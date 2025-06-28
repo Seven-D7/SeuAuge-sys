@@ -1,0 +1,91 @@
+import React from 'react';
+import { Play, Clock, Heart, Lock } from 'lucide-react';
+import { Video } from '../../stores/favoritesStore';
+import { useFavoritesStore } from '../../stores/favoritesStore';
+import { useAuth } from '../../contexts/AuthContext';
+
+interface VideoCardProps {
+  video: Video;
+  onClick?: () => void;
+}
+
+const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
+  const { user } = useAuth();
+  const { isVideoFavorite, addVideoToFavorites, removeVideoFromFavorites } = useFavoritesStore();
+  const isFavorite = isVideoFavorite(video.id);
+  const hasAccess = video.isFree || user?.isPremium;
+
+  const toggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isFavorite) {
+      removeVideoFromFavorites(video.id);
+    } else {
+      addVideoToFavorites(video);
+    }
+  };
+
+  return (
+    <div 
+      className="group cursor-pointer bg-slate-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-teal-500/10"
+      onClick={onClick}
+    >
+      <div className="relative">
+        <img 
+          src={video.thumbnail} 
+          alt={video.title}
+          className="w-full h-48 object-cover"
+        />
+        
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="w-12 h-12 bg-teal-600 rounded-full flex items-center justify-center">
+              <Play className="w-6 h-6 text-white ml-1" />
+            </div>
+          </div>
+        </div>
+
+        {/* Premium badge */}
+        {!video.isFree && (
+          <div className="absolute top-3 left-3">
+            <div className="bg-yellow-500 text-black px-2 py-1 rounded-full text-xs font-medium flex items-center">
+              <Lock className="w-3 h-3 mr-1" />
+              Premium
+            </div>
+          </div>
+        )}
+
+        {/* Category badge */}
+        <div className="absolute top-3 right-3">
+          <span className="bg-teal-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+            {video.category}
+          </span>
+        </div>
+
+        {/* Duration */}
+        <div className="absolute bottom-3 right-3 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm flex items-center">
+          <Clock className="w-3 h-3 mr-1" />
+          {video.duration}
+        </div>
+
+        {/* Favorite button */}
+        <button
+          onClick={toggleFavorite}
+          className="absolute bottom-3 left-3 p-2 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-full transition-all duration-200"
+        >
+          <Heart 
+            className={`w-4 h-4 ${isFavorite ? 'text-red-500 fill-current' : 'text-white'}`} 
+          />
+        </button>
+      </div>
+
+      <div className="p-4">
+        <h3 className="font-semibold text-white mb-2 line-clamp-2">{video.title}</h3>
+        <p className="text-sm text-slate-400 mb-2">{video.instructor}</p>
+        <p className="text-xs text-slate-500 line-clamp-2">{video.description}</p>
+      </div>
+    </div>
+  );
+};
+
+export default VideoCard;
