@@ -9,12 +9,15 @@ import {
 } from 'firebase/auth';
 import { auth } from '../firebase';
 
+const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'admin@seuauge.com';
+
 interface User {
   id: string;
   email: string;
   name: string;
   avatar?: string;
   isPremium: boolean;
+  isAdmin: boolean;
 }
 
 interface AuthContextType {
@@ -48,6 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           name: firebaseUser.displayName || '',
           avatar: firebaseUser.photoURL || undefined,
           isPremium: false,
+          isAdmin: firebaseUser.email === ADMIN_EMAIL,
         };
         setUser(mapped);
       } else {
@@ -69,6 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name: firebaseUser.displayName || '',
         avatar: firebaseUser.photoURL || undefined,
         isPremium: false,
+        isAdmin: firebaseUser.email === ADMIN_EMAIL,
       };
       setUser(mapped);
     } catch (err) {
@@ -89,6 +94,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name,
         avatar: firebaseUser.photoURL || undefined,
         isPremium: false,
+        isAdmin: firebaseUser.email === ADMIN_EMAIL,
       };
       setUser(mapped);
     } catch (err) {

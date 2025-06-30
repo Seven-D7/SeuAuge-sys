@@ -5,11 +5,12 @@ import {
   User, 
   Heart, 
   ShoppingBag, 
-  Sparkles, 
+  Sparkles,
   Home,
   Settings,
   LogOut,
-  TrendingUp
+  TrendingUp,
+  ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -20,7 +21,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   const menuItems = [
     { icon: Home, label: 'Início', path: '/dashboard' },
@@ -30,6 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     { icon: User, label: 'Perfil', path: '/profile' },
     { icon: TrendingUp, label: 'Progresso', path: '/progress' },
     { icon: Sparkles, label: 'Novidades', path: '/programs' },
+    ...(user?.isAdmin ? [{ icon: ShieldCheck, label: 'Admin', path: '/admin' }] : []),
   ];
 
   const isActive = (path: string) => location.pathname === path;
