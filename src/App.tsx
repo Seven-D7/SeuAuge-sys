@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
 import Layout from './components/Layout/Layout';
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
@@ -11,6 +12,7 @@ import Favorites from './pages/Favorites';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Payment from './pages/Payment';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   return (
@@ -33,6 +35,14 @@ function App() {
             <Route path="profile" element={<Profile />} />
             <Route path="payment" element={<Payment />} />
             <Route path="settings" element={<Settings />} />
+            <Route
+              path="admin"
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              }
+            />
             <Route path="" element={<Navigate to="/dashboard" replace />} />
           </Route>
         </Routes>
