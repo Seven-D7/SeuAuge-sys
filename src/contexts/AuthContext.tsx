@@ -8,6 +8,7 @@ import {
   User as FirebaseUser,
 } from 'firebase/auth';
 import { auth } from '../firebase';
+import { getPlanFromToken } from '../services/plan';
 
 const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'admin@seuauge.com';
 
@@ -16,6 +17,7 @@ interface User {
   email: string;
   name: string;
   avatar?: string;
+  plan?: string | null;
   isPremium: boolean;
   isAdmin: boolean;
 }
@@ -42,17 +44,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const mapFirebaseUser = async (firebaseUser: FirebaseUser): Promise<User> => {
+    const plan = await getPlanFromToken();
+    return {
+      id: firebaseUser.uid,
+      email: firebaseUser.email || '',
+      name: firebaseUser.displayName || '',
+      avatar: firebaseUser.photoURL || undefined,
+      plan,
+      isPremium: plan !== 'A',
+      isAdmin: firebaseUser.email === ADMIN_EMAIL,
+    };
+  };
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        const mapped: User = {
-          id: firebaseUser.uid,
-          email: firebaseUser.email || '',
-          name: firebaseUser.displayName || '',
-          avatar: firebaseUser.photoURL || undefined,
-          isPremium: false,
-          isAdmin: firebaseUser.email === ADMIN_EMAIL,
-        };
+        const mapped = await mapFirebaseUser(firebaseUser);
         setUser(mapped);
       } else {
         setUser(null);
@@ -66,15 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string) => {
     try {
       const cred = await signInWithEmailAndPassword(auth, email, password);
-      const firebaseUser = cred.user;
-      const mapped: User = {
-        id: firebaseUser.uid,
-        email: firebaseUser.email || '',
-        name: firebaseUser.displayName || '',
-        avatar: firebaseUser.photoURL || undefined,
-        isPremium: false,
-        isAdmin: firebaseUser.email === ADMIN_EMAIL,
-      };
+      const mapped = await mapFirebaseUser(cred.user);
       setUser(mapped);
     } catch (err) {
       console.error(err);
@@ -87,15 +87,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (auth.currentUser) {
         await updateProfile(auth.currentUser, { displayName: name });
       }
-      const firebaseUser = cred.user;
-      const mapped: User = {
-        id: firebaseUser.uid,
-        email: firebaseUser.email || '',
-        name,
-        avatar: firebaseUser.photoURL || undefined,
-        isPremium: false,
-        isAdmin: firebaseUser.email === ADMIN_EMAIL,
-      };
+      const mapped = await mapFirebaseUser(cred.user);
       setUser(mapped);
     } catch (err) {
       console.error(err);

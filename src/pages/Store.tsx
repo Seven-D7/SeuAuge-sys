@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Filter } from 'lucide-react';
 import ProductCard from '../components/Products/ProductCard';
+import ProductModal from '../components/Products/ProductModal';
 import { mockProducts } from '../data/mockData';
+import type { Product } from '../stores/cartStore';
 
 const Store: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('Todos');
   const [sortBy, setSortBy] = useState('name');
+  const [selectedProduct, setSelectedProduct] = useState(null as Product | null);
 
   const categories = ['Todos', 'Suplementos', 'Equipamentos', 'Vitaminas', 'Bem-estar', 'Recuperação'];
   const sortOptions = [
@@ -92,7 +95,7 @@ const Store: React.FC = () => {
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredAndSortedProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard key={product.id} product={product} onSelect={setSelectedProduct} />
         ))}
       </div>
 
@@ -110,6 +113,10 @@ const Store: React.FC = () => {
             Limpar filtros
           </button>
         </div>
+      )}
+
+      {selectedProduct && (
+        <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
       )}
     </div>
   );
