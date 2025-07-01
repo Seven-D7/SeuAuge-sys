@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
+import PlanGuard from './components/PlanGuard';
 import Layout from './components/Layout/Layout';
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
@@ -29,7 +30,14 @@ function App() {
             }
           >
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path="videos" element={<Videos />} />
+            <Route
+              path="videos"
+              element={
+                <PlanGuard allowedPlans={['B', 'C']}>
+                  <Videos />
+                </PlanGuard>
+              }
+            />
             <Route path="store" element={<Store />} />
             <Route path="favorites" element={<Favorites />} />
             <Route path="profile" element={<Profile />} />
