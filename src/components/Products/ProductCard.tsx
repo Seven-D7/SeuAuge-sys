@@ -5,9 +5,10 @@ import { useFavoritesStore } from '../../stores/favoritesStore';
 
 interface ProductCardProps {
   product: Product;
+  onSelect?: (product: Product) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
   const { addItem } = useCartStore();
   const { isProductFavorite, addProductToFavorites, removeProductFromFavorites } = useFavoritesStore();
   const isFavorite = isProductFavorite(product.id);
@@ -36,7 +37,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   return (
-    <div className="group cursor-pointer bg-slate-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-teal-500/10">
+    <div
+      className="group cursor-pointer bg-slate-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-teal-500/10"
+      onClick={() => onSelect?.(product)}
+    >
       <div className="relative">
         <img 
           src={product.image} 
