@@ -8,6 +8,7 @@ import {
   User as FirebaseUser,
 } from 'firebase/auth';
 import { auth } from '../firebase';
+import { updateUserProfile, UpdateUserInput } from '../services/user';
 import { getPlanFromToken } from '../services/plan';
 
 const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'admin@seuauge.com';
@@ -27,6 +28,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name: string) => Promise<void>;
   logout: () => void;
+  updateUser: (data: UpdateUserInput) => Promise<void>;
   loading: boolean;
 }
 
@@ -99,11 +101,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
   };
 
+  const updateUser = async (data: UpdateUserInput) => {
+    try {
+      await updateUserProfile(data);
+      if (auth.currentUser) {
+        const mapped = await mapFirebaseUser(auth.currentUser);
+        setUser(mapped);
+      }
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  };
+
   const value = {
     user,
     login,
     register,
     logout,
+    updateUser,
     loading
   };
 

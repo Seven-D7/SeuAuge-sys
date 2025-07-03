@@ -1,18 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { User, Camera, Edit3, Save, X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const Profile: React.FC = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
   });
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
-  const handleSave = () => {
-    // Aqui você normalmente atualizaria os dados do usuário
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files?.[0];
+    if (selected) {
+      setFile(selected);
+      setPreview(URL.createObjectURL(selected));
+    }
+  };
+
+  const handleSave = async () => {
+    await updateUser({ name: formData.name, email: formData.email, file });
     setIsEditing(false);
+    setFile(null);
+    setPreview(null);
   };
 
   const handleCancel = () => {
@@ -20,6 +33,8 @@ const Profile: React.FC = () => {
       name: user?.name || '',
       email: user?.email || '',
     });
+    setFile(null);
+    setPreview(null);
     setIsEditing(false);
   };
 
@@ -63,16 +78,25 @@ const Profile: React.FC = () => {
           {/* Avatar */}
           <div className="relative">
             <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-r from-teal-500 to-emerald-500 flex items-center justify-center">
-              {user?.avatar ? (
+              {preview ? (
+                <img src={preview} alt="preview" className="w-full h-full object-cover" />
+              ) : user?.avatar ? (
                 <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
               ) : (
                 <User className="w-16 h-16 text-white" />
               )}
             </div>
             {isEditing && (
-              <button className="absolute bottom-0 right-0 w-10 h-10 bg-teal-600 hover:bg-teal-700 rounded-full flex items-center justify-center text-white transition-colors">
-                <Camera className="w-5 h-5" />
-              </button>
+              <>
+                <button
+                  type="button"
+                  onClick={() => fileRef.current?.click()}
+                  className="absolute bottom-0 right-0 w-10 h-10 bg-teal-600 hover:bg-teal-700 rounded-full flex items-center justify-center text-white transition-colors"
+                >
+                  <Camera className="w-5 h-5" />
+                </button>
+                <input ref={fileRef} type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+              </>
             )}
           </div>
 

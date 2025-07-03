@@ -1,0 +1,39 @@
+import { updateProfile, updateEmail } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { auth, db, storage } from '../firebase';
+
+export interface UpdateUserInput {
+  name: string;
+  email: string;
+  file?: File | null;
+}
+
+export async function updateUserProfile({ name, email, file }: UpdateUserInput) {
+  if (!auth.currentUser) return;
+
+  let photoURL = auth.currentUser.photoURL || undefined;
+
+  if (file) {
+    const fileRef = ref(storage, `avatars/${auth.currentUser.uid}`);
+    await uploadBytes(fileRef, file);
+    photoURL = await getDownloadURL(fileRef);
+  }
+
+  await updateProfile(auth.currentUser, {
+    displayName: name,
+    photoURL,
+  });
+
+  if (auth.currentUser.email !== email) {
+    await updateEmail(auth.currentUser, email);
+  }
+
+  await setDoc(
+    doc(db, 'users', auth.currentUser.uid),
+    { name, email, avatar: photoURL },
+    { merge: true }
+  );
+
+  return photoURL;
+}
