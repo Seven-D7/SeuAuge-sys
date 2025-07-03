@@ -9,6 +9,13 @@ export interface UpdateUserInput {
   file?: File | null;
 }
 
+export interface CreateUserInput {
+  uid: string;
+  name: string;
+  email: string;
+  avatar?: string | null;
+}
+
 export async function updateUserProfile({ name, email, file }: UpdateUserInput) {
   if (!auth.currentUser) return;
 
@@ -36,4 +43,13 @@ export async function updateUserProfile({ name, email, file }: UpdateUserInput) 
   );
 
   return photoURL;
+}
+
+export async function createUserDocument({
+  uid,
+  name,
+  email,
+  avatar = null,
+}: CreateUserInput) {
+  await setDoc(doc(db, 'users', uid), { name, email, avatar });
 }

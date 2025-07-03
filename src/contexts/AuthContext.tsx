@@ -8,7 +8,7 @@ import {
   User as FirebaseUser,
 } from 'firebase/auth';
 import { auth } from '../firebase';
-import { updateUserProfile, UpdateUserInput } from '../services/user';
+import { updateUserProfile, UpdateUserInput, createUserDocument } from '../services/user';
 import { getPlanFromToken } from '../services/plan';
 
 const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'admin@seuauge.com';
@@ -89,6 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (auth.currentUser) {
         await updateProfile(auth.currentUser, { displayName: name });
       }
+      await createUserDocument({ uid: cred.user.uid, name, email });
       const mapped = await mapFirebaseUser(cred.user);
       setUser(mapped);
     } catch (err) {
