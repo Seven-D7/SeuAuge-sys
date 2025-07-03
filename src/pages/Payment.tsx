@@ -1,16 +1,29 @@
 // Tela responsável por iniciar o fluxo de pagamento fora da plataforma
 import React from 'react';
-import { CreditCard, Smartphone, Barcode, ArrowLeft, ExternalLink } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { CreditCard, Smartphone, Barcode, ArrowLeft, ExternalLink, Check } from 'lucide-react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { updateUserPlan } from '../services/plan';
+import { useAuth } from '../contexts/AuthContext';
 
 // URL do provedor externo de pagamento
 const PAYMENT_URL = import.meta.env.VITE_PAYMENT_URL || 'https://pagamento.exemplo.com';
 
 const Payment: React.FC = () => {
-  // Redireciona o usuário para o provedor externo de pagamento
+  const navigate = useNavigate();
+  const { refreshPlan } = useAuth();
+  const [search] = useSearchParams();
+  const selectedPlan = search.get('plan');
+
   const handlePay = () => {
     console.log('Redirecionando para o pagamento externo');
     window.open(PAYMENT_URL, '_blank');
+  };
+
+  const handleConfirm = async () => {
+    if (!selectedPlan) return;
+    await updateUserPlan(selectedPlan);
+    await refreshPlan();
+    navigate('/plans');
   };
 
   return (
@@ -39,6 +52,12 @@ const Payment: React.FC = () => {
         className="inline-flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg"
       >
         <ExternalLink className="w-4 h-4 mr-2" /> Realizar Pagamento
+      </button>
+      <button
+        onClick={handleConfirm}
+        className="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg"
+      >
+        <Check className="w-4 h-4 mr-2" /> Já paguei
       </button>
       <Link to="/store" className="inline-flex items-center text-teal-600 hover:underline">
         <ArrowLeft className="w-4 h-4 mr-2" /> Voltar para a loja
