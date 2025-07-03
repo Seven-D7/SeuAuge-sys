@@ -29,18 +29,19 @@ export async function updateUserProfile({ name, email, file }: UpdateUserInput) 
 
   await updateProfile(auth.currentUser, {
     displayName: name,
-    photoURL,
+    photoURL: photoURL ?? null,
   });
 
   if (auth.currentUser.email !== email) {
     await updateEmail(auth.currentUser, email);
   }
 
-  await setDoc(
-    doc(db, 'users', auth.currentUser.uid),
-    { name, email, avatar: photoURL },
-    { merge: true }
-  );
+  const data: Record<string, unknown> = { name, email };
+  if (photoURL !== undefined) {
+    data.avatar = photoURL;
+  }
+
+  await setDoc(doc(db, 'users', auth.currentUser.uid), data, { merge: true });
 
   return photoURL;
 }
