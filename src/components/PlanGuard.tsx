@@ -1,3 +1,4 @@
+// Componente que restringe acesso conforme o plano do usuário
 import React from 'react';
 import { useLocation, Navigate } from 'react-router-dom';
 import usePlan from '../hooks/usePlan';
@@ -21,6 +22,7 @@ const PlanGuard: React.FC<PlanGuardProps> = ({ allowedPlans, redirectTo = '/paym
   }
 
   if (!plan || !allowedPlans.includes(plan)) {
+    console.log('Acesso negado. Plano atual:', plan);
     return (
       <div className="min-h-screen flex flex-col items-center justify-center text-slate-400 p-8 bg-slate-950 text-center space-y-4">
         <p>
