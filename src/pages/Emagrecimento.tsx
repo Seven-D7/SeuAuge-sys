@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { mockVideos, mockProducts } from '../data/mockData';
 import type { Product } from '../stores/cartStore';
 import type { Video } from '../stores/favoritesStore';
+import { useProgressStore } from '../stores/progressStore';
 
 interface FormData {
   height: number;
@@ -34,6 +35,7 @@ const diets = [
 const Emagrecimento: React.FC = () => {
   const [data, setData] = useState<FormData>(initialData);
   const [submitted, setSubmitted] = useState(false);
+  const { setWeightLoss } = useProgressStore();
 
   const imc = useMemo(() => {
     if (!data.height || !data.currentWeight) return 0;
@@ -48,6 +50,12 @@ const Emagrecimento: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
+    setWeightLoss({
+      ...data,
+      imc,
+      idealWeight,
+      dailyDeficit,
+    });
   };
 
   const idealWeight = useMemo(() => {

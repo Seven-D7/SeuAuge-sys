@@ -1,4 +1,3 @@
-// Estrutura base utilizada em todas as páginas protegidas
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
@@ -10,26 +9,16 @@ const Layout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    {/* Container principal do layout */}
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white">
       <div className="flex">
-        {/* Sidebar */}
-        <Sidebar 
-          isOpen={sidebarOpen} 
-          onClose={() => setSidebarOpen(false)} 
-        />
-        
-        {/* Main content */}
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <div className="flex-1 lg:ml-0">
           <Header onMenuClick={() => setSidebarOpen(true)} />
-          
           <main className="p-6">
             <Outlet />
           </main>
         </div>
       </div>
-      
-      {/* Cart sidebar */}
       <Cart />
       <ProfileModal />
     </div>
