@@ -7,6 +7,8 @@ const Videos: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('Todos');
   const [selectedType, setSelectedType] = useState('Todos');
 
+  const continueWatching = mockVideos.slice(0, 3);
+
   const categories = ['Todos', 'Yoga', 'Fitness', 'Nutrição', 'Meditação', 'Pilates', 'Bem-estar'];
   const types = ['Todos', 'Gratuito', 'Premium'];
 
@@ -31,6 +33,25 @@ const Videos: React.FC = () => {
           {filteredVideos.length} vídeos encontrados
         </div>
       </div>
+
+      {continueWatching.length > 0 && (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-white">Continuar Assistindo</h2>
+            <button className="text-teal-400 hover:text-teal-300 font-medium">Ver Todos</button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {continueWatching.map((video) => (
+              <div key={video.id} className="relative">
+                <VideoCard video={video} />
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-700">
+                  <div className="h-full bg-teal-500" style={{ width: `${Math.random() * 70 + 10}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Filters */}
       <div className="bg-slate-800 rounded-lg p-6">

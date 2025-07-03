@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Play, ShoppingBag, TrendingUp, Clock } from 'lucide-react';
-import VideoCard from '../components/Videos/VideoCard';
 import ProductCard from '../components/Products/ProductCard';
-import { mockVideos, mockProducts } from '../data/mockData';
+import PurchasedProductCard from '../components/Products/PurchasedProductCard';
+import ProductModal from '../components/Products/ProductModal';
+import { mockProducts } from '../data/mockData';
 import { useAuth } from '../contexts/AuthContext';
+import type { Product } from '../stores/cartStore';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   
-  const featuredVideos = mockVideos.slice(0, 4);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
   const featuredProducts = mockProducts.slice(0, 4);
-  const continueWatching = mockVideos.slice(2, 4);
+  const purchasedProducts = mockProducts.slice(2, 6);
 
   const stats = [
     { icon: Play, label: 'Vídeos Assistidos', value: '47', color: 'bg-teal-600' },
@@ -69,19 +72,6 @@ const Dashboard: React.FC = () => {
         })}
       </div>
 
-      {/* Featured Health Videos */}
-      <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-white">Vídeos de Saúde em Destaque</h2>
-          <button className="text-teal-400 hover:text-teal-300 font-medium">Ver Todos</button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featuredVideos.map((video) => (
-            <VideoCard key={video.id} video={video} />
-          ))}
-        </div>
-      </section>
-
       {/* Health Products Store */}
       <section>
         <div className="flex items-center justify-between mb-6">
@@ -95,27 +85,21 @@ const Dashboard: React.FC = () => {
         </div>
       </section>
 
-      {/* Continue Watching */}
+      {/* Purchased Products */}
       <section>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-white">Continuar Assistindo</h2>
+          <h2 className="text-2xl font-bold text-white">Produtos Adquiridos</h2>
           <button className="text-teal-400 hover:text-teal-300 font-medium">Ver Todos</button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {continueWatching.map((video) => (
-            <div key={video.id} className="relative">
-              <VideoCard video={video} />
-              {/* Progress bar */}
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-700">
-                <div 
-                  className="h-full bg-teal-500" 
-                  style={{ width: `${Math.random() * 70 + 10}%` }}
-                />
-              </div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {purchasedProducts.map((product) => (
+            <PurchasedProductCard key={product.id} product={product} onSelect={setSelectedProduct} />
           ))}
         </div>
       </section>
+      {selectedProduct && (
+        <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
+      )}
     </div>
   );
 };
