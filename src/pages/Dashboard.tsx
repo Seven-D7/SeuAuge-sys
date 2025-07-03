@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Play, ShoppingBag, TrendingUp, Clock } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import ProductCard from '../components/Products/ProductCard';
 import PurchasedProductCard from '../components/Products/PurchasedProductCard';
 import ProductModal from '../components/Products/ProductModal';
@@ -71,6 +72,20 @@ const Dashboard: React.FC = () => {
           );
         })}
       </div>
+
+      {/* Weight Loss Tool */}
+      <section className="bg-slate-800 rounded-lg p-6 flex flex-col sm:flex-row items-center justify-between">
+        <div className="mb-4 sm:mb-0">
+          <h2 className="text-xl font-bold text-white">Ferramenta de Emagrecimento</h2>
+          <p className="text-sm text-slate-400">Calcule seu plano personalizado</p>
+        </div>
+        <Link
+          to="/emagrecimento"
+          className="btn-primary"
+        >
+          Acessar
+        </Link>
+      </section>
 
       {/* Health Products Store */}
       <section>
