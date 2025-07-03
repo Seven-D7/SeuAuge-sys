@@ -1,3 +1,4 @@
+// Store que gerencia o carrinho de compras
 import { create } from 'zustand';
 
 export interface Product {
@@ -47,11 +48,12 @@ export const useCartStore = create<CartStore>((set, get) => ({
           showAddedAnimation: true,
         };
       }
-      return { 
+      return {
         items: [...state.items, { product, quantity: 1 }],
         showAddedAnimation: true,
       };
     });
+    console.log('Produto adicionado ao carrinho', product.name);
     
     // Remove a animação após 2 segundos
     setTimeout(() => {
