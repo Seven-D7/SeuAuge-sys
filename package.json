@@ -35,8 +35,8 @@
   },
   "optionalDependencies": {
     "chart.js": "^4.4.3",
-    "react-chartjs-2": "^5.2.0",
-    "jspdf": "^2.5.1",
-    "html2canvas": "^1.4.1"
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.1",
+    "react-chartjs-2": "^5.2.0"
   }
 }
