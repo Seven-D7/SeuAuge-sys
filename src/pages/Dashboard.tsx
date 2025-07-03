@@ -73,11 +73,11 @@ const Dashboard: React.FC = () => {
         })}
       </div>
 
-      {/* Weight Loss Tool */}
+      {/* AugeFit Planner */}
       <section className="bg-slate-800 rounded-lg p-6 flex flex-col sm:flex-row items-center justify-between">
         <div className="mb-4 sm:mb-0">
-          <h2 className="text-xl font-bold text-white">Ferramenta de Emagrecimento</h2>
-          <p className="text-sm text-slate-400">Calcule seu plano personalizado</p>
+          <h2 className="text-xl font-bold text-white">AugeFit Planner</h2>
+          <p className="text-sm text-slate-400">Monte seu plano de emagrecimento</p>
         </div>
         <Link
           to="/emagrecimento"

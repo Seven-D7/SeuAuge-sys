@@ -1,4 +1,3 @@
-// Estrutura base utilizada em todas as páginas protegidas
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
