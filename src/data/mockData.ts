@@ -44,7 +44,8 @@ export const mockVideos: Video[] = [
     videoUrl: '#',
     thumbnail: 'https://images.pexels.com/photos/416809/pexels-photo-416809.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
     description: 'Treinamento intervalado de alta intensidade para acelerar seu metabolismo e queimar calorias.',
-    instructor: 'Alex Rodriguez'
+    instructor: 'Alex Rodriguez',
+    tags: ['emagrecimento']
   },
   {
     id: '5',
@@ -78,7 +79,8 @@ export const mockProducts: Product[] = [
     image: 'https://images.pexels.com/photos/4162481/pexels-photo-4162481.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
     category: 'Suplementos',
     description: 'Blend de proteína whey de alta qualidade para recuperação muscular e crescimento.',
-    rating: 5
+    rating: 5,
+    tags: ['emagrecimento']
   },
   {
     id: '2',
@@ -96,7 +98,8 @@ export const mockProducts: Product[] = [
     image: 'https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
     category: 'Equipamentos',
     description: 'Kit completo de faixas de resistência para treinamento de força em casa.',
-    rating: 5
+    rating: 5,
+    tags: ['emagrecimento']
   },
   {
     id: '4',
@@ -105,7 +108,8 @@ export const mockProducts: Product[] = [
     image: 'https://images.pexels.com/photos/3822583/pexels-photo-3822583.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
     category: 'Equipamentos',
     description: 'Tapete de yoga antiderrapante e ecológico, perfeito para todos os tipos de prática.',
-    rating: 5
+    rating: 5,
+    tags: ['emagrecimento']
   },
   {
     id: '5',
