@@ -4,9 +4,10 @@ import {
   Play, 
   User, 
   Heart, 
-  ShoppingBag, 
+  ShoppingBag,
   Sparkles,
   Home,
+  AppWindow,
   Settings,
   LogOut,
   TrendingUp,
@@ -30,7 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     { icon: Sparkles, label: 'Planos', path: '/plans' },
     { icon: Heart, label: 'Favoritos', path: '/favorites' },
     { icon: TrendingUp, label: 'Progresso', path: '/progress' },
-    { icon: Sparkles, label: 'Novidades', path: '/programs' },
+    { icon: AppWindow, label: 'Apps', path: '/apps' },
     ...(user?.isAdmin ? [{ icon: ShieldCheck, label: 'Admin', path: '/admin' }] : []),
   ];
 
