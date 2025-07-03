@@ -16,6 +16,7 @@ import Plans from './pages/Plans';
 import AdminDashboard from './pages/AdminDashboard';
 import Emagrecimento from './pages/Emagrecimento';
 import Progress from './pages/Progress';
+import AppsPage from './pages/Apps';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
             <Route path="plans" element={<Plans />} />
             <Route path="payment" element={<Payment />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="apps" element={<AppsPage />} />
             <Route path="emagrecimento" element={<Emagrecimento />} />
             <Route
               path="admin"
