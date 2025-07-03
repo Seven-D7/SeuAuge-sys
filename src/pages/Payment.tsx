@@ -21,6 +21,9 @@ const Payment: React.FC = () => {
           <span className="font-medium">Boleto</span>
         </div>
       </div>
+      <p className="text-sm text-slate-500 dark:text-slate-400">
+        O pagamento será realizado em um ambiente externo seguro.
+      </p>
       <Link to="/store" className="inline-flex items-center text-teal-600 hover:underline">
         <ArrowLeft className="w-4 h-4 mr-2" /> Voltar para a loja
       </Link>
