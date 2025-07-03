@@ -1,4 +1,5 @@
 import { auth } from '../firebase';
+import api from './api';
 
 export async function getPlanFromToken(forceRefresh = false): Promise<string | null> {
   const currentUser = auth.currentUser;
@@ -8,3 +9,9 @@ export async function getPlanFromToken(forceRefresh = false): Promise<string | n
   return plan ?? null;
 }
 
+export async function updateUserPlan(plan: string): Promise<void> {
+  await api('/plan', {
+    method: 'POST',
+    body: JSON.stringify({ plan }),
+  });
+}

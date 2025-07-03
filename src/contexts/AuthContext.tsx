@@ -30,6 +30,7 @@ interface AuthContextType {
   register: (email: string, password: string, name: string) => Promise<void>;
   logout: () => void;
   updateUser: (data: UpdateUserInput) => Promise<void>;
+  refreshPlan: () => Promise<void>;
   loading: boolean;
 }
 
@@ -118,12 +119,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const refreshPlan = async () => {
+    if (!auth.currentUser) return;
+    const newPlan = await getPlanFromToken(true);
+    setUser((prev) =>
+      prev ? { ...prev, plan: newPlan, isPremium: newPlan !== 'A' } : prev
+    );
+  };
+
   const value = {
     user,
     login,
     register,
     logout,
     updateUser,
+    refreshPlan,
     loading
   };
 

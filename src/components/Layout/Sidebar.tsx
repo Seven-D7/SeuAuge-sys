@@ -27,6 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     { icon: Home, label: 'Início', path: '/dashboard' },
     { icon: Play, label: 'Vídeos', path: '/videos' },
     { icon: ShoppingBag, label: 'Loja', path: '/store' },
+    { icon: Sparkles, label: 'Planos', path: '/plans' },
     { icon: Heart, label: 'Favoritos', path: '/favorites' },
     { icon: TrendingUp, label: 'Progresso', path: '/progress' },
     { icon: Sparkles, label: 'Novidades', path: '/programs' },

@@ -13,6 +13,7 @@ import Favorites from './pages/Favorites';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Payment from './pages/Payment';
+import Plans from './pages/Plans';
 import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
             <Route path="store" element={<Store />} />
             <Route path="favorites" element={<Favorites />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="plans" element={<Plans />} />
             <Route path="payment" element={<Payment />} />
             <Route path="settings" element={<Settings />} />
             <Route
