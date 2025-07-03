@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { User, Camera, Edit3, Save, X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useProgressStore } from '../stores/progressStore';
 
 const Profile: React.FC = () => {
   const { user, updateUser } = useAuth();
@@ -9,9 +10,11 @@ const Profile: React.FC = () => {
     name: user?.name || '',
     email: user?.email || '',
   });
+  const { metrics, setMetrics } = useProgressStore();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [bodyForm, setBodyForm] = useState(metrics);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
@@ -23,6 +26,7 @@ const Profile: React.FC = () => {
 
   const handleSave = async () => {
     await updateUser({ name: formData.name, email: formData.email, file });
+    setMetrics(bodyForm);
     setIsEditing(false);
     setFile(null);
     setPreview(null);
@@ -33,6 +37,7 @@ const Profile: React.FC = () => {
       name: user?.name || '',
       email: user?.email || '',
     });
+    setBodyForm(metrics);
     setFile(null);
     setPreview(null);
     setIsEditing(false);
@@ -45,7 +50,10 @@ const Profile: React.FC = () => {
         <h1 className="text-3xl font-bold text-white">Meu Perfil</h1>
         {!isEditing ? (
           <button
-            onClick={() => setIsEditing(true)}
+            onClick={() => {
+              setBodyForm(metrics);
+              setIsEditing(true);
+            }}
             className="flex items-center space-x-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
           >
             <Edit3 className="w-4 h-4" />
@@ -109,6 +117,12 @@ const Profile: React.FC = () => {
                 <div className="inline-flex items-center px-3 py-1 bg-yellow-500 text-black rounded-full text-sm font-medium">
                   Membro Premium
                 </div>
+                <div className="grid grid-cols-2 gap-2 text-sm text-slate-300 mt-4">
+                  <span>Peso: {metrics.totalWeight}kg</span>
+                  <span>IMC: {metrics.bmi}</span>
+                  <span>Água Total: {metrics.totalBodyWater}L</span>
+                  <span>Massa Magra: {metrics.leanMass}kg</span>
+                </div>
               </div>
             ) : (
               <div className="space-y-4 max-w-md">
@@ -129,6 +143,152 @@ const Profile: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
                   />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <label className="flex flex-col">
+                    <span className="text-sm mb-1">Peso Corporal (kg)</span>
+                    <input
+                      type="number"
+                      value={bodyForm.totalWeight}
+                      onChange={(e) => setBodyForm({ ...bodyForm, totalWeight: Number(e.target.value) })}
+                      className="input"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="text-sm mb-1">IMC</span>
+                    <input
+                      type="number"
+                      value={bodyForm.bmi}
+                      onChange={(e) => setBodyForm({ ...bodyForm, bmi: Number(e.target.value) })}
+                      className="input"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="text-sm mb-1">Água Corporal Total (L)</span>
+                    <input
+                      type="number"
+                      value={bodyForm.totalBodyWater}
+                      onChange={(e) => setBodyForm({ ...bodyForm, totalBodyWater: Number(e.target.value) })}
+                      className="input"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="text-sm mb-1">Água Intracelular (L)</span>
+                    <input
+                      type="number"
+                      value={bodyForm.intracellularWater}
+                      onChange={(e) => setBodyForm({ ...bodyForm, intracellularWater: Number(e.target.value) })}
+                      className="input"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="text-sm mb-1">Água Extracelular (L)</span>
+                    <input
+                      type="number"
+                      value={bodyForm.extracellularWater}
+                      onChange={(e) => setBodyForm({ ...bodyForm, extracellularWater: Number(e.target.value) })}
+                      className="input"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="text-sm mb-1">Massa Magra (kg)</span>
+                    <input
+                      type="number"
+                      value={bodyForm.leanMass}
+                      onChange={(e) => setBodyForm({ ...bodyForm, leanMass: Number(e.target.value) })}
+                      className="input"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="text-sm mb-1">Massa Muscular Esquelética (kg)</span>
+                    <input
+                      type="number"
+                      value={bodyForm.skeletalMuscleMass}
+                      onChange={(e) => setBodyForm({ ...bodyForm, skeletalMuscleMass: Number(e.target.value) })}
+                      className="input"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="text-sm mb-1">Massa de Gordura (kg)</span>
+                    <input
+                      type="number"
+                      value={bodyForm.bodyFatMass}
+                      onChange={(e) => setBodyForm({ ...bodyForm, bodyFatMass: Number(e.target.value) })}
+                      className="input"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="text-sm mb-1">% Gordura Corporal</span>
+                    <input
+                      type="number"
+                      value={bodyForm.bodyFatPercent}
+                      onChange={(e) => setBodyForm({ ...bodyForm, bodyFatPercent: Number(e.target.value) })}
+                      className="input"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="text-sm mb-1">Gordura Braços (%)</span>
+                    <input
+                      type="number"
+                      value={bodyForm.fatArms}
+                      onChange={(e) => setBodyForm({ ...bodyForm, fatArms: Number(e.target.value) })}
+                      className="input"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="text-sm mb-1">Gordura Tronco (%)</span>
+                    <input
+                      type="number"
+                      value={bodyForm.fatTrunk}
+                      onChange={(e) => setBodyForm({ ...bodyForm, fatTrunk: Number(e.target.value) })}
+                      className="input"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="text-sm mb-1">Gordura Pernas (%)</span>
+                    <input
+                      type="number"
+                      value={bodyForm.fatLegs}
+                      onChange={(e) => setBodyForm({ ...bodyForm, fatLegs: Number(e.target.value) })}
+                      className="input"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="text-sm mb-1">Massa Óssea (kg)</span>
+                    <input
+                      type="number"
+                      value={bodyForm.boneMass}
+                      onChange={(e) => setBodyForm({ ...bodyForm, boneMass: Number(e.target.value) })}
+                      className="input"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="text-sm mb-1">TMB (kcal)</span>
+                    <input
+                      type="number"
+                      value={bodyForm.bmr}
+                      onChange={(e) => setBodyForm({ ...bodyForm, bmr: Number(e.target.value) })}
+                      className="input"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="text-sm mb-1">Relação ECW/ICW</span>
+                    <input
+                      type="number"
+                      value={bodyForm.ecwIcwRatio}
+                      onChange={(e) => setBodyForm({ ...bodyForm, ecwIcwRatio: Number(e.target.value) })}
+                      className="input"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="text-sm mb-1">Equilíbrio Muscular (%)</span>
+                    <input
+                      type="number"
+                      value={bodyForm.muscleSymmetry}
+                      onChange={(e) => setBodyForm({ ...bodyForm, muscleSymmetry: Number(e.target.value) })}
+                      className="input"
+                    />
+                  </label>
                 </div>
               </div>
             )}
