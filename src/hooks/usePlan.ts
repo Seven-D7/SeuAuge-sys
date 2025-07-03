@@ -1,3 +1,4 @@
+// Hook para recuperar o plano do usuário e exibir conteúdo condicionalmente
 import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getPlanFromToken } from '../services/plan';
@@ -23,6 +24,7 @@ export default function usePlan(): UsePlan {
       const currentPlan = user.plan ?? (await getPlanFromToken());
       if (!active) return;
       setPlan(currentPlan);
+      console.log('Plano obtido:', currentPlan);
       setLoading(false);
     }
     fetchPlan();

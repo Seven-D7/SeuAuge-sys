@@ -1,3 +1,4 @@
+// Contexto responsável por gerenciar a autenticação com o Firebase
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   signInWithEmailAndPassword,
@@ -78,6 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const cred = await signInWithEmailAndPassword(auth, email, password);
       const mapped = await mapFirebaseUser(cred.user);
       setUser(mapped);
+      console.log('Usuário autenticado', mapped.email);
     } catch (err) {
       console.error(err);
     }
@@ -91,6 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       const mapped = await mapFirebaseUser(cred.user);
       setUser(mapped);
+      console.log('Usuário registrado', mapped.email);
     } catch (err) {
       console.error(err);
     }
@@ -99,6 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     await signOut(auth);
     setUser(null);
+    console.log('Usuário desconectado');
   };
 
   const updateUser = async (data: UpdateUserInput) => {
