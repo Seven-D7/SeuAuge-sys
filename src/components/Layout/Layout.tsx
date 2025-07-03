@@ -9,8 +9,8 @@ import ProfileModal from '../Profile/ProfileModal';
 const Layout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // Container principal do layout
   return (
-    {/* Container principal do layout */}
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white">
       <div className="flex">
         {/* Sidebar */}
@@ -37,3 +37,5 @@ const Layout: React.FC = () => {
 };
 
 export default Layout;
+// Este componente Layout serve como um contêiner para todas as páginas protegidas da aplicação.
+// Ele inclui a sidebar, o cabeçalho e os componentes de carrinho e perfil,
