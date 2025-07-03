@@ -1,8 +1,18 @@
+// Tela responsável por iniciar o fluxo de pagamento fora da plataforma
 import React from 'react';
-import { CreditCard, Smartphone, Barcode, ArrowLeft } from 'lucide-react';
+import { CreditCard, Smartphone, Barcode, ArrowLeft, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+// URL do provedor externo de pagamento
+const PAYMENT_URL = import.meta.env.VITE_PAYMENT_URL || 'https://pagamento.exemplo.com';
+
 const Payment: React.FC = () => {
+  // Redireciona o usuário para o provedor externo de pagamento
+  const handlePay = () => {
+    console.log('Redirecionando para o pagamento externo');
+    window.open(PAYMENT_URL, '_blank');
+  };
+
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Pagamento</h1>
@@ -24,6 +34,12 @@ const Payment: React.FC = () => {
       <p className="text-sm text-slate-500 dark:text-slate-400">
         O pagamento será realizado em um ambiente externo seguro.
       </p>
+      <button
+        onClick={handlePay}
+        className="inline-flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg"
+      >
+        <ExternalLink className="w-4 h-4 mr-2" /> Realizar Pagamento
+      </button>
       <Link to="/store" className="inline-flex items-center text-teal-600 hover:underline">
         <ArrowLeft className="w-4 h-4 mr-2" /> Voltar para a loja
       </Link>
