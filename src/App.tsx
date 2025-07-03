@@ -14,6 +14,7 @@ import Settings from './pages/Settings';
 import Payment from './pages/Payment';
 import Plans from './pages/Plans';
 import AdminDashboard from './pages/AdminDashboard';
+import Emagrecimento from './pages/Emagrecimento';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
             <Route path="plans" element={<Plans />} />
             <Route path="payment" element={<Payment />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="emagrecimento" element={<Emagrecimento />} />
             <Route
               path="admin"
               element={

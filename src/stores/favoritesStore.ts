@@ -10,6 +10,7 @@ export interface Video {
   thumbnail: string;
   description: string;
   instructor: string;
+  tags?: string[];
 }
 
 interface FavoritesStore {
