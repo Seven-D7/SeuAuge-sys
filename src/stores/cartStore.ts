@@ -9,6 +9,7 @@ export interface Product {
   category: string;
   description: string;
   rating: number;
+  tags?: string[];
 }
 
 export interface CartItem {
