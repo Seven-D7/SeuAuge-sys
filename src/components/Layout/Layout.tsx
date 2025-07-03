@@ -14,21 +14,18 @@ const Layout: React.FC = () => {
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white">
       <div className="flex">
         {/* Sidebar */}
-        <Sidebar 
-          isOpen={sidebarOpen} 
-          onClose={() => setSidebarOpen(false)} 
-        />
-        
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
         {/* Main content */}
         <div className="flex-1 lg:ml-0">
           <Header onMenuClick={() => setSidebarOpen(true)} />
-          
+
           <main className="p-6">
             <Outlet />
           </main>
         </div>
       </div>
-      
+
       {/* Cart sidebar */}
       <Cart />
       <ProfileModal />

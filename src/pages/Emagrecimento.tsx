@@ -2,6 +2,9 @@ import React, { useMemo, useState } from 'react';
 import { mockVideos, mockProducts } from '../data/mockData';
 import type { Product } from '../stores/cartStore';
 import type { Video } from '../stores/favoritesStore';
+import WeightChart, { type WeightEntry } from '../components/Common/WeightChart';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface FormData {
   height: number;
@@ -34,6 +37,8 @@ const diets = [
 const Emagrecimento: React.FC = () => {
   const [data, setData] = useState<FormData>(initialData);
   const [submitted, setSubmitted] = useState(false);
+  const [history, setHistory] = useState<WeightEntry[]>([]);
+  const [newWeight, setNewWeight] = useState('');
 
   const imc = useMemo(() => {
     if (!data.height || !data.currentWeight) return 0;
@@ -48,6 +53,11 @@ const Emagrecimento: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
+    const entry: WeightEntry = {
+      date: new Date().toLocaleDateString(),
+      weight: data.currentWeight,
+    };
+    setHistory([entry]);
   };
 
   const idealWeight = useMemo(() => {
@@ -63,12 +73,20 @@ const Emagrecimento: React.FC = () => {
   }, [data.currentWeight, data.targetWeight, data.goalTime]);
 
   const recommendedVideos: Video[] = useMemo(() => {
-    return mockVideos.filter(v => v.tags?.includes('emagrecimento')).slice(0, 3);
-  }, []);
+    let vids = mockVideos.filter((v) => v.tags?.includes('emagrecimento'));
+    if (data.frequency > 4) {
+      vids = vids.filter((v) => v.category === 'Fitness');
+    }
+    return vids.slice(0, 3);
+  }, [data.frequency]);
 
   const recommendedProducts: Product[] = useMemo(() => {
-    return mockProducts.filter(p => p.tags?.includes('emagrecimento')).slice(0, 3);
-  }, []);
+    let products = mockProducts.filter((p) => p.tags?.includes('emagrecimento'));
+    if (imc > 30) {
+      products = products.filter((p) => p.category !== 'Vitaminas');
+    }
+    return products.slice(0, 3);
+  }, [imc]);
 
   return (
     <div className="space-y-8">
@@ -165,7 +183,7 @@ const Emagrecimento: React.FC = () => {
           <button type="submit" className="btn-primary mt-4">Calcular Plano</button>
         </form>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-6" id="result-area">
           <div className="bg-slate-800 p-4 rounded-lg space-y-2">
             <h2 className="text-xl font-semibold">Resumo do Plano</h2>
             <p>
@@ -173,6 +191,58 @@ const Emagrecimento: React.FC = () => {
               com um consumo diário de {dailyDeficit} calorias a menos e {data.frequency} treinos por semana.
             </p>
             <p>Peso ideal estimado: {idealWeight.toFixed(1)} kg</p>
+          </div>
+          {history.length > 0 && (
+            <div className="bg-slate-800 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold mb-2">Evolução do Peso</h3>
+              <WeightChart data={history} />
+            </div>
+          )}
+          <div className="flex items-end space-x-2">
+            <label className="flex flex-col flex-1">
+              <span className="text-sm mb-1">Nova pesagem (kg)</span>
+              <input
+                type="number"
+                className="input"
+                placeholder="Ex: 70"
+                value={newWeight}
+                onChange={(e) => setNewWeight(e.target.value)}
+              />
+            </label>
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={() => {
+                const weight = parseFloat(newWeight);
+                if (!isNaN(weight)) {
+                  setHistory((prev) => [
+                    ...prev,
+                    { date: new Date().toLocaleDateString(), weight },
+                  ]);
+                  setNewWeight('');
+                }
+              }}
+            >
+              Registrar
+            </button>
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={async () => {
+                const element = document.getElementById('result-area');
+                if (!element) return;
+                const canvas = await html2canvas(element);
+                const pdf = new jsPDF();
+                const imgData = canvas.toDataURL('image/png');
+                const imgProps = pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save('plano-emagrecimento.pdf');
+              }}
+            >
+              Gerar PDF
+            </button>
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-2">Vídeos Recomendados</h3>
