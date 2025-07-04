@@ -133,7 +133,11 @@ const steps = [
   },
 ];
 
-export default function Questionnaire({ onComplete }) {
+export interface QuestionnaireProps {
+  onComplete?: (data: any) => void;
+}
+
+export default function Questionnaire({ onComplete }: QuestionnaireProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);

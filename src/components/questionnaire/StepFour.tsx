@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { StepProps } from './types';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { Checkbox } from '../ui/checkbox';
@@ -22,7 +23,7 @@ const equipamentos = [
   { id: 'peso_corporal', label: 'Apenas peso corporal', icon: '💪' },
 ];
 
-export default function StepFour({ form, onNext, onPrevious, canGoBack, defaultValues }) {
+export default function StepFour({ form, onNext, onPrevious, canGoBack, defaultValues }: StepProps) {
   useEffect(() => {
     if (defaultValues) {
       Object.keys(defaultValues).forEach(key => {

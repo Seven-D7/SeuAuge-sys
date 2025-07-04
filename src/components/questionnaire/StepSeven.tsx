@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
+import { StepProps } from './types';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { ArrowLeft, CheckCircle, BarChart3 } from 'lucide-react';
 
-export default function StepSeven({ form, onNext, onPrevious, canGoBack, isLastStep, defaultValues }) {
+export default function StepSeven({ form, onNext, onPrevious, canGoBack, isLastStep, defaultValues }: StepProps) {
   useEffect(() => {
     if (defaultValues) {
       Object.keys(defaultValues).forEach(key => {
