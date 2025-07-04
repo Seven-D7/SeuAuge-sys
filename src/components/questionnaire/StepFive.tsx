@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { StepProps } from './types';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -22,7 +23,7 @@ const habitosAlimentares = [
   { id: 'fast_food', label: 'Fast food ocasionalmente' },
 ];
 
-export default function StepFive({ form, onNext, onPrevious, canGoBack, defaultValues }) {
+export default function StepFive({ form, onNext, onPrevious, canGoBack, defaultValues }: StepProps) {
   useEffect(() => {
     if (defaultValues) {
       Object.keys(defaultValues).forEach(key => {

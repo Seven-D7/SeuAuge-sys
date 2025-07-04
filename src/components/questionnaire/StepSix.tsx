@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
+import { StepProps } from './types';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { ArrowLeft, ArrowRight, Target, Heart, Users } from 'lucide-react';
 
-export default function StepSix({ form, onNext, onPrevious, canGoBack, defaultValues }) {
+export default function StepSix({ form, onNext, onPrevious, canGoBack, defaultValues }: StepProps) {
   useEffect(() => {
     if (defaultValues) {
       Object.keys(defaultValues).forEach(key => {
