@@ -104,13 +104,13 @@ const Cart: React.FC = () => {
           <div className="border-t border-slate-200 dark:border-slate-800 p-6">
             <div className="flex justify-between items-center mb-4">
               <span className="text-lg font-semibold">Total:</span>
-              <span className="text-lg font-bold text-teal-600 dark:text-teal-400">R$ {totalPrice.toFixed(2).replace('.', ',')}</span>
+              <span className="text-lg font-bold text-primary dark:text-primary">R$ {totalPrice.toFixed(2).replace('.', ',')}</span>
             </div>
             
             <div className="space-y-3">
               <button 
                 onClick={handleCheckout}
-                className="w-full bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2"
+                className="w-full bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2"
               >
                 <CreditCard className="w-4 h-4" />
                 <span>Finalizar Compra</span>

@@ -25,7 +25,7 @@ const Plans: React.FC = () => {
             <h2 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">
               {p.name}
             </h2>
-            <span className="text-teal-600 dark:text-teal-400 mb-4 font-medium">
+            <span className="text-primary dark:text-primary mb-4 font-medium">
               {p.price}
             </span>
             <ul className="flex-1 space-y-1 text-sm mb-4 list-disc list-inside text-slate-700 dark:text-slate-300">
@@ -43,7 +43,7 @@ const Plans: React.FC = () => {
                 disabled={!canUpgrade(p)}
                 className={`w-full py-2 rounded-lg text-white ${
                   canUpgrade(p)
-                    ? 'bg-teal-600 hover:bg-teal-700'
+                    ? 'bg-primary hover:bg-primary-dark'
                     : 'bg-slate-400 cursor-not-allowed'
                 }`}
               >

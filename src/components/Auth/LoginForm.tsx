@@ -44,7 +44,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="w-full pl-12 pr-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Digite seu email"
               required
             />
@@ -61,7 +61,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-12 pr-12 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="w-full pl-12 pr-12 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Digite sua senha"
               required
             />
@@ -78,7 +78,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 disabled:opacity-50"
+          className="w-full bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 disabled:opacity-50"
         >
           {loading ? 'Entrando...' : 'Entrar'}
         </button>
@@ -89,7 +89,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
           Não tem uma conta?{' '}
           <button
             onClick={onToggleMode}
-            className="text-teal-400 hover:text-teal-300 font-medium"
+            className="text-primary hover:text-primary font-medium"
           >
             Cadastre-se
           </button>
