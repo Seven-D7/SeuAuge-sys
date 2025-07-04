@@ -12,6 +12,12 @@ export interface WeightLossData {
   imc: number;
   idealWeight: number;
   dailyDeficit: number;
+  classificacaoImc?: string;
+  tmb?: number;
+  gastoEnergetico?: number;
+  caloriasDiarias?: number;
+  perdaSemanal?: number;
+  tempoEstimado?: number;
 }
 
 export interface BodyMetrics {
@@ -35,8 +41,10 @@ export interface BodyMetrics {
 
 interface ProgressStore {
   weightLoss?: WeightLossData;
+  reportData?: any;
   metrics: BodyMetrics;
   setWeightLoss: (data: WeightLossData) => void;
+  setReportData: (data: any) => void;
   setMetrics: (data: Partial<BodyMetrics>) => void;
 }
 
@@ -61,7 +69,9 @@ const defaultMetrics: BodyMetrics = {
 
 export const useProgressStore = create<ProgressStore>((set) => ({
   weightLoss: undefined,
+  reportData: undefined,
   metrics: defaultMetrics,
   setWeightLoss: (data) => set({ weightLoss: data }),
+  setReportData: (data) => set({ reportData: data }),
   setMetrics: (data) => set((state) => ({ metrics: { ...state.metrics, ...data } })),
 }));
