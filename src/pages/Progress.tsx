@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TrendingUp } from 'lucide-react';
 import { useProgressStore } from '../stores/progressStore';
+import Report from '../components/Report';
 
 const Progress: React.FC = () => {
-  const { weightLoss, metrics } = useProgressStore();
+  const { weightLoss, metrics, reportData } = useProgressStore();
+  const [showReport, setShowReport] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -13,18 +15,24 @@ const Progress: React.FC = () => {
       </div>
 
       {weightLoss && (
-        <section className="bg-slate-800 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-white mb-2">AugeFit Planner</h2>
-          <p className="text-slate-400 mb-1">
+        <section className="bg-slate-800 rounded-lg p-6 space-y-2">
+          <h2 className="text-xl font-semibold text-white">Emagrecendo bem</h2>
+          <p className="text-slate-400">
             Objetivo: {weightLoss.targetWeight}kg em {weightLoss.goalTime} semanas
           </p>
-          <p className="text-slate-400 mb-1">IMC atual: {weightLoss.imc.toFixed(1)}</p>
-          <p className="text-slate-400 mb-1">Peso ideal: {weightLoss.idealWeight.toFixed(1)}kg</p>
+          <p className="text-slate-400">IMC atual: {weightLoss.imc.toFixed(1)} ({weightLoss.classificacaoImc})</p>
+          <p className="text-slate-400">Peso ideal: {weightLoss.idealWeight.toFixed(1)}kg</p>
           <p className="text-slate-400">Déficit diário sugerido: {weightLoss.dailyDeficit} kcal</p>
+          <button
+            onClick={() => setShowReport(true)}
+            className="mt-4 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg"
+          >
+            Ver minhas metas
+          </button>
         </section>
       )}
 
-      <section className="bg-slate-800 rounded-lg p-6">
+      <section className="bg-slate-800 rounded-lg p-6 space-y-4">
         <h2 className="text-xl font-semibold text-white mb-4">Composição Corporal</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-slate-300">
           <div>
@@ -67,7 +75,10 @@ const Progress: React.FC = () => {
             <span className="font-medium text-white">Massa Óssea:</span> {metrics.boneMass}kg
           </div>
           <div>
-            <span className="font-medium text-white">TMB:</span> {metrics.bmr} kcal
+            <span className="font-medium text-white">TMB:</span> {weightLoss?.tmb ?? metrics.bmr} kcal
+          </div>
+          <div>
+            <span className="font-medium text-white">Calorias Diárias:</span> {weightLoss?.caloriasDiarias ?? 0} kcal
           </div>
           <div>
             <span className="font-medium text-white">Relação ECW/ICW:</span> {metrics.ecwIcwRatio}
@@ -77,6 +88,13 @@ const Progress: React.FC = () => {
           </div>
         </div>
       </section>
+      {showReport && weightLoss && (
+        <div className="fixed inset-0 z-10 bg-black/70 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-5xl overflow-y-auto max-h-full">
+            <Report data={reportData} onBack={() => setShowReport(false)} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
