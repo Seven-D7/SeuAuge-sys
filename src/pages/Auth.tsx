@@ -12,7 +12,7 @@ const Auth: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -24,7 +24,7 @@ const Auth: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-950 flex">
       {/* Left side - Hero */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-teal-600 via-emerald-600 to-cyan-600 relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-emerald-600 to-cyan-600 relative overflow-hidden">
         <div className="absolute inset-0 bg-black bg-opacity-20" />
         <div className="relative z-10 flex flex-col justify-center items-center text-white p-12">
           <div className="text-center max-w-lg">
@@ -34,10 +34,10 @@ const Auth: React.FC = () => {
               </div>
             </div>
             <h1 className="text-4xl font-bold mb-6">Transforme Sua Jornada de Saúde</h1>
-            <p className="text-xl mb-8 text-teal-100">
+            <p className="text-xl mb-8 text-primary">
               Acesse conteúdo premium de bem-estar, orientação nutricional especializada e uma loja de produtos de saúde selecionados, tudo em uma plataforma.
             </p>
-            <div className="flex items-center justify-center space-x-8 text-teal-100">
+            <div className="flex items-center justify-center space-x-8 text-primary">
               <div className="text-center">
                 <div className="text-2xl font-bold">500+</div>
                 <div className="text-sm">Vídeos</div>

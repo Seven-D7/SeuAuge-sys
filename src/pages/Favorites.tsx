@@ -34,7 +34,7 @@ const Favorites: React.FC = () => {
               onClick={() => setActiveTab(tab.id as 'videos' | 'products')}
               className={`flex items-center space-x-2 px-4 py-2 rounded-md font-medium transition-colors ${
                 activeTab === tab.id
-                  ? 'bg-teal-600 text-white'
+                  ? 'bg-primary text-white'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -63,7 +63,7 @@ const Favorites: React.FC = () => {
                 <Play className="w-16 h-16 text-slate-600 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-white mb-2">Nenhum vídeo favorito ainda</h3>
                 <p className="text-slate-400 mb-4">Comece a explorar e adicione vídeos aos seus favoritos</p>
-                <button className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                <button className="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition-colors">
                   Explorar Vídeos
                 </button>
               </div>

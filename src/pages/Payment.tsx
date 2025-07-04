@@ -49,7 +49,7 @@ const Payment: React.FC = () => {
       </p>
       <button
         onClick={handlePay}
-        className="inline-flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg"
+        className="inline-flex items-center px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg"
       >
         <ExternalLink className="w-4 h-4 mr-2" /> Realizar Pagamento
       </button>
@@ -59,7 +59,7 @@ const Payment: React.FC = () => {
       >
         <Check className="w-4 h-4 mr-2" /> Já paguei
       </button>
-      <Link to="/store" className="inline-flex items-center text-teal-600 hover:underline">
+      <Link to="/store" className="inline-flex items-center text-primary hover:underline">
         <ArrowLeft className="w-4 h-4 mr-2" /> Voltar para a loja
       </Link>
     </div>

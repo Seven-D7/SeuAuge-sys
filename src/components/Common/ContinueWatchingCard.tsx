@@ -27,7 +27,7 @@ const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({
       </div>
       <button
         onClick={() => navigate(`/video/${videoId}`)}
-        className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md"
+        className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-md"
       >
         Continuar
       </button>

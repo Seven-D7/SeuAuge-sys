@@ -26,7 +26,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
 
   return (
     <div 
-      className="group cursor-pointer bg-slate-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-teal-500/10"
+      className="group cursor-pointer bg-slate-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10"
       onClick={onClick}
     >
       <div className="relative">
@@ -39,7 +39,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
         {/* Overlay */}
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
           <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="w-12 h-12 bg-teal-600 rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
               <Play className="w-6 h-6 text-white ml-1" />
             </div>
           </div>
@@ -57,7 +57,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
 
         {/* Category badge */}
         <div className="absolute top-3 right-3">
-          <span className="bg-teal-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+          <span className="bg-primary text-white px-2 py-1 rounded-full text-xs font-medium">
             {video.category}
           </span>
         </div>

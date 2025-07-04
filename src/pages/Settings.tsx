@@ -13,7 +13,7 @@ const Settings: React.FC = () => {
         </span>
         <button
           onClick={toggleTheme}
-          className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+          className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
         >
           Alternar para {theme === 'dark' ? 'Claro' : 'Escuro'}
         </button>
