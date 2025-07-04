@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { StepProps } from './types';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -16,7 +17,7 @@ const condicoesMedicas = [
   { id: 'nenhuma', label: 'Nenhuma' },
 ];
 
-export default function StepTwo({ form, onNext, onPrevious, canGoBack, defaultValues }) {
+export default function StepTwo({ form, onNext, onPrevious, canGoBack, defaultValues }: StepProps) {
   useEffect(() => {
     if (defaultValues) {
       Object.keys(defaultValues).forEach(key => {

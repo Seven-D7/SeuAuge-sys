@@ -1,4 +1,9 @@
 import React from 'react';
+
+export interface ReportProps {
+  data: any;
+  onBack: () => void;
+}
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -51,7 +56,7 @@ const macroData = [
   { name: 'Gorduras', value: 30, color: '#f59e0b' },
 ];
 
-export default function Report({ data, onBack }) {
+export default function Report({ data, onBack }: ReportProps) {
   if (!data) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">

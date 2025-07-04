@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { StepProps } from './types';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { Checkbox } from '../ui/checkbox';
@@ -21,7 +22,7 @@ const habitosSociais = [
   { id: 'nenhum', label: 'Nenhum dos anteriores' },
 ];
 
-export default function StepThree({ form, onNext, onPrevious, canGoBack, defaultValues }) {
+export default function StepThree({ form, onNext, onPrevious, canGoBack, defaultValues }: StepProps) {
   useEffect(() => {
     if (defaultValues) {
       Object.keys(defaultValues).forEach(key => {
