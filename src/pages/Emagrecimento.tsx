@@ -46,7 +46,7 @@ const Emagrecimento: React.FC = () => {
           Questionário concluído!
         </h1>
         <button
-          className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-lg font-medium"
+          className="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium"
           onClick={() => navigate('/progress')}
         >
           Ver resultado

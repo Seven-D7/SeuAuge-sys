@@ -80,12 +80,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   className={`
                     flex items-center px-4 py-3 rounded-xl transition-all duration-200 group
                     ${isActive(item.path)
-                      ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-lg shadow-teal-600/25'
+                      ? 'bg-gradient-to-r from-primary to-emerald-600 text-white shadow-lg shadow-primary-dark/25'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800/50'
                     }
                   `}
                 >
-                  <Icon className={`w-5 h-5 mr-4 ${isActive(item.path) ? 'text-white' : 'text-slate-600 dark:text-slate-400 group-hover:text-teal-400'}`} />
+                  <Icon className={`w-5 h-5 mr-4 ${isActive(item.path) ? 'text-white' : 'text-slate-600 dark:text-slate-400 group-hover:text-primary'}`} />
                   <span className="font-medium">{item.label}</span>
                   {isActive(item.path) && (
                     <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
@@ -115,7 +115,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             to="/settings"
             className="flex items-center px-4 py-3 mb-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800/50 transition-all duration-200 group"
           >
-            <Settings className="w-5 h-5 mr-4 text-slate-600 dark:text-slate-400 group-hover:text-teal-400" />
+            <Settings className="w-5 h-5 mr-4 text-slate-600 dark:text-slate-400 group-hover:text-primary" />
             <span className="font-medium">Configurações</span>
           </Link>
           

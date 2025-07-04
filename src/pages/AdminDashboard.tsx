@@ -4,7 +4,7 @@ import { Users, DollarSign, ShoppingBag } from 'lucide-react';
 const AdminDashboard: React.FC = () => {
   // Esses valores podem ser obtidos do banco de dados futuramente
   const stats = [
-    { icon: Users, label: 'Usuários Ativos', value: 1200, color: 'bg-teal-600' },
+    { icon: Users, label: 'Usuários Ativos', value: 1200, color: 'bg-primary' },
     { icon: DollarSign, label: 'Receita Mensal', value: 'R$ 15.800', color: 'bg-emerald-600' },
     { icon: ShoppingBag, label: 'Vendas', value: 320, color: 'bg-cyan-600' },
   ];

@@ -38,7 +38,7 @@ const Videos: React.FC = () => {
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-white">Continuar Assistindo</h2>
-            <button className="text-teal-400 hover:text-teal-300 font-medium">Ver Todos</button>
+            <button className="text-primary hover:text-primary font-medium">Ver Todos</button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {continueWatching.map((video) => (
@@ -71,7 +71,7 @@ const Videos: React.FC = () => {
                   onClick={() => setSelectedCategory(category)}
                   className={`px-3 py-2 rounded-full text-sm font-medium transition-colors ${
                     selectedCategory === category
-                      ? 'bg-teal-600 text-white'
+                      ? 'bg-primary text-white'
                       : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
                   }`}
                 >
@@ -91,7 +91,7 @@ const Videos: React.FC = () => {
                   onClick={() => setSelectedType(type)}
                   className={`px-3 py-2 rounded-full text-sm font-medium transition-colors ${
                     selectedType === type
-                      ? 'bg-teal-600 text-white'
+                      ? 'bg-primary text-white'
                       : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
                   }`}
                 >
@@ -119,7 +119,7 @@ const Videos: React.FC = () => {
               setSelectedCategory('Todos');
               setSelectedType('Todos');
             }}
-            className="text-teal-400 hover:text-teal-300 font-medium"
+            className="text-primary hover:text-primary font-medium"
           >
             Limpar filtros
           </button>

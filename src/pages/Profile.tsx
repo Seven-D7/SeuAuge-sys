@@ -54,7 +54,7 @@ const Profile: React.FC = () => {
               setBodyForm(metrics);
               setIsEditing(true);
             }}
-            className="flex items-center space-x-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            className="flex items-center space-x-2 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg font-medium transition-colors"
           >
             <Edit3 className="w-4 h-4" />
             <span>Editar Perfil</span>
@@ -63,7 +63,7 @@ const Profile: React.FC = () => {
           <div className="flex space-x-2">
             <button
               onClick={handleSave}
-              className="flex items-center space-x-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              className="flex items-center space-x-2 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg font-medium transition-colors"
             >
               <Save className="w-4 h-4" />
               <span>Salvar</span>
@@ -81,7 +81,7 @@ const Profile: React.FC = () => {
 
       {/* Profile Card */}
       <section className="bg-slate-800 rounded-2xl overflow-hidden">
-        <div className="h-24 bg-gradient-to-r from-teal-600 to-emerald-600" />
+        <div className="h-24 bg-gradient-to-r from-primary to-emerald-600" />
         <div className="-mt-12 p-8 flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
           {/* Avatar */}
           <div className="relative">
@@ -99,7 +99,7 @@ const Profile: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => fileRef.current?.click()}
-                  className="absolute bottom-0 right-0 w-10 h-10 bg-teal-600 hover:bg-teal-700 rounded-full flex items-center justify-center text-white transition-colors"
+                  className="absolute bottom-0 right-0 w-10 h-10 bg-primary hover:bg-primary-dark rounded-full flex items-center justify-center text-white transition-colors"
                 >
                   <Camera className="w-5 h-5" />
                 </button>
@@ -132,7 +132,7 @@ const Profile: React.FC = () => {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
                 <div>
@@ -141,7 +141,7 @@ const Profile: React.FC = () => {
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -299,7 +299,7 @@ const Profile: React.FC = () => {
       {/* Stats */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-slate-800 rounded-lg p-6 text-center">
-          <div className="text-3xl font-bold text-teal-400 mb-2">47</div>
+          <div className="text-3xl font-bold text-primary mb-2">47</div>
           <div className="text-slate-400">Vídeos Assistidos</div>
         </div>
         <div className="bg-slate-800 rounded-lg p-6 text-center">
@@ -325,7 +325,7 @@ const Profile: React.FC = () => {
             <div key={index} className="flex items-center justify-between py-3 border-b border-slate-700 last:border-0">
               <div>
                 <span className="text-white">{activity.action}</span>
-                <span className="text-teal-400 ml-1">{activity.item}</span>
+                <span className="text-primary ml-1">{activity.item}</span>
               </div>
               <span className="text-slate-400 text-sm">{activity.time}</span>
             </div>

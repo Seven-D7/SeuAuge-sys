@@ -14,22 +14,22 @@ const Dashboard: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 rounded-2xl overflow-hidden">
+      <div className="relative bg-gradient-to-r from-primary via-emerald-600 to-cyan-600 rounded-2xl overflow-hidden">
         <div className="absolute inset-0 bg-black bg-opacity-20" />
         <div className="relative z-10 px-8 py-12 lg:px-12 lg:py-16">
           <div className="max-w-2xl">
             <h1 className="text-3xl lg:text-4xl font-bold text-white mb-4">
               Jornada Completa de Bem-estar
             </h1>
-            <p className="text-lg text-teal-100 mb-6">
+            <p className="text-lg text-primary mb-6">
               Transforme sua saúde com nosso programa abrangente de 12 semanas com treinos especializados, orientação nutricional e práticas de mindfulness.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="bg-white text-teal-600 px-6 py-3 rounded-lg font-medium hover:bg-teal-50 transition-colors flex items-center justify-center">
+              <button className="bg-white text-primary px-6 py-3 rounded-lg font-medium hover:bg-teal-50 transition-colors flex items-center justify-center">
                 <Play className="w-5 h-5 mr-2" />
                 Assistir Agora
               </button>
-              <button className="border border-white text-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:text-teal-600 transition-colors">
+              <button className="border border-white text-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:text-primary transition-colors">
                 Adicionar à Lista
               </button>
             </div>
@@ -60,7 +60,7 @@ const Dashboard: React.FC = () => {
       <section>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-white">Loja de Produtos de Saúde</h2>
-          <button className="text-teal-400 hover:text-teal-300 font-medium">Ver Todos</button>
+          <button className="text-primary hover:text-primary font-medium">Ver Todos</button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredProducts.map((product) => (

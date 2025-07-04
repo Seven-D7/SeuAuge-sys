@@ -36,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
               placeholder="Buscar conteúdo de saúde..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
         </div>
@@ -53,7 +53,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           <button
             onClick={toggleCart}
             className={`relative p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ${
-              showAddedAnimation ? 'animate-bounce bg-teal-600 text-white' : ''
+              showAddedAnimation ? 'animate-bounce bg-primary text-white' : ''
             }`}
           >
             <ShoppingCart className="w-5 h-5" />

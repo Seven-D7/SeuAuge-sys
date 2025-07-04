@@ -31,10 +31,10 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
             <h2 className="text-2xl font-bold">{product.name}</h2>
             <p className="text-slate-300 text-sm">{product.description}</p>
             <div className="flex justify-between items-center">
-              <span className="text-lg font-bold text-teal-400">R$ {product.price.toFixed(2).replace('.', ',')}</span>
+              <span className="text-lg font-bold text-primary">R$ {product.price.toFixed(2).replace('.', ',')}</span>
               <button
                 onClick={handleAdd}
-                className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+                className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center space-x-2"
               >
                 <ShoppingCart className="w-4 h-4" />
                 <span>Adicionar</span>

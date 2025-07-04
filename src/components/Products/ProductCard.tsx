@@ -38,7 +38,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
 
   return (
     <div
-      className="group cursor-pointer bg-slate-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-teal-500/10"
+      className="group cursor-pointer bg-slate-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10"
       onClick={() => onSelect?.(product)}
     >
       <div className="relative">
@@ -80,10 +80,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
 
         {/* Price and action */}
         <div className="flex items-center justify-between">
-          <span className="text-lg font-bold text-teal-400">R$ {product.price.toFixed(2).replace('.', ',')}</span>
+          <span className="text-lg font-bold text-primary">R$ {product.price.toFixed(2).replace('.', ',')}</span>
           <button
             onClick={handleAddToCart}
-            className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-all duration-200 hover:scale-105 active:scale-95"
+            className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-all duration-200 hover:scale-105 active:scale-95"
           >
             <ShoppingCart className="w-4 h-4" />
             <span>Adicionar</span>
