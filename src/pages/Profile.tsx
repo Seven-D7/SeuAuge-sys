@@ -436,21 +436,24 @@ const Profile: React.FC = () => {
                   { title: 'Privacidade', description: 'Controle suas configurações de privacidade', icon: Shield },
                   { title: 'Metas', description: 'Defina e acompanhe suas metas pessoais', icon: Target },
                   { title: 'Conta', description: 'Configurações da sua conta', icon: User },
-                ].map((setting, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-4 bg-slate-700/30 rounded-xl hover:bg-slate-700/50 transition-all duration-200 group cursor-pointer"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <setting.icon className="w-6 h-6 text-slate-400 group-hover:text-white transition-colors duration-200" />
-                      <div>
-                        <div className="text-white font-medium">{setting.title}</div>
-                        <div className="text-slate-400 text-sm">{setting.description}</div>
+                ].map((setting, index) => {
+                  const Icon = setting.icon;
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-4 bg-slate-700/30 rounded-xl hover:bg-slate-700/50 transition-all duration-200 group cursor-pointer"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <Icon className="w-6 h-6 text-slate-400 group-hover:text-white transition-colors duration-200" />
+                        <div>
+                          <div className="text-white font-medium">{setting.title}</div>
+                          <div className="text-slate-400 text-sm">{setting.description}</div>
+                        </div>
                       </div>
+                      <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-all duration-200" />
                     </div>
-                    <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-all duration-200" />
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
           )}
