@@ -3,15 +3,23 @@ import React from 'react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
-import { Crown, Target, Zap, Users, CheckCircle, ArrowRight, Star, Trophy, Heart, Dumbbell, UtensilsCrossed, Clock, Shield, TrendingUp, Award, Sparkles, Phone, Mail, MapPin } from 'lucide-react';
+import {
+  Crown,
+  Target,
+  Zap,
+  CheckCircle,
+  ArrowRight,
+  Trophy,
+  Shield,
+} from 'lucide-react';
 
 function Home() {
   const handlePlanSelect = (planName: string) => {
-    console.log(`Plano selecionado: ${planName}`);
+    navigate('/auth?mode=login');
   };
 
   const handleStartJourney = () => {
-    console.log('Iniciando jornada');
+    navigate('/auth?mode=login');
   };
 
   return (
