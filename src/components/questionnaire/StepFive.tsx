@@ -55,25 +55,25 @@ export default function StepFive({ form, onNext, onPrevious, canGoBack, defaultV
                   defaultValue={field.value}
                   className="grid grid-cols-1 md:grid-cols-2 gap-3"
                 >
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="onivoro" id="pref-onivoro" />
                     <Label htmlFor="pref-onivoro" className="cursor-pointer">
                       🍖 Onívoro (como de tudo)
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="vegetariano" id="pref-vegetariano" />
                     <Label htmlFor="pref-vegetariano" className="cursor-pointer">
                       🥬 Vegetariano
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="vegano" id="pref-vegano" />
                     <Label htmlFor="pref-vegano" className="cursor-pointer">
                       🌱 Vegano
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="pescetariano" id="pref-pescetariano" />
                     <Label htmlFor="pref-pescetariano" className="cursor-pointer">
                       🐟 Pescetariano
@@ -106,7 +106,7 @@ export default function StepFive({ form, onNext, onPrevious, canGoBack, defaultV
                       return (
                         <FormItem
                           key={restricao.id}
-                          className="flex flex-row items-start space-x-3 space-y-0 p-3 border rounded-lg hover:bg-gray-50"
+                          className="flex flex-row items-start space-x-3 space-y-0 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700"
                         >
                           <FormControl>
                             <Checkbox
@@ -182,7 +182,7 @@ export default function StepFive({ form, onNext, onPrevious, canGoBack, defaultV
                       return (
                         <FormItem
                           key={habito.id}
-                          className="flex flex-row items-start space-x-3 space-y-0 p-3 border rounded-lg hover:bg-gray-50"
+                          className="flex flex-row items-start space-x-3 space-y-0 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700"
                         >
                           <FormControl>
                             <Checkbox
@@ -224,7 +224,7 @@ export default function StepFive({ form, onNext, onPrevious, canGoBack, defaultV
                   defaultValue={field.value}
                   className="grid grid-cols-1 gap-3"
                 >
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="baixo" id="orc-baixo" />
                     <div className="flex-1">
                       <Label htmlFor="orc-baixo" className="cursor-pointer font-medium">
@@ -233,7 +233,7 @@ export default function StepFive({ form, onNext, onPrevious, canGoBack, defaultV
                       <p className="text-sm text-gray-600">Foco em alimentos básicos e econômicos</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="medio" id="orc-medio" />
                     <div className="flex-1">
                       <Label htmlFor="orc-medio" className="cursor-pointer font-medium">
@@ -242,7 +242,7 @@ export default function StepFive({ form, onNext, onPrevious, canGoBack, defaultV
                       <p className="text-sm text-gray-600">Variedade moderada de alimentos</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="alto" id="orc-alto" />
                     <div className="flex-1">
                       <Label htmlFor="orc-alto" className="cursor-pointer font-medium">
@@ -287,10 +287,10 @@ export default function StepFive({ form, onNext, onPrevious, canGoBack, defaultV
         />
 
         {/* Dica nutricional */}
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-          <h4 className="font-medium text-green-900 mb-2">🥗 Dica Nutricional</h4>
-          <p className="text-sm text-green-700">
-            Uma alimentação equilibrada é 70% do sucesso na perda de peso. Nosso plano será 
+        <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-700">
+          <h4 className="font-medium text-green-900 dark:text-green-200 mb-2">🥗 Dica Nutricional</h4>
+          <p className="text-sm text-green-700 dark:text-green-300">
+            Uma alimentação equilibrada é 70% do sucesso na perda de peso. Nosso plano será
             personalizado considerando suas preferências e restrições.
           </p>
         </div>

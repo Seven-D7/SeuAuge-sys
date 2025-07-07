@@ -46,7 +46,7 @@ export default function StepThree({ form, onNext, onPrevious, canGoBack, default
           name="tipo_trabalho"
           render={({ field }) => (
             <FormItem className="space-y-3">
-              <FormLabel className="text-base font-semibold flex items-center gap-2">
+              <FormLabel className="text-base font-semibold flex items-center gap-2 dark:text-gray-200">
                 <Clock className="w-5 h-5 text-blue-500" />
                 Tipo de trabalho *
               </FormLabel>
@@ -56,7 +56,7 @@ export default function StepThree({ form, onNext, onPrevious, canGoBack, default
                   defaultValue={field.value}
                   className="grid grid-cols-1 gap-3"
                 >
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="sedentario" id="trabalho-sedentario" />
                     <div className="flex-1">
                       <Label htmlFor="trabalho-sedentario" className="cursor-pointer font-medium">
@@ -65,7 +65,7 @@ export default function StepThree({ form, onNext, onPrevious, canGoBack, default
                       <p className="text-sm text-gray-600">Maior parte do dia sentado</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="moderado" id="trabalho-moderado" />
                     <div className="flex-1">
                       <Label htmlFor="trabalho-moderado" className="cursor-pointer font-medium">
@@ -74,7 +74,7 @@ export default function StepThree({ form, onNext, onPrevious, canGoBack, default
                       <p className="text-sm text-gray-600">Algumas atividades em pé ou caminhando</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="ativo" id="trabalho-ativo" />
                     <div className="flex-1">
                       <Label htmlFor="trabalho-ativo" className="cursor-pointer font-medium">
@@ -96,7 +96,7 @@ export default function StepThree({ form, onNext, onPrevious, canGoBack, default
           name="horarios_exercicio"
           render={() => (
             <FormItem>
-              <FormLabel className="text-base font-semibold">
+              <FormLabel className="text-base font-semibold dark:text-gray-200">
                 Horários disponíveis para exercício *
               </FormLabel>
               <p className="text-sm text-gray-600 mb-3">Selecione todos os horários que funcionam para você</p>
@@ -110,7 +110,7 @@ export default function StepThree({ form, onNext, onPrevious, canGoBack, default
                       return (
                         <FormItem
                           key={horario.id}
-                          className="flex flex-row items-start space-x-3 space-y-0 p-3 border rounded-lg hover:bg-gray-50"
+                          className="flex flex-row items-start space-x-3 space-y-0 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700"
                         >
                           <FormControl>
                             <Checkbox
@@ -143,7 +143,7 @@ export default function StepThree({ form, onNext, onPrevious, canGoBack, default
           name="nivel_stress"
           render={({ field }) => (
             <FormItem className="space-y-4">
-              <FormLabel className="text-base font-semibold flex items-center gap-2">
+              <FormLabel className="text-base font-semibold flex items-center gap-2 dark:text-gray-200">
                 <Zap className="w-5 h-5 text-orange-500" />
                 Nível de stress (1-10) *
               </FormLabel>
@@ -177,7 +177,7 @@ export default function StepThree({ form, onNext, onPrevious, canGoBack, default
           name="qualidade_sono"
           render={({ field }) => (
             <FormItem className="space-y-3">
-              <FormLabel className="text-base font-semibold flex items-center gap-2">
+              <FormLabel className="text-base font-semibold flex items-center gap-2 dark:text-gray-200">
                 <Moon className="w-5 h-5 text-purple-500" />
                 Qualidade do sono *
               </FormLabel>
@@ -187,25 +187,25 @@ export default function StepThree({ form, onNext, onPrevious, canGoBack, default
                   defaultValue={field.value}
                   className="grid grid-cols-1 md:grid-cols-2 gap-3"
                 >
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="excelente" id="sono-excelente" />
                     <Label htmlFor="sono-excelente" className="cursor-pointer">
                       Excelente (7-9h, sem interrupções)
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="boa" id="sono-boa" />
                     <Label htmlFor="sono-boa" className="cursor-pointer">
                       Boa (6-8h, poucas interrupções)
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="regular" id="sono-regular" />
                     <Label htmlFor="sono-regular" className="cursor-pointer">
                       Regular (5-7h, algumas interrupções)
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="ruim" id="sono-ruim" />
                     <Label htmlFor="sono-ruim" className="cursor-pointer">
                       Ruim (menos de 5h, muitas interrupções)
@@ -224,7 +224,7 @@ export default function StepThree({ form, onNext, onPrevious, canGoBack, default
           name="habitos_sociais"
           render={() => (
             <FormItem>
-              <FormLabel className="text-base font-semibold">Hábitos sociais</FormLabel>
+              <FormLabel className="text-base font-semibold dark:text-gray-200">Hábitos sociais</FormLabel>
               <p className="text-sm text-gray-600 mb-3">Selecione os que se aplicam (opcional)</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {habitosSociais.map((habito) => (
@@ -236,7 +236,7 @@ export default function StepThree({ form, onNext, onPrevious, canGoBack, default
                       return (
                         <FormItem
                           key={habito.id}
-                          className="flex flex-row items-start space-x-3 space-y-0 p-3 border rounded-lg hover:bg-gray-50"
+                          className="flex flex-row items-start space-x-3 space-y-0 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700"
                         >
                           <FormControl>
                             <Checkbox
@@ -269,10 +269,10 @@ export default function StepThree({ form, onNext, onPrevious, canGoBack, default
         />
 
         {/* Dica sobre estilo de vida */}
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-          <h4 className="font-medium text-green-900 mb-2">🌱 Dica de Bem-estar</h4>
-          <p className="text-sm text-green-700">
-            Um bom sono e gerenciamento do stress são fundamentais para o sucesso na perda de peso. 
+        <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-700">
+          <h4 className="font-medium text-green-900 dark:text-green-200 mb-2">🌱 Dica de Bem-estar</h4>
+          <p className="text-sm text-green-700 dark:text-green-300">
+            Um bom sono e gerenciamento do stress são fundamentais para o sucesso na perda de peso.
             Nosso plano incluirá dicas específicas para seu estilo de vida.
           </p>
         </div>

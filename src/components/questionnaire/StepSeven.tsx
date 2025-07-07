@@ -24,10 +24,10 @@ export default function StepSeven({ form, onNext, onPrevious, canGoBack, isLastS
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="text-center mb-6">
           <BarChart3 className="w-12 h-12 text-blue-500 mx-auto mb-3" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-200 mb-2">
             Dados Avançados (Opcional)
           </h3>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             Informações adicionais para um plano ainda mais preciso
           </p>
         </div>
@@ -189,22 +189,22 @@ export default function StepSeven({ form, onNext, onPrevious, canGoBack, isLastS
         />
 
         {/* Informação sobre dados opcionais */}
-        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-          <h4 className="font-medium text-blue-900 mb-2">📊 Dados Opcionais</h4>
-          <p className="text-sm text-blue-700">
-            Todos os campos desta etapa são opcionais. Quanto mais informações você fornecer, 
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-700">
+          <h4 className="font-medium text-blue-900 dark:text-blue-200 mb-2">📊 Dados Opcionais</h4>
+          <p className="text-sm text-blue-700 dark:text-blue-300">
+            Todos os campos desta etapa são opcionais. Quanto mais informações você fornecer,
             mais preciso e personalizado será seu plano de emagrecimento.
           </p>
         </div>
 
         {/* Resumo final */}
-        <div className="bg-green-50 p-6 rounded-lg border border-green-200 text-center">
+        <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-lg border border-green-200 dark:border-green-700 text-center">
           <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
-          <h4 className="font-semibold text-green-900 mb-2">
+          <h4 className="font-semibold text-green-900 dark:text-green-200 mb-2">
             Parabéns! Você está quase terminando!
           </h4>
-          <p className="text-sm text-green-700">
-            Após finalizar, processaremos todas as suas informações e criaremos um plano 
+          <p className="text-sm text-green-700 dark:text-green-300">
+            Após finalizar, processaremos todas as suas informações e criaremos um plano
             personalizado completo com treinos, dieta e acompanhamento.
           </p>
         </div>

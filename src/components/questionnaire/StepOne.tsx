@@ -24,8 +24,8 @@ export default function StepOne({ form, onNext, defaultValues }: StepProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Título da Seção */}
         <div className="text-center">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-2">Informações Pessoais</h2>
-          <p className="text-gray-600 text-sm">Preencha os dados para criar seu plano personalizado.</p>
+          <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Informações Pessoais</h2>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">Preencha os dados para criar seu plano personalizado.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -192,9 +192,9 @@ export default function StepOne({ form, onNext, defaultValues }: StepProps) {
         </div>
 
         {/* Dica */}
-        <div className="bg-blue-50 p-6 rounded-2xl flex flex-col gap-2">
-          <h4 className="font-medium text-blue-900 text-lg flex items-center gap-2">💡 Dica</h4>
-          <p className="text-sm text-blue-700 leading-relaxed">
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-2xl flex flex-col gap-2">
+          <h4 className="font-medium text-blue-900 dark:text-blue-200 text-lg flex items-center gap-2">💡 Dica</h4>
+          <p className="text-sm text-blue-700 dark:text-blue-300 leading-relaxed">
             Seja honesto com suas informações. Dados precisos nos ajudam a criar um plano mais eficaz para você.
           </p>
         </div>
