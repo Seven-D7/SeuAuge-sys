@@ -5,6 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import Layout from './components/Layout/Layout';
 import Auth from './pages/Auth';
+import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Videos from './pages/Videos';
 import Store from './pages/Store';
@@ -23,6 +24,7 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/auth" element={<Auth />} />
           <Route
             path="/*"
