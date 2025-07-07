@@ -55,7 +55,7 @@ export default function StepFour({ form, onNext, onPrevious, canGoBack, defaultV
                   defaultValue={field.value}
                   className="grid grid-cols-1 gap-3"
                 >
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="sedentario" id="nivel-sedentario" />
                     <div className="flex-1">
                       <Label htmlFor="nivel-sedentario" className="cursor-pointer font-medium">
@@ -64,7 +64,7 @@ export default function StepFour({ form, onNext, onPrevious, canGoBack, defaultV
                       <p className="text-sm text-gray-600">Pouca ou nenhuma atividade física</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="iniciante" id="nivel-iniciante" />
                     <div className="flex-1">
                       <Label htmlFor="nivel-iniciante" className="cursor-pointer font-medium">
@@ -73,7 +73,7 @@ export default function StepFour({ form, onNext, onPrevious, canGoBack, defaultV
                       <p className="text-sm text-gray-600">Exercícios leves e esporádicos</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="intermediario" id="nivel-intermediario" />
                     <div className="flex-1">
                       <Label htmlFor="nivel-intermediario" className="cursor-pointer font-medium">
@@ -82,7 +82,7 @@ export default function StepFour({ form, onNext, onPrevious, canGoBack, defaultV
                       <p className="text-sm text-gray-600">Exercícios regulares e moderados</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="avancado" id="nivel-avancado" />
                     <div className="flex-1">
                       <Label htmlFor="nivel-avancado" className="cursor-pointer font-medium">
@@ -118,7 +118,7 @@ export default function StepFour({ form, onNext, onPrevious, canGoBack, defaultV
                       return (
                         <FormItem
                           key={tipo.id}
-                          className="flex flex-row items-start space-x-3 space-y-0 p-3 border rounded-lg hover:bg-gray-50"
+                          className="flex flex-row items-start space-x-3 space-y-0 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700"
                         >
                           <FormControl>
                             <Checkbox
@@ -162,25 +162,25 @@ export default function StepFour({ form, onNext, onPrevious, canGoBack, defaultV
                   defaultValue={field.value}
                   className="grid grid-cols-1 md:grid-cols-2 gap-3"
                 >
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="nunca" id="exp-nunca" />
                     <Label htmlFor="exp-nunca" className="cursor-pointer">
                       Nunca frequentei
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="pouca" id="exp-pouca" />
                     <Label htmlFor="exp-pouca" className="cursor-pointer">
                       Pouca experiência
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="moderada" id="exp-moderada" />
                     <Label htmlFor="exp-moderada" className="cursor-pointer">
                       Experiência moderada
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="muita" id="exp-muita" />
                     <Label htmlFor="exp-muita" className="cursor-pointer">
                       Muita experiência
@@ -213,7 +213,7 @@ export default function StepFour({ form, onNext, onPrevious, canGoBack, defaultV
                       return (
                         <FormItem
                           key={equipamento.id}
-                          className="flex flex-row items-start space-x-3 space-y-0 p-3 border rounded-lg hover:bg-gray-50"
+                          className="flex flex-row items-start space-x-3 space-y-0 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700"
                         >
                           <FormControl>
                             <Checkbox
@@ -257,25 +257,25 @@ export default function StepFour({ form, onNext, onPrevious, canGoBack, defaultV
                   defaultValue={field.value}
                   className="grid grid-cols-1 md:grid-cols-2 gap-3"
                 >
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="casa" id="local-casa" />
                     <Label htmlFor="local-casa" className="cursor-pointer">
                       🏠 Em casa
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="academia" id="local-academia" />
                     <Label htmlFor="local-academia" className="cursor-pointer">
                       🏢 Academia
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="ar_livre" id="local-ar-livre" />
                     <Label htmlFor="local-ar-livre" className="cursor-pointer">
                       🌳 Ao ar livre
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="combinacao" id="local-combinacao" />
                     <Label htmlFor="local-combinacao" className="cursor-pointer">
                       🔄 Combinação
@@ -289,10 +289,10 @@ export default function StepFour({ form, onNext, onPrevious, canGoBack, defaultV
         />
 
         {/* Dica sobre exercícios */}
-        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-          <h4 className="font-medium text-blue-900 mb-2">💪 Dica de Treino</h4>
-          <p className="text-sm text-blue-700">
-            Não se preocupe se você é iniciante! Nosso plano será adaptado ao seu nível atual e 
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-700">
+          <h4 className="font-medium text-blue-900 dark:text-blue-200 mb-2">💪 Dica de Treino</h4>
+          <p className="text-sm text-blue-700 dark:text-blue-300">
+            Não se preocupe se você é iniciante! Nosso plano será adaptado ao seu nível atual e
             evoluirá gradualmente conforme você progride.
           </p>
         </div>

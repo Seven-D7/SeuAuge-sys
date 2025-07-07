@@ -39,7 +39,7 @@ export default function StepTwo({ form, onNext, onPrevious, canGoBack, defaultVa
           name="condicoes_medicas"
           render={() => (
             <FormItem>
-              <FormLabel className="text-base font-semibold flex items-center gap-2">
+              <FormLabel className="text-base font-semibold flex items-center gap-2 dark:text-gray-200">
                 <Heart className="w-5 h-5 text-red-500" />
                 Possui alguma condição médica? *
               </FormLabel>
@@ -53,7 +53,7 @@ export default function StepTwo({ form, onNext, onPrevious, canGoBack, defaultVa
                       return (
                         <FormItem
                           key={condicao.id}
-                          className="flex flex-row items-start space-x-3 space-y-0 p-3 border rounded-lg hover:bg-gray-50"
+                          className="flex flex-row items-start space-x-3 space-y-0 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700"
                         >
                           <FormControl>
                             <Checkbox
@@ -112,26 +112,26 @@ export default function StepTwo({ form, onNext, onPrevious, canGoBack, defaultVa
           name="lesoes"
           render={({ field }) => (
             <FormItem className="space-y-3">
-              <FormLabel className="text-base font-semibold">Histórico de lesões? *</FormLabel>
+              <FormLabel className="text-base font-semibold dark:text-gray-200">Histórico de lesões? *</FormLabel>
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                   className="grid grid-cols-1 gap-3"
                 >
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="nenhuma" id="lesoes-nenhuma" />
                     <Label htmlFor="lesoes-nenhuma" className="cursor-pointer">
                       Nenhuma lesão
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="leves" id="lesoes-leves" />
                     <Label htmlFor="lesoes-leves" className="cursor-pointer">
                       Lesões leves (já recuperadas)
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="atual" id="lesoes-atual" />
                     <Label htmlFor="lesoes-atual" className="cursor-pointer">
                       Lesão atual ou limitação
@@ -169,26 +169,26 @@ export default function StepTwo({ form, onNext, onPrevious, canGoBack, defaultVa
           name="acompanhamento_medico"
           render={({ field }) => (
             <FormItem className="space-y-3">
-              <FormLabel className="text-base font-semibold">Acompanhamento médico atual? *</FormLabel>
+              <FormLabel className="text-base font-semibold dark:text-gray-200">Acompanhamento médico atual? *</FormLabel>
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                   className="grid grid-cols-1 gap-3"
                 >
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="regular" id="acomp-regular" />
                     <Label htmlFor="acomp-regular" className="cursor-pointer">
                       Sim, tenho acompanhamento regular
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="esporadico" id="acomp-esporadico" />
                     <Label htmlFor="acomp-esporadico" className="cursor-pointer">
                       Esporádico
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 dark:border-slate-700">
                     <RadioGroupItem value="nenhum" id="acomp-nenhum" />
                     <Label htmlFor="acomp-nenhum" className="cursor-pointer">
                       Não tenho acompanhamento
@@ -202,9 +202,9 @@ export default function StepTwo({ form, onNext, onPrevious, canGoBack, defaultVa
         />
 
         {/* Informação importante */}
-        <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
-          <h4 className="font-medium text-amber-900 mb-2">⚠️ Importante</h4>
-          <p className="text-sm text-amber-700">
+        <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg border border-amber-200 dark:border-amber-700">
+          <h4 className="font-medium text-amber-900 dark:text-amber-200 mb-2">⚠️ Importante</h4>
+          <p className="text-sm text-amber-700 dark:text-amber-300">
             Se você tem alguma condição médica ou lesão, recomendamos consultar um profissional de saúde antes de iniciar qualquer programa de exercícios.
           </p>
         </div>

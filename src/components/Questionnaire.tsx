@@ -254,12 +254,12 @@ export default function Questionnaire({ onComplete }: QuestionnaireProps) {
 
   if (isSubmitting) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
             <h3 className="text-lg font-semibold mb-2">Processando seus dados...</h3>
-            <p className="text-gray-600">Gerando seu plano personalizado</p>
+            <p className="text-gray-600 dark:text-gray-300">Gerando seu plano personalizado</p>
           </CardContent>
         </Card>
       </div>
@@ -267,14 +267,14 @@ export default function Questionnaire({ onComplete }: QuestionnaireProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-slate-900 dark:to-slate-800 p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Questionário Personalizado
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             Responda algumas perguntas para criarmos seu plano ideal
           </p>
         </div>
@@ -282,7 +282,7 @@ export default function Questionnaire({ onComplete }: QuestionnaireProps) {
         {/* Progress */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Etapa {currentStep} de {steps.length}
             </span>
             <Badge variant="secondary" className="flex items-center gap-1">
@@ -306,28 +306,28 @@ export default function Questionnaire({ onComplete }: QuestionnaireProps) {
                   key={step.id}
                   className={`flex flex-col items-center p-3 rounded-lg min-w-[120px] ${
                     isActive
-                      ? 'bg-blue-100 border-2 border-blue-500'
+                      ? 'bg-primary/20 dark:bg-primary/30 border-2 border-primary'
                       : isCompleted
-                      ? 'bg-green-100 border-2 border-green-500'
-                      : 'bg-gray-100 border-2 border-gray-200'
+                      ? 'bg-green-100 dark:bg-green-900/30 border-2 border-green-500'
+                      : 'bg-gray-100 dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600'
                   }`}
                 >
                   <Icon
                     className={`w-6 h-6 mb-2 ${
                       isActive
-                        ? 'text-blue-600'
+                        ? 'text-primary'
                         : isCompleted
                         ? 'text-green-600'
-                        : 'text-gray-400'
+                        : 'text-gray-400 dark:text-gray-500'
                     }`}
                   />
                   <span
                     className={`text-xs font-medium text-center ${
                       isActive
-                        ? 'text-blue-900'
+                        ? 'text-primary' 
                         : isCompleted
                         ? 'text-green-900'
-                        : 'text-gray-600'
+                        : 'text-gray-600 dark:text-gray-300'
                     }`}
                   >
                     {step.title}
@@ -342,7 +342,7 @@ export default function Questionnaire({ onComplete }: QuestionnaireProps) {
         <Card className="mb-8">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <currentStepData.icon className="w-6 h-6 text-blue-600" />
+              <currentStepData.icon className="w-6 h-6 text-primary" />
               <div>
                 <CardTitle>{currentStepData.title}</CardTitle>
                 <CardDescription>{currentStepData.description}</CardDescription>
