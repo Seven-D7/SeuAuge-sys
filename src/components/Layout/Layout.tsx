@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import Cart from '../Cart/Cart';
-import ProfileModal from '../Profile/ProfileModal';
 
 const Layout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -27,7 +26,6 @@ const Layout: React.FC = () => {
 
       {/* Cart sidebar */}
       <Cart />
-      <ProfileModal />
     </div>
   );
 };
