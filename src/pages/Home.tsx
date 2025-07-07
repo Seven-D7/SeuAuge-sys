@@ -13,7 +13,7 @@ const Home: React.FC = () => {
   }
 
   const handleSelectPlan = (planName: string) => {
-    navigate('/login');
+    navigate('/auth');
   };
 
   return (
@@ -22,7 +22,7 @@ const Home: React.FC = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-primary via-emerald-600 to-cyan-600 opacity-20" />
       <div className="relative max-w-4xl mx-auto space-y-8 px-4">
         <div className="flex justify-end">
-          <Link to="/login" className="text-primary hover:underline font-medium">
+          <Link to="/auth" className="text-primary hover:underline font-medium">
             Entrar
           </Link>
         </div>
