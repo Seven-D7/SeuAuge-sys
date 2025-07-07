@@ -48,7 +48,7 @@ function Home() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
-                  Seu Auge
+                  Meu Auge
                 </h1>
                 <p className="text-sm text-gray-600">Transforme Sua Vida</p>
               </div>
@@ -300,7 +300,7 @@ function Home() {
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               Por Que Escolher o
-              <span className="bg-gradient-to-r from-teal-500 to-emerald-500 bg-clip-text text-transparent"> Seu Auge?</span>
+              <span className="bg-gradient-to-r from-teal-500 to-emerald-500 bg-clip-text text-transparent"> Meu Auge?</span>
             </h2>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto">
               Metodologia científica comprovada com acompanhamento humano personalizado.
@@ -452,7 +452,7 @@ function Home() {
       <section className="py-20 px-4 bg-gradient-to-r from-teal-500 to-emerald-500 text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Pronto Para Alcançar Seu Auge?
+            Pronto Para Alcançar Meu Auge?
           </h2>
           <p className="text-xl mb-8 opacity-90">
             Junte-se a mais de 15.000 pessoas que já transformaram suas vidas. 
@@ -489,7 +489,7 @@ function Home() {
                 <div className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white p-2 rounded-xl">
                   <Crown className="w-6 h-6" />
                 </div>
-                <span className="text-xl font-bold">Seu Auge</span>
+                <span className="text-xl font-bold">Meu Auge</span>
               </div>
               <p className="text-gray-400 mb-4">
                 Transformando vidas através da ciência e do acompanhamento humano personalizado.
@@ -547,7 +547,7 @@ function Home() {
           </div>
           
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 Seu Auge. Todos os direitos reservados.</p>
+            <p>&copy; 2025 Meu Auge. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>

@@ -1,6 +1,6 @@
 # Fluxo de Aquisição de Planos
 
-Este documento descreve o processo de escolha e compra de planos dentro do **Seu Auge**.
+Este documento descreve o processo de escolha e compra de planos dentro do **Meu Auge**.
 
 ## Tela de Planos
 

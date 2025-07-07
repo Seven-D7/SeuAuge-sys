@@ -33,7 +33,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
   return (
     <div className="w-full max-w-md space-y-6">
       <div className="text-center">
-        <h2 className="text-3xl font-bold text-white mb-2">Junte-se ao Seu Auge</h2>
+        <h2 className="text-3xl font-bold text-white mb-2">Junte-se ao Meu Auge</h2>
         <p className="text-slate-400">Comece sua transformação de bem-estar hoje</p>
       </div>
 
