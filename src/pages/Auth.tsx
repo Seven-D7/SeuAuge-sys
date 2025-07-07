@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { TrendingUp } from 'lucide-react';
 import LoginForm from '../components/Auth/LoginForm';
 import RegisterForm from '../components/Auth/RegisterForm';
 import { useAuth } from '../contexts/AuthContext';
 
 const Auth: React.FC = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialMode = searchParams.get('mode') === 'register' ? false : true;
+  const [isLogin, setIsLogin] = useState(initialMode);
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -76,9 +78,19 @@ const Auth: React.FC = () => {
           </div>
 
           {isLogin ? (
-            <LoginForm onToggleMode={() => setIsLogin(false)} />
+            <LoginForm
+              onToggleMode={() => {
+                setSearchParams({ mode: 'register' });
+                setIsLogin(false);
+              }}
+            />
           ) : (
-            <RegisterForm onToggleMode={() => setIsLogin(true)} />
+            <RegisterForm
+              onToggleMode={() => {
+                setSearchParams({ mode: 'login' });
+                setIsLogin(true);
+              }}
+            />
           )}
         </div>
       </div>
