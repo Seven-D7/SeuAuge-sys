@@ -12,6 +12,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { register } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -20,8 +21,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
     
     try {
       await register(email, password, name);
+      setError(null);
     } catch (error) {
       console.error('Erro no cadastro:', error);
+      setError('Falha ao criar conta. Verifique os dados informados.');
     } finally {
       setLoading(false);
     }
@@ -44,7 +47,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
             <input
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                setError(null);
+              }}
               className="w-full pl-12 pr-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Digite seu nome completo"
               required
@@ -61,7 +67,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setError(null);
+              }}
               className="w-full pl-12 pr-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Digite seu email"
               required
@@ -78,7 +87,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
             <input
               type={showPassword ? 'text' : 'password'}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError(null);
+              }}
               className="w-full pl-12 pr-12 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Crie uma senha"
               required
@@ -93,6 +105,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
           </div>
         </div>
 
+        {error && <p className="text-red-500 text-sm">{error}</p>}
         <button
           type="submit"
           disabled={loading}

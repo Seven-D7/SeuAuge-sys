@@ -11,6 +11,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -19,8 +20,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     
     try {
       await login(email, password);
+      setError(null);
     } catch (error) {
       console.error('Erro no login:', error);
+      setError('Falha ao entrar. Verifique suas credenciais.');
     } finally {
       setLoading(false);
     }
@@ -43,7 +46,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setError(null);
+              }}
               className="w-full pl-12 pr-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Digite seu email"
               required
@@ -60,7 +66,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             <input
               type={showPassword ? 'text' : 'password'}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError(null);
+              }}
               className="w-full pl-12 pr-12 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Digite sua senha"
               required
@@ -75,6 +84,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
           </div>
         </div>
 
+        {error && <p className="text-red-500 text-sm">{error}</p>}
         <button
           type="submit"
           disabled={loading}
