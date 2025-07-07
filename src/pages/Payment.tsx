@@ -53,12 +53,7 @@ const Payment: React.FC = () => {
       >
         <ExternalLink className="w-4 h-4 mr-2" /> Realizar Pagamento
       </button>
-      <button
-        onClick={handleConfirm}
-        className="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg"
-      >
-        <Check className="w-4 h-4 mr-2" /> Já paguei
-      </button>
+    
       <Link to="/store" className="inline-flex items-center text-primary hover:underline">
         <ArrowLeft className="w-4 h-4 mr-2" /> Voltar para a loja
       </Link>
