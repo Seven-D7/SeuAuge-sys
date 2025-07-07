@@ -140,7 +140,7 @@ function Home() {
                 <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Target className="w-8 h-8 text-gray-600" />
                 </div>
-                <CardTitle className="text-2xl mb-2">Essencial</CardTitle>
+                <CardTitle className="text-2xl mb-2">Gratuito</CardTitle>
                 <CardDescription className="text-lg">Perfeito para iniciantes</CardDescription>
                 <div className="mt-4">
                   <span className="text-4xl font-bold">R$ 97</span>
@@ -191,7 +191,7 @@ function Home() {
                 <div className="bg-gradient-to-r from-teal-100 to-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Crown className="w-8 h-8 text-teal-600" />
                 </div>
-                <CardTitle className="text-2xl mb-2">Premium</CardTitle>
+                <CardTitle className="text-2xl mb-2">Essencial</CardTitle>
                 <CardDescription className="text-lg">Resultados acelerados</CardDescription>
                 <div className="mt-4">
                   <span className="text-4xl font-bold">R$ 197</span>
@@ -240,7 +240,7 @@ function Home() {
                 <div className="bg-gradient-to-r from-emerald-100 to-cyan-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Trophy className="w-8 h-8 text-emerald-600" />
                 </div>
-                <CardTitle className="text-2xl mb-2">Elite</CardTitle>
+                <CardTitle className="text-2xl mb-2">Premium</CardTitle>
                 <CardDescription className="text-lg">Transformação completa</CardDescription>
                 <div className="mt-4">
                   <span className="text-4xl font-bold">R$ 397</span>
@@ -477,9 +477,6 @@ function Home() {
               Falar com Especialista
             </Button>
           </div>
-          <p className="text-sm mt-6 opacity-75">
-            ✅ Sem compromisso • ✅ Garantia de 30 dias • ✅ Suporte 24/7
-          </p>
         </div>
       </section>
 
