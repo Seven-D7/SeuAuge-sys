@@ -1,10 +1,16 @@
 import React from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { PLANS } from '../data/plans';
-import { Button } from '../components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { PLANS } from '@/data/plans';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { CheckCircle } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Home: React.FC = () => {
   const { user } = useAuth();
