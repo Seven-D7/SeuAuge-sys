@@ -1,4 +1,4 @@
-# Seu Auge - Sistema de Bem-estar
+# Meu Auge - Sistema de Bem-estar
 
 Plataforma web desenvolvida em React + TypeScript para gerenciamento de vídeos de saúde e loja de produtos. Utiliza Firebase para autenticação, Firestore e Storage.
 

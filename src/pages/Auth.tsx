@@ -71,7 +71,7 @@ const Auth: React.FC = () => {
                 <TrendingUp className="w-5 h-5 text-white" />
               </div>
               <div>
-                <span className="text-2xl font-bold text-white">Seu Auge</span>
+                <span className="text-2xl font-bold text-white">Meu Auge</span>
                 <p className="text-xs text-slate-400">Transforme-se</p>
               </div>
             </div>
