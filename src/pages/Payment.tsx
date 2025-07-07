@@ -29,6 +29,9 @@ const Payment: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Pagamento</h1>
+      {selectedPlan && (
+        <p className="text-slate-600 dark:text-slate-400">Você está adquirindo o <span className="font-medium">Plano {selectedPlan}</span></p>
+      )}
       <p className="text-slate-700 dark:text-slate-300">Escolha a forma de pagamento:</p>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div className="flex flex-col items-center bg-slate-100 dark:bg-slate-800 p-4 rounded-xl">
@@ -53,7 +56,14 @@ const Payment: React.FC = () => {
       >
         <ExternalLink className="w-4 h-4 mr-2" /> Realizar Pagamento
       </button>
-    
+
+      <button
+        onClick={handleConfirm}
+        className="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg"
+      >
+        <Check className="w-4 h-4 mr-2" /> Já paguei
+      </button>
+
       <Link to="/store" className="inline-flex items-center text-primary hover:underline">
         <ArrowLeft className="w-4 h-4 mr-2" /> Voltar para a loja
       </Link>

@@ -4,6 +4,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import Layout from './components/Layout/Layout';
+import PlanGuard from './components/PlanGuard';
 import Auth from './pages/Auth';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
@@ -44,12 +45,33 @@ function App() {
             <Route path="store" element={<Store />} />
             <Route path="favorites" element={<Favorites />} />
             <Route path="profile" element={<Profile />} />
-            <Route path="progress" element={<Progress />} />
+            <Route
+              path="progress"
+              element={
+                <PlanGuard allowedPlans={["B", "C"]}>
+                  <Progress />
+                </PlanGuard>
+              }
+            />
             <Route path="plans" element={<Plans />} />
             <Route path="payment" element={<Payment />} />
             <Route path="settings" element={<Settings />} />
-            <Route path="apps" element={<AppsPage />} />
-            <Route path="emagrecimento" element={<Emagrecimento />} />
+            <Route
+              path="apps"
+              element={
+                <PlanGuard allowedPlans={["B", "C"]}>
+                  <AppsPage />
+                </PlanGuard>
+              }
+            />
+            <Route
+              path="emagrecimento"
+              element={
+                <PlanGuard allowedPlans={["B", "C"]}>
+                  <Emagrecimento />
+                </PlanGuard>
+              }
+            />
             <Route
               path="admin"
               element={
