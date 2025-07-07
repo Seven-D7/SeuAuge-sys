@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { StepProps } from './types';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { ArrowRight } from 'lucide-react';
@@ -22,7 +21,13 @@ export default function StepOne({ form, onNext, defaultValues }: StepProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {/* Título da Seção */}
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-2">Informações Pessoais</h2>
+          <p className="text-gray-600 text-sm">Preencha os dados para criar seu plano personalizado.</p>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Nome */}
           <FormField
@@ -30,13 +35,9 @@ export default function StepOne({ form, onNext, defaultValues }: StepProps) {
             name="nome"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nome completo *</FormLabel>
+                <FormLabel className="text-sm mb-1">Nome completo *</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="Seu nome completo" 
-                    {...field}
-                    className="h-12"
-                  />
+                  <Input placeholder="Seu nome completo" {...field} className="h-12 rounded-xl" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -49,14 +50,9 @@ export default function StepOne({ form, onNext, defaultValues }: StepProps) {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email *</FormLabel>
+                <FormLabel className="text-sm mb-1">Email *</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="email"
-                    placeholder="seu@email.com" 
-                    {...field}
-                    className="h-12"
-                  />
+                  <Input type="email" placeholder="seu@email.com" {...field} className="h-12 rounded-xl" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -69,14 +65,14 @@ export default function StepOne({ form, onNext, defaultValues }: StepProps) {
             name="idade"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Idade *</FormLabel>
+                <FormLabel className="text-sm mb-1">Idade *</FormLabel>
                 <FormControl>
-                  <Input 
+                  <Input
                     type="number"
-                    placeholder="30" 
+                    placeholder="30"
                     {...field}
                     onChange={(e) => field.onChange(parseInt(e.target.value) || '')}
-                    className="h-12"
+                    className="h-12 rounded-xl"
                   />
                 </FormControl>
                 <FormMessage />
@@ -90,10 +86,10 @@ export default function StepOne({ form, onNext, defaultValues }: StepProps) {
             name="sexo"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Sexo *</FormLabel>
+                <FormLabel className="text-sm mb-1">Sexo *</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger className="h-12">
+                    <SelectTrigger className="h-12 rounded-xl">
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                   </FormControl>
@@ -114,14 +110,14 @@ export default function StepOne({ form, onNext, defaultValues }: StepProps) {
             name="altura"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Altura (cm) *</FormLabel>
+                <FormLabel className="text-sm mb-1">Altura (cm) *</FormLabel>
                 <FormControl>
-                  <Input 
+                  <Input
                     type="number"
-                    placeholder="175" 
+                    placeholder="175"
                     {...field}
                     onChange={(e) => field.onChange(parseInt(e.target.value) || '')}
-                    className="h-12"
+                    className="h-12 rounded-xl"
                   />
                 </FormControl>
                 <FormMessage />
@@ -135,15 +131,15 @@ export default function StepOne({ form, onNext, defaultValues }: StepProps) {
             name="peso_atual"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Peso atual (kg) *</FormLabel>
+                <FormLabel className="text-sm mb-1">Peso atual (kg) *</FormLabel>
                 <FormControl>
-                  <Input 
+                  <Input
                     type="number"
                     step="0.1"
-                    placeholder="70.5" 
+                    placeholder="70.5"
                     {...field}
                     onChange={(e) => field.onChange(parseFloat(e.target.value) || '')}
-                    className="h-12"
+                    className="h-12 rounded-xl"
                   />
                 </FormControl>
                 <FormMessage />
@@ -157,15 +153,15 @@ export default function StepOne({ form, onNext, defaultValues }: StepProps) {
             name="peso_objetivo"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Peso objetivo (kg) *</FormLabel>
+                <FormLabel className="text-sm mb-1">Peso objetivo (kg) *</FormLabel>
                 <FormControl>
-                  <Input 
+                  <Input
                     type="number"
                     step="0.1"
-                    placeholder="65.0" 
+                    placeholder="65.0"
                     {...field}
                     onChange={(e) => field.onChange(parseFloat(e.target.value) || '')}
-                    className="h-12"
+                    className="h-12 rounded-xl"
                   />
                 </FormControl>
                 <FormMessage />
@@ -179,14 +175,14 @@ export default function StepOne({ form, onNext, defaultValues }: StepProps) {
             name="prazo"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Prazo desejado (semanas) *</FormLabel>
+                <FormLabel className="text-sm mb-1">Prazo desejado (semanas) *</FormLabel>
                 <FormControl>
-                  <Input 
+                  <Input
                     type="number"
-                    placeholder="12" 
+                    placeholder="12"
                     {...field}
                     onChange={(e) => field.onChange(parseInt(e.target.value) || '')}
-                    className="h-12"
+                    className="h-12 rounded-xl"
                   />
                 </FormControl>
                 <FormMessage />
@@ -195,19 +191,19 @@ export default function StepOne({ form, onNext, defaultValues }: StepProps) {
           />
         </div>
 
-        {/* Informações adicionais */}
-        <div className="bg-blue-50 p-4 rounded-lg">
-          <h4 className="font-medium text-blue-900 mb-2">💡 Dica</h4>
-          <p className="text-sm text-blue-700">
+        {/* Dica */}
+        <div className="bg-blue-50 p-6 rounded-2xl flex flex-col gap-2">
+          <h4 className="font-medium text-blue-900 text-lg flex items-center gap-2">💡 Dica</h4>
+          <p className="text-sm text-blue-700 leading-relaxed">
             Seja honesto com suas informações. Dados precisos nos ajudam a criar um plano mais eficaz para você.
           </p>
         </div>
 
-        {/* Botões de navegação */}
-        <div className="flex justify-end pt-6">
-          <Button 
-            type="submit" 
-            className="flex items-center gap-2 h-12 px-8"
+        {/* Botão */}
+        <div className="flex justify-end pt-4">
+          <Button
+            type="submit"
+            className="flex items-center gap-2 h-12 px-8 rounded-xl"
             size="lg"
           >
             Próximo
@@ -218,4 +214,3 @@ export default function StepOne({ form, onNext, defaultValues }: StepProps) {
     </Form>
   );
 }
-
