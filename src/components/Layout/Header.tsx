@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search, ShoppingCart, Bell, Menu, User } from 'lucide-react';
-import { useProfileStore } from '../../stores/profileStore';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCartStore } from '../../stores/cartStore';
 
@@ -11,7 +11,6 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const { user } = useAuth();
   const { getTotalItems, toggleCart, showAddedAnimation } = useCartStore();
-  const { toggleProfile } = useProfileStore();
   const [searchQuery, setSearchQuery] = useState('');
 
   const totalCartItems = getTotalItems();
@@ -67,8 +66,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           </button>
 
           {/* User profile */}
-          <button
-            onClick={toggleProfile}
+          <Link
+            to="/profile"
             className="flex items-center space-x-3 focus:outline-none"
           >
             <div className="hidden sm:block text-right">
@@ -82,7 +81,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                 <User className="w-4 h-4 text-white" />
               )}
             </div>
-          </button>
+          </Link>
         </div>
       </div>
     </header>
