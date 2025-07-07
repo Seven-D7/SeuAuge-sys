@@ -3,7 +3,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { PLANS } from '../data/plans';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Shield } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const Home: React.FC = () => {
@@ -54,6 +54,13 @@ const Home: React.FC = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+        {/* Garantia */}
+        <div className="text-center mt-12">
+          <div className="inline-flex items-center gap-3 bg-green-50 border border-green-200 rounded-full px-6 py-3">
+            <Shield className="w-6 h-6 text-green-600" />
+            <span className="text-green-800 font-medium">Garantia de 30 dias ou seu dinheiro de volta</span>
+          </div>
         </div>
       </div>
     </div>
