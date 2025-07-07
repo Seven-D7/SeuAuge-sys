@@ -203,6 +203,7 @@ export default function StepOne({ form, onNext, defaultValues }: StepProps) {
         <div className="flex justify-end pt-4">
           <Button
             type="submit"
+            variant="default"
             className="flex items-center gap-2 h-12 px-8 rounded-xl"
             size="lg"
           >

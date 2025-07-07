@@ -14,7 +14,7 @@ const Home: React.FC = () => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  const handleGetPlan = () => {
+  const handleSelectPlan = (planName: string) => {
     navigate('/login');
   };
 
@@ -45,7 +45,12 @@ const Home: React.FC = () => {
                     </li>
                   ))}
                 </ul>
-                <Button onClick={handleGetPlan} className="w-full mt-4">
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => handleSelectPlan(p.id)}
+                  className="w-full mt-4"
+                >
                   Obter Plano
                 </Button>
               </CardContent>

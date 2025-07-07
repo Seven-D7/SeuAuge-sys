@@ -300,9 +300,10 @@ export default function StepFour({ form, onNext, onPrevious, canGoBack, defaultV
         {/* Botões de navegação */}
         <div className="flex justify-between pt-6">
           {canGoBack && (
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
               onClick={onPrevious}
               className="flex items-center gap-2 h-12 px-8"
             >
@@ -310,8 +311,10 @@ export default function StepFour({ form, onNext, onPrevious, canGoBack, defaultV
               Anterior
             </Button>
           )}
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
+            variant="default"
+            size="sm"
             className="flex items-center gap-2 h-12 px-8 ml-auto"
           >
             Próximo
