@@ -15,21 +15,19 @@ const Home: React.FC = () => {
   }
 
   const handleSelectPlan = (planName: string) => {
-    navigate('/login');
+    navigate('/auth');
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white py-12">
-      <div className="max-w-4xl mx-auto space-y-8 px-4">
+    <div className="relative min-h-screen bg-slate-950 text-white py-12">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-emerald-600 to-cyan-600 opacity-20" />
+      <div className="relative max-w-4xl mx-auto space-y-8 px-4">
         <div className="flex justify-end">
-          <Link
-            to="/login"
-            className="text-primary hover:underline font-medium"
-          >
+          <Link to="/auth" className="text-primary hover:underline font-medium">
             Entrar
           </Link>
         </div>
-        <h1 className="text-4xl font-bold text-center">Escolha seu plano</h1>
+        <h1 className="text-4xl font-bold text-center">Comece grátis</h1>
         <div className="grid md:grid-cols-3 gap-6">
           {PLANS.map((p) => (
             <Card key={p.id} className="bg-slate-900">
@@ -51,7 +49,7 @@ const Home: React.FC = () => {
                   onClick={() => handleSelectPlan(p.id)}
                   className="w-full mt-4"
                 >
-                  Obter Plano
+                  Comece Grátis
                 </Button>
               </CardContent>
             </Card>

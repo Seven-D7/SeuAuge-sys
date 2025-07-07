@@ -100,14 +100,6 @@ function App() {
               Iniciar Transformação
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="h-14 px-8 text-lg border-orange-200 text-orange-700 hover:bg-orange-50"
-            >
-              <Trophy className="w-5 h-5 mr-2" />
-              Ver Resultados
-            </Button>
           </div>
 
           {/* Stats */}
