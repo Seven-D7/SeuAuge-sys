@@ -18,6 +18,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import Emagrecimento from './pages/Emagrecimento';
 import Progress from './pages/Progress';
 import AppsPage from './pages/Apps';
+import About from './pages/About';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/login" element={<Navigate to="/auth" replace />} />
           <Route
