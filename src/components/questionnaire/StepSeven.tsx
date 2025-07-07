@@ -212,9 +212,10 @@ export default function StepSeven({ form, onNext, onPrevious, canGoBack, isLastS
         {/* Botões de navegação */}
         <div className="flex justify-between pt-6">
           {canGoBack && (
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
               onClick={onPrevious}
               className="flex items-center gap-2 h-12 px-8"
             >
@@ -222,8 +223,9 @@ export default function StepSeven({ form, onNext, onPrevious, canGoBack, isLastS
               Anterior
             </Button>
           )}
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
+            variant="default"
             className="flex items-center gap-2 h-12 px-8 ml-auto bg-green-600 hover:bg-green-700"
             size="lg"
           >

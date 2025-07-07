@@ -63,7 +63,7 @@ export default function Report({ data, onBack }: ReportProps) {
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
             <p className="text-gray-600">Nenhum dado de relatório disponível.</p>
-            <Button onClick={onBack} className="mt-4">
+            <Button variant="default" size="sm" onClick={onBack} className="mt-4">
               Voltar ao Questionário
             </Button>
           </CardContent>
@@ -162,11 +162,11 @@ export default function Report({ data, onBack }: ReportProps) {
             </p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="flex items-center gap-2">
               <Download className="w-4 h-4" />
               Baixar PDF
             </Button>
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="flex items-center gap-2">
               <Share2 className="w-4 h-4" />
               Compartilhar
             </Button>
@@ -620,7 +620,7 @@ export default function Report({ data, onBack }: ReportProps) {
         {/* Botão Voltar */}
         {onBack && (
           <div className="text-center mt-8">
-            <Button variant="outline" onClick={onBack}>
+            <Button variant="outline" size="sm" onClick={onBack}>
               Voltar ao Questionário
             </Button>
           </div>

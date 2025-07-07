@@ -212,9 +212,10 @@ export default function StepTwo({ form, onNext, onPrevious, canGoBack, defaultVa
         {/* Botões de navegação */}
         <div className="flex justify-between pt-6">
           {canGoBack && (
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
               onClick={onPrevious}
               className="flex items-center gap-2 h-12 px-8"
             >
@@ -222,8 +223,10 @@ export default function StepTwo({ form, onNext, onPrevious, canGoBack, defaultVa
               Anterior
             </Button>
           )}
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
+            variant="default"
+            size="sm"
             className="flex items-center gap-2 h-12 px-8 ml-auto"
           >
             Próximo
