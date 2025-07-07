@@ -1,10 +1,16 @@
 import React from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { PLANS } from '../data/plans';
-import { Button } from '../components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { PLANS } from '@/data/plans';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { CheckCircle } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Home: React.FC = () => {
   const { user } = useAuth();
@@ -15,12 +21,20 @@ const Home: React.FC = () => {
   }
 
   const handleGetPlan = () => {
-    navigate('/auth');
+    navigate('/login');
   };
 
   return (
     <div className="min-h-screen bg-slate-950 text-white py-12">
       <div className="max-w-4xl mx-auto space-y-8 px-4">
+        <div className="flex justify-end">
+          <Link
+            to="/login"
+            className="text-primary hover:underline font-medium"
+          >
+            Entrar
+          </Link>
+        </div>
         <h1 className="text-4xl font-bold text-center">Escolha seu plano</h1>
         <div className="grid md:grid-cols-3 gap-6">
           {PLANS.map((p) => (
