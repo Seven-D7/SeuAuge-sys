@@ -17,6 +17,7 @@ const Home: React.FC = () => {
   };
 
   return (
+    <>
     <div className="relative min-h-screen bg-slate-950 text-white py-12">
       <div className="absolute inset-0 bg-gradient-to-br from-primary via-emerald-600 to-cyan-600 opacity-20" />
       <div className="relative max-w-4xl mx-auto space-y-8 px-4">
@@ -184,8 +185,7 @@ const Home: React.FC = () => {
               <div className="flex mb-4">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                ))}
-              </div>
+                ))}</div>
               <p className="text-gray-700 italic">
                 "Nunca pensei que conseguiria emagrecer de forma tão saudável. O acompanhamento foi fundamental para manter a motivação!"
               </p>
@@ -204,8 +204,7 @@ const Home: React.FC = () => {
               <div className="flex mb-4">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                ))}
-              </div>
+                ))}</div>
               <p className="text-gray-700 italic">
                 "O app é incrível! Consegui seguir o plano mesmo com a correria do trabalho. Recomendo para todos!"
               </p>
@@ -224,8 +223,7 @@ const Home: React.FC = () => {
               <div className="flex mb-4">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                ))}
-              </div>
+                ))}</div>
               <p className="text-gray-700 italic">
                 "Finalmente encontrei um método que funciona! A equipe é muito atenciosa e os resultados são reais."
               </p>
@@ -341,6 +339,7 @@ const Home: React.FC = () => {
         </div>
       </footer>
     </div>
+    </>
   );
 }
 
