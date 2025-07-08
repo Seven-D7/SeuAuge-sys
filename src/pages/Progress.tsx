@@ -103,7 +103,7 @@ const Progress: React.FC = () => {
                   onChange={(e) =>
                     setFormMetrics({ ...formMetrics, [field.key]: Number(e.target.value) })
                   }
-                  className="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
                 />
               </div>
             ))}

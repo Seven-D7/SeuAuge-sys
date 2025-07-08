@@ -17,7 +17,7 @@ import Payment from './pages/Payment';
 import Plans from './pages/Plans';
 import AdminDashboard from './pages/AdminDashboard';
 const Progress = lazy(() => import('./pages/Progress'));
-import AppsPage from './pages/Apps';
+const AppsPage = lazy(() => import('./pages/Apps'));
 import About from './pages/About';
 
 const FitnessModulesApp = lazy(() => import('./components/fitness-modules/ModulosConfig'));
@@ -62,7 +62,9 @@ function App() {
               path="apps"
               element={
                 <PlanGuard allowedPlans={["B", "C"]}>
-                  <AppsPage />
+                  <Suspense fallback={<div className="p-4 text-white">Carregando...</div>}>
+                    <AppsPage />
+                  </Suspense>
                 </PlanGuard>
               }
             />
