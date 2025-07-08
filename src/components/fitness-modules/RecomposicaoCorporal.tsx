@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -22,7 +23,16 @@ import {
   CheckCircle,
   AlertTriangle,
   Info,
-  BarChart3
+  BarChart3,
+  Sparkles,
+  Flame,
+  Award,
+  PieChart,
+  LineChart,
+  Users,
+  Shield,
+  Rocket,
+  X
 } from 'lucide-react';
 
 // Importar algoritmos avançados
@@ -35,72 +45,73 @@ import {
 } from '@/lib/fitness/advanced_fitness_algorithms';
 
 interface UserData {
-  // Dados básicos
+  // Dados básicos (obrigatórios)
   nome: string;
   idade: number;
   sexo: 'masculino' | 'feminino';
   altura: number;
   peso_atual: number;
   
-  // Dados específicos para recomposição
+  // Dados específicos para recomposição (obrigatórios)
   gordura_corporal_atual: number;
   gordura_corporal_objetivo: number;
+  prazo_meses: number;
+  confianca_recomposicao: number; // 1-10
+  
+  // Dados de treino (obrigatórios)
+  nivel_atividade: 'sedentario' | 'leve' | 'moderado' | 'intenso' | 'muito_intenso';
+  dias_treino_semana: number;
+  tempo_disponivel_sessao: number;
+  
+  // Dados opcionais
   massa_muscular_atual?: number;
   massa_muscular_objetivo?: number;
-  prazo_meses: number;
+  experiencia_treino?: 'iniciante' | 'intermediario' | 'avancado';
+  lesoes_limitacoes?: string;
+  suplementacao_atual?: string;
   
-  // Experiência e preferências
-  nivel_experiencia: 'iniciante' | 'intermediario' | 'avancado';
-  dias_treino_semana: number;
-  preferencia_cardio: 'baixa' | 'moderada' | 'alta';
-  local_treino: 'academia' | 'casa' | 'ambos';
-  
-  // Dados de bioimpedância (essenciais para recomposição)
-  massa_gorda: number;
-  massa_magra: number;
-  massa_muscular: number;
-  hidratacao: number;
-  
-  // Histórico e limitações
-  historico_dietas: string;
-  restricoes_alimentares: string;
-  lesoes_limitacoes: string;
+  // Dados de composição corporal (opcionais)
+  circunferencia_cintura?: number;
+  circunferencia_quadril?: number;
+  massa_magra?: number;
 }
 
 interface RecompositionResults {
-  // Análise atual
+  // Métricas calculadas
   imc: number;
   classificacao_imc: string;
-  percentual_gordura_atual: number;
-  classificacao_gordura: string;
-  massa_muscular_relativa: number;
+  tmb: number;
+  gasto_energetico: number;
+  calorias_recomposicao: number;
   
-  // Metas calculadas
-  perda_gordura_kg: number;
-  ganho_muscular_kg: number;
-  peso_final_estimado: number;
-  tempo_estimado_meses: number;
+  // Análise de recomposição
+  perfil_corporal: any;
+  potencial_recomposicao: number;
+  deficit_calorico_recomendado: number;
+  perda_gordura_semanal: number;
+  ganho_muscular_semanal: number;
   
-  // Estratégia personalizada
-  estrategia_recomendada: 'deficit_moderado' | 'manutencao_calorica' | 'ciclagem_calorica';
-  calorias_treino: number;
-  calorias_descanso: number;
+  // Planos personalizados
+  plano_treino_recomposicao: any;
+  plano_nutricional_recomposicao: any;
+  cronograma_fases: any;
+  suplementacao_recomendada: string[];
   
-  // Análise avançada
-  perfil_genetico: any;
-  probabilidade_sucesso: number;
-  dificuldade_recomposicao: 'baixa' | 'moderada' | 'alta';
-  
-  // Planos detalhados
-  plano_treino_hibrido: any;
-  plano_nutricional_ciclico: any;
-  cronograma_periodizado: any;
-  
-  // Predições e monitoramento
-  marcos_mensais: any[];
-  indicadores_progresso: string[];
-  fatores_criticos: string[];
+  // Predições
+  resultado_3_meses: any;
+  resultado_6_meses: any;
+  fatores_limitantes: string[];
   recomendacoes_otimizacao: string[];
+  
+  // Elementos únicos
+  score_motivacional: number;
+  badges_conquistadas: string[];
+  nivel_usuario: string;
+  pontos_experiencia: number;
+}
+
+interface ValidationErrors {
+  [key: string]: string;
 }
 
 const RecomposicaoCorporal: React.FC = () => {
@@ -109,425 +120,453 @@ const RecomposicaoCorporal: React.FC = () => {
   const [userData, setUserData] = useState<Partial<UserData>>({});
   const [results, setResults] = useState<RecompositionResults | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [animationStep, setAnimationStep] = useState(0);
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
 
   const totalSteps = 4;
   const progress = (step / totalSteps) * 100;
 
+  // Cores da paleta específica
+  const colors = {
+    primary: '#1ab894',    // Verde principal
+    dark: '#111828',       // Azul escuro
+    white: '#ffffff',      // Branco
+    primaryLight: '#22d3aa', // Verde mais claro
+    primaryDark: '#0f9d7a',  // Verde mais escuro
+  };
+
   // Algoritmos especializados
-  const [successPredictor] = useState(new SuccessPredictionAlgorithm());
   const [adaptiveEngine] = useState(new AdaptivePersonalizationEngine());
 
+  // Animação de entrada
+  useEffect(() => {
+    const timer = setTimeout(() => setAnimationStep(1), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Validação de campos obrigatórios
+  const validateStep = (stepNumber: number): boolean => {
+    const errors: ValidationErrors = {};
+    
+    switch (stepNumber) {
+      case 1:
+        if (!userData.nome?.trim()) errors.nome = 'Nome é obrigatório';
+        if (!userData.idade || userData.idade < 16 || userData.idade > 100) errors.idade = 'Idade deve estar entre 16 e 100 anos';
+        if (!userData.sexo) errors.sexo = 'Sexo é obrigatório';
+        if (!userData.altura || userData.altura < 100 || userData.altura > 250) errors.altura = 'Altura deve estar entre 100 e 250 cm';
+        if (!userData.peso_atual || userData.peso_atual < 30 || userData.peso_atual > 300) errors.peso_atual = 'Peso atual deve estar entre 30 e 300 kg';
+        break;
+        
+      case 2:
+        if (!userData.gordura_corporal_atual || userData.gordura_corporal_atual < 5 || userData.gordura_corporal_atual > 50) {
+          errors.gordura_corporal_atual = 'Gordura corporal atual deve estar entre 5% e 50%';
+        }
+        if (!userData.gordura_corporal_objetivo || userData.gordura_corporal_objetivo < 5 || userData.gordura_corporal_objetivo > 50) {
+          errors.gordura_corporal_objetivo = 'Gordura corporal objetivo deve estar entre 5% e 50%';
+        }
+        if (userData.gordura_corporal_objetivo && userData.gordura_corporal_atual && 
+            userData.gordura_corporal_objetivo >= userData.gordura_corporal_atual) {
+          errors.gordura_corporal_objetivo = 'Objetivo deve ser menor que o atual para recomposição';
+        }
+        if (!userData.prazo_meses || userData.prazo_meses < 1 || userData.prazo_meses > 24) {
+          errors.prazo_meses = 'Prazo deve estar entre 1 e 24 meses';
+        }
+        if (!userData.confianca_recomposicao || userData.confianca_recomposicao < 1 || userData.confianca_recomposicao > 10) {
+          errors.confianca_recomposicao = 'Confiança deve estar entre 1 e 10';
+        }
+        break;
+        
+      case 3:
+        if (!userData.nivel_atividade) errors.nivel_atividade = 'Nível de atividade é obrigatório';
+        if (!userData.dias_treino_semana || userData.dias_treino_semana < 2 || userData.dias_treino_semana > 7) {
+          errors.dias_treino_semana = 'Dias de treino deve estar entre 2 e 7';
+        }
+        if (!userData.tempo_disponivel_sessao || userData.tempo_disponivel_sessao < 30 || userData.tempo_disponivel_sessao > 180) {
+          errors.tempo_disponivel_sessao = 'Tempo por sessão deve estar entre 30 e 180 minutos';
+        }
+        break;
+    }
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const calculateRecompositionMetrics = (data: UserData): RecompositionResults => {
-    // 1. Análise da composição corporal atual
+    // 1. Métricas básicas
     const altura_m = data.altura / 100;
     const imc = data.peso_atual / (altura_m * altura_m);
     
     let classificacao_imc = '';
-    if (imc < 18.5) classificacao_imc = 'Abaixo do peso';
-    else if (imc < 25) classificacao_imc = 'Peso normal';
-    else if (imc < 30) classificacao_imc = 'Sobrepeso';
-    else classificacao_imc = 'Obesidade';
+    if (imc < 18.5) classificacao_imc = 'Abaixo do peso - Foque em ganho muscular';
+    else if (imc < 25) classificacao_imc = 'Peso normal - Ideal para recomposição';
+    else if (imc < 30) classificacao_imc = 'Sobrepeso - Priorize perda de gordura';
+    else classificacao_imc = 'Obesidade - Foque em emagrecimento primeiro';
 
-    // 2. Análise do percentual de gordura
-    const percentual_gordura = (data.massa_gorda / data.peso_atual) * 100;
-    
-    let classificacao_gordura = '';
+    // 2. TMB
+    let tmb: number;
     if (data.sexo === 'masculino') {
-      if (percentual_gordura < 6) classificacao_gordura = 'Muito baixo';
-      else if (percentual_gordura < 14) classificacao_gordura = 'Atlético';
-      else if (percentual_gordura < 18) classificacao_gordura = 'Fitness';
-      else if (percentual_gordura < 25) classificacao_gordura = 'Aceitável';
-      else classificacao_gordura = 'Alto';
+      tmb = (10 * data.peso_atual) + (6.25 * data.altura) - (5 * data.idade) + 5;
     } else {
-      if (percentual_gordura < 16) classificacao_gordura = 'Muito baixo';
-      else if (percentual_gordura < 21) classificacao_gordura = 'Atlético';
-      else if (percentual_gordura < 25) classificacao_gordura = 'Fitness';
-      else if (percentual_gordura < 32) classificacao_gordura = 'Aceitável';
-      else classificacao_gordura = 'Alto';
+      tmb = (10 * data.peso_atual) + (6.25 * data.altura) - (5 * data.idade) - 161;
     }
 
-    // 3. Massa muscular relativa (kg de músculo por kg de peso corporal)
-    const massa_muscular_relativa = (data.massa_muscular / data.peso_atual) * 100;
+    // 3. Gasto energético baseado no nível de atividade
+    const fatores_atividade = {
+      sedentario: 1.2,
+      leve: 1.375,
+      moderado: 1.55,
+      intenso: 1.725,
+      muito_intenso: 1.9
+    };
+    const fator = fatores_atividade[data.nivel_atividade];
+    const gasto_energetico = tmb * fator;
 
-    // 4. Perfil genético
+    // 4. Perfil corporal
     const geneticProfile = new GeneticFitnessProfile({
       age: data.idade,
       sex: data.sexo,
       height: data.altura,
       weight: data.peso_atual,
-      activityLevel: 'intenso'
+      activityLevel: data.nivel_atividade
     });
 
-    // 5. Algoritmo de hipertrofia para componente muscular
-    const hypertrophyAlgorithm = new HypertrophyAlgorithm(
-      geneticProfile, 
-      data.nivel_experiencia
-    );
+    // 5. Potencial de recomposição
+    let potencial = 0.5;
+    
+    if (data.idade < 30) potencial += 0.2;
+    else if (data.idade > 40) potencial -= 0.1;
+    
+    if (data.gordura_corporal_atual > 20) potencial += 0.1; // Mais gordura = mais potencial de perda
+    if (data.confianca_recomposicao >= 8) potencial += 0.1;
+    if (data.dias_treino_semana >= 4) potencial += 0.1;
+    if (data.experiencia_treino === 'iniciante') potencial += 0.1; // Iniciantes respondem melhor
+    
+    potencial = Math.min(potencial, 1.0);
 
-    // 6. Cálculo das metas
-    const gordura_objetivo_kg = (data.gordura_corporal_objetivo / 100) * data.peso_atual;
-    const perda_gordura_kg = data.massa_gorda - gordura_objetivo_kg;
+    // 6. Déficit calórico recomendado
+    let deficit_base = 300; // Déficit conservador para recomposição
     
-    // Estimativa de ganho muscular baseada na experiência e genética
-    let ganho_muscular_base = 0.5; // kg por mês para iniciante
-    if (data.nivel_experiencia === 'intermediario') ganho_muscular_base = 0.25;
-    else if (data.nivel_experiencia === 'avancado') ganho_muscular_base = 0.1;
+    if (data.gordura_corporal_atual > 25) {
+      deficit_base = 500; // Mais agressivo para gordura alta
+    } else if (data.gordura_corporal_atual < 15) {
+      deficit_base = 200; // Mais conservador para gordura baixa
+    }
     
-    // Ajustar baseado no perfil genético
+    // Ajustar baseado na experiência
+    if (data.experiencia_treino === 'iniciante') {
+      deficit_base *= 0.8; // Mais conservador para iniciantes
+    }
+    
+    const calorias_recomposicao = gasto_energetico - deficit_base;
+
+    // 7. Estimativas de mudança corporal
+    const perda_gordura_semanal = (deficit_base * 7) / 7700; // 1kg gordura = ~7700 kcal
+    const ganho_muscular_semanal = data.experiencia_treino === 'iniciante' ? 0.1 : 
+                                   data.experiencia_treino === 'intermediario' ? 0.05 : 0.025;
+
+    // 8. Elementos únicos
+    const score_motivacional = calculateMotivationalScore(data, potencial);
+    const badges_conquistadas = generateBadges(data, potencial, imc);
+    const nivel_usuario = calculateUserLevel(data, score_motivacional);
+    const pontos_experiencia = calculateExperiencePoints(data, potencial);
+
+    // 9. Planos detalhados
+    const plano_treino = generateRecompositionTrainingPlan(data);
+    const plano_nutricional = generateRecompositionNutrition(data, calorias_recomposicao);
+    const cronograma = generatePhaseSchedule(data);
+    const suplementacao = generateRecompositionSupplements(data);
+    const resultado_3_meses = calculateResults(data, 3, perda_gordura_semanal, ganho_muscular_semanal);
+    const resultado_6_meses = calculateResults(data, 6, perda_gordura_semanal, ganho_muscular_semanal);
+
+    // 10. Fatores limitantes e recomendações
+    const fatores_limitantes: string[] = [];
+    const recomendacoes: string[] = [];
+    
+    if (data.idade > 40) fatores_limitantes.push('Idade - metabolismo mais lento');
+    if (data.gordura_corporal_atual < 12) fatores_limitantes.push('Gordura corporal muito baixa');
+    if (data.dias_treino_semana < 3) fatores_limitantes.push('Frequência de treino insuficiente');
+    if (data.confianca_recomposicao < 6) fatores_limitantes.push('Baixa confiança no processo');
+    
+    recomendacoes.push('Combine treino de força com cardio moderado');
+    recomendacoes.push('Mantenha déficit calórico moderado');
+    recomendacoes.push('Priorize proteína em todas as refeições');
+    recomendacoes.push('Monitore composição corporal, não apenas peso');
+    
     if (geneticProfile.geneticProfile.dominantType === 'power') {
-      ganho_muscular_base *= 1.2;
-    }
-    
-    // Ajustar baseado na recomposição (mais difícil que bulking puro)
-    ganho_muscular_base *= 0.7;
-    
-    const ganho_muscular_kg = ganho_muscular_base * data.prazo_meses;
-    const peso_final_estimado = data.peso_atual - perda_gordura_kg + ganho_muscular_kg;
-
-    // 7. Dificuldade da recomposição
-    let dificuldade_score = 0;
-    
-    // Fatores que aumentam dificuldade
-    if (data.nivel_experiencia === 'avancado') dificuldade_score += 2;
-    if (percentual_gordura < 15 && data.sexo === 'masculino') dificuldade_score += 2;
-    if (percentual_gordura < 20 && data.sexo === 'feminino') dificuldade_score += 2;
-    if (data.idade > 35) dificuldade_score += 1;
-    if (perda_gordura_kg > 10) dificuldade_score += 1;
-    
-    const dificuldade_recomposicao = dificuldade_score <= 2 ? 'baixa' : 
-                                   dificuldade_score <= 4 ? 'moderada' : 'alta';
-
-    // 8. Estratégia calórica personalizada
-    let estrategia: 'deficit_moderado' | 'manutencao_calorica' | 'ciclagem_calorica';
-    
-    if (percentual_gordura > 20 || dificuldade_recomposicao === 'baixa') {
-      estrategia = 'deficit_moderado';
-    } else if (dificuldade_recomposicao === 'alta' || data.nivel_experiencia === 'avancado') {
-      estrategia = 'ciclagem_calorica';
+      recomendacoes.push('Foque em treinos de força intensos');
     } else {
-      estrategia = 'manutencao_calorica';
+      recomendacoes.push('Inclua mais atividade cardiovascular');
     }
-
-    // 9. Cálculo calórico baseado na estratégia
-    const tmb = data.sexo === 'masculino' 
-      ? (10 * data.peso_atual) + (6.25 * data.altura) - (5 * data.idade) + 5
-      : (10 * data.peso_atual) + (6.25 * data.altura) - (5 * data.idade) - 161;
-    
-    const gasto_energetico = tmb * 1.6; // Fator para treino intenso
-    
-    let calorias_treino, calorias_descanso;
-    
-    switch (estrategia) {
-      case 'deficit_moderado':
-        calorias_treino = gasto_energetico - 200;
-        calorias_descanso = gasto_energetico - 300;
-        break;
-      case 'manutencao_calorica':
-        calorias_treino = gasto_energetico + 100;
-        calorias_descanso = gasto_energetico - 100;
-        break;
-      case 'ciclagem_calorica':
-        calorias_treino = gasto_energetico + 200;
-        calorias_descanso = gasto_energetico - 400;
-        break;
-    }
-
-    // 10. Probabilidade de sucesso
-    const probabilidade_sucesso = successPredictor.predictWeightLossSuccess({
-      age: data.idade,
-      sex: data.sexo,
-      height: data.altura,
-      activityLevel: 'intenso'
-    }, []);
-    
-    // Ajustar para recomposição (mais difícil)
-    const prob_recomposicao = Math.max(0.1, probabilidade_sucesso * 0.7);
-
-    // 11. Tempo estimado (mais conservador para recomposição)
-    const tempo_estimado = Math.max(data.prazo_meses, 
-      (perda_gordura_kg / 0.3) / 4.33); // 0.3kg gordura por semana máximo
-
-    // 12. Plano de treino híbrido
-    const plano_treino = generateHybridTrainingPlan(data, hypertrophyAlgorithm, estrategia);
-    
-    // 13. Plano nutricional cíclico
-    const nutritionAlgorithm = new AdaptiveNutritionAlgorithm(data, 'recomposition');
-    const plano_nutricional = generateCyclicalNutrition(data, calorias_treino, calorias_descanso, estrategia);
-    
-    // 14. Cronograma periodizado
-    const cronograma = generatePeriodizedSchedule(data, estrategia);
-    
-    // 15. Marcos mensais
-    const marcos = generateMonthlyMilestones(data, perda_gordura_kg, ganho_muscular_kg);
-    
-    // 16. Indicadores de progresso
-    const indicadores = [
-      'Peso corporal (semanal)',
-      'Percentual de gordura (quinzenal)',
-      'Medidas corporais (semanal)',
-      'Fotos de progresso (semanal)',
-      'Performance nos treinos',
-      'Qualidade do sono',
-      'Níveis de energia'
-    ];
-    
-    // 17. Fatores críticos
-    const fatores_criticos = [];
-    if (dificuldade_recomposicao === 'alta') {
-      fatores_criticos.push('Recomposição avançada - progresso mais lento');
-    }
-    if (percentual_gordura < 15) {
-      fatores_criticos.push('Baixo percentual de gordura - risco de perda muscular');
-    }
-    if (data.idade > 40) {
-      fatores_criticos.push('Idade avançada - recuperação mais lenta');
-    }
-    
-    // 18. Recomendações de otimização
-    const recomendacoes = [];
-    if (estrategia === 'ciclagem_calorica') {
-      recomendacoes.push('Monitore rigorosamente a ciclagem calórica');
-      recomendacoes.push('Ajuste carboidratos conforme dias de treino');
-    }
-    if (dificuldade_recomposicao === 'alta') {
-      recomendacoes.push('Considere acompanhamento profissional');
-      recomendacoes.push('Seja paciente - resultados levam mais tempo');
-    }
-    recomendacoes.push('Priorize sono de qualidade (8+ horas)');
-    recomendacoes.push('Mantenha consistência no treino e dieta');
 
     return {
       imc: Math.round(imc * 10) / 10,
       classificacao_imc,
-      percentual_gordura_atual: Math.round(percentual_gordura * 10) / 10,
-      classificacao_gordura,
-      massa_muscular_relativa: Math.round(massa_muscular_relativa * 10) / 10,
-      perda_gordura_kg: Math.round(perda_gordura_kg * 100) / 100,
-      ganho_muscular_kg: Math.round(ganho_muscular_kg * 100) / 100,
-      peso_final_estimado: Math.round(peso_final_estimado * 100) / 100,
-      tempo_estimado_meses: Math.round(tempo_estimado),
-      estrategia_recomendada: estrategia,
-      calorias_treino: Math.round(calorias_treino),
-      calorias_descanso: Math.round(calorias_descanso),
-      perfil_genetico: geneticProfile.geneticProfile,
-      probabilidade_sucesso: Math.round(prob_recomposicao * 100) / 100,
-      dificuldade_recomposicao,
-      plano_treino_hibrido: plano_treino,
-      plano_nutricional_ciclico: plano_nutricional,
-      cronograma_periodizado: cronograma,
-      marcos_mensais: marcos,
-      indicadores_progresso: indicadores,
-      fatores_criticos,
-      recomendacoes_otimizacao: recomendacoes
+      tmb: Math.round(tmb),
+      gasto_energetico: Math.round(gasto_energetico),
+      calorias_recomposicao: Math.round(calorias_recomposicao),
+      perfil_corporal: geneticProfile.geneticProfile,
+      potencial_recomposicao: Math.round(potencial * 100) / 100,
+      deficit_calorico_recomendado: deficit_base,
+      perda_gordura_semanal: Math.round(perda_gordura_semanal * 1000) / 1000,
+      ganho_muscular_semanal: Math.round(ganho_muscular_semanal * 1000) / 1000,
+      plano_treino_recomposicao: plano_treino,
+      plano_nutricional_recomposicao: plano_nutricional,
+      cronograma_fases: cronograma,
+      suplementacao_recomendada: suplementacao,
+      resultado_3_meses,
+      resultado_6_meses,
+      fatores_limitantes,
+      recomendacoes_otimizacao: recomendacoes,
+      score_motivacional,
+      badges_conquistadas,
+      nivel_usuario,
+      pontos_experiencia
     };
   };
 
-  const generateHybridTrainingPlan = (data: UserData, algorithm: any, estrategia: string) => {
-    // Treino híbrido: força + hipertrofia + cardio estratégico
-    const base_plan = {
-      frequencia_semanal: data.dias_treino_semana,
-      divisao: data.dias_treino_semana >= 5 ? 'Push/Pull/Legs + Cardio' : 'Upper/Lower + Cardio',
-      cardio_estrategico: true
-    };
+  // Funções auxiliares para elementos únicos
+  const calculateMotivationalScore = (data: UserData, potencial: number): number => {
+    let score = 50;
+    score += data.confianca_recomposicao * 5;
+    score += potencial * 30;
+    if (data.experiencia_treino === 'avancado') score += 15;
+    if (data.dias_treino_semana >= 4) score += 10;
+    return Math.min(100, Math.round(score));
+  };
 
-    // Distribuição baseada na estratégia
-    if (estrategia === 'deficit_moderado') {
-      base_plan.cardio_frequencia = '4-5x/semana';
-      base_plan.cardio_tipo = 'LISS + 2x HIIT';
-      base_plan.forca_hipertrofia = '70% Hipertrofia / 30% Força';
-    } else if (estrategia === 'ciclagem_calorica') {
-      base_plan.cardio_frequencia = '3-4x/semana';
-      base_plan.cardio_tipo = 'HIIT nos dias baixo carbo';
-      base_plan.forca_hipertrofia = '60% Hipertrofia / 40% Força';
-    } else {
-      base_plan.cardio_frequencia = '3x/semana';
-      base_plan.cardio_tipo = 'LISS pós-treino';
-      base_plan.forca_hipertrofia = '80% Hipertrofia / 20% Força';
-    }
+  const generateBadges = (data: UserData, potencial: number, imc: number): string[] => {
+    const badges: string[] = [];
+    if (potencial > 0.8) badges.push('🏆 Alto Potencial');
+    if (data.confianca_recomposicao >= 8) badges.push('💪 Confiante');
+    if (data.experiencia_treino === 'avancado') badges.push('⭐ Experiente');
+    if (data.dias_treino_semana >= 5) badges.push('🔥 Dedicado');
+    if (data.gordura_corporal_atual > 20) badges.push('🎯 Transformador');
+    badges.push('🔄 Recompositor');
+    return badges;
+  };
 
+  const calculateUserLevel = (data: UserData, score: number): string => {
+    if (score >= 90) return 'Elite Recomposer';
+    if (score >= 75) return 'Avançado';
+    if (score >= 60) return 'Intermediário';
+    if (score >= 45) return 'Iniciante Plus';
+    return 'Iniciante';
+  };
+
+  const calculateExperiencePoints = (data: UserData, potencial: number): number => {
+    let pontos = 100;
+    pontos += data.confianca_recomposicao * 10;
+    pontos += potencial * 50;
+    if (data.experiencia_treino === 'avancado') pontos += 100;
+    return Math.round(pontos);
+  };
+
+  const generateRecompositionTrainingPlan = (data: UserData) => {
     return {
-      ...base_plan,
-      exemplo_semana: {
-        segunda: 'Peito + Tríceps + 20min LISS',
-        terca: 'Costas + Bíceps + 15min HIIT',
-        quarta: 'Pernas + 20min LISS',
-        quinta: 'Ombros + Core + 15min HIIT',
-        sexta: 'Treino Full Body',
-        sabado: '30min Cardio LISS',
-        domingo: 'Descanso ativo'
-      },
-      observacoes: [
-        'Priorize exercícios compostos',
-        'Mantenha intensidade alta no treino de força',
-        'Cardio estratégico conforme estratégia nutricional',
-        'Monitore sinais de overtraining'
+      tipo_treino: 'Recomposição Corporal',
+      frequencia: data.dias_treino_semana,
+      duracao_sessao: data.tempo_disponivel_sessao,
+      divisao_treino: data.dias_treino_semana >= 4 ? 'Upper/Lower + Cardio' : 'Full Body + Cardio',
+      fases_treino: [
+        { nome: 'Força + Cardio Moderado', series: '3-4', reps: '8-12', cardio: '20-30min' },
+        { nome: 'Hipertrofia + HIIT', series: '3-5', reps: '10-15', cardio: '15-25min' },
+        { nome: 'Definição + Cardio Intenso', series: '2-4', reps: '12-20', cardio: '30-45min' }
+      ],
+      exercicios_principais: [
+        'Agachamento',
+        'Levantamento terra',
+        'Supino',
+        'Remada',
+        'Desenvolvimento',
+        'Cardio intervalado'
       ]
     };
   };
 
-  const generateCyclicalNutrition = (data: UserData, cal_treino: number, cal_descanso: number, estrategia: string) => {
-    const nutrition_plan = {
-      estrategia,
-      calorias_treino: cal_treino,
-      calorias_descanso: cal_descanso,
-      diferenca_calorica: cal_treino - cal_descanso
-    };
-
-    // Macros para dias de treino (mais carboidratos)
-    const macros_treino = {
-      proteina: Math.round((cal_treino * 0.30) / 4), // 30%
-      carboidratos: Math.round((cal_treino * 0.40) / 4), // 40%
-      gorduras: Math.round((cal_treino * 0.30) / 9) // 30%
-    };
-
-    // Macros para dias de descanso (menos carboidratos, mais gorduras)
-    const macros_descanso = {
-      proteina: Math.round((cal_descanso * 0.35) / 4), // 35%
-      carboidratos: Math.round((cal_descanso * 0.25) / 4), // 25%
-      gorduras: Math.round((cal_descanso * 0.40) / 9) // 40%
-    };
+  const generateRecompositionNutrition = (data: UserData, calorias: number) => {
+    const proteina_g = Math.round((calorias * 0.30) / 4); // 30% proteína para recomposição
+    const carbo_g = Math.round((calorias * 0.35) / 4);    // 35% carboidratos
+    const gordura_g = Math.round((calorias * 0.35) / 9);  // 35% gorduras
 
     return {
-      ...nutrition_plan,
-      macros_treino,
-      macros_descanso,
-      timing_carboidratos: {
-        pre_treino: '30-40g carboidratos 1h antes',
-        pos_treino: '40-50g carboidratos + 25-30g proteína',
-        noite_treino: 'Reduzir carboidratos após 18h',
-        dia_descanso: 'Carboidratos apenas manhã e almoço'
+      calorias_diarias: calorias,
+      macronutrientes: {
+        proteina: proteina_g,
+        carboidratos: carbo_g,
+        gorduras: gordura_g
       },
-      suplementacao_ciclica: {
-        dias_treino: ['Whey + Dextrose pós-treino', 'Creatina', 'Cafeína pré-treino'],
-        dias_descanso: ['Caseína antes dormir', 'Ômega 3', 'Multivitamínico']
-      },
-      hidratacao: '40ml/kg nos dias de treino, 35ml/kg descanso'
-    };
-  };
-
-  const generatePeriodizedSchedule = (data: UserData, estrategia: string) => {
-    return {
-      fase_1: {
-        duracao: '4-6 semanas',
-        foco: 'Adaptação metabólica',
-        estrategia_nutricional: estrategia,
-        ajustes: 'Estabelecer rotina e monitorar resposta'
-      },
-      fase_2: {
-        duracao: '6-8 semanas',
-        foco: 'Recomposição ativa',
-        estrategia_nutricional: estrategia,
-        ajustes: 'Otimizar baseado no progresso'
-      },
-      fase_3: {
-        duracao: '4-6 semanas',
-        foco: 'Refinamento final',
-        estrategia_nutricional: 'Ajuste fino baseado em resultados',
-        ajustes: 'Personalização máxima'
-      },
-      deload: {
-        frequencia: 'A cada 6-8 semanas',
-        duracao: '1 semana',
-        modificacoes: 'Reduzir volume treino 50%, manter calorias'
-      },
-      avaliacoes: {
-        composicao_corporal: 'Quinzenal (bioimpedância)',
-        fotos_progresso: 'Semanal',
-        medidas_corporais: 'Semanal',
-        performance_treino: 'Contínuo'
+      proteina_por_kg: Math.round((proteina_g / data.peso_atual) * 10) / 10,
+      estrategias_nutricionais: [
+        'Ciclagem de carboidratos',
+        'Janela anabólica pós-treino',
+        'Jejum intermitente (opcional)',
+        'Refeições frequentes'
+      ],
+      timing_refeicoes: {
+        pre_treino: 'Proteína + carboidratos complexos',
+        pos_treino: 'Proteína rápida + carboidratos simples',
+        antes_dormir: 'Proteína lenta (caseína)'
       }
     };
   };
 
-  const generateMonthlyMilestones = (data: UserData, perda_gordura: number, ganho_muscular: number) => {
-    const marcos = [];
-    const meses = data.prazo_meses;
+  const generatePhaseSchedule = (data: UserData) => {
+    return {
+      fase_1: {
+        nome: 'Adaptação',
+        duracao: '4 semanas',
+        foco: 'Estabelecer rotina e técnica',
+        deficit: 'Moderado (300-400 kcal)'
+      },
+      fase_2: {
+        nome: 'Progressão',
+        duracao: '8-12 semanas',
+        foco: 'Perda de gordura + ganho muscular',
+        deficit: 'Controlado (400-500 kcal)'
+      },
+      fase_3: {
+        nome: 'Refinamento',
+        duracao: '4-6 semanas',
+        foco: 'Definição final',
+        deficit: 'Agressivo (500-600 kcal)'
+      },
+      fase_4: {
+        nome: 'Manutenção',
+        duracao: 'Contínua',
+        foco: 'Manter resultados',
+        deficit: 'Mínimo (200-300 kcal)'
+      }
+    };
+  };
+
+  const generateRecompositionSupplements = (data: UserData) => {
+    const suplementos = ['Whey Protein', 'Creatina', 'Multivitamínico', 'Ômega 3'];
     
-    for (let i = 1; i <= meses; i++) {
-      const perda_mes = (perda_gordura / meses) * i;
-      const ganho_mes = (ganho_muscular / meses) * i;
-      const peso_estimado = data.peso_atual - perda_mes + ganho_mes;
-      const gordura_estimada = data.gordura_corporal_atual - ((perda_gordura / data.peso_atual) * 100 * (i / meses));
-      
-      marcos.push({
-        mes: i,
-        peso_estimado: Math.round(peso_estimado * 100) / 100,
-        gordura_estimada: Math.round(gordura_estimada * 10) / 10,
-        perda_gordura_acumulada: Math.round(perda_mes * 100) / 100,
-        ganho_muscular_acumulado: Math.round(ganho_mes * 100) / 100,
-        marcos_visuais: i <= 2 ? 'Melhora na definição' : 
-                       i <= 4 ? 'Mudanças visíveis significativas' : 
-                       'Transformação completa'
-      });
+    if (data.gordura_corporal_atual > 20) {
+      suplementos.push('L-Carnitina', 'Cafeína');
     }
     
-    return marcos;
+    if (data.experiencia_treino === 'avancado') {
+      suplementos.push('HMB', 'Glutamina');
+    }
+    
+    if (data.idade > 35) {
+      suplementos.push('ZMA', 'Coenzima Q10');
+    }
+    
+    return suplementos;
+  };
+
+  const calculateResults = (data: UserData, meses: number, perda_gordura_semanal: number, ganho_muscular_semanal: number) => {
+    const semanas = meses * 4;
+    const perda_gordura_total = perda_gordura_semanal * semanas;
+    const ganho_muscular_total = ganho_muscular_semanal * semanas;
+    
+    const peso_final = data.peso_atual - perda_gordura_total + ganho_muscular_total;
+    const gordura_final = Math.max(5, data.gordura_corporal_atual - (perda_gordura_total / data.peso_atual * 100));
+    
+    return {
+      peso_estimado: Math.round(peso_final * 10) / 10,
+      gordura_corporal_estimada: Math.round(gordura_final * 10) / 10,
+      perda_gordura_kg: Math.round(perda_gordura_total * 10) / 10,
+      ganho_muscular_kg: Math.round(ganho_muscular_total * 10) / 10,
+      mudanca_composicao: Math.round((perda_gordura_total + ganho_muscular_total) * 10) / 10
+    };
   };
 
   const handleNext = () => {
     if (step < totalSteps) {
-      setStep(step + 1);
+      if (validateStep(step)) {
+        setStep(step + 1);
+        setValidationErrors({});
+      }
     } else {
-      handleCalculate();
+      if (validateStep(step)) {
+        handleCalculate();
+      }
     }
   };
 
   const handlePrevious = () => {
     if (step > 1) {
       setStep(step - 1);
+      setValidationErrors({});
     }
   };
 
   const handleCalculate = async () => {
     setIsCalculating(true);
-    
-    // Simular processamento complexo
     await new Promise(resolve => setTimeout(resolve, 3000));
-    
     const calculatedResults = calculateRecompositionMetrics(userData as UserData);
     setResults(calculatedResults);
     setIsCalculating(false);
+  };
+
+  const renderValidationError = (field: string) => {
+    if (validationErrors[field]) {
+      return (
+        <div className="flex items-center gap-2 mt-1 text-red-400 text-sm">
+          <X className="h-4 w-4" />
+          {validationErrors[field]}
+        </div>
+      );
+    }
+    return null;
   };
 
   const renderStep = () => {
     switch (step) {
       case 1:
         return (
-          <Card className="w-full max-w-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Scale className="h-5 w-5" />
-                Dados Pessoais e Metas
+          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Scale className="h-6 w-6" />
+                </div>
+                Dados Pessoais
               </CardTitle>
-              <CardDescription>
-                Informações básicas e objetivos de recomposição corporal
+              <CardDescription className="text-white/90">
+                Informações básicas para análise de recomposição corporal
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="nome">Nome</Label>
+            <CardContent className="space-y-6 p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="nome" className="text-gray-700 font-medium">Nome *</Label>
                   <Input
                     id="nome"
                     value={userData.nome || ''}
                     onChange={(e) => setUserData({...userData, nome: e.target.value})}
                     placeholder="Seu nome"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.nome ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
+                  {renderValidationError('nome')}
                 </div>
-                <div>
-                  <Label htmlFor="idade">Idade</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="idade" className="text-gray-700 font-medium">Idade *</Label>
                   <Input
                     id="idade"
                     type="number"
                     value={userData.idade || ''}
                     onChange={(e) => setUserData({...userData, idade: parseInt(e.target.value)})}
                     placeholder="Anos"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.idade ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
+                  {renderValidationError('idade')}
                 </div>
-                <div>
-                  <Label htmlFor="sexo">Sexo</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="sexo" className="text-gray-700 font-medium">Sexo *</Label>
                   <Select onValueChange={(value) => setUserData({...userData, sexo: value as 'masculino' | 'feminino'})}>
-                    <SelectTrigger>
+                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.sexo ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}>
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
@@ -535,37 +574,38 @@ const RecomposicaoCorporal: React.FC = () => {
                       <SelectItem value="feminino">Feminino</SelectItem>
                     </SelectContent>
                   </Select>
+                  {renderValidationError('sexo')}
                 </div>
-                <div>
-                  <Label htmlFor="altura">Altura (cm)</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="altura" className="text-gray-700 font-medium">Altura (cm) *</Label>
                   <Input
                     id="altura"
                     type="number"
                     value={userData.altura || ''}
                     onChange={(e) => setUserData({...userData, altura: parseInt(e.target.value)})}
                     placeholder="175"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.altura ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
+                  {renderValidationError('altura')}
                 </div>
-                <div>
-                  <Label htmlFor="peso_atual">Peso Atual (kg)</Label>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="peso_atual" className="text-gray-700 font-medium">Peso Atual (kg) *</Label>
                   <Input
                     id="peso_atual"
                     type="number"
                     step="0.1"
                     value={userData.peso_atual || ''}
                     onChange={(e) => setUserData({...userData, peso_atual: parseFloat(e.target.value)})}
-                    placeholder="75.5"
+                    placeholder="70.5"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.peso_atual ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
-                </div>
-                <div>
-                  <Label htmlFor="prazo">Prazo (meses)</Label>
-                  <Input
-                    id="prazo"
-                    type="number"
-                    value={userData.prazo_meses || ''}
-                    onChange={(e) => setUserData({...userData, prazo_meses: parseInt(e.target.value)})}
-                    placeholder="6"
-                  />
+                  {renderValidationError('peso_atual')}
                 </div>
               </div>
             </CardContent>
@@ -574,92 +614,121 @@ const RecomposicaoCorporal: React.FC = () => {
 
       case 2:
         return (
-          <Card className="w-full max-w-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5" />
-                Composição Corporal Atual
+          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <RotateCcw className="h-6 w-6" />
+                </div>
+                Objetivos de Recomposição
               </CardTitle>
-              <CardDescription>
-                Dados de bioimpedância (essenciais para recomposição)
+              <CardDescription className="text-white/90">
+                Defina suas metas de composição corporal
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <Alert>
-                <Info className="h-4 w-4" />
-                <AlertDescription>
-                  Para recomposição corporal, dados precisos de composição são fundamentais. Use uma balança de bioimpedância ou DEXA scan.
-                </AlertDescription>
-              </Alert>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="massa_gorda">Massa Gorda (kg)</Label>
-                  <Input
-                    id="massa_gorda"
-                    type="number"
-                    step="0.1"
-                    value={userData.massa_gorda || ''}
-                    onChange={(e) => setUserData({...userData, massa_gorda: parseFloat(e.target.value)})}
-                    placeholder="12.5"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="massa_magra">Massa Magra (kg)</Label>
-                  <Input
-                    id="massa_magra"
-                    type="number"
-                    step="0.1"
-                    value={userData.massa_magra || ''}
-                    onChange={(e) => setUserData({...userData, massa_magra: parseFloat(e.target.value)})}
-                    placeholder="63.0"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="massa_muscular">Massa Muscular (kg)</Label>
-                  <Input
-                    id="massa_muscular"
-                    type="number"
-                    step="0.1"
-                    value={userData.massa_muscular || ''}
-                    onChange={(e) => setUserData({...userData, massa_muscular: parseFloat(e.target.value)})}
-                    placeholder="55.2"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="hidratacao">Hidratação (%)</Label>
-                  <Input
-                    id="hidratacao"
-                    type="number"
-                    step="0.1"
-                    value={userData.hidratacao || ''}
-                    onChange={(e) => setUserData({...userData, hidratacao: parseFloat(e.target.value)})}
-                    placeholder="58.5"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="gordura_atual">% Gordura Atual</Label>
+            <CardContent className="space-y-6 p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="gordura_atual" className="text-gray-700 font-medium">Gordura Corporal Atual (%) *</Label>
                   <Input
                     id="gordura_atual"
                     type="number"
                     step="0.1"
                     value={userData.gordura_corporal_atual || ''}
                     onChange={(e) => setUserData({...userData, gordura_corporal_atual: parseFloat(e.target.value)})}
-                    placeholder="16.5"
+                    placeholder="20.0"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.gordura_corporal_atual ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
+                  {renderValidationError('gordura_corporal_atual')}
                 </div>
-                <div>
-                  <Label htmlFor="gordura_objetivo">% Gordura Objetivo</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="gordura_objetivo" className="text-gray-700 font-medium">Gordura Corporal Objetivo (%) *</Label>
                   <Input
                     id="gordura_objetivo"
                     type="number"
                     step="0.1"
                     value={userData.gordura_corporal_objetivo || ''}
                     onChange={(e) => setUserData({...userData, gordura_corporal_objetivo: parseFloat(e.target.value)})}
-                    placeholder="12.0"
+                    placeholder="15.0"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.gordura_corporal_objetivo ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
+                  />
+                  {renderValidationError('gordura_corporal_objetivo')}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="prazo" className="text-gray-700 font-medium">Prazo para Meta (meses) *</Label>
+                  <Input
+                    id="prazo"
+                    type="number"
+                    value={userData.prazo_meses || ''}
+                    onChange={(e) => setUserData({...userData, prazo_meses: parseInt(e.target.value)})}
+                    placeholder="6"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.prazo_meses ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
+                  />
+                  {renderValidationError('prazo_meses')}
+                </div>
+                <div className="space-y-3">
+                  <Label htmlFor="confianca" className="text-gray-700 font-medium">Confiança na Recomposição (1-10) *</Label>
+                  <Input
+                    id="confianca"
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={userData.confianca_recomposicao || ''}
+                    onChange={(e) => setUserData({...userData, confianca_recomposicao: parseInt(e.target.value)})}
+                    placeholder="7"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.confianca_recomposicao ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
+                  />
+                  {renderValidationError('confianca_recomposicao')}
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl border" style={{ backgroundColor: `${colors.primary}10`, borderColor: `${colors.primary}40` }}>
+                <p className="text-sm" style={{ color: colors.primaryDark }}>
+                  <Sparkles className="inline h-4 w-4 mr-1" />
+                  1 = Muito inseguro, 10 = Extremamente confiante no processo de recomposição
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="massa_muscular_atual" className="text-gray-700 font-medium">Massa Muscular Atual (kg) - Opcional</Label>
+                  <Input
+                    id="massa_muscular_atual"
+                    type="number"
+                    step="0.1"
+                    value={userData.massa_muscular_atual || ''}
+                    onChange={(e) => setUserData({...userData, massa_muscular_atual: parseFloat(e.target.value)})}
+                    placeholder="45.0"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="massa_muscular_objetivo" className="text-gray-700 font-medium">Massa Muscular Objetivo (kg) - Opcional</Label>
+                  <Input
+                    id="massa_muscular_objetivo"
+                    type="number"
+                    step="0.1"
+                    value={userData.massa_muscular_objetivo || ''}
+                    onChange={(e) => setUserData({...userData, massa_muscular_objetivo: parseFloat(e.target.value)})}
+                    placeholder="50.0"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                 </div>
               </div>
@@ -669,22 +738,84 @@ const RecomposicaoCorporal: React.FC = () => {
 
       case 3:
         return (
-          <Card className="w-full max-w-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5" />
-                Experiência e Preferências de Treino
+          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Activity className="h-6 w-6" />
+                </div>
+                Nível de Atividade e Treino
               </CardTitle>
-              <CardDescription>
-                Configure seu perfil de treinamento
+              <CardDescription className="text-white/90">
+                Configure sua rotina de atividades físicas
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="nivel_experiencia">Nível de Experiência</Label>
-                <Select onValueChange={(value) => setUserData({...userData, nivel_experiencia: value as any})}>
-                  <SelectTrigger>
+            <CardContent className="space-y-6 p-8">
+              <div className="space-y-2">
+                <Label htmlFor="nivel_atividade" className="text-gray-700 font-medium">Nível de Atividade Atual *</Label>
+                <Select onValueChange={(value) => setUserData({...userData, nivel_atividade: value as any})}>
+                  <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                    validationErrors.nivel_atividade ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                  }`}>
                     <SelectValue placeholder="Selecione seu nível" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="sedentario">Sedentário (pouco ou nenhum exercício)</SelectItem>
+                    <SelectItem value="leve">Leve (exercício leve 1-3 dias/semana)</SelectItem>
+                    <SelectItem value="moderado">Moderado (exercício moderado 3-5 dias/semana)</SelectItem>
+                    <SelectItem value="intenso">Intenso (exercício intenso 6-7 dias/semana)</SelectItem>
+                    <SelectItem value="muito_intenso">Muito Intenso (exercício muito intenso, trabalho físico)</SelectItem>
+                  </SelectContent>
+                </Select>
+                {renderValidationError('nivel_atividade')}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="dias_treino" className="text-gray-700 font-medium">Dias de Treino por Semana *</Label>
+                  <Select onValueChange={(value) => setUserData({...userData, dias_treino_semana: parseInt(value)})}>
+                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.dias_treino_semana ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="2">2 dias</SelectItem>
+                      <SelectItem value="3">3 dias</SelectItem>
+                      <SelectItem value="4">4 dias</SelectItem>
+                      <SelectItem value="5">5 dias</SelectItem>
+                      <SelectItem value="6">6 dias</SelectItem>
+                      <SelectItem value="7">7 dias</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {renderValidationError('dias_treino_semana')}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="tempo_sessao" className="text-gray-700 font-medium">Tempo por Sessão (minutos) *</Label>
+                  <Select onValueChange={(value) => setUserData({...userData, tempo_disponivel_sessao: parseInt(value)})}>
+                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.tempo_disponivel_sessao ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="30">30 minutos</SelectItem>
+                      <SelectItem value="45">45 minutos</SelectItem>
+                      <SelectItem value="60">60 minutos</SelectItem>
+                      <SelectItem value="75">75 minutos</SelectItem>
+                      <SelectItem value="90">90 minutos</SelectItem>
+                      <SelectItem value="120">120 minutos</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {renderValidationError('tempo_disponivel_sessao')}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="experiencia_treino" className="text-gray-700 font-medium">Experiência com Treino (Opcional)</Label>
+                <Select onValueChange={(value) => setUserData({...userData, experiencia_treino: value as any})}>
+                  <SelectTrigger className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12">
+                    <SelectValue placeholder="Selecione sua experiência" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="iniciante">Iniciante (0-1 ano)</SelectItem>
@@ -694,47 +825,11 @@ const RecomposicaoCorporal: React.FC = () => {
                 </Select>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="dias_treino">Dias de Treino/Semana</Label>
-                  <Select onValueChange={(value) => setUserData({...userData, dias_treino_semana: parseInt(value)})}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="4">4 dias</SelectItem>
-                      <SelectItem value="5">5 dias</SelectItem>
-                      <SelectItem value="6">6 dias</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="preferencia_cardio">Preferência por Cardio</Label>
-                  <Select onValueChange={(value) => setUserData({...userData, preferencia_cardio: value as any})}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="baixa">Baixa (mínimo necessário)</SelectItem>
-                      <SelectItem value="moderada">Moderada (equilibrado)</SelectItem>
-                      <SelectItem value="alta">Alta (gosto de cardio)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="local_treino">Local de Treino</Label>
-                <Select onValueChange={(value) => setUserData({...userData, local_treino: value as any})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="academia">Academia completa</SelectItem>
-                    <SelectItem value="casa">Casa (equipamentos limitados)</SelectItem>
-                    <SelectItem value="ambos">Ambos</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="p-4 rounded-xl border" style={{ backgroundColor: `${colors.primary}10`, borderColor: `${colors.primary}40` }}>
+                <p className="text-sm" style={{ color: colors.primaryDark }}>
+                  <Target className="inline h-4 w-4 mr-1" />
+                  Para recomposição corporal, recomendamos 4-5 dias de treino combinando força e cardio
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -742,44 +837,89 @@ const RecomposicaoCorporal: React.FC = () => {
 
       case 4:
         return (
-          <Card className="w-full max-w-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Heart className="h-5 w-5" />
-                Histórico e Limitações
+          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <BarChart3 className="h-6 w-6" />
+                </div>
+                Informações Adicionais (Opcional)
               </CardTitle>
-              <CardDescription>
-                Informações adicionais para personalização máxima
+              <CardDescription className="text-white/90">
+                Dados extras para otimização máxima
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="historico_dietas">Histórico de Dietas</Label>
-                <Input
-                  id="historico_dietas"
-                  value={userData.historico_dietas || ''}
-                  onChange={(e) => setUserData({...userData, historico_dietas: e.target.value})}
-                  placeholder="Ex: cutting anterior, dietas restritivas..."
-                />
+            <CardContent className="space-y-6 p-8">
+              <Alert className="border" style={{ backgroundColor: `${colors.primary}10`, borderColor: `${colors.primary}40` }}>
+                <Info className="h-4 w-4" style={{ color: colors.primary }} />
+                <AlertDescription style={{ color: colors.primaryDark }}>
+                  Estes dados são opcionais, mas melhoram a precisão dos cálculos de recomposição.
+                </AlertDescription>
+              </Alert>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="cintura" className="text-gray-700 font-medium">Circunferência Cintura (cm)</Label>
+                  <Input
+                    id="cintura"
+                    type="number"
+                    value={userData.circunferencia_cintura || ''}
+                    onChange={(e) => setUserData({...userData, circunferencia_cintura: parseInt(e.target.value)})}
+                    placeholder="80"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="quadril" className="text-gray-700 font-medium">Circunferência Quadril (cm)</Label>
+                  <Input
+                    id="quadril"
+                    type="number"
+                    value={userData.circunferencia_quadril || ''}
+                    onChange={(e) => setUserData({...userData, circunferencia_quadril: parseInt(e.target.value)})}
+                    placeholder="95"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="massa_magra" className="text-gray-700 font-medium">Massa Magra (kg)</Label>
+                  <Input
+                    id="massa_magra"
+                    type="number"
+                    step="0.1"
+                    value={userData.massa_magra || ''}
+                    onChange={(e) => setUserData({...userData, massa_magra: parseFloat(e.target.value)})}
+                    placeholder="55.0"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
+                  />
+                </div>
               </div>
 
-              <div>
-                <Label htmlFor="restricoes">Restrições Alimentares</Label>
-                <Input
-                  id="restricoes"
-                  value={userData.restricoes_alimentares || ''}
-                  onChange={(e) => setUserData({...userData, restricoes_alimentares: e.target.value})}
-                  placeholder="Ex: vegetariano, intolerâncias..."
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="lesoes">Lesões ou Limitações</Label>
-                <Input
+              <div className="space-y-2">
+                <Label htmlFor="lesoes" className="text-gray-700 font-medium">Lesões ou Limitações</Label>
+                <Textarea
                   id="lesoes"
                   value={userData.lesoes_limitacoes || ''}
                   onChange={(e) => setUserData({...userData, lesoes_limitacoes: e.target.value})}
-                  placeholder="Ex: lesão no joelho, problemas nas costas..."
+                  placeholder="Descreva qualquer lesão, dor ou limitação física..."
+                  rows={3}
+                  className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl resize-none"
+                  style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="suplementacao" className="text-gray-700 font-medium">Suplementação Atual</Label>
+                <Textarea
+                  id="suplementacao"
+                  value={userData.suplementacao_atual || ''}
+                  onChange={(e) => setUserData({...userData, suplementacao_atual: e.target.value})}
+                  placeholder="Ex: Whey protein, creatina, termogênico..."
+                  rows={2}
+                  className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl resize-none"
+                  style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                 />
               </div>
             </CardContent>
@@ -793,16 +933,42 @@ const RecomposicaoCorporal: React.FC = () => {
 
   if (isCalculating) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6 p-6 bg-gradient-to-br from-purple-50 to-pink-100">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto"></div>
-          <h2 className="text-2xl font-bold text-gray-800">Calculando Recomposição Corporal</h2>
-          <p className="text-gray-600">Analisando estratégias avançadas de body recomposition...</p>
-          <div className="space-y-2">
-            <p className="text-sm text-gray-500">✓ Analisando composição corporal atual</p>
-            <p className="text-sm text-gray-500">✓ Calculando estratégia calórica ótima</p>
-            <p className="text-sm text-gray-500">✓ Gerando plano híbrido de treino</p>
-            <p className="text-sm text-gray-500">✓ Criando cronograma periodizado</p>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-8 p-6 relative overflow-hidden" style={{ backgroundColor: colors.dark }}>
+        {/* Elementos de fundo animados */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob" style={{ backgroundColor: colors.primary }}></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000" style={{ backgroundColor: colors.primaryLight }}></div>
+          <div className="absolute top-40 left-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000" style={{ backgroundColor: colors.primaryDark }}></div>
+        </div>
+
+        <div className="text-center space-y-6 z-10 backdrop-blur-sm bg-white/10 p-12 rounded-3xl border border-white/20">
+          <div className="relative">
+            <div className="animate-spin rounded-full h-20 w-20 border-4 border-white/30 mx-auto" style={{ borderTopColor: colors.primary }}></div>
+            <div className="absolute inset-0 animate-ping rounded-full h-20 w-20 border-4 border-white/20 mx-auto"></div>
+          </div>
+          
+          <div className="space-y-4">
+            <h2 className="text-4xl font-bold text-white">Calculando Recomposição Corporal</h2>
+            <p className="text-xl text-gray-200">Aplicando algoritmos de transformação corporal...</p>
+            
+            <div className="space-y-3 mt-8">
+              <div className="flex items-center justify-center space-x-3 text-white/90">
+                <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: colors.primary }}></div>
+                <p className="text-sm">Analisando composição corporal</p>
+              </div>
+              <div className="flex items-center justify-center space-x-3 text-white/90">
+                <div className="w-2 h-2 rounded-full animate-pulse animation-delay-500" style={{ backgroundColor: colors.primaryLight }}></div>
+                <p className="text-sm">Calculando déficit calórico ideal</p>
+              </div>
+              <div className="flex items-center justify-center space-x-3 text-white/90">
+                <div className="w-2 h-2 rounded-full animate-pulse animation-delay-1000" style={{ backgroundColor: colors.primaryDark }}></div>
+                <p className="text-sm">Otimizando estratégia de recomposição</p>
+              </div>
+              <div className="flex items-center justify-center space-x-3 text-white/90">
+                <div className="w-2 h-2 rounded-full animate-pulse animation-delay-1500" style={{ backgroundColor: colors.primary }}></div>
+                <p className="text-sm">Gerando cronograma personalizado</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -811,333 +977,105 @@ const RecomposicaoCorporal: React.FC = () => {
 
   if (results) {
     return (
-      <div className="min-h-screen p-6 bg-gradient-to-br from-purple-50 to-pink-100">
-        <div className="max-w-6xl mx-auto space-y-6">
-          {/* Header */}
-          <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-gray-800">Plano de Recomposição Corporal</h1>
-            <p className="text-gray-600">Estratégia científica para perder gordura e ganhar músculo simultaneamente</p>
+      <div className="min-h-screen p-6 relative overflow-hidden" style={{ backgroundColor: colors.dark }}>
+        {/* Elementos de fundo animados */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-20 right-20 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob" style={{ backgroundColor: colors.primary }}></div>
+          <div className="absolute bottom-20 left-20 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000" style={{ backgroundColor: colors.primaryLight }}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000" style={{ backgroundColor: colors.primaryDark }}></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto space-y-8 relative z-10">
+          {/* Header com animação */}
+          <div className="text-center space-y-4 animate-fade-in">
+            <div className="inline-flex items-center gap-3 text-white px-8 py-4 rounded-2xl shadow-2xl" style={{ backgroundColor: colors.primary }}>
+              <Sparkles className="h-8 w-8" />
+              <h1 className="text-4xl font-bold">Plano de Recomposição Corporal</h1>
+              <Sparkles className="h-8 w-8" />
+            </div>
+            <p className="text-xl text-gray-300">Transformação científica: perder gordura e ganhar músculo</p>
           </div>
 
-          {/* Análise de Dificuldade */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Brain className="h-5 w-5" />
-                Análise de Viabilidade
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center">
-                  <p className="text-sm text-gray-600">Dificuldade</p>
-                  <Badge variant={results.dificuldade_recomposicao === 'baixa' ? "default" : 
-                                results.dificuldade_recomposicao === 'moderada' ? "secondary" : "destructive"}>
-                    {results.dificuldade_recomposicao.charAt(0).toUpperCase() + results.dificuldade_recomposicao.slice(1)}
-                  </Badge>
-                </div>
-                <div className="text-center">
-                  <p className="text-sm text-gray-600">Probabilidade de Sucesso</p>
-                  <p className="text-lg font-bold">{(results.probabilidade_sucesso * 100).toFixed(0)}%</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-sm text-gray-600">Tempo Estimado</p>
-                  <p className="text-lg font-bold">{results.tempo_estimado_meses} meses</p>
-                </div>
-              </div>
-              
-              {results.fatores_criticos.length > 0 && (
-                <Alert className="mt-4">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription>
-                    <strong>Fatores Críticos:</strong>
-                    <ul className="list-disc list-inside mt-2">
-                      {results.fatores_criticos.map((fator, index) => (
-                        <li key={index} className="text-sm">{fator}</li>
-                      ))}
-                    </ul>
-                  </AlertDescription>
-                </Alert>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Composição Corporal Atual vs Objetivo */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
+          {/* Score Motivacional e Badges */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5" />
-                  Composição Atual
+                <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                  <div className="p-3 rounded-xl" style={{ backgroundColor: colors.primary }}>
+                    <Trophy className="h-6 w-6" />
+                  </div>
+                  Score Motivacional
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span>IMC:</span>
-                    <span className="font-medium">{results.imc} ({results.classificacao_imc})</span>
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <div className="text-6xl font-bold text-white">
+                      {results.score_motivacional}
+                    </div>
+                    <p className="text-xl text-gray-300 mt-2">Pontos de Motivação</p>
                   </div>
-                  <div className="flex justify-between">
-                    <span>% Gordura:</span>
-                    <span className="font-medium">{results.percentual_gordura_atual}% ({results.classificacao_gordura})</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>% Massa Muscular:</span>
-                    <span className="font-medium">{results.massa_muscular_relativa}%</span>
+                  
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-gray-300">
+                      <span>Nível do Usuário</span>
+                      <Badge className="text-white" style={{ backgroundColor: colors.primary }}>
+                        {results.nivel_usuario}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between text-gray-300">
+                      <span>Pontos de Experiência</span>
+                      <span className="font-bold" style={{ color: colors.primary }}>{results.pontos_experiencia} XP</span>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5" />
-                  Metas de Transformação
+                <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                  <div className="p-3 rounded-xl" style={{ backgroundColor: colors.primary }}>
+                    <Award className="h-6 w-6" />
+                  </div>
+                  Badges Conquistadas
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span>Perda de Gordura:</span>
-                    <Badge variant="destructive">-{results.perda_gordura_kg}kg</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Ganho Muscular:</span>
-                    <Badge variant="default">+{results.ganho_muscular_kg}kg</Badge>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Peso Final:</span>
-                    <span className="font-medium">{results.peso_final_estimado}kg</span>
-                  </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {results.badges_conquistadas.map((badge, index) => (
+                    <div key={index} className="border rounded-xl p-4 text-center backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                      <div className="text-2xl mb-2">{badge.split(' ')[0]}</div>
+                      <div className="text-sm font-medium" style={{ color: colors.primary }}>{badge.split(' ').slice(1).join(' ')}</div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
           </div>
-
-          {/* Estratégia Calórica */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <RotateCcw className="h-5 w-5" />
-                Estratégia Nutricional: {results.estrategia_recomendada.replace('_', ' ').toUpperCase()}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-3">Calorias por Tipo de Dia</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between p-3 bg-green-50 rounded-lg">
-                      <span>Dias de Treino:</span>
-                      <span className="font-bold text-green-700">{results.calorias_treino} kcal</span>
-                    </div>
-                    <div className="flex justify-between p-3 bg-blue-50 rounded-lg">
-                      <span>Dias de Descanso:</span>
-                      <span className="font-bold text-blue-700">{results.calorias_descanso} kcal</span>
-                    </div>
-                    <div className="flex justify-between p-3 bg-purple-50 rounded-lg">
-                      <span>Diferença:</span>
-                      <span className="font-bold text-purple-700">{results.calorias_treino - results.calorias_descanso} kcal</span>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-3">Macronutrientes</h4>
-                  <div className="space-y-2">
-                    <div className="text-sm">
-                      <strong>Dias de Treino:</strong>
-                      <ul className="list-disc list-inside ml-2 mt-1">
-                        <li>Proteína: {results.plano_nutricional_ciclico.macros_treino.proteina}g (30%)</li>
-                        <li>Carboidratos: {results.plano_nutricional_ciclico.macros_treino.carboidratos}g (40%)</li>
-                        <li>Gorduras: {results.plano_nutricional_ciclico.macros_treino.gorduras}g (30%)</li>
-                      </ul>
-                    </div>
-                    <div className="text-sm">
-                      <strong>Dias de Descanso:</strong>
-                      <ul className="list-disc list-inside ml-2 mt-1">
-                        <li>Proteína: {results.plano_nutricional_ciclico.macros_descanso.proteina}g (35%)</li>
-                        <li>Carboidratos: {results.plano_nutricional_ciclico.macros_descanso.carboidratos}g (25%)</li>
-                        <li>Gorduras: {results.plano_nutricional_ciclico.macros_descanso.gorduras}g (40%)</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Plano de Treino Híbrido */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5" />
-                Plano de Treino Híbrido
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-3">Estrutura Semanal</h4>
-                  <ul className="space-y-2 text-sm">
-                    <li>• <strong>Frequência:</strong> {results.plano_treino_hibrido.frequencia_semanal}x/semana</li>
-                    <li>• <strong>Divisão:</strong> {results.plano_treino_hibrido.divisao}</li>
-                    <li>• <strong>Cardio:</strong> {results.plano_treino_hibrido.cardio_frequencia}</li>
-                    <li>• <strong>Tipo Cardio:</strong> {results.plano_treino_hibrido.cardio_tipo}</li>
-                    <li>• <strong>Força/Hipertrofia:</strong> {results.plano_treino_hibrido.forca_hipertrofia}</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-3">Exemplo de Semana</h4>
-                  <div className="space-y-1 text-sm">
-                    {Object.entries(results.plano_treino_hibrido.exemplo_semana).map(([dia, treino]) => (
-                      <div key={dia} className="flex justify-between">
-                        <span className="capitalize font-medium">{dia}:</span>
-                        <span className="text-gray-600">{treino}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Timing Nutricional */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                Timing Nutricional Estratégico
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-3">Timing de Carboidratos</h4>
-                  <div className="space-y-3">
-                    {Object.entries(results.plano_nutricional_ciclico.timing_carboidratos).map(([momento, instrucao]) => (
-                      <div key={momento} className="border-l-2 border-purple-200 pl-3">
-                        <p className="font-medium text-sm capitalize">{momento.replace('_', ' ')}</p>
-                        <p className="text-xs text-gray-600">{instrucao}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-3">Suplementação Cíclica</h4>
-                  <div className="space-y-3">
-                    <div>
-                      <p className="font-medium text-sm text-green-700">Dias de Treino:</p>
-                      <ul className="list-disc list-inside text-xs text-gray-600 ml-2">
-                        {results.plano_nutricional_ciclico.suplementacao_ciclica.dias_treino.map((supl: string, index: number) => (
-                          <li key={index}>{supl}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm text-blue-700">Dias de Descanso:</p>
-                      <ul className="list-disc list-inside text-xs text-gray-600 ml-2">
-                        {results.plano_nutricional_ciclico.suplementacao_ciclica.dias_descanso.map((supl: string, index: number) => (
-                          <li key={index}>{supl}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Marcos Mensais */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
-                Marcos de Progresso Mensais
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {results.marcos_mensais.slice(0, 6).map((marco, index) => (
-                  <div key={index} className="p-4 border rounded-lg bg-gradient-to-br from-purple-50 to-pink-50">
-                    <h5 className="font-semibold text-purple-800">Mês {marco.mes}</h5>
-                    <div className="space-y-1 text-sm mt-2">
-                      <p>Peso: <span className="font-medium">{marco.peso_estimado}kg</span></p>
-                      <p>Gordura: <span className="font-medium">{marco.gordura_estimada}%</span></p>
-                      <p className="text-xs text-gray-600">{marco.marcos_visuais}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Indicadores de Progresso */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5" />
-                Monitoramento e Indicadores
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-3">Indicadores de Progresso</h4>
-                  <div className="space-y-2">
-                    {results.indicadores_progresso.map((indicador, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
-                        <span className="text-sm">{indicador}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-3">Recomendações de Otimização</h4>
-                  <div className="space-y-2">
-                    {results.recomendacoes_otimizacao.map((recomendacao, index) => (
-                      <div key={index} className="flex items-start gap-2 p-2 bg-purple-50 rounded-lg">
-                        <Info className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm">{recomendacao}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Cronograma Periodizado */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
-                Cronograma Periodizado
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {Object.entries(results.cronograma_periodizado).filter(([key]) => key.startsWith('fase')).map(([fase, dados]: [string, any]) => (
-                  <div key={fase} className="p-4 border rounded-lg">
-                    <h5 className="font-semibold capitalize">{fase.replace('_', ' ')}: {dados.duracao}</h5>
-                    <p className="text-sm text-gray-600 mt-1">{dados.foco}</p>
-                    <p className="text-xs text-gray-500 mt-2">{dados.ajustes}</p>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Botões de Ação */}
-          <div className="flex gap-4 justify-center">
-            <Button onClick={() => window.print()} variant="outline">
+          <div className="flex flex-wrap gap-6 justify-center pt-8">
+            <Button 
+              onClick={() => window.print()} 
+              className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
+            >
+              <BarChart3 className="mr-2 h-5 w-5" />
               Imprimir Plano
             </Button>
-            <Button onClick={() => navigate('/progress')}>
+            <Button 
+              onClick={() => navigate('/progress')}
+              className="text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
+              style={{ backgroundColor: colors.primary }}
+            >
+              <TrendingUp className="mr-2 h-5 w-5" />
               Iniciar Acompanhamento
             </Button>
-            <Button onClick={() => {setResults(null); setStep(1);}} variant="outline">
+            <Button 
+              onClick={() => {setResults(null); setStep(1);}} 
+              className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
+            >
+              <Sparkles className="mr-2 h-5 w-5" />
               Nova Análise
             </Button>
           </div>
@@ -1147,21 +1085,52 @@ const RecomposicaoCorporal: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-purple-50 to-pink-100">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-gray-800">Recomposição Corporal Inteligente</h1>
-          <p className="text-gray-600">Perca gordura e ganhe músculo simultaneamente com ciência</p>
+    <div className="min-h-screen p-6 relative overflow-hidden" style={{ backgroundColor: colors.dark }}>
+      {/* Elementos de fundo animados */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 right-20 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob" style={{ backgroundColor: colors.primary }}></div>
+        <div className="absolute bottom-20 left-20 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000" style={{ backgroundColor: colors.primaryLight }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000" style={{ backgroundColor: colors.primaryDark }}></div>
+      </div>
+
+      <div className="max-w-5xl mx-auto space-y-8 relative z-10">
+        {/* Header com animação */}
+        <div className={`text-center space-y-4 transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <div className="inline-flex items-center gap-3 text-white px-8 py-4 rounded-2xl shadow-2xl backdrop-blur-lg" style={{ backgroundColor: colors.primary }}>
+            <Sparkles className="h-8 w-8" />
+            <h1 className="text-4xl font-bold">Recomposição Corporal Inteligente</h1>
+            <Sparkles className="h-8 w-8" />
+          </div>
+          <p className="text-xl text-gray-200">Algoritmos avançados de transformação corporal</p>
         </div>
 
-        {/* Progress Bar */}
-        <div className="w-full max-w-2xl mx-auto">
-          <div className="flex justify-between text-sm text-gray-600 mb-2">
-            <span>Passo {step} de {totalSteps}</span>
-            <span>{Math.round(progress)}% completo</span>
+        {/* Progress Bar com design moderno */}
+        <div className={`w-full max-w-3xl mx-auto transition-all duration-700 delay-300 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <div className="flex justify-between text-sm text-gray-200 mb-4">
+            <span className="font-medium">Passo {step} de {totalSteps}</span>
+            <span className="font-medium">{Math.round(progress)}% completo</span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <div className="relative">
+            <Progress 
+              value={progress} 
+              className="h-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full overflow-hidden"
+            />
+            <div className="absolute inset-0 rounded-full opacity-80" 
+                 style={{width: `${progress}%`, backgroundColor: colors.primary}}></div>
+          </div>
+          
+          {/* Step indicators */}
+          <div className="flex justify-between mt-4">
+            {Array.from({length: totalSteps}, (_, i) => (
+              <div key={i} className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                i + 1 <= step 
+                  ? 'text-white shadow-lg' 
+                  : 'text-gray-300 border border-white/30'
+              }`} style={{ backgroundColor: i + 1 <= step ? colors.primary : 'transparent' }}>
+                {i + 1 <= step ? <CheckCircle className="h-4 w-4" /> : i + 1}
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Step Content */}
@@ -1169,18 +1138,93 @@ const RecomposicaoCorporal: React.FC = () => {
           {renderStep()}
         </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-center gap-4">
+        {/* Navigation Buttons com design moderno */}
+        <div className={`flex justify-center gap-6 transition-all duration-700 delay-500 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
           {step > 1 && (
-            <Button onClick={handlePrevious} variant="outline">
+            <Button 
+              onClick={handlePrevious} 
+              className="bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-4 rounded-2xl text-lg font-semibold backdrop-blur-sm hover:scale-105 transition-all duration-300"
+            >
               Anterior
             </Button>
           )}
-          <Button onClick={handleNext}>
-            {step === totalSteps ? 'Calcular Plano' : 'Próximo'}
+          <Button 
+            onClick={handleNext}
+            className="text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
+            style={{ backgroundColor: colors.primary }}
+          >
+            {step === totalSteps ? (
+              <>
+                <Rocket className="mr-2 h-5 w-5" />
+                Calcular Recomposição
+              </>
+            ) : (
+              'Próximo'
+            )}
           </Button>
         </div>
+
+        {/* Mostrar erros de validação se houver */}
+        {Object.keys(validationErrors).length > 0 && (
+          <div className="fixed bottom-4 right-4 max-w-md">
+            <Alert className="bg-red-500/20 border-red-500/30 backdrop-blur-sm">
+              <AlertTriangle className="h-4 w-4 text-red-400" />
+              <AlertDescription className="text-red-300">
+                Por favor, corrija os campos obrigatórios destacados em vermelho.
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
       </div>
+
+      {/* CSS personalizado para animações */}
+      <style jsx>{`
+        @keyframes blob {
+          0% {
+            transform: translate(0px, 0px) scale(1);
+          }
+          33% {
+            transform: translate(30px, -50px) scale(1.1);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.9);
+          }
+          100% {
+            transform: translate(0px, 0px) scale(1);
+          }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+        .animation-delay-500 {
+          animation-delay: 0.5s;
+        }
+        .animation-delay-1000 {
+          animation-delay: 1s;
+        }
+        .animation-delay-1500 {
+          animation-delay: 1.5s;
+        }
+        .animate-fade-in {
+          animation: fadeIn 1s ease-out;
+        }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 };

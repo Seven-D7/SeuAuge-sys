@@ -21,7 +21,20 @@ import {
   Clock,
   CheckCircle,
   AlertTriangle,
-  Info
+  Info,
+  Star,
+  Trophy,
+  Sparkles,
+  Flame,
+  Award,
+  BarChart3,
+  PieChart,
+  LineChart,
+  TrendingUp,
+  Users,
+  Shield,
+  Rocket,
+  X
 } from 'lucide-react';
 
 // Importar algoritmos avançados
@@ -33,7 +46,7 @@ import {
 } from '@/lib/fitness/advanced_fitness_algorithms';
 
 interface UserData {
-  // Dados básicos
+  // Dados básicos (obrigatórios)
   nome: string;
   idade: number;
   sexo: 'masculino' | 'feminino';
@@ -42,14 +55,16 @@ interface UserData {
   peso_objetivo: number;
   prazo: number;
   
-  // Dados avançados
+  // Dados avançados (obrigatórios)
   nivel_atividade: 'sedentario' | 'leve' | 'moderado' | 'intenso';
   experiencia_exercicio: 'iniciante' | 'intermediario' | 'avancado';
   confianca_exercicio: number; // 1-10
-  historico_dietas: string;
-  restricoes_alimentares: string;
-  horarios_disponiveis: string[];
-  preferencias_exercicio: string[];
+  
+  // Dados opcionais
+  historico_dietas?: string;
+  restricoes_alimentares?: string;
+  horarios_disponiveis?: string[];
+  preferencias_exercicio?: string[];
   
   // Dados de composição corporal (opcionais)
   massa_gorda?: number;
@@ -80,6 +95,16 @@ interface WeightLossResults {
   plano_treino: any;
   plano_nutricional: any;
   cronograma_adaptativo: any;
+  
+  // Novos elementos únicos
+  score_motivacional: number;
+  badges_conquistadas: string[];
+  nivel_usuario: string;
+  pontos_experiencia: number;
+}
+
+interface ValidationErrors {
+  [key: string]: string;
 }
 
 const EmagrecimentoAvancado: React.FC = () => {
@@ -89,6 +114,8 @@ const EmagrecimentoAvancado: React.FC = () => {
   const [results, setResults] = useState<WeightLossResults | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [weeklyProgress, setWeeklyProgress] = useState<number[]>([]);
+  const [animationStep, setAnimationStep] = useState(0);
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
 
   // Algoritmos avançados
   const [successPredictor] = useState(new SuccessPredictionAlgorithm());
@@ -97,7 +124,56 @@ const EmagrecimentoAvancado: React.FC = () => {
   const totalSteps = 5;
   const progress = (step / totalSteps) * 100;
 
-  // Cálculos avançados
+  // Cores da paleta específica
+  const colors = {
+    primary: '#1ab894',    // Verde principal
+    dark: '#111828',       // Azul escuro
+    white: '#ffffff',      // Branco
+    primaryLight: '#22d3aa', // Verde mais claro
+    primaryDark: '#0f9d7a',  // Verde mais escuro
+  };
+
+  // Animação de entrada
+  useEffect(() => {
+    const timer = setTimeout(() => setAnimationStep(1), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Validação de campos obrigatórios
+  const validateStep = (stepNumber: number): boolean => {
+    const errors: ValidationErrors = {};
+    
+    switch (stepNumber) {
+      case 1:
+        if (!userData.nome?.trim()) errors.nome = 'Nome é obrigatório';
+        if (!userData.idade || userData.idade < 16 || userData.idade > 100) errors.idade = 'Idade deve estar entre 16 e 100 anos';
+        if (!userData.sexo) errors.sexo = 'Sexo é obrigatório';
+        if (!userData.altura || userData.altura < 100 || userData.altura > 250) errors.altura = 'Altura deve estar entre 100 e 250 cm';
+        if (!userData.peso_atual || userData.peso_atual < 30 || userData.peso_atual > 300) errors.peso_atual = 'Peso atual deve estar entre 30 e 300 kg';
+        if (!userData.peso_objetivo || userData.peso_objetivo < 30 || userData.peso_objetivo > 300) errors.peso_objetivo = 'Peso objetivo deve estar entre 30 e 300 kg';
+        if (userData.peso_objetivo && userData.peso_atual && userData.peso_objetivo >= userData.peso_atual) {
+          errors.peso_objetivo = 'Peso objetivo deve ser menor que o peso atual';
+        }
+        break;
+        
+      case 2:
+        if (!userData.nivel_atividade) errors.nivel_atividade = 'Nível de atividade é obrigatório';
+        if (!userData.experiencia_exercicio) errors.experiencia_exercicio = 'Experiência com exercícios é obrigatória';
+        if (!userData.confianca_exercicio || userData.confianca_exercicio < 1 || userData.confianca_exercicio > 10) {
+          errors.confianca_exercicio = 'Confiança deve estar entre 1 e 10';
+        }
+        break;
+        
+      case 3:
+        if (!userData.prazo || userData.prazo < 1 || userData.prazo > 104) errors.prazo = 'Prazo deve estar entre 1 e 104 semanas';
+        break;
+    }
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Cálculos avançados com elementos únicos
   const calculateAdvancedMetrics = (data: UserData): WeightLossResults => {
     // 1. Métricas básicas
     const altura_m = data.altura / 100;
@@ -213,6 +289,12 @@ const EmagrecimentoAvancado: React.FC = () => {
     const nutritionAlgorithm = new AdaptiveNutritionAlgorithm(data, 'weight_loss');
     const plano_nutricional = generateNutritionPlan(data, calorias_diarias, nutritionAlgorithm);
 
+    // 11. NOVOS ELEMENTOS ÚNICOS
+    const score_motivacional = calculateMotivationalScore(data, probabilidade_sucesso);
+    const badges_conquistadas = generateBadges(data, probabilidade_sucesso, imc);
+    const nivel_usuario = calculateUserLevel(data, score_motivacional);
+    const pontos_experiencia = calculateExperiencePoints(data, probabilidade_sucesso);
+
     return {
       imc: Math.round(imc * 10) / 10,
       classificacao_imc,
@@ -228,8 +310,49 @@ const EmagrecimentoAvancado: React.FC = () => {
       recomendacoes_personalizadas: recomendacoes,
       plano_treino,
       plano_nutricional,
-      cronograma_adaptativo: generateAdaptiveSchedule(data)
+      cronograma_adaptativo: generateAdaptiveSchedule(data),
+      score_motivacional,
+      badges_conquistadas,
+      nivel_usuario,
+      pontos_experiencia
     };
+  };
+
+  // Funções para elementos únicos
+  const calculateMotivationalScore = (data: UserData, probabilidade: number): number => {
+    let score = 50; // Base
+    score += data.confianca_exercicio * 5; // Confiança
+    score += probabilidade * 30; // Probabilidade de sucesso
+    if (data.experiencia_exercicio === 'avancado') score += 15;
+    if (data.nivel_atividade !== 'sedentario') score += 10;
+    return Math.min(100, Math.round(score));
+  };
+
+  const generateBadges = (data: UserData, probabilidade: number, imc: number): string[] => {
+    const badges: string[] = [];
+    if (probabilidade > 0.8) badges.push('🏆 Alto Potencial');
+    if (data.confianca_exercicio >= 8) badges.push('💪 Confiante');
+    if (data.experiencia_exercicio === 'avancado') badges.push('⭐ Experiente');
+    if (imc < 25) badges.push('🎯 Peso Ideal');
+    if (data.nivel_atividade === 'intenso') badges.push('🔥 Atlético');
+    badges.push('🚀 Iniciante Motivado');
+    return badges;
+  };
+
+  const calculateUserLevel = (data: UserData, score: number): string => {
+    if (score >= 90) return 'Elite Fitness';
+    if (score >= 75) return 'Avançado';
+    if (score >= 60) return 'Intermediário';
+    if (score >= 45) return 'Iniciante Plus';
+    return 'Iniciante';
+  };
+
+  const calculateExperiencePoints = (data: UserData, probabilidade: number): number => {
+    let pontos = 100; // Base
+    pontos += data.confianca_exercicio * 10;
+    pontos += probabilidade * 50;
+    if (data.experiencia_exercicio === 'avancado') pontos += 100;
+    return Math.round(pontos);
   };
 
   const generatePersonalizedWorkout = (data: UserData, geneticProfile: any) => {
@@ -239,22 +362,23 @@ const EmagrecimentoAvancado: React.FC = () => {
       frequencia_semanal: isBeginnerFriendly ? 3 : 4,
       duracao_sessao: isBeginnerFriendly ? 30 : 45,
       tipo_principal: geneticProfile.geneticProfile.dominantType === 'power' ? 'Força + Cardio' : 'Cardio + Força',
-      exercicios: []
+      exercicios: [],
+      intensidade: isBeginnerFriendly ? 'Baixa-Moderada' : 'Moderada-Alta'
     };
 
     if (geneticProfile.geneticProfile.dominantType === 'power') {
       baseWorkout.exercicios = [
-        { nome: 'Agachamento', series: 3, repeticoes: '8-12', descanso: '90s' },
-        { nome: 'Flexão de braço', series: 3, repeticoes: '6-10', descanso: '90s' },
-        { nome: 'Prancha', series: 3, repeticoes: '30-60s', descanso: '60s' },
-        { nome: 'Caminhada rápida', series: 1, repeticoes: '20-30min', descanso: '-' }
+        { nome: 'Agachamento', series: 3, repeticoes: '8-12', descanso: '90s', dificuldade: 'Moderada' },
+        { nome: 'Flexão de braço', series: 3, repeticoes: '6-10', descanso: '90s', dificuldade: 'Moderada' },
+        { nome: 'Prancha', series: 3, repeticoes: '30-60s', descanso: '60s', dificuldade: 'Baixa' },
+        { nome: 'Caminhada rápida', series: 1, repeticoes: '20-30min', descanso: '-', dificuldade: 'Baixa' }
       ];
     } else {
       baseWorkout.exercicios = [
-        { nome: 'Caminhada/Corrida leve', series: 1, repeticoes: '30-45min', descanso: '-' },
-        { nome: 'Agachamento', series: 2, repeticoes: '12-15', descanso: '60s' },
-        { nome: 'Flexão adaptada', series: 2, repeticoes: '8-12', descanso: '60s' },
-        { nome: 'Alongamento', series: 1, repeticoes: '10min', descanso: '-' }
+        { nome: 'Caminhada/Corrida leve', series: 1, repeticoes: '30-45min', descanso: '-', dificuldade: 'Baixa' },
+        { nome: 'Agachamento', series: 2, repeticoes: '12-15', descanso: '60s', dificuldade: 'Baixa' },
+        { nome: 'Flexão adaptada', series: 2, repeticoes: '8-12', descanso: '60s', dificuldade: 'Baixa' },
+        { nome: 'Alongamento', series: 1, repeticoes: '10min', descanso: '-', dificuldade: 'Muito Baixa' }
       ];
     }
 
@@ -286,7 +410,9 @@ const EmagrecimentoAvancado: React.FC = () => {
         'Consuma carboidratos complexos preferencialmente',
         'Inclua gorduras boas como abacate e oleaginosas',
         'Beba pelo menos 2L de água por dia'
-      ]
+      ],
+      qualidade_nutricional: 'Excelente',
+      flexibilidade: 'Alta'
     };
   };
 
@@ -302,68 +428,100 @@ const EmagrecimentoAvancado: React.FC = () => {
 
   const handleNext = () => {
     if (step < totalSteps) {
-      setStep(step + 1);
+      if (validateStep(step)) {
+        setStep(step + 1);
+        setValidationErrors({});
+      }
     } else {
-      handleCalculate();
+      if (validateStep(step)) {
+        handleCalculate();
+      }
     }
   };
 
   const handlePrevious = () => {
     if (step > 1) {
       setStep(step - 1);
+      setValidationErrors({});
     }
   };
 
   const handleCalculate = async () => {
     setIsCalculating(true);
     
-    // Simular processamento complexo
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // Simular processamento complexo com animações
+    await new Promise(resolve => setTimeout(resolve, 3000));
     
     const calculatedResults = calculateAdvancedMetrics(userData as UserData);
     setResults(calculatedResults);
     setIsCalculating(false);
   };
 
+  const renderValidationError = (field: string) => {
+    if (validationErrors[field]) {
+      return (
+        <div className="flex items-center gap-2 mt-1 text-red-400 text-sm">
+          <X className="h-4 w-4" />
+          {validationErrors[field]}
+        </div>
+      );
+    }
+    return null;
+  };
+
   const renderStep = () => {
     switch (step) {
       case 1:
         return (
-          <Card className="w-full max-w-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Scale className="h-5 w-5" />
+          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Scale className="h-6 w-6" />
+                </div>
                 Dados Pessoais
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/90">
                 Informações básicas para cálculos personalizados
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="nome">Nome</Label>
+            <CardContent className="space-y-6 p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="nome" className="text-gray-700 font-medium">Nome *</Label>
                   <Input
                     id="nome"
                     value={userData.nome || ''}
                     onChange={(e) => setUserData({...userData, nome: e.target.value})}
                     placeholder="Seu nome"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.nome ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
+                  {renderValidationError('nome')}
                 </div>
-                <div>
-                  <Label htmlFor="idade">Idade</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="idade" className="text-gray-700 font-medium">Idade *</Label>
                   <Input
                     id="idade"
                     type="number"
                     value={userData.idade || ''}
                     onChange={(e) => setUserData({...userData, idade: parseInt(e.target.value)})}
                     placeholder="Anos"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.idade ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
+                  {renderValidationError('idade')}
                 </div>
-                <div>
-                  <Label htmlFor="sexo">Sexo</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="sexo" className="text-gray-700 font-medium">Sexo *</Label>
                   <Select onValueChange={(value) => setUserData({...userData, sexo: value as 'masculino' | 'feminino'})}>
-                    <SelectTrigger>
+                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.sexo ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}>
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
@@ -371,19 +529,25 @@ const EmagrecimentoAvancado: React.FC = () => {
                       <SelectItem value="feminino">Feminino</SelectItem>
                     </SelectContent>
                   </Select>
+                  {renderValidationError('sexo')}
                 </div>
-                <div>
-                  <Label htmlFor="altura">Altura (cm)</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="altura" className="text-gray-700 font-medium">Altura (cm) *</Label>
                   <Input
                     id="altura"
                     type="number"
                     value={userData.altura || ''}
                     onChange={(e) => setUserData({...userData, altura: parseInt(e.target.value)})}
                     placeholder="175"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.altura ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
+                  {renderValidationError('altura')}
                 </div>
-                <div>
-                  <Label htmlFor="peso_atual">Peso Atual (kg)</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="peso_atual" className="text-gray-700 font-medium">Peso Atual (kg) *</Label>
                   <Input
                     id="peso_atual"
                     type="number"
@@ -391,10 +555,15 @@ const EmagrecimentoAvancado: React.FC = () => {
                     value={userData.peso_atual || ''}
                     onChange={(e) => setUserData({...userData, peso_atual: parseFloat(e.target.value)})}
                     placeholder="70.5"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.peso_atual ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
+                  {renderValidationError('peso_atual')}
                 </div>
-                <div>
-                  <Label htmlFor="peso_objetivo">Peso Objetivo (kg)</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="peso_objetivo" className="text-gray-700 font-medium">Peso Objetivo (kg) *</Label>
                   <Input
                     id="peso_objetivo"
                     type="number"
@@ -402,7 +571,12 @@ const EmagrecimentoAvancado: React.FC = () => {
                     value={userData.peso_objetivo || ''}
                     onChange={(e) => setUserData({...userData, peso_objetivo: parseFloat(e.target.value)})}
                     placeholder="65.0"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.peso_objetivo ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
+                  {renderValidationError('peso_objetivo')}
                 </div>
               </div>
             </CardContent>
@@ -411,21 +585,25 @@ const EmagrecimentoAvancado: React.FC = () => {
 
       case 2:
         return (
-          <Card className="w-full max-w-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5" />
+          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Activity className="h-6 w-6" />
+                </div>
                 Perfil de Atividade
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/90">
                 Informações sobre seu nível atual de atividade física
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="nivel_atividade">Nível de Atividade Atual</Label>
+            <CardContent className="space-y-6 p-8">
+              <div className="space-y-2">
+                <Label htmlFor="nivel_atividade" className="text-gray-700 font-medium">Nível de Atividade Atual *</Label>
                 <Select onValueChange={(value) => setUserData({...userData, nivel_atividade: value as any})}>
-                  <SelectTrigger>
+                  <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                    validationErrors.nivel_atividade ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                  }`}>
                     <SelectValue placeholder="Selecione seu nível" />
                   </SelectTrigger>
                   <SelectContent>
@@ -435,12 +613,15 @@ const EmagrecimentoAvancado: React.FC = () => {
                     <SelectItem value="intenso">Intenso (exercício pesado 6-7 dias/semana)</SelectItem>
                   </SelectContent>
                 </Select>
+                {renderValidationError('nivel_atividade')}
               </div>
               
-              <div>
-                <Label htmlFor="experiencia">Experiência com Exercícios</Label>
+              <div className="space-y-2">
+                <Label htmlFor="experiencia" className="text-gray-700 font-medium">Experiência com Exercícios *</Label>
                 <Select onValueChange={(value) => setUserData({...userData, experiencia_exercicio: value as any})}>
-                  <SelectTrigger>
+                  <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                    validationErrors.experiencia_exercicio ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                  }`}>
                     <SelectValue placeholder="Selecione sua experiência" />
                   </SelectTrigger>
                   <SelectContent>
@@ -449,10 +630,11 @@ const EmagrecimentoAvancado: React.FC = () => {
                     <SelectItem value="avancado">Avançado (mais de 2 anos)</SelectItem>
                   </SelectContent>
                 </Select>
+                {renderValidationError('experiencia_exercicio')}
               </div>
 
-              <div>
-                <Label htmlFor="confianca">Confiança para Exercitar-se (1-10)</Label>
+              <div className="space-y-3">
+                <Label htmlFor="confianca" className="text-gray-700 font-medium">Confiança para Exercitar-se (1-10) *</Label>
                 <Input
                   id="confianca"
                   type="number"
@@ -461,10 +643,18 @@ const EmagrecimentoAvancado: React.FC = () => {
                   value={userData.confianca_exercicio || ''}
                   onChange={(e) => setUserData({...userData, confianca_exercicio: parseInt(e.target.value)})}
                   placeholder="5"
+                  className={`border-2 transition-colors rounded-xl h-12 ${
+                    validationErrors.confianca_exercicio ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                  }`}
+                  style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                 />
-                <p className="text-sm text-gray-500 mt-1">
-                  1 = Muito inseguro, 10 = Muito confiante
-                </p>
+                {renderValidationError('confianca_exercicio')}
+                <div className="p-4 rounded-xl border" style={{ backgroundColor: `${colors.primary}10`, borderColor: `${colors.primary}40` }}>
+                  <p className="text-sm" style={{ color: colors.primaryDark }}>
+                    <Sparkles className="inline h-4 w-4 mr-1" />
+                    1 = Muito inseguro, 10 = Muito confiante
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -472,50 +662,64 @@ const EmagrecimentoAvancado: React.FC = () => {
 
       case 3:
         return (
-          <Card className="w-full max-w-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="h-5 w-5" />
+          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Target className="h-6 w-6" />
+                </div>
                 Objetivos e Prazos
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/90">
                 Defina suas metas e expectativas realistas
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="prazo">Prazo para Atingir o Objetivo (semanas)</Label>
+            <CardContent className="space-y-6 p-8">
+              <div className="space-y-3">
+                <Label htmlFor="prazo" className="text-gray-700 font-medium">Prazo para Atingir o Objetivo (semanas) *</Label>
                 <Input
                   id="prazo"
                   type="number"
                   value={userData.prazo || ''}
                   onChange={(e) => setUserData({...userData, prazo: parseInt(e.target.value)})}
                   placeholder="12"
+                  className={`border-2 transition-colors rounded-xl h-12 ${
+                    validationErrors.prazo ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                  }`}
+                  style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                 />
-                <p className="text-sm text-gray-500 mt-1">
-                  Recomendado: 0.5-1kg por semana (perda saudável)
-                </p>
+                {renderValidationError('prazo')}
+                <div className="p-4 rounded-xl border" style={{ backgroundColor: `${colors.primary}10`, borderColor: `${colors.primary}40` }}>
+                  <p className="text-sm" style={{ color: colors.primaryDark }}>
+                    <Trophy className="inline h-4 w-4 mr-1" />
+                    Recomendado: 0.5-1kg por semana (perda saudável)
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <Label htmlFor="historico">Histórico de Dietas Anteriores</Label>
+              <div className="space-y-2">
+                <Label htmlFor="historico" className="text-gray-700 font-medium">Histórico de Dietas Anteriores</Label>
                 <Textarea
                   id="historico"
                   value={userData.historico_dietas || ''}
                   onChange={(e) => setUserData({...userData, historico_dietas: e.target.value})}
                   placeholder="Descreva brevemente suas experiências anteriores com dietas..."
                   rows={3}
+                  className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl resize-none"
+                  style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                 />
               </div>
 
-              <div>
-                <Label htmlFor="restricoes">Restrições Alimentares</Label>
+              <div className="space-y-2">
+                <Label htmlFor="restricoes" className="text-gray-700 font-medium">Restrições Alimentares</Label>
                 <Textarea
                   id="restricoes"
                   value={userData.restricoes_alimentares || ''}
                   onChange={(e) => setUserData({...userData, restricoes_alimentares: e.target.value})}
                   placeholder="Ex: vegetariano, intolerância à lactose, alergias..."
                   rows={2}
+                  className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl resize-none"
+                  style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                 />
               </div>
             </CardContent>
@@ -524,24 +728,28 @@ const EmagrecimentoAvancado: React.FC = () => {
 
       case 4:
         return (
-          <Card className="w-full max-w-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
+          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Clock className="h-6 w-6" />
+                </div>
                 Disponibilidade e Preferências
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/90">
                 Informações para personalizar seu plano de treinos
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label>Horários Disponíveis para Exercícios</Label>
-                <div className="grid grid-cols-2 gap-2 mt-2">
+            <CardContent className="space-y-6 p-8">
+              <div className="space-y-3">
+                <Label className="text-gray-700 font-medium">Horários Disponíveis para Exercícios</Label>
+                <div className="grid grid-cols-2 gap-3">
                   {['Manhã (6h-9h)', 'Meio-dia (11h-14h)', 'Tarde (14h-18h)', 'Noite (18h-22h)'].map((horario) => (
-                    <label key={horario} className="flex items-center space-x-2">
+                    <label key={horario} className="flex items-center space-x-3 p-3 rounded-xl border cursor-pointer hover:border-primary transition-colors" style={{ backgroundColor: `${colors.primary}05`, borderColor: `${colors.primary}20` }}>
                       <input
                         type="checkbox"
+                        className="w-4 h-4 rounded focus:ring-primary"
+                        style={{ accentColor: colors.primary }}
                         onChange={(e) => {
                           const horarios = userData.horarios_disponiveis || [];
                           if (e.target.checked) {
@@ -551,19 +759,21 @@ const EmagrecimentoAvancado: React.FC = () => {
                           }
                         }}
                       />
-                      <span className="text-sm">{horario}</span>
+                      <span className="text-sm font-medium" style={{ color: colors.primaryDark }}>{horario}</span>
                     </label>
                   ))}
                 </div>
               </div>
 
-              <div>
-                <Label>Preferências de Exercício</Label>
-                <div className="grid grid-cols-2 gap-2 mt-2">
+              <div className="space-y-3">
+                <Label className="text-gray-700 font-medium">Preferências de Exercício</Label>
+                <div className="grid grid-cols-2 gap-3">
                   {['Caminhada', 'Corrida', 'Musculação', 'Natação', 'Dança', 'Yoga', 'Ciclismo', 'Exercícios em casa'].map((exercicio) => (
-                    <label key={exercicio} className="flex items-center space-x-2">
+                    <label key={exercicio} className="flex items-center space-x-3 p-3 rounded-xl border cursor-pointer hover:border-primary transition-colors" style={{ backgroundColor: `${colors.primary}05`, borderColor: `${colors.primary}20` }}>
                       <input
                         type="checkbox"
+                        className="w-4 h-4 rounded focus:ring-primary"
+                        style={{ accentColor: colors.primary }}
                         onChange={(e) => {
                           const preferencias = userData.preferencias_exercicio || [];
                           if (e.target.checked) {
@@ -573,7 +783,7 @@ const EmagrecimentoAvancado: React.FC = () => {
                           }
                         }}
                       />
-                      <span className="text-sm">{exercicio}</span>
+                      <span className="text-sm font-medium" style={{ color: colors.primaryDark }}>{exercicio}</span>
                     </label>
                   ))}
                 </div>
@@ -584,27 +794,29 @@ const EmagrecimentoAvancado: React.FC = () => {
 
       case 5:
         return (
-          <Card className="w-full max-w-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Heart className="h-5 w-5" />
-                Dados de Composição Corporal (Opcional)
+          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Heart className="h-6 w-6" />
+                </div>
+                Dados de Composição Corporal
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/90">
                 Se você tem dados de bioimpedância, inclua aqui para maior precisão
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <Alert>
-                <Info className="h-4 w-4" />
-                <AlertDescription>
+            <CardContent className="space-y-6 p-8">
+              <Alert className="border" style={{ backgroundColor: `${colors.primary}10`, borderColor: `${colors.primary}40` }}>
+                <Info className="h-4 w-4" style={{ color: colors.primary }} />
+                <AlertDescription style={{ color: colors.primaryDark }}>
                   Estes dados são opcionais, mas melhoram significativamente a precisão dos cálculos.
                 </AlertDescription>
               </Alert>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="massa_gorda">Massa Gorda (%)</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="massa_gorda" className="text-gray-700 font-medium">Massa Gorda (%)</Label>
                   <Input
                     id="massa_gorda"
                     type="number"
@@ -612,10 +824,12 @@ const EmagrecimentoAvancado: React.FC = () => {
                     value={userData.massa_gorda || ''}
                     onChange={(e) => setUserData({...userData, massa_gorda: parseFloat(e.target.value)})}
                     placeholder="15.5"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                 </div>
-                <div>
-                  <Label htmlFor="massa_magra">Massa Magra (kg)</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="massa_magra" className="text-gray-700 font-medium">Massa Magra (kg)</Label>
                   <Input
                     id="massa_magra"
                     type="number"
@@ -623,10 +837,12 @@ const EmagrecimentoAvancado: React.FC = () => {
                     value={userData.massa_magra || ''}
                     onChange={(e) => setUserData({...userData, massa_magra: parseFloat(e.target.value)})}
                     placeholder="55.2"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                 </div>
-                <div>
-                  <Label htmlFor="massa_muscular">Massa Muscular (kg)</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="massa_muscular" className="text-gray-700 font-medium">Massa Muscular (kg)</Label>
                   <Input
                     id="massa_muscular"
                     type="number"
@@ -634,10 +850,12 @@ const EmagrecimentoAvancado: React.FC = () => {
                     value={userData.massa_muscular || ''}
                     onChange={(e) => setUserData({...userData, massa_muscular: parseFloat(e.target.value)})}
                     placeholder="45.8"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                 </div>
-                <div>
-                  <Label htmlFor="hidratacao">Hidratação (%)</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="hidratacao" className="text-gray-700 font-medium">Hidratação (%)</Label>
                   <Input
                     id="hidratacao"
                     type="number"
@@ -645,6 +863,8 @@ const EmagrecimentoAvancado: React.FC = () => {
                     value={userData.hidratacao || ''}
                     onChange={(e) => setUserData({...userData, hidratacao: parseFloat(e.target.value)})}
                     placeholder="58.5"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                 </div>
               </div>
@@ -659,15 +879,42 @@ const EmagrecimentoAvancado: React.FC = () => {
 
   if (isCalculating) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6 p-6 bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
-          <h2 className="text-2xl font-bold text-gray-800">Processando Análise Avançada</h2>
-          <p className="text-gray-600">Aplicando algoritmos de machine learning...</p>
-          <div className="space-y-2">
-            <p className="text-sm text-gray-500">✓ Calculando perfil genético simulado</p>
-            <p className="text-sm text-gray-500">✓ Analisando fatores preditivos</p>
-            <p className="text-sm text-gray-500">✓ Gerando plano personalizado</p>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-8 p-6 relative overflow-hidden" style={{ backgroundColor: colors.dark }}>
+        {/* Elementos de fundo animados */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob" style={{ backgroundColor: colors.primary }}></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000" style={{ backgroundColor: colors.primaryLight }}></div>
+          <div className="absolute top-40 left-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000" style={{ backgroundColor: colors.primaryDark }}></div>
+        </div>
+
+        <div className="text-center space-y-6 z-10 backdrop-blur-sm bg-white/10 p-12 rounded-3xl border border-white/20">
+          <div className="relative">
+            <div className="animate-spin rounded-full h-20 w-20 border-4 border-white/30 mx-auto" style={{ borderTopColor: colors.primary }}></div>
+            <div className="absolute inset-0 animate-ping rounded-full h-20 w-20 border-4 border-white/20 mx-auto"></div>
+          </div>
+          
+          <div className="space-y-4">
+            <h2 className="text-4xl font-bold text-white">Processando Análise Avançada</h2>
+            <p className="text-xl text-gray-200">Aplicando algoritmos de machine learning...</p>
+            
+            <div className="space-y-3 mt-8">
+              <div className="flex items-center justify-center space-x-3 text-white/90">
+                <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: colors.primary }}></div>
+                <p className="text-sm">Calculando perfil genético simulado</p>
+              </div>
+              <div className="flex items-center justify-center space-x-3 text-white/90">
+                <div className="w-2 h-2 rounded-full animate-pulse animation-delay-500" style={{ backgroundColor: colors.primaryLight }}></div>
+                <p className="text-sm">Analisando fatores preditivos</p>
+              </div>
+              <div className="flex items-center justify-center space-x-3 text-white/90">
+                <div className="w-2 h-2 rounded-full animate-pulse animation-delay-1000" style={{ backgroundColor: colors.primaryDark }}></div>
+                <p className="text-sm">Gerando plano personalizado</p>
+              </div>
+              <div className="flex items-center justify-center space-x-3 text-white/90">
+                <div className="w-2 h-2 rounded-full animate-pulse animation-delay-1500" style={{ backgroundColor: colors.primary }}></div>
+                <p className="text-sm">Criando elementos únicos</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -676,154 +923,310 @@ const EmagrecimentoAvancado: React.FC = () => {
 
   if (results) {
     return (
-      <div className="min-h-screen p-6 bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="max-w-6xl mx-auto space-y-6">
-          {/* Header */}
-          <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-gray-800">Análise Avançada de Emagrecimento</h1>
-            <p className="text-gray-600">Plano personalizado baseado em algoritmos científicos</p>
+      <div className="min-h-screen p-6 relative overflow-hidden" style={{ backgroundColor: colors.dark }}>
+        {/* Elementos de fundo animados */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-20 right-20 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob" style={{ backgroundColor: colors.primary }}></div>
+          <div className="absolute bottom-20 left-20 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000" style={{ backgroundColor: colors.primaryLight }}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000" style={{ backgroundColor: colors.primaryDark }}></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto space-y-8 relative z-10">
+          {/* Header com animação */}
+          <div className="text-center space-y-4 animate-fade-in">
+            <div className="inline-flex items-center gap-3 text-white px-8 py-4 rounded-2xl shadow-2xl" style={{ backgroundColor: colors.primary }}>
+              <Sparkles className="h-8 w-8" />
+              <h1 className="text-4xl font-bold">Análise Completa de Emagrecimento</h1>
+              <Sparkles className="h-8 w-8" />
+            </div>
+            <p className="text-xl text-gray-300">Plano personalizado baseado em algoritmos científicos avançados</p>
+          </div>
+
+          {/* Score Motivacional e Badges */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                  <div className="p-3 rounded-xl" style={{ backgroundColor: colors.primary }}>
+                    <Trophy className="h-6 w-6" />
+                  </div>
+                  Score Motivacional
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <div className="text-6xl font-bold text-white">
+                      {results.score_motivacional}
+                    </div>
+                    <p className="text-xl text-gray-300 mt-2">Pontos de Motivação</p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-gray-300">
+                      <span>Nível do Usuário</span>
+                      <Badge className="text-white" style={{ backgroundColor: colors.primary }}>
+                        {results.nivel_usuario}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between text-gray-300">
+                      <span>Pontos de Experiência</span>
+                      <span className="font-bold" style={{ color: colors.primary }}>{results.pontos_experiencia} XP</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                  <div className="p-3 rounded-xl" style={{ backgroundColor: colors.primary }}>
+                    <Award className="h-6 w-6" />
+                  </div>
+                  Badges Conquistadas
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-3">
+                  {results.badges_conquistadas.map((badge, index) => (
+                    <div key={index} className="border rounded-xl p-4 text-center backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                      <div className="text-2xl mb-2">{badge.split(' ')[0]}</div>
+                      <div className="text-sm font-medium" style={{ color: colors.primary }}>{badge.split(' ').slice(1).join(' ')}</div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Probabilidade de Sucesso */}
-          <Card>
+          <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Brain className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                <div className="p-3 rounded-xl" style={{ backgroundColor: colors.primary }}>
+                  <Brain className="h-6 w-6" />
+                </div>
                 Predição de Sucesso (IA)
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center gap-4">
-                <div className="flex-1">
-                  <div className="flex justify-between mb-2">
-                    <span>Probabilidade de Sucesso</span>
-                    <span className="font-bold">{(results.probabilidade_sucesso * 100).toFixed(0)}%</span>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2">
+                  <div className="flex items-center gap-6">
+                    <div className="relative w-32 h-32">
+                      <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 36 36">
+                        <path
+                          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                          fill="none"
+                          stroke="rgba(255,255,255,0.2)"
+                          strokeWidth="2"
+                        />
+                        <path
+                          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                          fill="none"
+                          stroke={colors.primary}
+                          strokeWidth="2"
+                          strokeDasharray={`${results.probabilidade_sucesso * 100}, 100`}
+                          className="animate-pulse"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-3xl font-bold text-white">{(results.probabilidade_sucesso * 100).toFixed(0)}%</span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-white mb-2">Probabilidade de Sucesso</h3>
+                      <Badge 
+                        className={`text-lg px-4 py-2 ${
+                          results.probabilidade_sucesso > 0.7 
+                            ? "text-white" 
+                            : results.probabilidade_sucesso > 0.4 
+                            ? "text-white" 
+                            : "text-white"
+                        }`}
+                        style={{ 
+                          backgroundColor: results.probabilidade_sucesso > 0.7 
+                            ? colors.primary 
+                            : results.probabilidade_sucesso > 0.4 
+                            ? '#f59e0b' 
+                            : '#ef4444'
+                        }}
+                      >
+                        {results.probabilidade_sucesso > 0.7 ? "Alta" : results.probabilidade_sucesso > 0.4 ? "Moderada" : "Baixa"}
+                      </Badge>
+                    </div>
                   </div>
-                  <Progress value={results.probabilidade_sucesso * 100} className="h-3" />
                 </div>
-                <Badge variant={results.probabilidade_sucesso > 0.7 ? "default" : results.probabilidade_sucesso > 0.4 ? "secondary" : "destructive"}>
-                  {results.probabilidade_sucesso > 0.7 ? "Alta" : results.probabilidade_sucesso > 0.4 ? "Moderada" : "Baixa"}
-                </Badge>
-              </div>
-              
-              {results.fatores_risco.length > 0 && (
-                <Alert className="mt-4">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription>
-                    <strong>Fatores de Atenção:</strong>
-                    <ul className="list-disc list-inside mt-2">
+                
+                <div className="space-y-4">
+                  <h4 className="text-lg font-semibold text-white">Fatores de Atenção</h4>
+                  {results.fatores_risco.length > 0 ? (
+                    <div className="space-y-2">
                       {results.fatores_risco.map((fator, index) => (
-                        <li key={index} className="text-sm">{fator}</li>
+                        <div key={index} className="flex items-start gap-2 p-3 bg-red-500/20 border border-red-500/30 rounded-lg backdrop-blur-sm">
+                          <AlertTriangle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm text-red-300">{fator}</span>
+                        </div>
                       ))}
-                    </ul>
-                  </AlertDescription>
-                </Alert>
-              )}
+                    </div>
+                  ) : (
+                    <div className="p-3 border rounded-lg backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4" style={{ color: colors.primary }} />
+                        <span className="text-sm" style={{ color: colors.primary }}>Nenhum fator de risco identificado</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </CardContent>
           </Card>
 
           {/* Métricas Principais */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2">
-                  <Scale className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm font-medium">IMC</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl hover:scale-105 transition-transform duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 rounded-xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}30` }}>
+                    <Scale className="h-6 w-6" style={{ color: colors.primary }} />
+                  </div>
+                  <span className="text-lg font-medium" style={{ color: colors.primary }}>IMC</span>
                 </div>
-                <p className="text-2xl font-bold">{results.imc}</p>
-                <p className="text-sm text-gray-600">{results.classificacao_imc}</p>
+                <p className="text-4xl font-bold text-white mb-2">{results.imc}</p>
+                <p className="text-sm" style={{ color: colors.primary }}>{results.classificacao_imc}</p>
               </CardContent>
             </Card>
             
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2">
-                  <Zap className="h-4 w-4 text-orange-600" />
-                  <span className="text-sm font-medium">TMB</span>
+            <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl hover:scale-105 transition-transform duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 rounded-xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}30` }}>
+                    <Zap className="h-6 w-6" style={{ color: colors.primary }} />
+                  </div>
+                  <span className="text-lg font-medium" style={{ color: colors.primary }}>TMB</span>
                 </div>
-                <p className="text-2xl font-bold">{results.tmb}</p>
-                <p className="text-sm text-gray-600">kcal/dia</p>
+                <p className="text-4xl font-bold text-white mb-2">{results.tmb}</p>
+                <p className="text-sm" style={{ color: colors.primary }}>kcal/dia</p>
               </CardContent>
             </Card>
             
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2">
-                  <Target className="h-4 w-4 text-green-600" />
-                  <span className="text-sm font-medium">Meta Calórica</span>
+            <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl hover:scale-105 transition-transform duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 rounded-xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}30` }}>
+                    <Target className="h-6 w-6" style={{ color: colors.primary }} />
+                  </div>
+                  <span className="text-lg font-medium" style={{ color: colors.primary }}>Meta Calórica</span>
                 </div>
-                <p className="text-2xl font-bold">{results.calorias_diarias}</p>
-                <p className="text-sm text-gray-600">kcal/dia</p>
+                <p className="text-4xl font-bold text-white mb-2">{results.calorias_diarias}</p>
+                <p className="text-sm" style={{ color: colors.primary }}>kcal/dia</p>
               </CardContent>
             </Card>
             
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2">
-                  <TrendingDown className="h-4 w-4 text-red-600" />
-                  <span className="text-sm font-medium">Perda Semanal</span>
+            <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl hover:scale-105 transition-transform duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 rounded-xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}30` }}>
+                    <TrendingDown className="h-6 w-6" style={{ color: colors.primary }} />
+                  </div>
+                  <span className="text-lg font-medium" style={{ color: colors.primary }}>Perda Semanal</span>
                 </div>
-                <p className="text-2xl font-bold">{results.perda_semanal}kg</p>
-                <p className="text-sm text-gray-600">{results.tempo_estimado} semanas</p>
+                <p className="text-4xl font-bold text-white mb-2">{results.perda_semanal}kg</p>
+                <p className="text-sm" style={{ color: colors.primary }}>{results.tempo_estimado} semanas</p>
               </CardContent>
             </Card>
           </div>
 
           {/* Perfil Genético */}
-          <Card>
+          <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                <div className="p-3 rounded-xl" style={{ backgroundColor: colors.primary }}>
+                  <Activity className="h-6 w-6" />
+                </div>
                 Perfil Genético Simulado
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="text-center">
-                  <p className="text-sm text-gray-600">Tipo Dominante</p>
-                  <Badge variant="outline" className="mt-1">
-                    {results.perfil_genetico.dominantType === 'power' ? 'Força/Potência' : 'Resistência'}
-                  </Badge>
+                  <div className="p-6 border rounded-2xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                    <p className="text-sm mb-2" style={{ color: colors.primary }}>Tipo Dominante</p>
+                    <Badge className="text-white text-lg px-4 py-2" style={{ backgroundColor: colors.primary }}>
+                      {results.perfil_genetico.dominantType === 'power' ? 'Força/Potência' : 'Resistência'}
+                    </Badge>
+                  </div>
                 </div>
                 <div className="text-center">
-                  <p className="text-sm text-gray-600">Score Potência</p>
-                  <p className="text-lg font-bold">{results.perfil_genetico.powerScore}/5</p>
+                  <div className="p-6 border rounded-2xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                    <p className="text-sm mb-2" style={{ color: colors.primary }}>Score Potência</p>
+                    <p className="text-4xl font-bold text-white">{results.perfil_genetico.powerScore}/5</p>
+                  </div>
                 </div>
                 <div className="text-center">
-                  <p className="text-sm text-gray-600">Score Resistência</p>
-                  <p className="text-lg font-bold">{results.perfil_genetico.enduranceScore}/5</p>
+                  <div className="p-6 border rounded-2xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                    <p className="text-sm mb-2" style={{ color: colors.primary }}>Score Resistência</p>
+                    <p className="text-4xl font-bold text-white">{results.perfil_genetico.enduranceScore}/5</p>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Plano de Treino */}
-          <Card>
+          <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                <div className="p-3 rounded-xl" style={{ backgroundColor: colors.primary }}>
+                  <Activity className="h-6 w-6" />
+                </div>
                 Plano de Treino Personalizado
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-2">Estrutura Semanal</h4>
-                  <ul className="space-y-1 text-sm">
-                    <li>• Frequência: {results.plano_treino.frequencia_semanal}x por semana</li>
-                    <li>• Duração: {results.plano_treino.duracao_sessao} minutos</li>
-                    <li>• Foco: {results.plano_treino.tipo_principal}</li>
-                  </ul>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="space-y-6">
+                  <h4 className="text-xl font-semibold text-white mb-4">Estrutura Semanal</h4>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 p-4 border rounded-xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                      <Calendar className="h-5 w-5" style={{ color: colors.primary }} />
+                      <span style={{ color: colors.primary }}>Frequência: {results.plano_treino.frequencia_semanal}x por semana</span>
+                    </div>
+                    <div className="flex items-center gap-3 p-4 border rounded-xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                      <Clock className="h-5 w-5" style={{ color: colors.primary }} />
+                      <span style={{ color: colors.primary }}>Duração: {results.plano_treino.duracao_sessao} minutos</span>
+                    </div>
+                    <div className="flex items-center gap-3 p-4 border rounded-xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                      <Target className="h-5 w-5" style={{ color: colors.primary }} />
+                      <span style={{ color: colors.primary }}>Foco: {results.plano_treino.tipo_principal}</span>
+                    </div>
+                    <div className="flex items-center gap-3 p-4 border rounded-xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                      <Flame className="h-5 w-5" style={{ color: colors.primary }} />
+                      <span style={{ color: colors.primary }}>Intensidade: {results.plano_treino.intensidade}</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-semibold mb-2">Exercícios Principais</h4>
-                  <div className="space-y-2">
+                <div className="space-y-6">
+                  <h4 className="text-xl font-semibold text-white mb-4">Exercícios Principais</h4>
+                  <div className="space-y-3">
                     {results.plano_treino.exercicios.map((exercicio: any, index: number) => (
-                      <div key={index} className="text-sm border-l-2 border-blue-200 pl-2">
-                        <span className="font-medium">{exercicio.nome}</span>
-                        <span className="text-gray-600 ml-2">
-                          {exercicio.series}x{exercicio.repeticoes}
-                        </span>
+                      <div key={index} className="p-4 bg-gradient-to-r from-gray-800/50 to-gray-700/50 border border-gray-600/30 rounded-xl backdrop-blur-sm hover:border-gray-500/50 transition-colors">
+                        <div className="flex justify-between items-start mb-2">
+                          <span className="font-semibold text-white text-lg">{exercicio.nome}</span>
+                          <Badge className={`${
+                            exercicio.dificuldade === 'Muito Baixa' ? 'bg-green-500' :
+                            exercicio.dificuldade === 'Baixa' ? 'bg-yellow-500' :
+                            exercicio.dificuldade === 'Moderada' ? 'bg-orange-500' : 'bg-red-500'
+                          }`}>
+                            {exercicio.dificuldade}
+                          </Badge>
+                        </div>
+                        <div className="text-gray-300 text-sm">
+                          <span className="font-medium">{exercicio.series}x{exercicio.repeticoes}</span>
+                          {exercicio.descanso !== '-' && <span className="ml-2">• Descanso: {exercicio.descanso}</span>}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -833,58 +1236,87 @@ const EmagrecimentoAvancado: React.FC = () => {
           </Card>
 
           {/* Plano Nutricional */}
-          <Card>
+          <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Heart className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                <div className="p-3 rounded-xl" style={{ backgroundColor: colors.primary }}>
+                  <Heart className="h-6 w-6" />
+                </div>
                 Plano Nutricional Adaptativo
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-2">Macronutrientes Diários</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span>Proteínas:</span>
-                      <span className="font-medium">{results.plano_nutricional.macronutrientes.proteina}g</span>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="space-y-6">
+                  <h4 className="text-xl font-semibold text-white mb-4">Macronutrientes Diários</h4>
+                  <div className="space-y-4">
+                    <div className="p-4 border rounded-xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium" style={{ color: colors.primary }}>Proteínas:</span>
+                        <span className="font-bold text-white text-xl">{results.plano_nutricional.macronutrientes.proteina}g</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span>Carboidratos:</span>
-                      <span className="font-medium">{results.plano_nutricional.macronutrientes.carboidratos}g</span>
+                    <div className="p-4 border rounded-xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium" style={{ color: colors.primary }}>Carboidratos:</span>
+                        <span className="font-bold text-white text-xl">{results.plano_nutricional.macronutrientes.carboidratos}g</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span>Gorduras:</span>
-                      <span className="font-medium">{results.plano_nutricional.macronutrientes.gorduras}g</span>
+                    <div className="p-4 border rounded-xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium" style={{ color: colors.primary }}>Gorduras:</span>
+                        <span className="font-bold text-white text-xl">{results.plano_nutricional.macronutrientes.gorduras}g</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 border rounded-xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                      <p className="text-sm" style={{ color: colors.primary }}>Qualidade</p>
+                      <p className="text-white font-bold">{results.plano_nutricional.qualidade_nutricional}</p>
+                    </div>
+                    <div className="text-center p-4 border rounded-xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                      <p className="text-sm" style={{ color: colors.primary }}>Flexibilidade</p>
+                      <p className="text-white font-bold">{results.plano_nutricional.flexibilidade}</p>
                     </div>
                   </div>
                 </div>
-                <div>
-                  <h4 className="font-semibold mb-2">Dicas Personalizadas</h4>
-                  <ul className="space-y-1 text-sm">
+                
+                <div className="space-y-6">
+                  <h4 className="text-xl font-semibold text-white mb-4">Dicas Personalizadas</h4>
+                  <div className="space-y-3">
                     {results.plano_nutricional.dicas_personalizadas.map((dica: string, index: number) => (
-                      <li key={index}>• {dica}</li>
+                      <div key={index} className="flex items-start gap-3 p-4 border rounded-xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                        <CheckCircle className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: colors.primary }} />
+                        <span style={{ color: colors.primary }}>{dica}</span>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Recomendações Personalizadas */}
-          <Card>
+          <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                <div className="p-3 rounded-xl" style={{ backgroundColor: colors.primary }}>
+                  <Rocket className="h-6 w-6" />
+                </div>
                 Recomendações Personalizadas
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {results.recomendacoes_personalizadas.map((recomendacao, index) => (
-                  <div key={index} className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg">
-                    <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">{recomendacao}</span>
+                  <div key={index} className="group p-6 border rounded-2xl backdrop-blur-sm hover:scale-105 transition-all duration-300" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                    <div className="flex items-start gap-4">
+                      <div className="p-2 rounded-lg group-hover:bg-opacity-50 transition-colors" style={{ backgroundColor: `${colors.primary}30` }}>
+                        <CheckCircle className="h-5 w-5" style={{ color: colors.primary }} />
+                      </div>
+                      <span className="leading-relaxed" style={{ color: colors.primary }}>{recomendacao}</span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -892,40 +1324,61 @@ const EmagrecimentoAvancado: React.FC = () => {
           </Card>
 
           {/* Cronograma Adaptativo */}
-          <Card>
+          <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                <div className="p-3 rounded-xl" style={{ backgroundColor: colors.primary }}>
+                  <Calendar className="h-6 w-6" />
+                </div>
                 Cronograma Adaptativo
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                  <span className="font-medium">Semanas 1-2:</span>
-                  <span className="text-sm">{results.cronograma_adaptativo.semana_1_2}</span>
+              <div className="space-y-4">
+                <div className="p-6 border rounded-2xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-lg" style={{ color: colors.primary }}>Semanas 1-2:</span>
+                    <span style={{ color: colors.primary }}>{results.cronograma_adaptativo.semana_1_2}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                  <span className="font-medium">Semanas 3-4:</span>
-                  <span className="text-sm">{results.cronograma_adaptativo.semana_3_4}</span>
+                <div className="p-6 border rounded-2xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-lg" style={{ color: colors.primary }}>Semanas 3-4:</span>
+                    <span style={{ color: colors.primary }}>{results.cronograma_adaptativo.semana_3_4}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
-                  <span className="font-medium">Semanas 5-8:</span>
-                  <span className="text-sm">{results.cronograma_adaptativo.semana_5_8}</span>
+                <div className="p-6 border rounded-2xl backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-lg" style={{ color: colors.primary }}>Semanas 5-8:</span>
+                    <span style={{ color: colors.primary }}>{results.cronograma_adaptativo.semana_5_8}</span>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Botões de Ação */}
-          <div className="flex gap-4 justify-center">
-            <Button onClick={() => window.print()} variant="outline">
+          <div className="flex flex-wrap gap-6 justify-center pt-8">
+            <Button 
+              onClick={() => window.print()} 
+              className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
+            >
+              <BarChart3 className="mr-2 h-5 w-5" />
               Imprimir Plano
             </Button>
-            <Button onClick={() => navigate('/progress')}>
+            <Button 
+              onClick={() => navigate('/progress')}
+              className="text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
+              style={{ backgroundColor: colors.primary }}
+            >
+              <TrendingUp className="mr-2 h-5 w-5" />
               Iniciar Acompanhamento
             </Button>
-            <Button onClick={() => {setResults(null); setStep(1);}} variant="outline">
+            <Button 
+              onClick={() => {setResults(null); setStep(1);}} 
+              className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
+            >
+              <Sparkles className="mr-2 h-5 w-5" />
               Nova Análise
             </Button>
           </div>
@@ -935,21 +1388,52 @@ const EmagrecimentoAvancado: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-gray-800">Emagrecimento Inteligente</h1>
-          <p className="text-gray-600">Análise avançada com algoritmos de machine learning</p>
+    <div className="min-h-screen p-6 relative overflow-hidden" style={{ backgroundColor: colors.dark }}>
+      {/* Elementos de fundo animados */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 right-20 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob" style={{ backgroundColor: colors.primary }}></div>
+        <div className="absolute bottom-20 left-20 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000" style={{ backgroundColor: colors.primaryLight }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000" style={{ backgroundColor: colors.primaryDark }}></div>
+      </div>
+
+      <div className="max-w-5xl mx-auto space-y-8 relative z-10">
+        {/* Header com animação */}
+        <div className={`text-center space-y-4 transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <div className="inline-flex items-center gap-3 text-white px-8 py-4 rounded-2xl shadow-2xl backdrop-blur-lg" style={{ backgroundColor: colors.primary }}>
+            <Sparkles className="h-8 w-8" />
+            <h1 className="text-4xl font-bold">Emagrecimento Inteligente</h1>
+            <Sparkles className="h-8 w-8" />
+          </div>
+          <p className="text-xl text-gray-200">Análise avançada com algoritmos de machine learning</p>
         </div>
 
-        {/* Progress Bar */}
-        <div className="w-full max-w-2xl mx-auto">
-          <div className="flex justify-between text-sm text-gray-600 mb-2">
-            <span>Passo {step} de {totalSteps}</span>
-            <span>{Math.round(progress)}% completo</span>
+        {/* Progress Bar com design moderno */}
+        <div className={`w-full max-w-3xl mx-auto transition-all duration-700 delay-300 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <div className="flex justify-between text-sm text-gray-200 mb-4">
+            <span className="font-medium">Passo {step} de {totalSteps}</span>
+            <span className="font-medium">{Math.round(progress)}% completo</span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <div className="relative">
+            <Progress 
+              value={progress} 
+              className="h-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full overflow-hidden"
+            />
+            <div className="absolute inset-0 rounded-full opacity-80" 
+                 style={{width: `${progress}%`, backgroundColor: colors.primary}}></div>
+          </div>
+          
+          {/* Step indicators */}
+          <div className="flex justify-between mt-4">
+            {Array.from({length: totalSteps}, (_, i) => (
+              <div key={i} className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                i + 1 <= step 
+                  ? 'text-white shadow-lg' 
+                  : 'text-gray-300 border border-white/30'
+              }`} style={{ backgroundColor: i + 1 <= step ? colors.primary : 'transparent' }}>
+                {i + 1 <= step ? <CheckCircle className="h-4 w-4" /> : i + 1}
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Step Content */}
@@ -957,18 +1441,93 @@ const EmagrecimentoAvancado: React.FC = () => {
           {renderStep()}
         </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-center gap-4">
+        {/* Navigation Buttons com design moderno */}
+        <div className={`flex justify-center gap-6 transition-all duration-700 delay-500 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
           {step > 1 && (
-            <Button onClick={handlePrevious} variant="outline">
+            <Button 
+              onClick={handlePrevious} 
+              className="bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-4 rounded-2xl text-lg font-semibold backdrop-blur-sm hover:scale-105 transition-all duration-300"
+            >
               Anterior
             </Button>
           )}
-          <Button onClick={handleNext}>
-            {step === totalSteps ? 'Calcular Plano' : 'Próximo'}
+          <Button 
+            onClick={handleNext}
+            className="text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
+            style={{ backgroundColor: colors.primary }}
+          >
+            {step === totalSteps ? (
+              <>
+                <Rocket className="mr-2 h-5 w-5" />
+                Calcular Plano
+              </>
+            ) : (
+              'Próximo'
+            )}
           </Button>
         </div>
+
+        {/* Mostrar erros de validação se houver */}
+        {Object.keys(validationErrors).length > 0 && (
+          <div className="fixed bottom-4 right-4 max-w-md">
+            <Alert className="bg-red-500/20 border-red-500/30 backdrop-blur-sm">
+              <AlertTriangle className="h-4 w-4 text-red-400" />
+              <AlertDescription className="text-red-300">
+                Por favor, corrija os campos obrigatórios destacados em vermelho.
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
       </div>
+
+      {/* CSS personalizado para animações */}
+      <style jsx>{`
+        @keyframes blob {
+          0% {
+            transform: translate(0px, 0px) scale(1);
+          }
+          33% {
+            transform: translate(30px, -50px) scale(1.1);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.9);
+          }
+          100% {
+            transform: translate(0px, 0px) scale(1);
+          }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+        .animation-delay-500 {
+          animation-delay: 0.5s;
+        }
+        .animation-delay-1000 {
+          animation-delay: 1s;
+        }
+        .animation-delay-1500 {
+          animation-delay: 1.5s;
+        }
+        .animate-fade-in {
+          animation: fadeIn 1s ease-out;
+        }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 };

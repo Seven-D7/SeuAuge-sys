@@ -24,7 +24,16 @@ import {
   AlertTriangle,
   Info,
   BarChart3,
-  Gauge
+  Gauge,
+  Sparkles,
+  Flame,
+  Award,
+  PieChart,
+  LineChart,
+  Users,
+  Shield,
+  Rocket,
+  X
 } from 'lucide-react';
 
 // Importar algoritmos avançados
@@ -36,85 +45,72 @@ import {
 } from '@/lib/fitness/advanced_fitness_algorithms';
 
 interface UserData {
-  // Dados básicos
+  // Dados básicos (obrigatórios)
   nome: string;
   idade: number;
   sexo: 'masculino' | 'feminino';
   altura: number;
   peso_atual: number;
   
-  // Modalidade esportiva
+  // Modalidade esportiva (obrigatórios)
   modalidade_principal: string;
   nivel_competitivo: 'recreativo' | 'amador' | 'semi_profissional' | 'profissional';
   anos_experiencia: number;
-  posicao_funcao?: string;
+  confianca_performance: number; // 1-10
   
-  // Objetivos específicos
-  objetivo_principal: 'forca_maxima' | 'potencia' | 'resistencia' | 'velocidade' | 'agilidade' | 'hipertrofia_funcional';
-  objetivo_secundario?: string;
-  competicao_proxima?: string;
-  data_competicao?: string;
-  
-  // Dados de performance atual
-  teste_velocidade_40m?: number; // segundos
-  salto_vertical?: number; // cm
-  teste_agilidade?: number; // segundos
-  vo2_max?: number; // ml/kg/min
-  frequencia_cardiaca_repouso?: number;
-  
-  // Dados de força (1RM ou estimativas)
-  supino_1rm?: number;
-  agachamento_1rm?: number;
-  levantamento_terra_1rm?: number;
-  desenvolvimento_1rm?: number;
-  
-  // Treino atual
+  // Dados de treino (obrigatórios)
   dias_treino_semana: number;
-  horas_treino_dia: number;
-  periodizacao_atual: string;
+  tempo_disponivel_sessao: number;
   
-  // Dados de composição corporal
-  massa_gorda?: number;
-  massa_magra?: number;
-  massa_muscular?: number;
+  // Dados opcionais
+  posicao_funcao?: string;
+  objetivo_especifico?: 'velocidade' | 'resistencia' | 'forca' | 'agilidade' | 'coordenacao';
+  lesoes_limitacoes?: string;
+  suplementacao_atual?: string;
   
-  // Histórico e limitações
-  lesoes_historico: string;
-  limitacoes_fisicas: string;
-  suplementacao_atual: string;
+  // Dados de performance atual (opcionais)
+  vo2_max?: number;
+  frequencia_cardiaca_repouso?: number;
+  tempo_corrida_5km?: number;
+  salto_vertical?: number;
+  teste_agilidade?: number;
 }
 
 interface PerformanceResults {
-  // Análise atual
+  // Métricas calculadas
   imc: number;
-  classificacao_atletica: string;
-  perfil_atletico: string;
-  pontos_fortes: string[];
-  areas_melhoria: string[];
+  classificacao_imc: string;
+  tmb: number;
+  gasto_energetico: number;
+  calorias_performance: number;
   
   // Análise de performance
-  nivel_forca_relativa: string;
-  nivel_potencia: string;
-  nivel_resistencia: string;
-  indice_performance_geral: number;
+  perfil_atletico: any;
+  potencial_performance: number;
+  areas_melhoria: string[];
+  pontos_fortes: string[];
   
-  // Predições e potencial
-  perfil_genetico: any;
-  potencial_modalidade: number;
-  tempo_melhoria_estimado: number;
-  ganhos_esperados: any;
-  
-  // Planos especializados
-  plano_treino_periodizado: any;
+  // Planos personalizados
+  plano_treino_especifico: any;
   plano_nutricional_performance: any;
-  cronograma_competitivo: any;
-  protocolo_recuperacao: any;
+  cronograma_periodizacao: any;
+  suplementacao_recomendada: string[];
   
-  // Monitoramento
-  metricas_acompanhamento: string[];
-  testes_performance: any[];
-  indicadores_overtraining: string[];
+  // Predições
+  melhoria_performance_3_meses: any;
+  metas_especificas: any;
+  fatores_limitantes: string[];
   recomendacoes_otimizacao: string[];
+  
+  // Elementos únicos
+  score_motivacional: number;
+  badges_conquistadas: string[];
+  nivel_usuario: string;
+  pontos_experiencia: number;
+}
+
+interface ValidationErrors {
+  [key: string]: string;
 }
 
 const PerformanceAtletica: React.FC = () => {
@@ -123,699 +119,415 @@ const PerformanceAtletica: React.FC = () => {
   const [userData, setUserData] = useState<Partial<UserData>>({});
   const [results, setResults] = useState<PerformanceResults | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [animationStep, setAnimationStep] = useState(0);
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
 
-  const totalSteps = 5;
+  const totalSteps = 4;
   const progress = (step / totalSteps) * 100;
+
+  // Cores da paleta específica
+  const colors = {
+    primary: '#1ab894',    // Verde principal
+    dark: '#111828',       // Azul escuro
+    white: '#ffffff',      // Branco
+    primaryLight: '#22d3aa', // Verde mais claro
+    primaryDark: '#0f9d7a',  // Verde mais escuro
+  };
 
   // Algoritmos especializados
   const [adaptiveEngine] = useState(new AdaptivePersonalizationEngine());
 
+  // Animação de entrada
+  useEffect(() => {
+    const timer = setTimeout(() => setAnimationStep(1), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Validação de campos obrigatórios
+  const validateStep = (stepNumber: number): boolean => {
+    const errors: ValidationErrors = {};
+    
+    switch (stepNumber) {
+      case 1:
+        if (!userData.nome?.trim()) errors.nome = 'Nome é obrigatório';
+        if (!userData.idade || userData.idade < 16 || userData.idade > 100) errors.idade = 'Idade deve estar entre 16 e 100 anos';
+        if (!userData.sexo) errors.sexo = 'Sexo é obrigatório';
+        if (!userData.altura || userData.altura < 100 || userData.altura > 250) errors.altura = 'Altura deve estar entre 100 e 250 cm';
+        if (!userData.peso_atual || userData.peso_atual < 30 || userData.peso_atual > 300) errors.peso_atual = 'Peso atual deve estar entre 30 e 300 kg';
+        break;
+        
+      case 2:
+        if (!userData.modalidade_principal?.trim()) errors.modalidade_principal = 'Modalidade é obrigatória';
+        if (!userData.nivel_competitivo) errors.nivel_competitivo = 'Nível competitivo é obrigatório';
+        if (!userData.anos_experiencia || userData.anos_experiencia < 0 || userData.anos_experiencia > 50) {
+          errors.anos_experiencia = 'Anos de experiência deve estar entre 0 e 50';
+        }
+        if (!userData.confianca_performance || userData.confianca_performance < 1 || userData.confianca_performance > 10) {
+          errors.confianca_performance = 'Confiança deve estar entre 1 e 10';
+        }
+        break;
+        
+      case 3:
+        if (!userData.dias_treino_semana || userData.dias_treino_semana < 2 || userData.dias_treino_semana > 7) {
+          errors.dias_treino_semana = 'Dias de treino deve estar entre 2 e 7';
+        }
+        if (!userData.tempo_disponivel_sessao || userData.tempo_disponivel_sessao < 30 || userData.tempo_disponivel_sessao > 300) {
+          errors.tempo_disponivel_sessao = 'Tempo por sessão deve estar entre 30 e 300 minutos';
+        }
+        break;
+    }
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const calculatePerformanceMetrics = (data: UserData): PerformanceResults => {
-    // 1. Análise antropométrica
+    // 1. Métricas básicas
     const altura_m = data.altura / 100;
     const imc = data.peso_atual / (altura_m * altura_m);
     
-    let classificacao_atletica = '';
-    if (imc < 20) classificacao_atletica = 'Atleta de resistência';
-    else if (imc < 25) classificacao_atletica = 'Atleta equilibrado';
-    else if (imc < 28) classificacao_atletica = 'Atleta de força/potência';
-    else classificacao_atletica = 'Acima do ideal atlético';
+    let classificacao_imc = '';
+    if (imc < 18.5) classificacao_imc = 'Abaixo do peso - Pode afetar performance';
+    else if (imc < 25) classificacao_imc = 'Peso normal - Ideal para performance';
+    else if (imc < 30) classificacao_imc = 'Sobrepeso - Pode limitar performance';
+    else classificacao_imc = 'Obesidade - Limitação significativa';
 
-    // 2. Perfil genético
+    // 2. TMB
+    let tmb: number;
+    if (data.sexo === 'masculino') {
+      tmb = (10 * data.peso_atual) + (6.25 * data.altura) - (5 * data.idade) + 5;
+    } else {
+      tmb = (10 * data.peso_atual) + (6.25 * data.altura) - (5 * data.idade) - 161;
+    }
+
+    // 3. Gasto energético para atletas
+    const fator_atividade = {
+      2: 1.6, 3: 1.7, 4: 1.8, 5: 1.9, 6: 2.0, 7: 2.2
+    };
+    const fator = fator_atividade[data.dias_treino_semana as keyof typeof fator_atividade] || 1.8;
+    const gasto_energetico = tmb * fator;
+
+    // 4. Perfil atlético
     const geneticProfile = new GeneticFitnessProfile({
       age: data.idade,
       sex: data.sexo,
       height: data.altura,
       weight: data.peso_atual,
-      activityLevel: 'intenso'
+      activityLevel: 'atleta'
     });
 
-    // 3. Análise de performance baseada em testes
-    const performance_analysis = analyzeCurrentPerformance(data, geneticProfile);
+    // 5. Potencial de performance
+    let potencial = 0.5;
     
-    // 4. Determinação do perfil atlético
-    const perfil_atletico = determineAthleticProfile(data, performance_analysis, geneticProfile);
+    if (data.idade < 25) potencial += 0.2;
+    else if (data.idade > 35) potencial -= 0.1;
     
-    // 5. Identificação de pontos fortes e fracos
-    const strengths_weaknesses = identifyStrengthsWeaknesses(data, performance_analysis);
+    if (data.nivel_competitivo === 'profissional') potencial += 0.2;
+    else if (data.nivel_competitivo === 'semi_profissional') potencial += 0.1;
     
-    // 6. Cálculo do potencial para a modalidade
-    const potencial_modalidade = calculateSportPotential(data, geneticProfile, performance_analysis);
+    if (data.anos_experiencia > 5) potencial += 0.1;
+    if (data.confianca_performance >= 8) potencial += 0.1;
+    if (geneticProfile.geneticProfile.enduranceScore >= 4) potencial += 0.1;
     
-    // 7. Estimativa de tempo para melhorias
-    const tempo_melhoria = estimateImprovementTime(data, performance_analysis);
+    potencial = Math.min(potencial, 1.0);
+
+    // 6. Áreas de melhoria e pontos fortes
+    const areas_melhoria: string[] = [];
+    const pontos_fortes: string[] = [];
     
-    // 8. Predição de ganhos esperados
-    const ganhos_esperados = predictPerformanceGains(data, geneticProfile, performance_analysis);
+    if (imc > 25) areas_melhoria.push('Composição corporal');
+    if (data.confianca_performance < 7) areas_melhoria.push('Confiança mental');
+    if (data.anos_experiencia < 2) areas_melhoria.push('Experiência técnica');
     
-    // 9. Plano de treino periodizado
-    const plano_treino = generatePeriodizedTrainingPlan(data, performance_analysis, geneticProfile);
+    if (data.nivel_competitivo === 'profissional') pontos_fortes.push('Alto nível competitivo');
+    if (data.confianca_performance >= 8) pontos_fortes.push('Confiança elevada');
+    if (geneticProfile.geneticProfile.enduranceScore >= 4) pontos_fortes.push('Boa capacidade aeróbica');
+
+    // 7. Elementos únicos
+    const score_motivacional = calculateMotivationalScore(data, potencial);
+    const badges_conquistadas = generateBadges(data, potencial, imc);
+    const nivel_usuario = calculateUserLevel(data, score_motivacional);
+    const pontos_experiencia = calculateExperiencePoints(data, potencial);
+
+    // 8. Planos detalhados
+    const plano_treino = generatePerformanceTrainingPlan(data);
+    const plano_nutricional = generatePerformanceNutrition(data, gasto_energetico);
+    const cronograma = generatePeriodizationSchedule(data);
+    const suplementacao = generatePerformanceSupplements(data);
+    const melhoria_3_meses = calculatePerformanceImprovement(data);
+    const metas = generateSpecificGoals(data);
+
+    // 9. Fatores limitantes e recomendações
+    const fatores_limitantes: string[] = [];
+    const recomendacoes: string[] = [];
     
-    // 10. Plano nutricional para performance
-    const nutritionAlgorithm = new AdaptiveNutritionAlgorithm(data, 'performance');
-    const plano_nutricional = generatePerformanceNutrition(data, plano_treino);
+    if (data.idade > 35) fatores_limitantes.push('Idade - recuperação mais lenta');
+    if (imc > 25) fatores_limitantes.push('Excesso de peso corporal');
+    if (data.dias_treino_semana < 4) fatores_limitantes.push('Volume de treino insuficiente');
     
-    // 11. Cronograma competitivo
-    const cronograma = generateCompetitiveSchedule(data, plano_treino);
-    
-    // 12. Protocolo de recuperação
-    const protocolo_recuperacao = generateRecoveryProtocol(data, plano_treino);
-    
-    // 13. Métricas de acompanhamento
-    const metricas = generateTrackingMetrics(data, performance_analysis);
-    
-    // 14. Testes de performance
-    const testes = generatePerformanceTests(data, performance_analysis);
-    
-    // 15. Indicadores de overtraining
-    const indicadores_overtraining = [
-      'Frequência cardíaca de repouso elevada',
-      'Diminuição na qualidade do sono',
-      'Redução na motivação para treinar',
-      'Queda na performance nos testes',
-      'Aumento da fadiga percebida',
-      'Alterações no humor/irritabilidade',
-      'Aumento da susceptibilidade a lesões'
-    ];
-    
-    // 16. Recomendações de otimização
-    const recomendacoes = generateOptimizationRecommendations(data, performance_analysis, geneticProfile);
+    if (geneticProfile.geneticProfile.dominantType === 'endurance') {
+      recomendacoes.push('Foque em esportes de resistência');
+      recomendacoes.push('Desenvolva capacidade aeróbica máxima');
+    } else {
+      recomendacoes.push('Priorize treinos de força e potência');
+      recomendacoes.push('Trabalhe explosão e velocidade');
+    }
 
     return {
       imc: Math.round(imc * 10) / 10,
-      classificacao_atletica,
-      perfil_atletico,
-      pontos_fortes: strengths_weaknesses.strengths,
-      areas_melhoria: strengths_weaknesses.weaknesses,
-      nivel_forca_relativa: performance_analysis.strength_level,
-      nivel_potencia: performance_analysis.power_level,
-      nivel_resistencia: performance_analysis.endurance_level,
-      indice_performance_geral: performance_analysis.overall_index,
-      perfil_genetico: geneticProfile.geneticProfile,
-      potencial_modalidade: Math.round(potencial_modalidade * 100) / 100,
-      tempo_melhoria_estimado: tempo_melhoria,
-      ganhos_esperados,
-      plano_treino_periodizado: plano_treino,
+      classificacao_imc,
+      tmb: Math.round(tmb),
+      gasto_energetico: Math.round(gasto_energetico),
+      calorias_performance: Math.round(gasto_energetico + 200), // Leve superávit para performance
+      perfil_atletico: geneticProfile.geneticProfile,
+      potencial_performance: Math.round(potencial * 100) / 100,
+      areas_melhoria,
+      pontos_fortes,
+      plano_treino_especifico: plano_treino,
       plano_nutricional_performance: plano_nutricional,
-      cronograma_competitivo: cronograma,
-      protocolo_recuperacao,
-      metricas_acompanhamento: metricas,
-      testes_performance: testes,
-      indicadores_overtraining,
-      recomendacoes_otimizacao: recomendacoes
+      cronograma_periodizacao: cronograma,
+      suplementacao_recomendada: suplementacao,
+      melhoria_performance_3_meses: melhoria_3_meses,
+      metas_especificas: metas,
+      fatores_limitantes,
+      recomendacoes_otimizacao: recomendacoes,
+      score_motivacional,
+      badges_conquistadas,
+      nivel_usuario,
+      pontos_experiencia
     };
   };
 
-  const analyzeCurrentPerformance = (data: UserData, geneticProfile: any) => {
-    // Análise baseada em testes de performance
-    let strength_score = 5; // Base 1-10
-    let power_score = 5;
-    let endurance_score = 5;
-    
-    // Análise de força relativa
-    if (data.agachamento_1rm && data.peso_atual) {
-      const squat_ratio = data.agachamento_1rm / data.peso_atual;
-      if (squat_ratio > 2.0) strength_score += 2;
-      else if (squat_ratio > 1.5) strength_score += 1;
-      else if (squat_ratio < 1.0) strength_score -= 1;
-    }
-    
-    // Análise de potência (salto vertical)
-    if (data.salto_vertical) {
-      if (data.salto_vertical > 60) power_score += 2;
-      else if (data.salto_vertical > 45) power_score += 1;
-      else if (data.salto_vertical < 30) power_score -= 1;
-    }
-    
-    // Análise de resistência (VO2 max)
-    if (data.vo2_max) {
-      if (data.vo2_max > 55) endurance_score += 2;
-      else if (data.vo2_max > 45) endurance_score += 1;
-      else if (data.vo2_max < 35) endurance_score -= 1;
-    }
-    
-    // Ajustar baseado na idade
-    if (data.idade > 30) {
-      strength_score -= 0.5;
-      power_score -= 0.5;
-    }
-    if (data.idade > 40) {
-      endurance_score -= 0.5;
-    }
-    
-    // Normalizar scores
-    strength_score = Math.max(1, Math.min(10, strength_score));
-    power_score = Math.max(1, Math.min(10, power_score));
-    endurance_score = Math.max(1, Math.min(10, endurance_score));
-    
-    const overall_index = (strength_score + power_score + endurance_score) / 3;
-    
+  // Funções auxiliares para elementos únicos
+  const calculateMotivationalScore = (data: UserData, potencial: number): number => {
+    let score = 50;
+    score += data.confianca_performance * 5;
+    score += potencial * 30;
+    if (data.nivel_competitivo === 'profissional') score += 20;
+    if (data.anos_experiencia >= 5) score += 10;
+    return Math.min(100, Math.round(score));
+  };
+
+  const generateBadges = (data: UserData, potencial: number, imc: number): string[] => {
+    const badges: string[] = [];
+    if (potencial > 0.8) badges.push('🏆 Alto Potencial');
+    if (data.confianca_performance >= 8) badges.push('💪 Confiante');
+    if (data.nivel_competitivo === 'profissional') badges.push('⭐ Profissional');
+    if (data.anos_experiencia >= 10) badges.push('🔥 Veterano');
+    if (data.dias_treino_semana >= 6) badges.push('🚀 Dedicado');
+    badges.push('⚡ Atleta');
+    return badges;
+  };
+
+  const calculateUserLevel = (data: UserData, score: number): string => {
+    if (score >= 90) return 'Elite Athlete';
+    if (score >= 75) return 'Avançado';
+    if (score >= 60) return 'Intermediário';
+    if (score >= 45) return 'Iniciante Plus';
+    return 'Iniciante';
+  };
+
+  const calculateExperiencePoints = (data: UserData, potencial: number): number => {
+    let pontos = 100;
+    pontos += data.confianca_performance * 10;
+    pontos += potencial * 50;
+    pontos += data.anos_experiencia * 5;
+    if (data.nivel_competitivo === 'profissional') pontos += 150;
+    return Math.round(pontos);
+  };
+
+  const generatePerformanceTrainingPlan = (data: UserData) => {
     return {
-      strength_level: strength_score > 7 ? 'Excelente' : strength_score > 5 ? 'Bom' : 'Precisa melhorar',
-      power_level: power_score > 7 ? 'Excelente' : power_score > 5 ? 'Bom' : 'Precisa melhorar',
-      endurance_level: endurance_score > 7 ? 'Excelente' : endurance_score > 5 ? 'Bom' : 'Precisa melhorar',
-      overall_index: Math.round(overall_index * 10) / 10,
-      strength_score,
-      power_score,
-      endurance_score
-    };
-  };
-
-  const determineAthleticProfile = (data: UserData, performance: any, geneticProfile: any) => {
-    const { strength_score, power_score, endurance_score } = performance;
-    
-    if (strength_score > power_score && strength_score > endurance_score) {
-      return 'Atleta de Força';
-    } else if (power_score > strength_score && power_score > endurance_score) {
-      return 'Atleta de Potência';
-    } else if (endurance_score > strength_score && endurance_score > power_score) {
-      return 'Atleta de Resistência';
-    } else {
-      return 'Atleta Equilibrado';
-    }
-  };
-
-  const identifyStrengthsWeaknesses = (data: UserData, performance: any) => {
-    const strengths = [];
-    const weaknesses = [];
-    
-    if (performance.strength_score >= 7) strengths.push('Força muscular');
-    else if (performance.strength_score <= 4) weaknesses.push('Força muscular');
-    
-    if (performance.power_score >= 7) strengths.push('Potência explosiva');
-    else if (performance.power_score <= 4) weaknesses.push('Potência explosiva');
-    
-    if (performance.endurance_score >= 7) strengths.push('Resistência cardiovascular');
-    else if (performance.endurance_score <= 4) weaknesses.push('Resistência cardiovascular');
-    
-    // Análises específicas baseadas em testes
-    if (data.teste_velocidade_40m && data.teste_velocidade_40m < 5.0) {
-      strengths.push('Velocidade de sprint');
-    } else if (data.teste_velocidade_40m && data.teste_velocidade_40m > 6.0) {
-      weaknesses.push('Velocidade de sprint');
-    }
-    
-    if (data.teste_agilidade && data.teste_agilidade < 10.0) {
-      strengths.push('Agilidade');
-    } else if (data.teste_agilidade && data.teste_agilidade > 12.0) {
-      weaknesses.push('Agilidade');
-    }
-    
-    // Se não há pontos fortes identificados
-    if (strengths.length === 0) {
-      strengths.push('Potencial de desenvolvimento');
-    }
-    
-    // Se não há fraquezas identificadas
-    if (weaknesses.length === 0) {
-      weaknesses.push('Manutenção do nível atual');
-    }
-    
-    return { strengths, weaknesses };
-  };
-
-  const calculateSportPotential = (data: UserData, geneticProfile: any, performance: any) => {
-    let potential = 0.5; // Base
-    
-    // Fatores que aumentam o potencial
-    if (data.idade < 25) potential += 0.2;
-    else if (data.idade < 30) potential += 0.1;
-    
-    if (data.anos_experiencia < 5) potential += 0.1; // Margem para melhoria
-    else if (data.anos_experiencia > 10) potential -= 0.1; // Próximo do pico
-    
-    if (geneticProfile.geneticProfile.dominantType === 'power' && 
-        ['forca_maxima', 'potencia', 'velocidade'].includes(data.objetivo_principal)) {
-      potential += 0.2;
-    }
-    
-    if (geneticProfile.geneticProfile.dominantType === 'endurance' && 
-        ['resistencia'].includes(data.objetivo_principal)) {
-      potential += 0.2;
-    }
-    
-    if (performance.overall_index < 6) potential += 0.1; // Muito espaço para melhoria
-    
-    return Math.min(1.0, potential);
-  };
-
-  const estimateImprovementTime = (data: UserData, performance: any) => {
-    // Tempo base em semanas
-    let base_time = 12;
-    
-    // Ajustar baseado no nível atual
-    if (performance.overall_index < 5) base_time = 8; // Iniciantes melhoram mais rápido
-    else if (performance.overall_index > 7) base_time = 20; // Avançados levam mais tempo
-    
-    // Ajustar baseado na idade
-    if (data.idade > 35) base_time += 4;
-    if (data.idade > 45) base_time += 8;
-    
-    // Ajustar baseado na experiência
-    if (data.anos_experiencia > 10) base_time += 6;
-    
-    return base_time;
-  };
-
-  const predictPerformanceGains = (data: UserData, geneticProfile: any, performance: any) => {
-    const gains = {
-      forca: '5-15%',
-      potencia: '8-20%',
-      resistencia: '10-25%',
-      velocidade: '3-8%',
-      agilidade: '5-12%'
-    };
-    
-    // Ajustar baseado no nível atual e potencial
-    if (performance.overall_index < 5) {
-      // Iniciantes - ganhos maiores
-      gains.forca = '15-30%';
-      gains.potencia = '20-35%';
-      gains.resistencia = '25-40%';
-    } else if (performance.overall_index > 7) {
-      // Avançados - ganhos menores
-      gains.forca = '2-8%';
-      gains.potencia = '3-10%';
-      gains.resistencia = '5-15%';
-    }
-    
-    return gains;
-  };
-
-  const generatePeriodizedTrainingPlan = (data: UserData, performance: any, geneticProfile: any) => {
-    const plan = {
-      tipo_periodizacao: 'Linear',
-      duracao_ciclo: '12-16 semanas',
-      fases: {}
-    };
-    
-    // Determinar tipo de periodização baseado no objetivo
-    if (data.data_competicao) {
-      plan.tipo_periodizacao = 'Reversa (Peaking)';
-    } else if (data.objetivo_principal === 'hipertrofia_funcional') {
-      plan.tipo_periodizacao = 'Ondulatória';
-    }
-    
-    // Fases da periodização
-    plan.fases = {
-      preparacao_geral: {
-        duracao: '4-6 semanas',
-        foco: 'Base aeróbia e força geral',
-        volume: 'Alto',
-        intensidade: 'Baixa-Moderada',
-        exercicios: 'Movimentos básicos e condicionamento'
-      },
-      preparacao_especifica: {
-        duracao: '4-6 semanas',
-        foco: 'Força específica e técnica',
-        volume: 'Moderado-Alto',
-        intensidade: 'Moderada-Alta',
-        exercicios: 'Movimentos específicos da modalidade'
-      },
-      pre_competitiva: {
-        duracao: '2-4 semanas',
-        foco: 'Potência e velocidade',
-        volume: 'Baixo-Moderado',
-        intensidade: 'Alta',
-        exercicios: 'Exercícios explosivos e específicos'
-      },
-      competitiva: {
-        duracao: 'Variável',
-        foco: 'Manutenção e pico de performance',
-        volume: 'Baixo',
-        intensidade: 'Muito Alta',
-        exercicios: 'Manutenção e ajustes finos'
-      }
-    };
-    
-    // Distribuição semanal baseada no objetivo principal
-    const weekly_distribution = generateWeeklyDistribution(data, performance);
-    plan.distribuicao_semanal = weekly_distribution;
-    
-    return plan;
-  };
-
-  const generateWeeklyDistribution = (data: UserData, performance: any) => {
-    const distribution = {
-      forca: 0,
-      potencia: 0,
-      resistencia: 0,
-      velocidade: 0,
-      tecnica: 0,
-      recuperacao: 0
-    };
-    
-    // Distribuição baseada no objetivo principal
-    switch (data.objetivo_principal) {
-      case 'forca_maxima':
-        distribution.forca = 40;
-        distribution.potencia = 20;
-        distribution.tecnica = 20;
-        distribution.recuperacao = 20;
-        break;
-      case 'potencia':
-        distribution.potencia = 35;
-        distribution.forca = 25;
-        distribution.velocidade = 20;
-        distribution.recuperacao = 20;
-        break;
-      case 'resistencia':
-        distribution.resistencia = 50;
-        distribution.forca = 15;
-        distribution.tecnica = 15;
-        distribution.recuperacao = 20;
-        break;
-      case 'velocidade':
-        distribution.velocidade = 35;
-        distribution.potencia = 25;
-        distribution.forca = 20;
-        distribution.recuperacao = 20;
-        break;
-      default:
-        distribution.forca = 25;
-        distribution.potencia = 25;
-        distribution.resistencia = 20;
-        distribution.tecnica = 15;
-        distribution.recuperacao = 15;
-    }
-    
-    return distribution;
-  };
-
-  const generatePerformanceNutrition = (data: UserData, plano_treino: any) => {
-    // Cálculo calórico para atletas
-    const tmb = data.sexo === 'masculino' 
-      ? (10 * data.peso_atual) + (6.25 * data.altura) - (5 * data.idade) + 5
-      : (10 * data.peso_atual) + (6.25 * data.altura) - (5 * data.idade) - 161;
-    
-    // Fator de atividade para atletas (1.8-2.2)
-    const activity_factor = data.horas_treino_dia > 3 ? 2.2 : 
-                           data.horas_treino_dia > 2 ? 2.0 : 1.8;
-    
-    const total_calories = tmb * activity_factor;
-    
-    // Distribuição de macronutrientes para performance
-    const macros = {
-      proteina: Math.round((total_calories * 0.20) / 4), // 20% - 2g/kg
-      carboidratos: Math.round((total_calories * 0.55) / 4), // 55% - 6-8g/kg
-      gorduras: Math.round((total_calories * 0.25) / 9) // 25%
-    };
-    
-    return {
-      calorias_diarias: Math.round(total_calories),
-      macronutrientes: macros,
-      hidratacao: '40-50ml/kg + 500-750ml/hora de treino',
-      timing_nutricional: {
-        pre_treino: {
-          timing: '2-3h antes',
-          composicao: 'Carboidratos (1-4g/kg) + Proteína moderada',
-          exemplo: 'Aveia com banana e whey protein'
-        },
-        durante_treino: {
-          timing: 'Treinos >60min',
-          composicao: 'Carboidratos (30-60g/h) + Eletrólitos',
-          exemplo: 'Bebida esportiva ou gel energético'
-        },
-        pos_treino: {
-          timing: '30-60min após',
-          composicao: 'Carboidratos (1-1.5g/kg) + Proteína (20-25g)',
-          exemplo: 'Batata doce + frango ou shake recovery'
-        }
-      },
-      suplementacao_performance: [
-        'Creatina (3-5g/dia)',
-        'Cafeína (3-6mg/kg pré-treino)',
-        'Beta-alanina (3-5g/dia)',
-        'Whey protein (pós-treino)',
-        'Multivitamínico',
-        'Ômega 3',
-        'Vitamina D'
+      tipo_periodizacao: data.nivel_competitivo === 'profissional' ? 'Periodização Complexa' : 'Periodização Linear',
+      frequencia: data.dias_treino_semana,
+      duracao_sessao: data.tempo_disponivel_sessao,
+      fases_treino: [
+        { nome: 'Base Aeróbica', duracao: '4-6 semanas', intensidade: '60-70% FCmax' },
+        { nome: 'Desenvolvimento', duracao: '6-8 semanas', intensidade: '70-85% FCmax' },
+        { nome: 'Pico', duracao: '2-3 semanas', intensidade: '85-95% FCmax' },
+        { nome: 'Recuperação', duracao: '1-2 semanas', intensidade: '50-60% FCmax' }
+      ],
+      exercicios_especificos: [
+        'Treinos específicos da modalidade',
+        'Trabalho de força funcional',
+        'Treino de velocidade/agilidade',
+        'Recuperação ativa'
       ]
     };
   };
 
-  const generateCompetitiveSchedule = (data: UserData, plano_treino: any) => {
+  const generatePerformanceNutrition = (data: UserData, calorias: number) => {
+    const proteina_g = Math.round((calorias * 0.20) / 4); // 20% proteína para atletas
+    const carbo_g = Math.round((calorias * 0.55) / 4);    // 55% carboidratos
+    const gordura_g = Math.round((calorias * 0.25) / 9);  // 25% gorduras
+
+    return {
+      calorias_diarias: calorias,
+      macronutrientes: {
+        proteina: proteina_g,
+        carboidratos: carbo_g,
+        gorduras: gordura_g
+      },
+      hidratacao: '40-50ml por kg de peso corporal',
+      timing_nutricional: {
+        pre_treino: 'Carboidratos 1-2h antes',
+        durante_treino: 'Hidratação + eletrólitos',
+        pos_treino: 'Proteína + carboidratos em 30min'
+      }
+    };
+  };
+
+  const generatePeriodizationSchedule = (data: UserData) => {
     return {
       macrociclo: '12 meses',
       mesociclos: [
-        {
-          nome: 'Preparação Geral',
-          duracao: '8-12 semanas',
-          objetivo: 'Construir base física e técnica',
-          competicoes: 'Amistosos ou competições menores'
-        },
-        {
-          nome: 'Preparação Específica',
-          duracao: '6-8 semanas',
-          objetivo: 'Desenvolver qualidades específicas',
-          competicoes: 'Competições regionais'
-        },
-        {
-          nome: 'Pré-Competitivo',
-          duracao: '4-6 semanas',
-          objetivo: 'Afinar performance',
-          competicoes: 'Competições importantes'
-        },
-        {
-          nome: 'Competitivo',
-          duracao: '4-8 semanas',
-          objetivo: 'Pico de performance',
-          competicoes: 'Competições principais'
-        },
-        {
-          nome: 'Transição',
-          duracao: '2-4 semanas',
-          objetivo: 'Recuperação ativa',
-          competicoes: 'Descanso ou atividades recreativas'
-        }
+        { nome: 'Preparação Geral', duracao: '8-12 semanas' },
+        { nome: 'Preparação Específica', duracao: '6-8 semanas' },
+        { nome: 'Competitivo', duracao: '4-6 semanas' },
+        { nome: 'Transição', duracao: '2-4 semanas' }
       ],
-      taper_protocol: {
-        duracao: '2-3 semanas antes da competição',
-        reducao_volume: '40-60%',
-        manutencao_intensidade: '90-100%',
-        foco: 'Qualidade sobre quantidade'
-      }
+      avaliacao_frequencia: 'A cada 4 semanas'
     };
   };
 
-  const generateRecoveryProtocol = (data: UserData, plano_treino: any) => {
+  const generatePerformanceSupplements = (data: UserData) => {
+    const suplementos = ['Whey Protein', 'Creatina', 'Multivitamínico', 'Eletrólitos'];
+    
+    if (data.nivel_competitivo === 'profissional') {
+      suplementos.push('Beta-alanina', 'Citrulina', 'Cafeína');
+    }
+    
+    if (data.modalidade_principal.toLowerCase().includes('resistencia') || 
+        data.modalidade_principal.toLowerCase().includes('corrida')) {
+      suplementos.push('Carboidrato em gel', 'BCAA');
+    }
+    
+    return suplementos;
+  };
+
+  const calculatePerformanceImprovement = (data: UserData) => {
     return {
-      sono: {
-        duracao: '8-9 horas por noite',
-        qualidade: 'Ambiente escuro, fresco e silencioso',
-        rotina: 'Horários regulares de dormir e acordar',
-        monitoramento: 'Tracker de sono ou diário'
-      },
-      recuperacao_ativa: {
-        frequencia: '2-3x por semana',
-        atividades: ['Caminhada leve', 'Yoga', 'Natação recreativa', 'Mobilidade'],
-        duracao: '20-45 minutos',
-        intensidade: 'Muito baixa (50-60% FCmax)'
-      },
-      terapias: {
-        massagem: '1-2x por semana',
-        crioterapia: 'Pós-treinos intensos',
-        sauna: '2-3x por semana (15-20min)',
-        alongamento: 'Diário (15-30min)'
-      },
-      monitoramento: {
-        frequencia_cardiaca: 'Diária (repouso)',
-        variabilidade_fc: 'Diária (HRV)',
-        percepcao_esforco: 'Pós-treino (RPE)',
-        qualidade_sono: 'Diária',
-        humor_energia: 'Diária'
-      },
-      sinais_alerta: [
-        'FC repouso >10bpm acima da média',
-        'HRV reduzida por 2+ dias',
-        'Qualidade do sono ruim por 3+ dias',
-        'RPE elevada em cargas normais',
-        'Redução na motivação'
+      vo2_max: '+5-15%',
+      forca: '+10-25%',
+      velocidade: '+3-8%',
+      resistencia: '+8-20%',
+      agilidade: '+5-12%'
+    };
+  };
+
+  const generateSpecificGoals = (data: UserData) => {
+    return {
+      curto_prazo: [
+        'Melhorar técnica específica',
+        'Aumentar volume de treino',
+        'Otimizar recuperação'
+      ],
+      medio_prazo: [
+        'Atingir pico de forma',
+        'Competir em nível superior',
+        'Reduzir tempo de prova/melhorar marca'
+      ],
+      longo_prazo: [
+        'Manter performance consistente',
+        'Prevenir lesões',
+        'Longevidade esportiva'
       ]
     };
-  };
-
-  const generateTrackingMetrics = (data: UserData, performance: any) => {
-    const base_metrics = [
-      'Peso corporal (diário)',
-      'Frequência cardíaca de repouso (diário)',
-      'Qualidade do sono (diário)',
-      'Percepção de esforço (pós-treino)',
-      'Humor e energia (diário)'
-    ];
-    
-    // Métricas específicas baseadas no objetivo
-    const specific_metrics = [];
-    
-    switch (data.objetivo_principal) {
-      case 'forca_maxima':
-        specific_metrics.push('Cargas de treino (1RM estimado)', 'Volume total levantado');
-        break;
-      case 'potencia':
-        specific_metrics.push('Altura do salto vertical', 'Velocidade de sprint');
-        break;
-      case 'resistencia':
-        specific_metrics.push('Tempo em distâncias padrão', 'Frequência cardíaca de treino');
-        break;
-      case 'velocidade':
-        specific_metrics.push('Tempos de sprint (10m, 40m)', 'Tempo de reação');
-        break;
-      case 'agilidade':
-        specific_metrics.push('Teste de agilidade T', 'Teste de mudança de direção');
-        break;
-    }
-    
-    return [...base_metrics, ...specific_metrics];
-  };
-
-  const generatePerformanceTests = (data: UserData, performance: any) => {
-    const tests = [
-      {
-        nome: 'Teste de Força Máxima',
-        frequencia: 'A cada 4-6 semanas',
-        protocolo: '1RM ou 3RM nos exercícios principais',
-        objetivo: 'Monitorar ganhos de força'
-      },
-      {
-        nome: 'Teste de Salto Vertical',
-        frequencia: 'Semanal',
-        protocolo: 'Countermovement jump - melhor de 3 tentativas',
-        objetivo: 'Avaliar potência de membros inferiores'
-      },
-      {
-        nome: 'Teste de Sprint 40m',
-        frequencia: 'Quinzenal',
-        protocolo: 'Tempo eletrônico - melhor de 2 tentativas',
-        objetivo: 'Avaliar velocidade máxima'
-      },
-      {
-        nome: 'Teste de Agilidade T',
-        frequencia: 'Quinzenal',
-        protocolo: 'Percurso em T - melhor de 2 tentativas',
-        objetivo: 'Avaliar agilidade e mudança de direção'
-      }
-    ];
-    
-    // Adicionar testes específicos baseados na modalidade
-    if (data.modalidade_principal.toLowerCase().includes('corrida') || 
-        data.modalidade_principal.toLowerCase().includes('ciclismo')) {
-      tests.push({
-        nome: 'Teste de Limiar Anaeróbio',
-        frequencia: 'A cada 6-8 semanas',
-        protocolo: 'Teste progressivo até exaustão',
-        objetivo: 'Avaliar capacidade aeróbia'
-      });
-    }
-    
-    return tests;
-  };
-
-  const generateOptimizationRecommendations = (data: UserData, performance: any, geneticProfile: any) => {
-    const recommendations = [];
-    
-    // Recomendações baseadas no perfil genético
-    if (geneticProfile.geneticProfile.dominantType === 'power') {
-      recommendations.push('Priorize exercícios explosivos e pliométricos');
-      recommendations.push('Use cargas de 70-85% 1RM para desenvolvimento de força');
-    } else {
-      recommendations.push('Inclua mais volume de treino aeróbio');
-      recommendations.push('Foque em exercícios de resistência muscular');
-    }
-    
-    // Recomendações baseadas na performance atual
-    if (performance.strength_score < 6) {
-      recommendations.push('Aumente o volume de treino de força');
-      recommendations.push('Inclua exercícios básicos (agachamento, terra, supino)');
-    }
-    
-    if (performance.power_score < 6) {
-      recommendations.push('Adicione treinos pliométricos 2-3x/semana');
-      recommendations.push('Trabalhe velocidade de execução nos exercícios');
-    }
-    
-    if (performance.endurance_score < 6) {
-      recommendations.push('Aumente o volume de treino cardiovascular');
-      recommendations.push('Inclua treinos intervalados de alta intensidade');
-    }
-    
-    // Recomendações baseadas na idade
-    if (data.idade > 35) {
-      recommendations.push('Priorize recuperação e mobilidade');
-      recommendations.push('Monitore sinais de overtraining mais rigorosamente');
-    }
-    
-    // Recomendações gerais
-    recommendations.push('Mantenha consistência no treino e nutrição');
-    recommendations.push('Monitore métricas de performance regularmente');
-    recommendations.push('Ajuste o plano baseado nos resultados dos testes');
-    
-    return recommendations;
   };
 
   const handleNext = () => {
     if (step < totalSteps) {
-      setStep(step + 1);
+      if (validateStep(step)) {
+        setStep(step + 1);
+        setValidationErrors({});
+      }
     } else {
-      handleCalculate();
+      if (validateStep(step)) {
+        handleCalculate();
+      }
     }
   };
 
   const handlePrevious = () => {
     if (step > 1) {
       setStep(step - 1);
+      setValidationErrors({});
     }
   };
 
   const handleCalculate = async () => {
     setIsCalculating(true);
-    
-    // Simular processamento complexo
-    await new Promise(resolve => setTimeout(resolve, 3500));
-    
+    await new Promise(resolve => setTimeout(resolve, 3000));
     const calculatedResults = calculatePerformanceMetrics(userData as UserData);
     setResults(calculatedResults);
     setIsCalculating(false);
+  };
+
+  const renderValidationError = (field: string) => {
+    if (validationErrors[field]) {
+      return (
+        <div className="flex items-center gap-2 mt-1 text-red-400 text-sm">
+          <X className="h-4 w-4" />
+          {validationErrors[field]}
+        </div>
+      );
+    }
+    return null;
   };
 
   const renderStep = () => {
     switch (step) {
       case 1:
         return (
-          <Card className="w-full max-w-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Trophy className="h-5 w-5" />
-                Dados Pessoais e Modalidade
+          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Scale className="h-6 w-6" />
+                </div>
+                Dados Pessoais
               </CardTitle>
-              <CardDescription>
-                Informações básicas e modalidade esportiva
+              <CardDescription className="text-white/90">
+                Informações básicas para análise de performance atlética
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="nome">Nome</Label>
+            <CardContent className="space-y-6 p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="nome" className="text-gray-700 font-medium">Nome *</Label>
                   <Input
                     id="nome"
                     value={userData.nome || ''}
                     onChange={(e) => setUserData({...userData, nome: e.target.value})}
                     placeholder="Seu nome"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.nome ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
+                  {renderValidationError('nome')}
                 </div>
-                <div>
-                  <Label htmlFor="idade">Idade</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="idade" className="text-gray-700 font-medium">Idade *</Label>
                   <Input
                     id="idade"
                     type="number"
                     value={userData.idade || ''}
                     onChange={(e) => setUserData({...userData, idade: parseInt(e.target.value)})}
                     placeholder="Anos"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.idade ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
+                  {renderValidationError('idade')}
                 </div>
-                <div>
-                  <Label htmlFor="sexo">Sexo</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="sexo" className="text-gray-700 font-medium">Sexo *</Label>
                   <Select onValueChange={(value) => setUserData({...userData, sexo: value as 'masculino' | 'feminino'})}>
-                    <SelectTrigger>
+                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.sexo ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}>
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
@@ -823,54 +535,80 @@ const PerformanceAtletica: React.FC = () => {
                       <SelectItem value="feminino">Feminino</SelectItem>
                     </SelectContent>
                   </Select>
+                  {renderValidationError('sexo')}
                 </div>
-                <div>
-                  <Label htmlFor="altura">Altura (cm)</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="altura" className="text-gray-700 font-medium">Altura (cm) *</Label>
                   <Input
                     id="altura"
                     type="number"
                     value={userData.altura || ''}
                     onChange={(e) => setUserData({...userData, altura: parseInt(e.target.value)})}
                     placeholder="175"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.altura ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
+                  {renderValidationError('altura')}
                 </div>
-                <div>
-                  <Label htmlFor="peso_atual">Peso Atual (kg)</Label>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="peso_atual" className="text-gray-700 font-medium">Peso Atual (kg) *</Label>
                   <Input
                     id="peso_atual"
                     type="number"
                     step="0.1"
                     value={userData.peso_atual || ''}
                     onChange={(e) => setUserData({...userData, peso_atual: parseFloat(e.target.value)})}
-                    placeholder="75.5"
+                    placeholder="70.5"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.peso_atual ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
-                </div>
-                <div>
-                  <Label htmlFor="anos_experiencia">Anos de Experiência</Label>
-                  <Input
-                    id="anos_experiencia"
-                    type="number"
-                    value={userData.anos_experiencia || ''}
-                    onChange={(e) => setUserData({...userData, anos_experiencia: parseInt(e.target.value)})}
-                    placeholder="5"
-                  />
+                  {renderValidationError('peso_atual')}
                 </div>
               </div>
+            </CardContent>
+          </Card>
+        );
 
-              <div>
-                <Label htmlFor="modalidade">Modalidade Principal</Label>
+      case 2:
+        return (
+          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Trophy className="h-6 w-6" />
+                </div>
+                Modalidade Esportiva
+              </CardTitle>
+              <CardDescription className="text-white/90">
+                Informações sobre sua modalidade e nível competitivo
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6 p-8">
+              <div className="space-y-2">
+                <Label htmlFor="modalidade" className="text-gray-700 font-medium">Modalidade Principal *</Label>
                 <Input
                   id="modalidade"
                   value={userData.modalidade_principal || ''}
                   onChange={(e) => setUserData({...userData, modalidade_principal: e.target.value})}
-                  placeholder="Ex: Futebol, Corrida, Natação, Basquete..."
+                  placeholder="Ex: Futebol, Corrida, Natação, Tênis..."
+                  className={`border-2 transition-colors rounded-xl h-12 ${
+                    validationErrors.modalidade_principal ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                  }`}
+                  style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                 />
+                {renderValidationError('modalidade_principal')}
               </div>
-
-              <div>
-                <Label htmlFor="nivel_competitivo">Nível Competitivo</Label>
+              
+              <div className="space-y-2">
+                <Label htmlFor="nivel_competitivo" className="text-gray-700 font-medium">Nível Competitivo *</Label>
                 <Select onValueChange={(value) => setUserData({...userData, nivel_competitivo: value as any})}>
-                  <SelectTrigger>
+                  <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                    validationErrors.nivel_competitivo ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                  }`}>
                     <SelectValue placeholder="Selecione seu nível" />
                   </SelectTrigger>
                   <SelectContent>
@@ -880,79 +618,61 @@ const PerformanceAtletica: React.FC = () => {
                     <SelectItem value="profissional">Profissional</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-            </CardContent>
-          </Card>
-        );
-
-      case 2:
-        return (
-          <Card className="w-full max-w-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="h-5 w-5" />
-                Objetivos de Performance
-              </CardTitle>
-              <CardDescription>
-                Defina seus objetivos específicos de performance
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="objetivo_principal">Objetivo Principal</Label>
-                <Select onValueChange={(value) => setUserData({...userData, objetivo_principal: value as any})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione seu objetivo principal" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="forca_maxima">Força Máxima</SelectItem>
-                    <SelectItem value="potencia">Potência Explosiva</SelectItem>
-                    <SelectItem value="resistencia">Resistência</SelectItem>
-                    <SelectItem value="velocidade">Velocidade</SelectItem>
-                    <SelectItem value="agilidade">Agilidade</SelectItem>
-                    <SelectItem value="hipertrofia_funcional">Hipertrofia Funcional</SelectItem>
-                  </SelectContent>
-                </Select>
+                {renderValidationError('nivel_competitivo')}
               </div>
 
-              <div>
-                <Label htmlFor="objetivo_secundario">Objetivo Secundário (Opcional)</Label>
-                <Input
-                  id="objetivo_secundario"
-                  value={userData.objetivo_secundario || ''}
-                  onChange={(e) => setUserData({...userData, objetivo_secundario: e.target.value})}
-                  placeholder="Ex: Melhora da técnica, prevenção de lesões..."
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="competicao_proxima">Próxima Competição (Opcional)</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="anos_experiencia" className="text-gray-700 font-medium">Anos de Experiência *</Label>
                   <Input
-                    id="competicao_proxima"
-                    value={userData.competicao_proxima || ''}
-                    onChange={(e) => setUserData({...userData, competicao_proxima: e.target.value})}
-                    placeholder="Nome da competição"
+                    id="anos_experiencia"
+                    type="number"
+                    step="0.5"
+                    value={userData.anos_experiencia || ''}
+                    onChange={(e) => setUserData({...userData, anos_experiencia: parseFloat(e.target.value)})}
+                    placeholder="2.5"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.anos_experiencia ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
+                  {renderValidationError('anos_experiencia')}
                 </div>
-                <div>
-                  <Label htmlFor="data_competicao">Data da Competição</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="confianca" className="text-gray-700 font-medium">Confiança na Performance (1-10) *</Label>
                   <Input
-                    id="data_competicao"
-                    type="date"
-                    value={userData.data_competicao || ''}
-                    onChange={(e) => setUserData({...userData, data_competicao: e.target.value})}
+                    id="confianca"
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={userData.confianca_performance || ''}
+                    onChange={(e) => setUserData({...userData, confianca_performance: parseInt(e.target.value)})}
+                    placeholder="7"
+                    className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.confianca_performance ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
+                  {renderValidationError('confianca_performance')}
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="posicao_funcao">Posição/Função (Opcional)</Label>
+              <div className="p-4 rounded-xl border" style={{ backgroundColor: `${colors.primary}10`, borderColor: `${colors.primary}40` }}>
+                <p className="text-sm" style={{ color: colors.primaryDark }}>
+                  <Sparkles className="inline h-4 w-4 mr-1" />
+                  1 = Muito inseguro, 10 = Extremamente confiante na sua performance
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="posicao" className="text-gray-700 font-medium">Posição/Função (Opcional)</Label>
                 <Input
-                  id="posicao_funcao"
+                  id="posicao"
                   value={userData.posicao_funcao || ''}
                   onChange={(e) => setUserData({...userData, posicao_funcao: e.target.value})}
                   placeholder="Ex: Atacante, Meio-campista, Velocista..."
+                  className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                  style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                 />
               </div>
             </CardContent>
@@ -961,77 +681,82 @@ const PerformanceAtletica: React.FC = () => {
 
       case 3:
         return (
-          <Card className="w-full max-w-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Gauge className="h-5 w-5" />
-                Testes de Performance Atual
+          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Calendar className="h-6 w-6" />
+                </div>
+                Planejamento de Treino
               </CardTitle>
-              <CardDescription>
-                Dados de testes físicos (preencha os que souber)
+              <CardDescription className="text-white/90">
+                Configure sua rotina de treinos para performance
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <Alert>
-                <Info className="h-4 w-4" />
-                <AlertDescription>
-                  Preencha apenas os testes que você conhece. Dados mais precisos resultam em planos mais personalizados.
-                </AlertDescription>
-              </Alert>
+            <CardContent className="space-y-6 p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="dias_treino" className="text-gray-700 font-medium">Dias de Treino por Semana *</Label>
+                  <Select onValueChange={(value) => setUserData({...userData, dias_treino_semana: parseInt(value)})}>
+                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.dias_treino_semana ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="2">2 dias</SelectItem>
+                      <SelectItem value="3">3 dias</SelectItem>
+                      <SelectItem value="4">4 dias</SelectItem>
+                      <SelectItem value="5">5 dias</SelectItem>
+                      <SelectItem value="6">6 dias</SelectItem>
+                      <SelectItem value="7">7 dias</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {renderValidationError('dias_treino_semana')}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="tempo_sessao" className="text-gray-700 font-medium">Tempo por Sessão (minutos) *</Label>
+                  <Select onValueChange={(value) => setUserData({...userData, tempo_disponivel_sessao: parseInt(value)})}>
+                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                      validationErrors.tempo_disponivel_sessao ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    }`}>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="30">30 minutos</SelectItem>
+                      <SelectItem value="45">45 minutos</SelectItem>
+                      <SelectItem value="60">60 minutos</SelectItem>
+                      <SelectItem value="90">90 minutos</SelectItem>
+                      <SelectItem value="120">120 minutos</SelectItem>
+                      <SelectItem value="180">180 minutos</SelectItem>
+                      <SelectItem value="240">240 minutos</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {renderValidationError('tempo_disponivel_sessao')}
+                </div>
+              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="teste_velocidade">Sprint 40m (segundos)</Label>
-                  <Input
-                    id="teste_velocidade"
-                    type="number"
-                    step="0.01"
-                    value={userData.teste_velocidade_40m || ''}
-                    onChange={(e) => setUserData({...userData, teste_velocidade_40m: parseFloat(e.target.value)})}
-                    placeholder="5.50"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="salto_vertical">Salto Vertical (cm)</Label>
-                  <Input
-                    id="salto_vertical"
-                    type="number"
-                    value={userData.salto_vertical || ''}
-                    onChange={(e) => setUserData({...userData, salto_vertical: parseInt(e.target.value)})}
-                    placeholder="45"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="teste_agilidade">Teste Agilidade T (segundos)</Label>
-                  <Input
-                    id="teste_agilidade"
-                    type="number"
-                    step="0.01"
-                    value={userData.teste_agilidade || ''}
-                    onChange={(e) => setUserData({...userData, teste_agilidade: parseFloat(e.target.value)})}
-                    placeholder="10.50"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="vo2_max">VO2 Max (ml/kg/min)</Label>
-                  <Input
-                    id="vo2_max"
-                    type="number"
-                    value={userData.vo2_max || ''}
-                    onChange={(e) => setUserData({...userData, vo2_max: parseInt(e.target.value)})}
-                    placeholder="50"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="fc_repouso">FC Repouso (bpm)</Label>
-                  <Input
-                    id="fc_repouso"
-                    type="number"
-                    value={userData.frequencia_cardiaca_repouso || ''}
-                    onChange={(e) => setUserData({...userData, frequencia_cardiaca_repouso: parseInt(e.target.value)})}
-                    placeholder="60"
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="objetivo_especifico" className="text-gray-700 font-medium">Objetivo Específico (Opcional)</Label>
+                <Select onValueChange={(value) => setUserData({...userData, objetivo_especifico: value as any})}>
+                  <SelectTrigger className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12">
+                    <SelectValue placeholder="Selecione o foco principal" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="velocidade">Velocidade</SelectItem>
+                    <SelectItem value="resistencia">Resistência</SelectItem>
+                    <SelectItem value="forca">Força</SelectItem>
+                    <SelectItem value="agilidade">Agilidade</SelectItem>
+                    <SelectItem value="coordenacao">Coordenação</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="p-4 rounded-xl border" style={{ backgroundColor: `${colors.primary}10`, borderColor: `${colors.primary}40` }}>
+                <p className="text-sm" style={{ color: colors.primaryDark }}>
+                  <Trophy className="inline h-4 w-4 mr-1" />
+                  Para atletas profissionais, recomendamos 6-7 dias de treino com sessões de 2-4 horas
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -1039,190 +764,103 @@ const PerformanceAtletica: React.FC = () => {
 
       case 4:
         return (
-          <Card className="w-full max-w-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5" />
-                Dados de Força e Treino Atual
+          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <BarChart3 className="h-6 w-6" />
+                </div>
+                Dados de Performance (Opcional)
               </CardTitle>
-              <CardDescription>
-                Informações sobre força máxima e rotina atual
+              <CardDescription className="text-white/90">
+                Dados atuais para análise mais precisa
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="supino_1rm">Supino 1RM (kg)</Label>
+            <CardContent className="space-y-6 p-8">
+              <Alert className="border" style={{ backgroundColor: `${colors.primary}10`, borderColor: `${colors.primary}40` }}>
+                <Info className="h-4 w-4" style={{ color: colors.primary }} />
+                <AlertDescription style={{ color: colors.primaryDark }}>
+                  Estes dados são opcionais, mas melhoram significativamente a precisão da análise.
+                </AlertDescription>
+              </Alert>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="vo2_max" className="text-gray-700 font-medium">VO2 Máximo (ml/kg/min)</Label>
                   <Input
-                    id="supino_1rm"
+                    id="vo2_max"
                     type="number"
-                    step="2.5"
-                    value={userData.supino_1rm || ''}
-                    onChange={(e) => setUserData({...userData, supino_1rm: parseFloat(e.target.value)})}
-                    placeholder="80"
+                    step="0.1"
+                    value={userData.vo2_max || ''}
+                    onChange={(e) => setUserData({...userData, vo2_max: parseFloat(e.target.value)})}
+                    placeholder="45.0"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                 </div>
-                <div>
-                  <Label htmlFor="agachamento_1rm">Agachamento 1RM (kg)</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="fc_repouso" className="text-gray-700 font-medium">FC Repouso (bpm)</Label>
                   <Input
-                    id="agachamento_1rm"
+                    id="fc_repouso"
                     type="number"
-                    step="2.5"
-                    value={userData.agachamento_1rm || ''}
-                    onChange={(e) => setUserData({...userData, agachamento_1rm: parseFloat(e.target.value)})}
-                    placeholder="100"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="terra_1rm">Levantamento Terra 1RM (kg)</Label>
-                  <Input
-                    id="terra_1rm"
-                    type="number"
-                    step="2.5"
-                    value={userData.levantamento_terra_1rm || ''}
-                    onChange={(e) => setUserData({...userData, levantamento_terra_1rm: parseFloat(e.target.value)})}
-                    placeholder="120"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="desenvolvimento_1rm">Desenvolvimento 1RM (kg)</Label>
-                  <Input
-                    id="desenvolvimento_1rm"
-                    type="number"
-                    step="2.5"
-                    value={userData.desenvolvimento_1rm || ''}
-                    onChange={(e) => setUserData({...userData, desenvolvimento_1rm: parseFloat(e.target.value)})}
+                    value={userData.frequencia_cardiaca_repouso || ''}
+                    onChange={(e) => setUserData({...userData, frequencia_cardiaca_repouso: parseInt(e.target.value)})}
                     placeholder="60"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="tempo_5km" className="text-gray-700 font-medium">Tempo 5km (minutos)</Label>
+                  <Input
+                    id="tempo_5km"
+                    type="number"
+                    step="0.1"
+                    value={userData.tempo_corrida_5km || ''}
+                    onChange={(e) => setUserData({...userData, tempo_corrida_5km: parseFloat(e.target.value)})}
+                    placeholder="25.0"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="salto_vertical" className="text-gray-700 font-medium">Salto Vertical (cm)</Label>
+                  <Input
+                    id="salto_vertical"
+                    type="number"
+                    value={userData.salto_vertical || ''}
+                    onChange={(e) => setUserData({...userData, salto_vertical: parseInt(e.target.value)})}
+                    placeholder="45"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="dias_treino">Dias de Treino/Semana</Label>
-                  <Select onValueChange={(value) => setUserData({...userData, dias_treino_semana: parseInt(value)})}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="4">4 dias</SelectItem>
-                      <SelectItem value="5">5 dias</SelectItem>
-                      <SelectItem value="6">6 dias</SelectItem>
-                      <SelectItem value="7">7 dias</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="horas_treino">Horas de Treino/Dia</Label>
-                  <Select onValueChange={(value) => setUserData({...userData, horas_treino_dia: parseFloat(value)})}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">1 hora</SelectItem>
-                      <SelectItem value="1.5">1.5 horas</SelectItem>
-                      <SelectItem value="2">2 horas</SelectItem>
-                      <SelectItem value="3">3 horas</SelectItem>
-                      <SelectItem value="4">4+ horas</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="periodizacao_atual">Periodização Atual</Label>
-                <Input
-                  id="periodizacao_atual"
-                  value={userData.periodizacao_atual || ''}
-                  onChange={(e) => setUserData({...userData, periodizacao_atual: e.target.value})}
-                  placeholder="Ex: Linear, Ondulatória, Block, Nenhuma..."
-                />
-              </div>
-            </CardContent>
-          </Card>
-        );
-
-      case 5:
-        return (
-          <Card className="w-full max-w-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Heart className="h-5 w-5" />
-                Histórico e Limitações
-              </CardTitle>
-              <CardDescription>
-                Informações sobre lesões, limitações e suplementação
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="lesoes_historico">Histórico de Lesões</Label>
+              <div className="space-y-2">
+                <Label htmlFor="lesoes" className="text-gray-700 font-medium">Lesões ou Limitações</Label>
                 <Textarea
-                  id="lesoes_historico"
-                  value={userData.lesoes_historico || ''}
-                  onChange={(e) => setUserData({...userData, lesoes_historico: e.target.value})}
-                  placeholder="Descreva lesões anteriores, cirurgias ou problemas recorrentes..."
+                  id="lesoes"
+                  value={userData.lesoes_limitacoes || ''}
+                  onChange={(e) => setUserData({...userData, lesoes_limitacoes: e.target.value})}
+                  placeholder="Descreva qualquer lesão, dor ou limitação física..."
                   rows={3}
+                  className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl resize-none"
+                  style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                 />
               </div>
 
-              <div>
-                <Label htmlFor="limitacoes_fisicas">Limitações Físicas Atuais</Label>
+              <div className="space-y-2">
+                <Label htmlFor="suplementacao" className="text-gray-700 font-medium">Suplementação Atual</Label>
                 <Textarea
-                  id="limitacoes_fisicas"
-                  value={userData.limitacoes_fisicas || ''}
-                  onChange={(e) => setUserData({...userData, limitacoes_fisicas: e.target.value})}
-                  placeholder="Dores, limitações de mobilidade, restrições médicas..."
-                  rows={3}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="suplementacao_atual">Suplementação Atual</Label>
-                <Textarea
-                  id="suplementacao_atual"
+                  id="suplementacao"
                   value={userData.suplementacao_atual || ''}
                   onChange={(e) => setUserData({...userData, suplementacao_atual: e.target.value})}
-                  placeholder="Liste os suplementos que você usa atualmente..."
+                  placeholder="Ex: Whey protein, creatina, cafeína..."
                   rows={2}
+                  className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl resize-none"
+                  style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                 />
-              </div>
-
-              {/* Dados de composição corporal opcionais */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="massa_gorda">Massa Gorda (kg)</Label>
-                  <Input
-                    id="massa_gorda"
-                    type="number"
-                    step="0.1"
-                    value={userData.massa_gorda || ''}
-                    onChange={(e) => setUserData({...userData, massa_gorda: parseFloat(e.target.value)})}
-                    placeholder="10.5"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="massa_magra">Massa Magra (kg)</Label>
-                  <Input
-                    id="massa_magra"
-                    type="number"
-                    step="0.1"
-                    value={userData.massa_magra || ''}
-                    onChange={(e) => setUserData({...userData, massa_magra: parseFloat(e.target.value)})}
-                    placeholder="65.0"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="massa_muscular">Massa Muscular (kg)</Label>
-                  <Input
-                    id="massa_muscular"
-                    type="number"
-                    step="0.1"
-                    value={userData.massa_muscular || ''}
-                    onChange={(e) => setUserData({...userData, massa_muscular: parseFloat(e.target.value)})}
-                    placeholder="55.2"
-                  />
-                </div>
               </div>
             </CardContent>
           </Card>
@@ -1235,16 +873,42 @@ const PerformanceAtletica: React.FC = () => {
 
   if (isCalculating) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6 p-6 bg-gradient-to-br from-orange-50 to-red-100">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-orange-600 mx-auto"></div>
-          <h2 className="text-2xl font-bold text-gray-800">Analisando Performance Atlética</h2>
-          <p className="text-gray-600">Aplicando algoritmos de otimização esportiva...</p>
-          <div className="space-y-2">
-            <p className="text-sm text-gray-500">✓ Analisando testes de performance</p>
-            <p className="text-sm text-gray-500">✓ Calculando potencial atlético</p>
-            <p className="text-sm text-gray-500">✓ Gerando periodização personalizada</p>
-            <p className="text-sm text-gray-500">✓ Otimizando protocolo de recuperação</p>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-8 p-6 relative overflow-hidden" style={{ backgroundColor: colors.dark }}>
+        {/* Elementos de fundo animados */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob" style={{ backgroundColor: colors.primary }}></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000" style={{ backgroundColor: colors.primaryLight }}></div>
+          <div className="absolute top-40 left-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000" style={{ backgroundColor: colors.primaryDark }}></div>
+        </div>
+
+        <div className="text-center space-y-6 z-10 backdrop-blur-sm bg-white/10 p-12 rounded-3xl border border-white/20">
+          <div className="relative">
+            <div className="animate-spin rounded-full h-20 w-20 border-4 border-white/30 mx-auto" style={{ borderTopColor: colors.primary }}></div>
+            <div className="absolute inset-0 animate-ping rounded-full h-20 w-20 border-4 border-white/20 mx-auto"></div>
+          </div>
+          
+          <div className="space-y-4">
+            <h2 className="text-4xl font-bold text-white">Analisando Performance Atlética</h2>
+            <p className="text-xl text-gray-200">Aplicando algoritmos de otimização esportiva...</p>
+            
+            <div className="space-y-3 mt-8">
+              <div className="flex items-center justify-center space-x-3 text-white/90">
+                <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: colors.primary }}></div>
+                <p className="text-sm">Analisando perfil atlético</p>
+              </div>
+              <div className="flex items-center justify-center space-x-3 text-white/90">
+                <div className="w-2 h-2 rounded-full animate-pulse animation-delay-500" style={{ backgroundColor: colors.primaryLight }}></div>
+                <p className="text-sm">Calculando potencial de performance</p>
+              </div>
+              <div className="flex items-center justify-center space-x-3 text-white/90">
+                <div className="w-2 h-2 rounded-full animate-pulse animation-delay-1000" style={{ backgroundColor: colors.primaryDark }}></div>
+                <p className="text-sm">Gerando periodização específica</p>
+              </div>
+              <div className="flex items-center justify-center space-x-3 text-white/90">
+                <div className="w-2 h-2 rounded-full animate-pulse animation-delay-1500" style={{ backgroundColor: colors.primary }}></div>
+                <p className="text-sm">Otimizando estratégias de treino</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1253,383 +917,105 @@ const PerformanceAtletica: React.FC = () => {
 
   if (results) {
     return (
-      <div className="min-h-screen p-6 bg-gradient-to-br from-orange-50 to-red-100">
-        <div className="max-w-6xl mx-auto space-y-6">
-          {/* Header */}
-          <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-gray-800">Análise de Performance Atlética</h1>
-            <p className="text-gray-600">Otimização científica para máximo desempenho esportivo</p>
+      <div className="min-h-screen p-6 relative overflow-hidden" style={{ backgroundColor: colors.dark }}>
+        {/* Elementos de fundo animados */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-20 right-20 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob" style={{ backgroundColor: colors.primary }}></div>
+          <div className="absolute bottom-20 left-20 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000" style={{ backgroundColor: colors.primaryLight }}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000" style={{ backgroundColor: colors.primaryDark }}></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto space-y-8 relative z-10">
+          {/* Header com animação */}
+          <div className="text-center space-y-4 animate-fade-in">
+            <div className="inline-flex items-center gap-3 text-white px-8 py-4 rounded-2xl shadow-2xl" style={{ backgroundColor: colors.primary }}>
+              <Sparkles className="h-8 w-8" />
+              <h1 className="text-4xl font-bold">Análise de Performance Atlética</h1>
+              <Sparkles className="h-8 w-8" />
+            </div>
+            <p className="text-xl text-gray-300">Otimização científica para atletas de alto rendimento</p>
           </div>
 
-          {/* Perfil Atlético */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Trophy className="h-5 w-5" />
-                Perfil Atlético
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="text-center">
-                  <p className="text-sm text-gray-600">Classificação</p>
-                  <Badge variant="outline" className="mt-1">{results.classificacao_atletica}</Badge>
-                </div>
-                <div className="text-center">
-                  <p className="text-sm text-gray-600">Perfil</p>
-                  <Badge variant="default" className="mt-1">{results.perfil_atletico}</Badge>
-                </div>
-                <div className="text-center">
-                  <p className="text-sm text-gray-600">Potencial</p>
-                  <p className="text-lg font-bold">{(results.potencial_modalidade * 100).toFixed(0)}%</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-sm text-gray-600">Índice Performance</p>
-                  <p className="text-lg font-bold">{results.indice_performance_geral}/10</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Análise de Performance */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
+          {/* Score Motivacional e Badges */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5" />
-                  Níveis Atuais
+                <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                  <div className="p-3 rounded-xl" style={{ backgroundColor: colors.primary }}>
+                    <Trophy className="h-6 w-6" />
+                  </div>
+                  Score Motivacional
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span>Força:</span>
-                    <Badge variant={results.nivel_forca_relativa === 'Excelente' ? "default" : 
-                                  results.nivel_forca_relativa === 'Bom' ? "secondary" : "outline"}>
-                      {results.nivel_forca_relativa}
-                    </Badge>
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <div className="text-6xl font-bold text-white">
+                      {results.score_motivacional}
+                    </div>
+                    <p className="text-xl text-gray-300 mt-2">Pontos de Motivação</p>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span>Potência:</span>
-                    <Badge variant={results.nivel_potencia === 'Excelente' ? "default" : 
-                                  results.nivel_potencia === 'Bom' ? "secondary" : "outline"}>
-                      {results.nivel_potencia}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Resistência:</span>
-                    <Badge variant={results.nivel_resistencia === 'Excelente' ? "default" : 
-                                  results.nivel_resistencia === 'Bom' ? "secondary" : "outline"}>
-                      {results.nivel_resistencia}
-                    </Badge>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5" />
-                  Pontos Fortes
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {results.pontos_fortes.map((ponto, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span className="text-sm">{ponto}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5" />
-                  Áreas de Melhoria
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {results.areas_melhoria.map((area, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <AlertTriangle className="h-4 w-4 text-orange-600" />
-                      <span className="text-sm">{area}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Ganhos Esperados */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Zap className="h-5 w-5" />
-                Ganhos Esperados ({results.tempo_melhoria_estimado} semanas)
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                {Object.entries(results.ganhos_esperados).map(([qualidade, ganho]) => (
-                  <div key={qualidade} className="text-center p-3 border rounded-lg">
-                    <p className="text-sm text-gray-600 capitalize">{qualidade}</p>
-                    <p className="text-lg font-bold text-orange-600">{ganho}</p>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Plano de Treino Periodizado */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
-                Plano de Treino Periodizado
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-3">Estrutura Geral</h4>
-                  <ul className="space-y-2 text-sm">
-                    <li>• <strong>Tipo:</strong> {results.plano_treino_periodizado.tipo_periodizacao}</li>
-                    <li>• <strong>Duração do Ciclo:</strong> {results.plano_treino_periodizado.duracao_ciclo}</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-3">Distribuição Semanal (%)</h4>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    {Object.entries(results.plano_treino_periodizado.distribuicao_semanal).map(([qualidade, porcentagem]) => (
-                      <div key={qualidade} className="flex justify-between">
-                        <span className="capitalize">{qualidade}:</span>
-                        <span className="font-medium">{porcentagem}%</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <h4 className="font-semibold mb-3">Fases da Periodização</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {Object.entries(results.plano_treino_periodizado.fases).map(([fase, dados]: [string, any]) => (
-                    <div key={fase} className="p-3 border rounded-lg">
-                      <h5 className="font-medium capitalize text-sm">{fase.replace('_', ' ')}</h5>
-                      <p className="text-xs text-gray-600 mt-1">{dados.duracao}</p>
-                      <p className="text-xs text-gray-700 mt-1">{dados.foco}</p>
-                      <div className="mt-2 text-xs">
-                        <span className="text-blue-600">Vol: {dados.volume}</span> | 
-                        <span className="text-red-600 ml-1">Int: {dados.intensidade}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Plano Nutricional para Performance */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Heart className="h-5 w-5" />
-                Nutrição para Performance
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-3">Necessidades Diárias</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span>Calorias:</span>
-                      <span className="font-medium">{results.plano_nutricional_performance.calorias_diarias} kcal</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Proteínas:</span>
-                      <span className="font-medium">{results.plano_nutricional_performance.macronutrientes.proteina}g</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Carboidratos:</span>
-                      <span className="font-medium">{results.plano_nutricional_performance.macronutrientes.carboidratos}g</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Gorduras:</span>
-                      <span className="font-medium">{results.plano_nutricional_performance.macronutrientes.gorduras}g</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Hidratação:</span>
-                      <span className="font-medium text-xs">{results.plano_nutricional_performance.hidratacao}</span>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-3">Timing Nutricional</h4>
+                  
                   <div className="space-y-3">
-                    {Object.entries(results.plano_nutricional_performance.timing_nutricional).map(([momento, dados]: [string, any]) => (
-                      <div key={momento} className="border-l-2 border-orange-200 pl-3">
-                        <p className="font-medium text-sm capitalize">{momento.replace('_', ' ')} ({dados.timing})</p>
-                        <p className="text-xs text-gray-600">{dados.exemplo}</p>
-                      </div>
-                    ))}
+                    <div className="flex justify-between text-gray-300">
+                      <span>Nível do Atleta</span>
+                      <Badge className="text-white" style={{ backgroundColor: colors.primary }}>
+                        {results.nivel_usuario}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between text-gray-300">
+                      <span>Pontos de Experiência</span>
+                      <span className="font-bold" style={{ color: colors.primary }}>{results.pontos_experiencia} XP</span>
+                    </div>
                   </div>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <h4 className="font-semibold mb-3">Suplementação para Performance</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                  {results.plano_nutricional_performance.suplementacao_performance.map((suplemento: string, index: number) => (
-                    <Badge key={index} variant="outline" className="justify-center p-2 text-xs">
-                      {suplemento}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Protocolo de Recuperação */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Timer className="h-5 w-5" />
-                Protocolo de Recuperação
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-3">Sono e Descanso</h4>
-                  <ul className="space-y-1 text-sm">
-                    <li>• <strong>Duração:</strong> {results.protocolo_recuperacao.sono.duracao}</li>
-                    <li>• <strong>Ambiente:</strong> {results.protocolo_recuperacao.sono.qualidade}</li>
-                    <li>• <strong>Rotina:</strong> {results.protocolo_recuperacao.sono.rotina}</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-3">Recuperação Ativa</h4>
-                  <ul className="space-y-1 text-sm">
-                    <li>• <strong>Frequência:</strong> {results.protocolo_recuperacao.recuperacao_ativa.frequencia}</li>
-                    <li>• <strong>Duração:</strong> {results.protocolo_recuperacao.recuperacao_ativa.duracao}</li>
-                    <li>• <strong>Atividades:</strong> {results.protocolo_recuperacao.recuperacao_ativa.atividades.join(', ')}</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <h4 className="font-semibold mb-3">Terapias de Recuperação</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {Object.entries(results.protocolo_recuperacao.terapias).map(([terapia, frequencia]) => (
-                    <div key={terapia} className="text-center p-3 bg-orange-50 rounded-lg">
-                      <p className="text-sm font-medium capitalize">{terapia.replace('_', ' ')}</p>
-                      <p className="text-xs text-gray-600">{frequencia}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Monitoramento */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Gauge className="h-5 w-5" />
-                  Métricas de Acompanhamento
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {results.metricas_acompanhamento.map((metrica, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-orange-600" />
-                      <span className="text-sm">{metrica}</span>
-                    </div>
-                  ))}
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5" />
-                  Sinais de Overtraining
+                <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                  <div className="p-3 rounded-xl" style={{ backgroundColor: colors.primary }}>
+                    <Award className="h-6 w-6" />
+                  </div>
+                  Badges Conquistadas
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  {results.indicadores_overtraining.slice(0, 5).map((indicador, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <AlertTriangle className="h-4 w-4 text-red-600" />
-                      <span className="text-sm">{indicador}</span>
+                <div className="grid grid-cols-2 gap-3">
+                  {results.badges_conquistadas.map((badge, index) => (
+                    <div key={index} className="border rounded-xl p-4 text-center backdrop-blur-sm" style={{ backgroundColor: `${colors.primary}20`, borderColor: `${colors.primary}30` }}>
+                      <div className="text-2xl mb-2">{badge.split(' ')[0]}</div>
+                      <div className="text-sm font-medium" style={{ color: colors.primary }}>{badge.split(' ').slice(1).join(' ')}</div>
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
           </div>
-
-          {/* Testes de Performance */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5" />
-                Protocolo de Testes
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {results.testes_performance.map((teste, index) => (
-                  <div key={index} className="p-4 border rounded-lg">
-                    <h5 className="font-semibold text-sm">{teste.nome}</h5>
-                    <p className="text-xs text-gray-600 mt-1">Frequência: {teste.frequencia}</p>
-                    <p className="text-xs text-gray-700 mt-1">{teste.protocolo}</p>
-                    <p className="text-xs text-orange-600 mt-2">{teste.objetivo}</p>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Recomendações de Otimização */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5" />
-                Recomendações de Otimização
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {results.recomendacoes_otimizacao.map((recomendacao, index) => (
-                  <div key={index} className="flex items-start gap-2 p-3 bg-orange-50 rounded-lg">
-                    <CheckCircle className="h-4 w-4 text-orange-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">{recomendacao}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Botões de Ação */}
-          <div className="flex gap-4 justify-center">
-            <Button onClick={() => window.print()} variant="outline">
-              Imprimir Plano
+          <div className="flex flex-wrap gap-6 justify-center pt-8">
+            <Button 
+              onClick={() => window.print()} 
+              className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
+            >
+              <BarChart3 className="mr-2 h-5 w-5" />
+              Imprimir Análise
             </Button>
-            <Button onClick={() => navigate('/progress')}>
+            <Button 
+              onClick={() => navigate('/progress')}
+              className="text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
+              style={{ backgroundColor: colors.primary }}
+            >
+              <TrendingUp className="mr-2 h-5 w-5" />
               Iniciar Acompanhamento
             </Button>
-            <Button onClick={() => {setResults(null); setStep(1);}} variant="outline">
+            <Button 
+              onClick={() => {setResults(null); setStep(1);}} 
+              className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
+            >
+              <Sparkles className="mr-2 h-5 w-5" />
               Nova Análise
             </Button>
           </div>
@@ -1639,21 +1025,52 @@ const PerformanceAtletica: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-orange-50 to-red-100">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-gray-800">Performance Atlética Inteligente</h1>
-          <p className="text-gray-600">Otimização científica para máximo desempenho esportivo</p>
+    <div className="min-h-screen p-6 relative overflow-hidden" style={{ backgroundColor: colors.dark }}>
+      {/* Elementos de fundo animados */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 right-20 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob" style={{ backgroundColor: colors.primary }}></div>
+        <div className="absolute bottom-20 left-20 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000" style={{ backgroundColor: colors.primaryLight }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000" style={{ backgroundColor: colors.primaryDark }}></div>
+      </div>
+
+      <div className="max-w-5xl mx-auto space-y-8 relative z-10">
+        {/* Header com animação */}
+        <div className={`text-center space-y-4 transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <div className="inline-flex items-center gap-3 text-white px-8 py-4 rounded-2xl shadow-2xl backdrop-blur-lg" style={{ backgroundColor: colors.primary }}>
+            <Sparkles className="h-8 w-8" />
+            <h1 className="text-4xl font-bold">Performance Atlética Inteligente</h1>
+            <Sparkles className="h-8 w-8" />
+          </div>
+          <p className="text-xl text-gray-200">Algoritmos avançados de otimização esportiva</p>
         </div>
 
-        {/* Progress Bar */}
-        <div className="w-full max-w-2xl mx-auto">
-          <div className="flex justify-between text-sm text-gray-600 mb-2">
-            <span>Passo {step} de {totalSteps}</span>
-            <span>{Math.round(progress)}% completo</span>
+        {/* Progress Bar com design moderno */}
+        <div className={`w-full max-w-3xl mx-auto transition-all duration-700 delay-300 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <div className="flex justify-between text-sm text-gray-200 mb-4">
+            <span className="font-medium">Passo {step} de {totalSteps}</span>
+            <span className="font-medium">{Math.round(progress)}% completo</span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <div className="relative">
+            <Progress 
+              value={progress} 
+              className="h-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full overflow-hidden"
+            />
+            <div className="absolute inset-0 rounded-full opacity-80" 
+                 style={{width: `${progress}%`, backgroundColor: colors.primary}}></div>
+          </div>
+          
+          {/* Step indicators */}
+          <div className="flex justify-between mt-4">
+            {Array.from({length: totalSteps}, (_, i) => (
+              <div key={i} className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                i + 1 <= step 
+                  ? 'text-white shadow-lg' 
+                  : 'text-gray-300 border border-white/30'
+              }`} style={{ backgroundColor: i + 1 <= step ? colors.primary : 'transparent' }}>
+                {i + 1 <= step ? <CheckCircle className="h-4 w-4" /> : i + 1}
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Step Content */}
@@ -1661,18 +1078,93 @@ const PerformanceAtletica: React.FC = () => {
           {renderStep()}
         </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-center gap-4">
+        {/* Navigation Buttons com design moderno */}
+        <div className={`flex justify-center gap-6 transition-all duration-700 delay-500 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
           {step > 1 && (
-            <Button onClick={handlePrevious} variant="outline">
+            <Button 
+              onClick={handlePrevious} 
+              className="bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-4 rounded-2xl text-lg font-semibold backdrop-blur-sm hover:scale-105 transition-all duration-300"
+            >
               Anterior
             </Button>
           )}
-          <Button onClick={handleNext}>
-            {step === totalSteps ? 'Analisar Performance' : 'Próximo'}
+          <Button 
+            onClick={handleNext}
+            className="text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
+            style={{ backgroundColor: colors.primary }}
+          >
+            {step === totalSteps ? (
+              <>
+                <Rocket className="mr-2 h-5 w-5" />
+                Analisar Performance
+              </>
+            ) : (
+              'Próximo'
+            )}
           </Button>
         </div>
+
+        {/* Mostrar erros de validação se houver */}
+        {Object.keys(validationErrors).length > 0 && (
+          <div className="fixed bottom-4 right-4 max-w-md">
+            <Alert className="bg-red-500/20 border-red-500/30 backdrop-blur-sm">
+              <AlertTriangle className="h-4 w-4 text-red-400" />
+              <AlertDescription className="text-red-300">
+                Por favor, corrija os campos obrigatórios destacados em vermelho.
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
       </div>
+
+      {/* CSS personalizado para animações */}
+      <style jsx>{`
+        @keyframes blob {
+          0% {
+            transform: translate(0px, 0px) scale(1);
+          }
+          33% {
+            transform: translate(30px, -50px) scale(1.1);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.9);
+          }
+          100% {
+            transform: translate(0px, 0px) scale(1);
+          }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+        .animation-delay-500 {
+          animation-delay: 0.5s;
+        }
+        .animation-delay-1000 {
+          animation-delay: 1s;
+        }
+        .animation-delay-1500 {
+          animation-delay: 1.5s;
+        }
+        .animate-fade-in {
+          animation: fadeIn 1s ease-out;
+        }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 };
