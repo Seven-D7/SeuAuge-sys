@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { lazy, Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,10 +18,10 @@ import {
 } from 'lucide-react';
 
 // Importar todos os módulos especializados
-import EmagrecimentoAvancado from './EmagrecimentoAvancado';
-import GanhoMassaMuscular from './GanhoMassaMuscular';
-import RecomposicaoCorporal from './RecomposicaoCorporal';
-import PerformanceAtletica from './PerformanceAtletica';
+const EmagrecimentoAvancado = lazy(() => import('./EmagrecimentoAvancado'));
+const GanhoMassaMuscular = lazy(() => import('./GanhoMassaMuscular'));
+const RecomposicaoCorporal = lazy(() => import('./RecomposicaoCorporal'));
+const PerformanceAtletica = lazy(() => import('./PerformanceAtletica'));
 
 // Configuração dos módulos
 export const MODULOS_CONFIG = {
@@ -181,6 +181,20 @@ const ModuleSelector: React.FC = () => {
               Resultados Comprovados
             </Badge>
           </div>
+          <nav className="flex justify-center gap-2 flex-wrap pt-4">
+            <Link to="/emagrecimento" className="gradient-emagrecimento text-white px-3 py-1 rounded-md text-sm flex items-center gap-1">
+              🔥 Emagrecimento
+            </Link>
+            <Link to="/ganho-massa" className="gradient-ganho-massa text-white px-3 py-1 rounded-md text-sm flex items-center gap-1">
+              💪 Ganho de Massa
+            </Link>
+            <Link to="/recomposicao" className="gradient-recomposicao text-white px-3 py-1 rounded-md text-sm flex items-center gap-1">
+              🔄 Recomposição
+            </Link>
+            <Link to="/performance" className="gradient-performance text-white px-3 py-1 rounded-md text-sm flex items-center gap-1">
+              ⚡ Performance
+            </Link>
+          </nav>
         </div>
 
         {/* Módulos Grid */}
@@ -378,10 +392,38 @@ const FitnessModulesApp: React.FC = () => {
     <Router>
       <Routes>
         <Route path="/" element={<ModuleSelector />} />
-        <Route path="/emagrecimento" element={<EmagrecimentoAvancado />} />
-        <Route path="/ganho-massa" element={<GanhoMassaMuscular />} />
-        <Route path="/recomposicao" element={<RecomposicaoCorporal />} />
-        <Route path="/performance" element={<PerformanceAtletica />} />
+        <Route
+          path="/emagrecimento"
+          element={
+            <Suspense fallback={<div className="p-4">Carregando...</div>}>
+              <EmagrecimentoAvancado />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/ganho-massa"
+          element={
+            <Suspense fallback={<div className="p-4">Carregando...</div>}>
+              <GanhoMassaMuscular />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/recomposicao"
+          element={
+            <Suspense fallback={<div className="p-4">Carregando...</div>}>
+              <RecomposicaoCorporal />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/performance"
+          element={
+            <Suspense fallback={<div className="p-4">Carregando...</div>}>
+              <PerformanceAtletica />
+            </Suspense>
+          }
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

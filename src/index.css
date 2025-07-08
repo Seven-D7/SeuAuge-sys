@@ -17,3 +17,18 @@
     @apply border border-slate-300 dark:border-slate-700 rounded-lg p-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-white;
   }
 }
+
+@layer utilities {
+  .gradient-emagrecimento {
+    @apply bg-gradient-to-br from-emagrecimento-start to-emagrecimento-end;
+  }
+  .gradient-ganho-massa {
+    @apply bg-gradient-to-br from-ganho-start to-ganho-end;
+  }
+  .gradient-recomposicao {
+    @apply bg-gradient-to-br from-recomposicao-start to-recomposicao-end;
+  }
+  .gradient-performance {
+    @apply bg-gradient-to-br from-performance-start to-performance-end;
+  }
+}
