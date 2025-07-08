@@ -36,7 +36,7 @@ function Home() {
             <div className="flex items-center gap-3">
               <div className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white p-2 rounded-xl">
                 <img
-  src="icone.png" 
+  src="/src/assets/icone.png" 
   alt="Logo"
   className="w-8 h-8 object-contain"
 />

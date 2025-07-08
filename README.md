@@ -1,49 +1,72 @@
-# Meu Auge - Sistema de Bem-estar
+# Arquivos Corrigidos - SeuAuge-sys
 
-Plataforma web desenvolvida em React + TypeScript para gerenciamento de vídeos de saúde e loja de produtos. Utiliza Firebase para autenticação, Firestore e Storage.
+Este arquivo ZIP contém todos os arquivos que foram modificados para corrigir bugs visuais e erros no projeto SeuAuge-sys.
 
-## Funcionalidades
+## Estrutura dos Arquivos
 
-- Autenticação de usuários e controle de planos
-- Listagem de vídeos com filtros e acesso condicionado ao plano
-- Loja com carrinho e favoritos
-- Área administrativa (para usuários com permissão)
-- Tema claro/escuro e layout responsivo
-
-## Requisitos
-
-- Node.js 18+
-- Configurar variáveis de ambiente em um arquivo `.env` conforme o exemplo abaixo:
-
-```bash
-VITE_API_URL=http://localhost:3000/api
-VITE_ADMIN_EMAIL=admin@seuauge.com
-VITE_PAYMENT_URL=https://pagamento.exemplo.com
-VITE_BYPASS_PLAN_GUARD=true
+```
+arquivos-corrigidos/
+├── README.md                                    # Este arquivo
+├── CORREÇÕES_APLICADAS.md                      # Relatório detalhado das correções
+├── todo.md                                     # Lista de tarefas e progresso
+├── vite.config.ts                             # Configuração do Vite corrigida
+└── src/
+    ├── pages/
+    │   ├── Home.tsx                            # Tela Home corrigida
+    │   └── Profile.tsx                         # Tela Profile corrigida
+    ├── components/
+    │   ├── home/
+    │   │   └── PlansSection.tsx                # Seção de planos implementada
+    │   └── fitness-modules/
+    │       ├── EmagrecimentoAvancado.tsx       # Imports corrigidos
+    │       ├── GanhoMassaMuscular.tsx          # Imports corrigidos
+    │       ├── ModulosConfig.tsx               # Imports corrigidos
+    │       ├── PerformanceAtletica.tsx         # Imports corrigidos
+    │       └── RecomposicaoCorporal.tsx        # Imports corrigidos
+    └── styles/
+        └── custom.css                          # Animações CSS adicionadas
 ```
 
-## Instalação
+## Como Aplicar as Correções
 
-```bash
-npm install
-```
+1. **Backup**: Faça backup dos arquivos originais antes de aplicar as correções
+2. **Substitua**: Substitua os arquivos originais pelos arquivos corrigidos mantendo a mesma estrutura de pastas
+3. **Teste**: Execute `npm install` e `npm run dev` para testar as correções
 
-## Desenvolvimento
+## Principais Correções Aplicadas
 
-```bash
-npm run dev
-```
+### 🏠 Home.tsx
+- ✅ Corrigido caminho da imagem do ícone
+- ✅ Melhorada estrutura semântica
 
-A aplicação será servida em `http://localhost:5173`.
+### 👤 Profile.tsx
+- ✅ Removido CSS inline para melhor performance
+- ✅ Melhorada responsividade para dispositivos móveis
+- ✅ Otimizadas tabs de navegação
 
-## Build para produção
+### 📋 PlansSection.tsx
+- ✅ Implementação completa da seção de planos
+- ✅ Três planos com design profissional
+- ✅ Responsividade e interatividade
 
-```bash
-npm run build
-```
+### 💪 Fitness Modules
+- ✅ Corrigidos imports problemáticos em todos os módulos
+- ✅ Caminhos relativos corretos para componentes UI
+- ✅ Imports dos algoritmos avançados corrigidos
 
-O resultado ficará na pasta `dist/`.
+### 🎨 custom.css
+- ✅ Animações CSS organizadas
+- ✅ Melhor performance e manutenibilidade
 
-## Licença
+### ⚙️ vite.config.ts
+- ✅ Configuração para hosts externos
+- ✅ Melhor compatibilidade de deploy
 
-Projeto educacional sem fins comerciais.
+## Site de Demonstração
+
+Você pode ver as correções aplicadas em: https://slkgepai.manus.space
+
+## Suporte
+
+Para dúvidas sobre as correções aplicadas, consulte o arquivo `CORREÇÕES_APLICADAS.md` que contém um relatório detalhado de todas as modificações.
+

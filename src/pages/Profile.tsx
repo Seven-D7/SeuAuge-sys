@@ -215,16 +215,16 @@ const Profile: React.FC = () => {
                     </div>
                     
                     {/* Quick metrics */}
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
                       {[
                         { label: 'Peso', value: `${metrics.totalWeight}kg`, color: 'text-blue-400' },
                         { label: 'IMC', value: metrics.bmi, color: 'text-green-400' },
                         { label: 'Gordura', value: `${metrics.bodyFatPercent}%`, color: 'text-yellow-400' },
                         { label: 'Músculo', value: `${metrics.skeletalMuscleMass}kg`, color: 'text-purple-400' },
                       ].map((metric, index) => (
-                        <div key={index} className="bg-slate-700/50 rounded-xl p-4 text-center hover:bg-slate-700/70 transition-all duration-200">
-                          <div className={`text-xl font-bold ${metric.color}`}>{metric.value}</div>
-                          <div className="text-slate-400 text-sm">{metric.label}</div>
+                        <div key={index} className="bg-slate-700/50 rounded-xl p-3 sm:p-4 text-center hover:bg-slate-700/70 transition-all duration-200">
+                          <div className={`text-lg sm:text-xl font-bold ${metric.color}`}>{metric.value}</div>
+                          <div className="text-slate-400 text-xs sm:text-sm">{metric.label}</div>
                         </div>
                       ))}
                     </div>
@@ -261,21 +261,21 @@ const Profile: React.FC = () => {
         </section>
 
         {/* Tabs de navegação */}
-        <div className="flex flex-wrap gap-2 bg-slate-800/50 p-2 rounded-2xl backdrop-blur-sm">
+        <div className="flex flex-wrap gap-2 bg-slate-800/50 p-2 rounded-2xl backdrop-blur-sm overflow-x-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
+                className={`flex items-center space-x-2 px-4 sm:px-6 py-3 rounded-xl font-medium transition-all duration-200 whitespace-nowrap ${
                   activeTab === tab.id
                     ? 'bg-gradient-to-r from-primary to-emerald-600 text-white shadow-lg'
                     : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
                 }`}
               >
                 <Icon className="w-4 h-4" />
-                <span>{tab.label}</span>
+                <span className="hidden sm:inline">{tab.label}</span>
               </button>
             );
           })}
@@ -424,27 +424,6 @@ const Profile: React.FC = () => {
           )}
         </div>
       </div>
-
-      {/* CSS personalizado para animações */}
-      <style jsx>{`
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes slide-up {
-          from { opacity: 0; transform: translateY(40px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .animate-fade-in {
-          animation: fade-in 0.6s ease-out;
-        }
-        
-        .animate-slide-up {
-          animation: slide-up 0.8s ease-out;
-        }
-      `}</style>
     </div>
   );
 };

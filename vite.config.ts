@@ -13,7 +13,9 @@ export default defineConfig({
     exclude: ['lucide-react'],
   },
   server: {
-    host: true,       // permite acesso via IP local (0.0.0.0)
+    host: '0.0.0.0',       // permite acesso via IP local (0.0.0.0)
     port: 5173,       // garante que porta padrão está setada
+    strictPort: true,
+    allowedHosts: 'all'
   },
 });
