@@ -6,9 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Meu Auge - Transforme Sua Jornada de Bem-estar</title>
     <meta name="description" content="Plataforma premium de saúde e bem-estar com vídeos especializados, orientação nutricional e produtos de saúde selecionados." />
+    <script>
+      const theme = localStorage.getItem('theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+  </body></html>
