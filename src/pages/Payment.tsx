@@ -38,7 +38,7 @@ const Payment: React.FC = () => {
     setLoadingConfirm(true);
     await updateUserPlan(selectedPlan);
     await refreshPlan();
-    navigate('/plans');
+    navigate('/plans'); 
   };
 
   return (
