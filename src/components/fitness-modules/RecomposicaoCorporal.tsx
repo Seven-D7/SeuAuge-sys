@@ -11,13 +11,8 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   RotateCcw, 
-  TrendingDown, 
-  TrendingUp, 
-  Brain, 
+  TrendingUp,  
   Activity, 
-  Calendar,
-  Zap,
-  Heart,
   Scale,
   Target,
   CheckCircle,
@@ -25,12 +20,7 @@ import {
   Info,
   BarChart3,
   Sparkles,
-  Flame,
   Award,
-  PieChart,
-  LineChart,
-  Users,
-  Shield,
   Rocket,
   X
 } from 'lucide-react';
@@ -38,10 +28,8 @@ import {
 // Importar algoritmos avançados
 import {
   GeneticFitnessProfile,
-  SuccessPredictionAlgorithm,
-  HypertrophyAlgorithm,
   AdaptivePersonalizationEngine,
-  AdaptiveNutritionAlgorithm
+
 } from '@/lib/fitness/advanced_fitness_algorithms';
 
 interface UserData {
