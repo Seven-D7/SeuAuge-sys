@@ -32,7 +32,7 @@ import {
   HypertrophyAlgorithm,
   AdaptivePersonalizationEngine,
   AdaptiveNutritionAlgorithm
-} from './lib/advanced_fitness_algorithms';
+} from '@/lib/fitness/advanced_fitness_algorithms';
 
 interface UserData {
   // Dados básicos

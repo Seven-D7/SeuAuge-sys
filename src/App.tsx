@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -20,6 +20,8 @@ import Emagrecimento from './pages/Emagrecimento';
 import Progress from './pages/Progress';
 import AppsPage from './pages/Apps';
 import About from './pages/About';
+
+const FitnessModulesApp = lazy(() => import('./components/fitness-modules/ModulosConfig'));
 
 function App() {
   return (
@@ -61,6 +63,16 @@ function App() {
               element={
                 <PlanGuard allowedPlans={["B", "C"]}>
                   <AppsPage />
+                </PlanGuard>
+              }
+            />
+            <Route
+              path="fitness/*"
+              element={
+                <PlanGuard allowedPlans={["B", "C"]}>
+                  <Suspense fallback={<div className="p-4 text-white">Carregando...</div>}>
+                    <FitnessModulesApp />
+                  </Suspense>
                 </PlanGuard>
               }
             />
