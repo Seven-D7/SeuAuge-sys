@@ -1,17 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import {
   Crown,
-  Target,
   Zap,
   Users,
-  CheckCircle,
   ArrowRight,
   Star,
-  Trophy,
   Heart,
   Dumbbell,
   UtensilsCrossed,
@@ -19,16 +16,12 @@ import {
   TrendingUp,
   Sparkles,
   Phone,
-  Mail,
-  MapPin
+  Mail
 } from 'lucide-react';
+import PlansSection from '../components/home/PlansSection';
 
 function Home() {
   const navigate = useNavigate();
-
-  const handlePlanSelect = (planName: string) => {
-    navigate('/login');
-  };
 
   const handleStartJourney = () => {
     navigate('/auth?mode=login');
@@ -123,178 +116,7 @@ function Home() {
       </section>
 
       {/* Planos Section */}
-      <section id="planos" className="py-20 px-4 bg-white/50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Escolha Seu
-              <span className="bg-gradient-to-r from-teal-500 to-emerald-500 bg-clip-text text-transparent"> Plano</span>
-            </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Planos científicos e personalizados para cada objetivo. Todos incluem acompanhamento profissional.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Plano Essencial */}
-            <Card className="relative border-2 border-gray-200 hover:border-teal-300 transition-all duration-300 hover:shadow-xl">
-              <CardHeader className="text-center pb-8">
-                <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Target className="w-8 h-8 text-gray-600" />
-                </div>
-                <CardTitle className="text-2xl mb-2">Gratuito</CardTitle>
-                <CardDescription className="text-lg">Perfeito para iniciantes</CardDescription>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">R$ 97</span>
-                  <span className="text-gray-600">/mês</span>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Plano alimentar personalizado</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Treinos para casa</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>App de acompanhamento</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Suporte via chat</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Relatórios semanais</span>
-                  </div>
-                </div>
-                <Button 
-                  className="w-full mt-6 h-12"
-                  variant="outline"
-                  onClick={() => handlePlanSelect('essencial')}
-                >
-                  Comece Gratis
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Plano Premium */}
-            <Card className="relative border-2 border-teal-300 hover:border-teal-400 transition-all duration-300 hover:shadow-xl scale-105">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white px-4 py-1">
-                  MAIS POPULAR
-                </Badge>
-              </div>
-              <CardHeader className="text-center pb-8">
-                <div className="bg-gradient-to-r from-teal-100 to-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Crown className="w-8 h-8 text-teal-600" />
-                </div>
-                <CardTitle className="text-2xl mb-2">Essencial</CardTitle>
-                <CardDescription className="text-lg">Resultados acelerados</CardDescription>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">R$ 197</span>
-                  <span className="text-gray-600">/mês</span>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span className="font-medium">Tudo do plano Essencial</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Consultoria nutricional mensal</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Treinos para academia</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Suplementação personalizada</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Grupo VIP no WhatsApp</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Ajustes semanais no plano</span>
-                  </div>
-                </div>
-                <Button
-                  className="w-full mt-6 h-12 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600"
-                  onClick={() => handlePlanSelect('premium')}
-                >
-                  Comece Gratis
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Plano Elite */}
-            <Card className="relative border-2 border-emerald-300 hover:border-emerald-400 transition-all duration-300 hover:shadow-xl">
-              <CardHeader className="text-center pb-8">
-                <div className="bg-gradient-to-r from-emerald-100 to-cyan-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Trophy className="w-8 h-8 text-emerald-600" />
-                </div>
-                <CardTitle className="text-2xl mb-2">Premium</CardTitle>
-                <CardDescription className="text-lg">Transformação completa</CardDescription>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">R$ 397</span>
-                  <span className="text-gray-600">/mês</span>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span className="font-medium">Tudo do plano Premium</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Personal trainer dedicado</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Consultas semanais 1:1</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Exames laboratoriais</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Coaching comportamental</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span>Garantia de resultado</span>
-                  </div>
-                </div>
-                <Button
-                  className="w-full mt-6 h-12 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600"
-                  onClick={() => handlePlanSelect('elite')}
-                >
-                  Comece Gratis
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Garantia */}
-          <div className="text-center mt-12">
-            <div className="inline-flex items-center gap-3 bg-green-50 border border-green-200 rounded-full px-6 py-3">
-              <Shield className="w-6 h-6 text-green-600" />
-              <span className="text-green-800 font-medium">Garantia de 30 dias ou seu dinheiro de volta</span>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PlansSection />
 
       {/* Benefícios Section */}
       <section className="py-20 px-4">
@@ -538,11 +360,7 @@ function Home() {
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail className="w-4 h-4" />
-                  <span>contato@seuauge.com</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <MapPin className="w-4 h-4" />
-                  <span>São Paulo, SP</span>
+                  <a href="mailto:contato@seuauge.com" className="hover:text-teal-400 transition-colors">contato@seuauge.com</a>
                 </div>
               </div>
             </div>
@@ -558,4 +376,3 @@ function Home() {
 }
 
 export default Home;
-

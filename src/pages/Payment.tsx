@@ -36,9 +36,16 @@ const Payment: React.FC = () => {
   const handleConfirm = async () => {
     if (!selectedPlan) return;
     setLoadingConfirm(true);
-    await updateUserPlan(selectedPlan);
-    await refreshPlan();
-    navigate('/plans'); 
+    try {
+      await updateUserPlan(selectedPlan);
+      await refreshPlan();
+      navigate('/plans');
+    } catch (error) {
+      console.error("Falha ao confirmar o pagamento:", error);
+      // Aqui você poderia exibir uma notificação de erro para o usuário
+    } finally {
+      setLoadingConfirm(false);
+    }
   };
 
   return (
