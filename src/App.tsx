@@ -16,8 +16,7 @@ import Settings from './pages/Settings';
 import Payment from './pages/Payment';
 import Plans from './pages/Plans';
 import AdminDashboard from './pages/AdminDashboard';
-import Emagrecimento from './pages/Emagrecimento';
-import Progress from './pages/Progress';
+const Progress = lazy(() => import('./pages/Progress'));
 import AppsPage from './pages/Apps';
 import About from './pages/About';
 
@@ -51,7 +50,9 @@ function App() {
               path="progress"
               element={
                 <PlanGuard allowedPlans={["B", "C"]}>
-                  <Progress />
+                  <Suspense fallback={<div className="p-4 text-white">Carregando...</div>}>
+                    <Progress />
+                  </Suspense>
                 </PlanGuard>
               }
             />
@@ -73,14 +74,6 @@ function App() {
                   <Suspense fallback={<div className="p-4 text-white">Carregando...</div>}>
                     <FitnessModulesApp />
                   </Suspense>
-                </PlanGuard>
-              }
-            />
-            <Route
-              path="emagrecimento"
-              element={
-                <PlanGuard allowedPlans={["B", "C"]}>
-                  <Emagrecimento />
                 </PlanGuard>
               }
             />

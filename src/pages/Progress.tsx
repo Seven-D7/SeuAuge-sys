@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { TrendingUp } from 'lucide-react';
 import { useProgressStore } from '../stores/progressStore';
-import Report from '../components/Report';
+const Report = lazy(() => import('../components/Report'));
 
 const Progress: React.FC = () => {
   const { weightLoss, metrics, reportData, setMetrics } = useProgressStore();
@@ -28,7 +28,7 @@ const Progress: React.FC = () => {
 
       {weightLoss && (
         <section className="bg-slate-800 rounded-lg p-6 space-y-2">
-          <h2 className="text-xl font-semibold text-white">Emagrecendo bem</h2>
+          <h2 className="text-xl font-semibold text-white">Emagrecimento Inteligente</h2>
           <p className="text-slate-400">
             Objetivo: {weightLoss.targetWeight}kg em {weightLoss.goalTime} semanas
           </p>
@@ -167,7 +167,9 @@ const Progress: React.FC = () => {
       {showReport && weightLoss && (
         <div className="fixed inset-0 z-10 bg-black/70 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-5xl overflow-y-auto max-h-full">
-            <Report data={reportData} onBack={() => setShowReport(false)} />
+            <Suspense fallback={<div className="p-4">Carregando...</div>}>
+              <Report data={reportData} onBack={() => setShowReport(false)} />
+            </Suspense>
           </div>
         </div>
       )}
