@@ -1,15 +1,31 @@
-import React, { useState, lazy, Suspense } from 'react';
+import React, { useState, lazy, Suspense, useEffect } from 'react';
 import { TrendingUp } from 'lucide-react';
 import { useProgressStore } from '../stores/progressStore';
+import { useAuth } from '../contexts/AuthContext';
+import { getUserMetrics, updateUserMetrics } from '../services/user';
 const Report = lazy(() => import('../components/Report'));
 
 const Progress: React.FC = () => {
   const { weightLoss, metrics, reportData, setMetrics } = useProgressStore();
+  const { user } = useAuth();
   const [showReport, setShowReport] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [formMetrics, setFormMetrics] = useState(metrics);
 
-  const handleSaveMetrics = () => {
+  useEffect(() => {
+    if (!user) return;
+    async function load() {
+      const saved = await getUserMetrics();
+      if (saved) {
+        setMetrics(saved);
+        setFormMetrics(saved);
+      }
+    }
+    load();
+  }, [user, setMetrics]);
+
+  const handleSaveMetrics = async () => {
+    await updateUserMetrics(formMetrics);
     setMetrics(formMetrics);
     setIsEditing(false);
   };
