@@ -27,7 +27,12 @@ interface User {
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name: string) => Promise<void>;
+  register: (
+    email: string,
+    password: string,
+    name: string,
+    birthdate: string
+  ) => Promise<void>;
   logout: () => void;
   updateUser: (data: UpdateUserInput) => Promise<void>;
   refreshPlan: () => Promise<void>;
@@ -87,13 +92,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const register = async (email: string, password: string, name: string) => {
+  const register = async (
+    email: string,
+    password: string,
+    name: string,
+    birthdate: string
+  ) => {
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       if (auth.currentUser) {
         await updateProfile(auth.currentUser, { displayName: name });
       }
-      await createUserDocument({ uid: cred.user.uid, name, email, plan: 'A' });
+      await createUserDocument({ uid: cred.user.uid, name, email, birthdate });
       const mapped = await mapFirebaseUser(cred.user);
       setUser(mapped);
       console.log('Usuário registrado', mapped.email);
