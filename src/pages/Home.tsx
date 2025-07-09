@@ -12,7 +12,6 @@ import {
   Heart,
   Dumbbell,
   UtensilsCrossed,
-  Shield,
   TrendingUp,
   Sparkles,
   Phone,
@@ -38,7 +37,7 @@ function Home() {
                 <img
   src="/src/assets/icone.png" 
   alt="Logo"
-  className="w-8 h-8 object-contain"
+  className="w-12 h-12 object-contain"
 />
               </div>
               <div>
@@ -311,7 +310,11 @@ function Home() {
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <div className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white p-2 rounded-xl">
-                  <Crown className="w-6 h-6" />
+                  <img
+  src="/src/assets/icone.png" 
+  alt="Logo"
+  className="w-12 h-12 object-contain"
+  />
                 </div>
                 <span className="text-xl font-bold">Meu Auge</span>
               </div>
