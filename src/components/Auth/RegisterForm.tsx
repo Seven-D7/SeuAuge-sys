@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -13,6 +14,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
   const { register } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,6 +24,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
     try {
       await register(email, password, name);
       setError(null);
+      navigate('/dashboard');
     } catch (error) {
       console.error('Erro no cadastro:', error);
       setError('Falha ao criar conta. Verifique os dados informados.');

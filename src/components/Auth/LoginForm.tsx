@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -12,6 +13,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,6 +23,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     try {
       await login(email, password);
       setError(null);
+      navigate('/dashboard');
     } catch (error) {
       console.error('Erro no login:', error);
       setError('Falha ao entrar. Verifique suas credenciais.');
