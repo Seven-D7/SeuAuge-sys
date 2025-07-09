@@ -49,7 +49,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   const mapFirebaseUser = async (firebaseUser: FirebaseUser): Promise<User> => {
-    const plan = await getPlanFromToken();
+    const planFromToken = await getPlanFromToken();
+    const plan = planFromToken ?? 'A';
     return {
       id: firebaseUser.uid,
       email: firebaseUser.email || '',
@@ -92,7 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (auth.currentUser) {
         await updateProfile(auth.currentUser, { displayName: name });
       }
-      await createUserDocument({ uid: cred.user.uid, name, email });
+      await createUserDocument({ uid: cred.user.uid, name, email, plan: 'A' });
       const mapped = await mapFirebaseUser(cred.user);
       setUser(mapped);
       console.log('Usuário registrado', mapped.email);

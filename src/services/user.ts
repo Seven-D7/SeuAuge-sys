@@ -14,6 +14,7 @@ export interface CreateUserInput {
   name: string;
   email: string;
   avatar?: string | null;
+  plan?: string;
 }
 
 export async function updateUserProfile({ name, email, file }: UpdateUserInput) {
@@ -51,6 +52,7 @@ export async function createUserDocument({
   name,
   email,
   avatar = null,
+  plan = 'A',
 }: CreateUserInput) {
-  await setDoc(doc(db, 'users', uid), { name, email, avatar });
+  await setDoc(doc(db, 'users', uid), { name, email, avatar, plan });
 }
