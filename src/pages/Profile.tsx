@@ -20,14 +20,19 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { useProgressStore } from '../stores/progressStore';
 import { getUserMetrics } from '../services/user';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 const Profile: React.FC = () => {
   const { user, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
+  const [userData, setUserData] = useState<{ name?: string; birthdate?: string; peso?: number; altura?: number } | null>(null);
   const [formData, setFormData] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
+    name: '',
+    birthdate: '',
+    peso: 0,
+    altura: 0,
   });
   const { metrics, setMetrics } = useProgressStore();
   const [file, setFile] = useState<File | null>(null);
@@ -36,13 +41,24 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     if (!user) return;
-    async function loadMetrics() {
+    async function load() {
+      const snap = await getDoc(doc(db, 'users', user.id));
+      if (snap.exists()) {
+        const data = snap.data();
+        setUserData(data as any);
+        setFormData({
+          name: data.name || '',
+          birthdate: data.birthdate || '',
+          peso: data.peso || 0,
+          altura: data.altura || 0,
+        });
+      }
       const saved = await getUserMetrics();
       if (saved) {
         setMetrics(saved);
       }
     }
-    loadMetrics();
+    load();
   }, [user, setMetrics]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +70,26 @@ const Profile: React.FC = () => {
   };
 
   const handleSave = async () => {
-    await updateUser({ name: formData.name, email: formData.email, file });
+    if (formData.name.trim().length < 2 || formData.name.trim().length > 50) {
+      alert('Nome deve ter entre 2 e 50 caracteres');
+      return;
+    }
+    if (formData.peso < 30 || formData.peso > 300) {
+      alert('Peso deve estar entre 30kg e 300kg');
+      return;
+    }
+    if (formData.altura < 100 || formData.altura > 250) {
+      alert('Altura deve estar entre 100 e 250 cm');
+      return;
+    }
+    const birth = new Date(formData.birthdate);
+    const age = new Date().getFullYear() - birth.getFullYear();
+    if (age > 100 || age < 16) {
+      alert('Idade deve estar entre 16 e 100 anos.');
+      return;
+    }
+
+    await updateUser({ name: formData.name, birthdate: formData.birthdate, file });
     setIsEditing(false);
     setFile(null);
     setPreview(null);
@@ -62,8 +97,10 @@ const Profile: React.FC = () => {
 
   const handleCancel = () => {
     setFormData({
-      name: user?.name || '',
-      email: user?.email || '',
+      name: userData?.name || '',
+      birthdate: userData?.birthdate || '',
+      peso: userData?.peso || 0,
+      altura: userData?.altura || 0,
     });
     setFile(null);
     setPreview(null);
@@ -223,7 +260,7 @@ const Profile: React.FC = () => {
                   <div className="space-y-4">
                     <div>
                       <h2 className="text-3xl font-bold text-white mb-2">{user?.name}</h2>
-                      <p className="text-slate-400 text-lg">{user?.email}</p>
+                      <p className="text-slate-400 text-lg">{userData?.name || 'Usuário'}</p>
                     </div>
                     
                     {/* Quick metrics */}
@@ -257,14 +294,62 @@ const Profile: React.FC = () => {
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="block text-sm font-medium text-slate-300">Email</label>
+                        <label className="block text-sm font-medium text-slate-300">Data de Nascimento</label>
                         <input
-                          type="email"
-                          value={formData.email}
+                          type="date"
+                          value={formData.birthdate}
                           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setFormData({ ...formData, email: e.target.value })
+                            setFormData({ ...formData, birthdate: e.target.value })
                           }
                           className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-slate-300">Peso (kg)</label>
+                        <input
+                          type="number"
+                          value={formData.peso}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            const v = Number(e.target.value);
+                            if (v < 30 || v > 300) {
+                              alert('Peso deve estar entre 30kg e 300kg');
+                              return;
+                            }
+                            setFormData({ ...formData, peso: v });
+                          }}
+                          className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-slate-300">Altura (cm)</label>
+                        <input
+                          type="number"
+                          value={formData.altura}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            const v = Number(e.target.value);
+                            if (v < 100 || v > 250) {
+                              alert('Altura deve estar entre 100 e 250 cm');
+                              return;
+                            }
+                            setFormData({ ...formData, altura: v });
+                          }}
+                          className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-slate-300">IMC</label>
+                        <input
+                          type="text"
+                          value={
+                            formData.peso && formData.altura
+                              ? (
+                                  formData.peso /
+                                  Math.pow(formData.altura / 100, 2)
+                                ).toFixed(1)
+                              : ''
+                          }
+                          readOnly
+                          className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white"
                         />
                       </div>
                     </div>
