@@ -37,11 +37,10 @@ const Dashboard: React.FC = () => {
         </div>
         
         {/* Hero image */}
-        <div 
-          className="absolute right-0 top-0 w-1/2 h-full bg-cover bg-center opacity-30"
-          style={{
-            backgroundImage: 'url(https://images.pexels.com/photos/3822583/pexels-photo-3822583.jpeg?auto=compress&cs=tinysrgb&w=800)'
-          }}
+        <img
+          className="absolute right-0 top-0 w-1/2 h-full object-cover opacity-30"
+          src="https://images.pexels.com/photos/3822583/pexels-photo-3822583.jpeg?auto=compress&cs=tinysrgb&w=800"
+          alt="Healthy lifestyle"
         />
       </div>
 
