@@ -5,6 +5,8 @@ import ProtectedRoute from '@components/ProtectedRoute';
 import AdminRoute from '@components/AdminRoute';
 import Layout from '@components/Layout/Layout';
 import PlanGuard from '@components/PlanGuard';
+import { Toaster } from 'react-hot-toast';
+
 const Auth = lazy(() => import('@pages/Auth'));
 const Home = lazy(() => import('@pages/Home'));
 const Dashboard = lazy(() => import('@pages/Dashboard'));
@@ -19,7 +21,6 @@ const AdminDashboard = lazy(() => import('@pages/AdminDashboard'));
 const Progress = lazy(() => import('@pages/Progress'));
 const AppsPage = lazy(() => import('@pages/Apps'));
 const About = lazy(() => import('@pages/About'));
-
 const FitnessModulesApp = lazy(() => import('@components/fitness-modules/ModulosConfig'));
 
 function App() {
@@ -27,11 +28,12 @@ function App() {
     <AuthProvider>
       <div className="min-h-screen bg-slate-900">
         <Routes>
-          <Route path="/" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Home /></Suspense>} />
-          <Route path="/about" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><About /></Suspense>} />
-          <Route path="/auth" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Auth /></Suspense>} />
+          <Route path="/" element={<Suspense fallback={<div className="p-4 text-white">Carregando...</div>}><Home /></Suspense>} />
+          <Route path="/about" element={<Suspense fallback={<div className="p-4 text-white">Carregando...</div>}><About /></Suspense>} />
+          <Route path="/auth" element={<Suspense fallback={<div className="p-4 text-white">Carregando...</div>}><Auth /></Suspense>} />
           <Route path="/login" element={<Navigate to="/auth?mode=login" replace />} />
           <Route path="/register" element={<Navigate to="/auth?mode=register" replace />} />
+
           <Route
             path="/*"
             element={
@@ -40,11 +42,12 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route path="dashboard" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Dashboard /></Suspense>} />
-            <Route path="videos" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Videos /></Suspense>} />
-            <Route path="store" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Store /></Suspense>} />
-            <Route path="favorites" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Favorites /></Suspense>} />
-            <Route path="profile" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Profile /></Suspense>} />
+            <Route path="dashboard" element={<Suspense fallback={<div className="p-4 text-white">Carregando...</div>}><Dashboard /></Suspense>} />
+            <Route path="videos" element={<Suspense fallback={<div className="p-4 text-white">Carregando...</div>}><Videos /></Suspense>} />
+            <Route path="store" element={<Suspense fallback={<div className="p-4 text-white">Carregando...</div>}><Store /></Suspense>} />
+            <Route path="favorites" element={<Suspense fallback={<div className="p-4 text-white">Carregando...</div>}><Favorites /></Suspense>} />
+            <Route path="profile" element={<Suspense fallback={<div className="p-4 text-white">Carregando...</div>}><Profile /></Suspense>} />
+            
             <Route
               path="progress"
               element={
@@ -55,9 +58,10 @@ function App() {
                 </PlanGuard>
               }
             />
-            <Route path="plans" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Plans /></Suspense>} />
-            <Route path="payment" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Payment /></Suspense>} />
-            <Route path="settings" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Settings /></Suspense>} />
+            <Route path="plans" element={<Suspense fallback={<div className="p-4 text-white">Carregando...</div>}><Plans /></Suspense>} />
+            <Route path="payment" element={<Suspense fallback={<div className="p-4 text-white">Carregando...</div>}><Payment /></Suspense>} />
+            <Route path="settings" element={<Suspense fallback={<div className="p-4 text-white">Carregando...</div>}><Settings /></Suspense>} />
+
             <Route
               path="apps"
               element={
@@ -82,7 +86,9 @@ function App() {
               path="admin"
               element={
                 <AdminRoute>
-                  <Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><AdminDashboard /></Suspense>
+                  <Suspense fallback={<div className="p-4 text-white">Carregando...</div>}>
+                    <AdminDashboard />
+                  </Suspense>
                 </AdminRoute>
               }
             />
@@ -94,4 +100,5 @@ function App() {
     </AuthProvider>
   );
 }
+
 export default App;
