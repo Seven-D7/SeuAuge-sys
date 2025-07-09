@@ -20,12 +20,11 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { PLANS } from '../data/plans';
-import { updateUserProfile } from '@/services/user';
+import { updateUserProfile, getUserData } from '@/services/user';
 import { updateUserPlan } from '../services/plan';
 import { useProgressStore } from '../stores/progressStore';
 import { getUserMetrics } from '../services/user';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import type { UserData } from '@/services/user';
 
 const Profile: React.FC = () => {
   const { user, refreshPlan } = useAuth();
@@ -36,9 +35,8 @@ const Profile: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     birthdate: '',
-    peso: 0,
-    altura: 0,
   });
+  const [userData, setUserData] = useState<UserData | null>(null);
   const { metrics, setMetrics } = useProgressStore();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -48,20 +46,14 @@ const Profile: React.FC = () => {
   useEffect(() => {
     if (!user) return;
     async function load() {
-      const snap = await getDoc(doc(db, 'users', user.id));
-      if (snap.exists()) {
-        const data = snap.data();
-        setUserData(data as any);
-        setFormData({
-          name: data.name || '',
-          birthdate: data.birthdate || '',
-          peso: data.peso || 0,
-          altura: data.altura || 0,
-        });
-      }
       const saved = await getUserMetrics();
       if (saved) {
         setMetrics(saved);
+      }
+      const data = await getUserData(user.id);
+      if (data) {
+        setUserData(data);
+        setFormData({ name: data.name ?? '', birthdate: data.birthdate ?? '' });
       }
     }
     load();
@@ -80,9 +72,19 @@ const Profile: React.FC = () => {
   };
 
   const handleSave = async () => {
+    if (formData.name.trim().length < 2 || formData.name.trim().length > 50) {
+      toast.error('Nome deve ter entre 2 e 50 caracteres');
+      return;
+    }
+    const birth = new Date(formData.birthdate);
+    const age = new Date().getFullYear() - birth.getFullYear();
+    if (age > 100 || age < 16) {
+      toast.error('Idade deve estar entre 16 e 100 anos.');
+      return;
+    }
     try {
       setSaving(true);
-      await updateUserProfile({ name: formData.name, email: formData.email, file });
+      await updateUserProfile({ name: formData.name, birthdate: formData.birthdate, file });
       toast.success('Perfil atualizado com sucesso!');
       setIsEditing(false);
       setFile(null);
@@ -99,8 +101,6 @@ const Profile: React.FC = () => {
     setFormData({
       name: userData?.name || '',
       birthdate: userData?.birthdate || '',
-      peso: userData?.peso || 0,
-      altura: userData?.altura || 0,
     });
     setFile(null);
     setPreview(null);
@@ -308,9 +308,10 @@ const Profile: React.FC = () => {
                         <input
                           type="text"
                           value={formData.name}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setFormData({ ...formData, name: e.target.value })
-                          }
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            const value = e.target.value;
+                            if (value.length <= 50) setFormData({ ...formData, name: value });
+                          }}
                           className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
                         />
                       </div>
@@ -319,58 +320,22 @@ const Profile: React.FC = () => {
                         <input
                           type="date"
                           value={formData.birthdate}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setFormData({ ...formData, birthdate: e.target.value })
-                          }
-                          className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-slate-300">Peso (kg)</label>
-                        <input
-                          type="number"
-                          value={formData.peso}
                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            const v = Number(e.target.value);
-                            if (v < 30 || v > 300) {
-                              alert('Peso deve estar entre 30kg e 300kg');
-                              return;
-                            }
-                            setFormData({ ...formData, peso: v });
+                            const age = new Date().getFullYear() - new Date(e.target.value).getFullYear();
+                            if (age <= 100) setFormData({ ...formData, birthdate: e.target.value });
                           }}
                           className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
                         />
                       </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="block text-sm font-medium text-slate-300">Altura (cm)</label>
+                        <label className="block text-sm font-medium text-slate-300">Idade</label>
                         <input
                           type="number"
-                          value={formData.altura}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            const v = Number(e.target.value);
-                            if (v < 100 || v > 250) {
-                              alert('Altura deve estar entre 100 e 250 cm');
-                              return;
-                            }
-                            setFormData({ ...formData, altura: v });
-                          }}
-                          className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-slate-300">IMC</label>
-                        <input
-                          type="text"
-                          value={
-                            formData.peso && formData.altura
-                              ? (
-                                  formData.peso /
-                                  Math.pow(formData.altura / 100, 2)
-                                ).toFixed(1)
-                              : ''
-                          }
-                          readOnly
-                          className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white"
+                          value={formData.birthdate ? new Date().getFullYear() - new Date(formData.birthdate).getFullYear() : ''}
+                          disabled
+                          className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 opacity-70"
                         />
                       </div>
                     </div>

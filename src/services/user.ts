@@ -22,6 +22,7 @@ export interface CreateUserInput {
   name: string;
   email: string;
   avatar?: string | null;
+  plan?: string;
   birthdate?: string | null;
 }
 
@@ -60,9 +61,10 @@ export async function createUserDocument({
   name,
   email,
   avatar = null,
+  plan = 'A',
   birthdate = null,
 }: CreateUserInput) {
-  await setDoc(doc(db, 'users', uid), { name, email, avatar, birthdate });
+  await setDoc(doc(db, 'users', uid), { name, email, avatar, plan, birthdate });
 }
 
 export async function updateUserMetrics(metrics: BodyMetrics) {
@@ -81,4 +83,19 @@ export async function getUserMetrics(uid?: string): Promise<BodyMetrics | null> 
   if (!snap.exists()) return null;
   const data = snap.data();
   return (data.metrics as BodyMetrics) ?? null;
+}
+
+export interface UserData {
+  name?: string;
+  email?: string;
+  avatar?: string;
+  birthdate?: string;
+}
+
+export async function getUserData(uid?: string): Promise<UserData | null> {
+  const userId = uid || auth.currentUser?.uid;
+  if (!userId) return null;
+  const snap = await getDoc(doc(db, 'users', userId));
+  if (!snap.exists()) return null;
+  return snap.data() as UserData;
 }
