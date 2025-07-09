@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/react';
 import './index.css';
+import './styles/animations.css';
 import App from './App';
 import { ThemeProvider } from './contexts/ThemeContext';
 
