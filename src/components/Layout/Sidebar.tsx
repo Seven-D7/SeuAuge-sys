@@ -14,6 +14,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { PLANS } from '../../data/plans';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
   const { user, logout } = useAuth();
+  const planName = PLANS.find((p) => p.id === (user?.plan ?? 'A'))?.name ?? 'Gratuito';
 
   const menuItems = [
     { icon: Home, label: 'Início', path: '/dashboard' },
@@ -96,15 +98,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </div>
         </nav>
 
-        {/* Premium Badge */}
+        {/* Plan Badge */}
         <div className="mx-4 mt-8 p-4 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-xl">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-900 dark:text-white">Premium</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400">Acesso total</p>
+              <p className="text-sm font-medium text-slate-900 dark:text-white">{planName}</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Plano atual</p>
             </div>
           </div>
         </div>
