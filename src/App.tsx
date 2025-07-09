@@ -1,35 +1,35 @@
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import AdminRoute from './components/AdminRoute';
-import Layout from './components/Layout/Layout';
-import PlanGuard from './components/PlanGuard';
-import Auth from './pages/Auth';
-import Home from './pages/Home';
-import Dashboard from './pages/Dashboard';
-import Videos from './pages/Videos';
-import Store from './pages/Store';
-import Favorites from './pages/Favorites';
-import Profile from './pages/Profile';
-import Settings from './pages/Settings';
-import Payment from './pages/Payment';
-import Plans from './pages/Plans';
-import AdminDashboard from './pages/AdminDashboard';
-const Progress = lazy(() => import('./pages/Progress'));
-const AppsPage = lazy(() => import('./pages/Apps'));
-import About from './pages/About';
+import { AuthProvider } from '@contexts/AuthContext';
+import ProtectedRoute from '@components/ProtectedRoute';
+import AdminRoute from '@components/AdminRoute';
+import Layout from '@components/Layout/Layout';
+import PlanGuard from '@components/PlanGuard';
+const Auth = lazy(() => import('@pages/Auth'));
+const Home = lazy(() => import('@pages/Home'));
+const Dashboard = lazy(() => import('@pages/Dashboard'));
+const Videos = lazy(() => import('@pages/Videos'));
+const Store = lazy(() => import('@pages/Store'));
+const Favorites = lazy(() => import('@pages/Favorites'));
+const Profile = lazy(() => import('@pages/Profile'));
+const Settings = lazy(() => import('@pages/Settings'));
+const Payment = lazy(() => import('@pages/Payment'));
+const Plans = lazy(() => import('@pages/Plans'));
+const AdminDashboard = lazy(() => import('@pages/AdminDashboard'));
+const Progress = lazy(() => import('@pages/Progress'));
+const AppsPage = lazy(() => import('@pages/Apps'));
+const About = lazy(() => import('@pages/About'));
 
-const FitnessModulesApp = lazy(() => import('./components/fitness-modules/ModulosConfig'));
+const FitnessModulesApp = lazy(() => import('@components/fitness-modules/ModulosConfig'));
 
 function App() {
   return (
     <AuthProvider>
       <div className="min-h-screen bg-slate-900">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/auth" element={<Auth />} />
+          <Route path="/" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Home /></Suspense>} />
+          <Route path="/about" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><About /></Suspense>} />
+          <Route path="/auth" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Auth /></Suspense>} />
           <Route path="/login" element={<Navigate to="/auth?mode=login" replace />} />
           <Route path="/register" element={<Navigate to="/auth?mode=register" replace />} />
           <Route
@@ -40,11 +40,11 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="videos" element={<Videos />} />
-            <Route path="store" element={<Store />} />
-            <Route path="favorites" element={<Favorites />} />
-            <Route path="profile" element={<Profile />} />
+            <Route path="dashboard" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Dashboard /></Suspense>} />
+            <Route path="videos" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Videos /></Suspense>} />
+            <Route path="store" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Store /></Suspense>} />
+            <Route path="favorites" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Favorites /></Suspense>} />
+            <Route path="profile" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Profile /></Suspense>} />
             <Route
               path="progress"
               element={
@@ -55,9 +55,9 @@ function App() {
                 </PlanGuard>
               }
             />
-            <Route path="plans" element={<Plans />} />
-            <Route path="payment" element={<Payment />} />
-            <Route path="settings" element={<Settings />} />
+            <Route path="plans" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Plans /></Suspense>} />
+            <Route path="payment" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Payment /></Suspense>} />
+            <Route path="settings" element={<Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><Settings /></Suspense>} />
             <Route
               path="apps"
               element={
@@ -82,7 +82,7 @@ function App() {
               path="admin"
               element={
                 <AdminRoute>
-                  <AdminDashboard />
+                  <Suspense fallback={<div className=\"p-4 text-white\">Carregando...</div>}><AdminDashboard /></Suspense>
                 </AdminRoute>
               }
             />
@@ -93,5 +93,4 @@ function App() {
     </AuthProvider>
   );
 }
-
 export default App;
