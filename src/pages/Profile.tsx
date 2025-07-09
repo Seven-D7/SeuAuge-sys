@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   User, 
   Camera, 
@@ -18,10 +18,13 @@ import {
   Shield
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { PLANS } from '../data/plans';
+import { updateUserPlan } from '../services/plan';
 import { useProgressStore } from '../stores/progressStore';
 
 const Profile: React.FC = () => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, refreshPlan } = useAuth();
+  const planName = PLANS.find((p) => p.id === (user?.plan ?? 'A'))?.name ?? 'Gratuito';
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [formData, setFormData] = useState({
@@ -32,6 +35,10 @@ const Profile: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setFormData({ name: user?.name || '', email: user?.email || '' });
+  }, [user]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
@@ -56,6 +63,15 @@ const Profile: React.FC = () => {
     setFile(null);
     setPreview(null);
     setIsEditing(false);
+  };
+
+  const handleCancelSubscription = async () => {
+    try {
+      await updateUserPlan('A');
+      await refreshPlan();
+    } catch (err) {
+      console.error('Erro ao cancelar assinatura', err);
+    }
   };
 
   const tabs = [
@@ -133,15 +149,26 @@ const Profile: React.FC = () => {
               <Shield className="w-5 h-5 text-slate-400" />
             </button>
             {!isEditing ? (
-              <button
-                onClick={() => {
-                  setIsEditing(true);
-                }}
-                className="flex items-center space-x-2 bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl"
-              >
-                <Edit3 className="w-4 h-4" />
-                <span>Editar Perfil</span>
-              </button>
+              <>
+                {user?.plan && user.plan !== 'A' && (
+                  <button
+                    onClick={handleCancelSubscription}
+                    className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 shadow-lg"
+                  >
+                    <X className="w-4 h-4" />
+                    <span>Cancelar Assinatura</span>
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    setIsEditing(true);
+                  }}
+                  className="flex items-center space-x-2 bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl"
+                >
+                  <Edit3 className="w-4 h-4" />
+                  <span>Editar Perfil</span>
+                </button>
+              </>
             ) : (
               <div className="flex space-x-3">
                 <button
@@ -170,7 +197,7 @@ const Profile: React.FC = () => {
             <div className="absolute top-4 right-4">
               <div className="inline-flex items-center px-4 py-2 bg-black/30 backdrop-blur-sm text-white rounded-full text-sm font-medium border border-white/20">
                 <Award className="w-4 h-4 mr-2" />
-                Membro Premium
+                {planName}
               </div>
             </div>
           </div>
