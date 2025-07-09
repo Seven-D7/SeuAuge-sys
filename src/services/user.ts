@@ -12,7 +12,8 @@ export async function uploadAvatar(file: File, uid: string): Promise<string> {
 
 export interface UpdateUserInput {
   name: string;
-  email: string;
+  email?: string;
+  birthdate?: string;
   file?: File | null;
 }
 
@@ -22,9 +23,10 @@ export interface CreateUserInput {
   email: string;
   avatar?: string | null;
   plan?: string;
+  birthdate?: string | null;
 }
 
-export async function updateUserProfile({ name, email, file }: UpdateUserInput) {
+export async function updateUserProfile({ name, email, birthdate, file }: UpdateUserInput) {
   if (!auth.currentUser) return;
 
   let photoURL = auth.currentUser.photoURL || undefined;
@@ -38,11 +40,13 @@ export async function updateUserProfile({ name, email, file }: UpdateUserInput) 
     photoURL: photoURL ?? null,
   });
 
-  if (auth.currentUser.email !== email) {
+  if (email && auth.currentUser.email !== email) {
     await updateEmail(auth.currentUser, email);
   }
 
-  const data: Record<string, unknown> = { name, email };
+  const data: Record<string, unknown> = { name };
+  if (email) data.email = email;
+  if (birthdate) data.birthdate = birthdate;
   if (photoURL !== undefined) {
     data.avatar = photoURL;
   }
@@ -58,8 +62,9 @@ export async function createUserDocument({
   email,
   avatar = null,
   plan = 'A',
+  birthdate = null,
 }: CreateUserInput) {
-  await setDoc(doc(db, 'users', uid), { name, email, avatar, plan });
+  await setDoc(doc(db, 'users', uid), { name, email, avatar, plan, birthdate });
 }
 
 export async function updateUserMetrics(metrics: BodyMetrics) {
@@ -78,4 +83,19 @@ export async function getUserMetrics(uid?: string): Promise<BodyMetrics | null> 
   if (!snap.exists()) return null;
   const data = snap.data();
   return (data.metrics as BodyMetrics) ?? null;
+}
+
+export interface UserData {
+  name?: string;
+  email?: string;
+  avatar?: string;
+  birthdate?: string;
+}
+
+export async function getUserData(uid?: string): Promise<UserData | null> {
+  const userId = uid || auth.currentUser?.uid;
+  if (!userId) return null;
+  const snap = await getDoc(doc(db, 'users', userId));
+  if (!snap.exists()) return null;
+  return snap.data() as UserData;
 }

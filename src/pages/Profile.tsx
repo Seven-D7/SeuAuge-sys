@@ -20,10 +20,11 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { PLANS } from '../data/plans';
-import { updateUserProfile } from '@/services/user';
+import { updateUserProfile, getUserData } from '@/services/user';
 import { updateUserPlan } from '../services/plan';
 import { useProgressStore } from '../stores/progressStore';
 import { getUserMetrics } from '../services/user';
+import type { UserData } from '@/services/user';
 
 const Profile: React.FC = () => {
   const { user, refreshPlan } = useAuth();
@@ -31,9 +32,10 @@ const Profile: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [formData, setFormData] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
+    name: '',
+    birthdate: '',
   });
+  const [userData, setUserData] = useState<UserData | null>(null);
   const { metrics, setMetrics } = useProgressStore();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -42,13 +44,18 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     if (!user) return;
-    async function loadMetrics() {
+    async function load() {
       const saved = await getUserMetrics();
       if (saved) {
         setMetrics(saved);
       }
+      const data = await getUserData(user.id);
+      if (data) {
+        setUserData(data);
+        setFormData({ name: data.name ?? '', birthdate: data.birthdate ?? '' });
+      }
     }
-    loadMetrics();
+    load();
   }, [user, setMetrics]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,9 +71,19 @@ const Profile: React.FC = () => {
   };
 
   const handleSave = async () => {
+    if (formData.name.trim().length < 2 || formData.name.trim().length > 50) {
+      toast.error('Nome deve ter entre 2 e 50 caracteres');
+      return;
+    }
+    const birth = new Date(formData.birthdate);
+    const age = new Date().getFullYear() - birth.getFullYear();
+    if (age > 100 || age < 16) {
+      toast.error('Idade deve estar entre 16 e 100 anos.');
+      return;
+    }
     try {
       setSaving(true);
-      await updateUserProfile({ name: formData.name, email: formData.email, file });
+      await updateUserProfile({ name: formData.name, birthdate: formData.birthdate, file });
       toast.success('Perfil atualizado com sucesso!');
       setIsEditing(false);
       setFile(null);
@@ -81,8 +98,8 @@ const Profile: React.FC = () => {
 
   const handleCancel = () => {
     setFormData({
-      name: user?.name || '',
-      email: user?.email || '',
+      name: userData?.name || '',
+      birthdate: userData?.birthdate || '',
     });
     setFile(null);
     setPreview(null);
@@ -263,7 +280,7 @@ const Profile: React.FC = () => {
                   <div className="space-y-4">
                     <div>
                       <h2 className="text-3xl font-bold text-white mb-2">{user?.name}</h2>
-                      <p className="text-slate-400 text-lg">{user?.email}</p>
+                      <p className="text-slate-400 text-lg">{userData?.name || 'Usuário'}</p>
                     </div>
                     
                     {/* Quick metrics */}
@@ -290,21 +307,34 @@ const Profile: React.FC = () => {
                         <input
                           type="text"
                           value={formData.name}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setFormData({ ...formData, name: e.target.value })
-                          }
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            const value = e.target.value;
+                            if (value.length <= 50) setFormData({ ...formData, name: value });
+                          }}
                           className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="block text-sm font-medium text-slate-300">Email</label>
+                        <label className="block text-sm font-medium text-slate-300">Data de Nascimento</label>
                         <input
-                          type="email"
-                          value={formData.email}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setFormData({ ...formData, email: e.target.value })
-                          }
+                          type="date"
+                          value={formData.birthdate}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            const age = new Date().getFullYear() - new Date(e.target.value).getFullYear();
+                            if (age <= 100) setFormData({ ...formData, birthdate: e.target.value });
+                          }}
                           className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-slate-300">Idade</label>
+                        <input
+                          type="number"
+                          value={formData.birthdate ? new Date().getFullYear() - new Date(formData.birthdate).getFullYear() : ''}
+                          disabled
+                          className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 opacity-70"
                         />
                       </div>
                     </div>
