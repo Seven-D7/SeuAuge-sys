@@ -473,11 +473,11 @@ const EmagrecimentoAvancado: React.FC = () => {
     switch (step) {
       case 1:
         return (
-          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <Card className={`w-full max-w-7xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
             <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
-              <CardTitle className="flex items-center gap-3 text-2xl">
-                <div className="p-2 bg-white/20 rounded-lg">
-                  <Scale className="h-6 w-6" />
+              <CardTitle className="flex items-center gap-3 text-3xl">
+                <div className="p-3 bg-white/20 rounded-lg">
+                  <Scale className="h-8 w-8" />
                 </div>
                 Dados Pessoais
               </CardTitle>
@@ -485,69 +485,73 @@ const EmagrecimentoAvancado: React.FC = () => {
                 Informações básicas para cálculos personalizados
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6 p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="nome" className="text-gray-700 font-medium">Nome *</Label>
+            <CardContent className="space-y-12 p-16">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                <div className="space-y-3">
+                  <Label htmlFor="nome" className="text-gray-700 font-medium text-sm">Nome *</Label>
                   <Input
                     id="nome"
                     value={userData.nome || ''}
                     onChange={(e) => setUserData({...userData, nome: e.target.value})}
                     placeholder="Seu nome"
-                    className={`border-2 transition-colors rounded-xl h-12 ${
+                    className={`border-2 transition-colors rounded-xl h-14 text-base ${
                       validationErrors.nome ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                   {renderValidationError('nome')}
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="idade" className="text-gray-700 font-medium">Idade *</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="idade" className="text-gray-700 font-medium text-sm">Idade *</Label>
                   <Input
                     id="idade"
                     type="number"
                     value={userData.idade || ''}
                     onChange={(e) => setUserData({...userData, idade: parseInt(e.target.value)})}
-                    placeholder="Anos"
-                    className={`border-2 transition-colors rounded-xl h-12 ${
+                    placeholder="25"
+                    className={`border-2 transition-colors rounded-xl h-14 text-base ${
                       validationErrors.idade ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                   {renderValidationError('idade')}
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="sexo" className="text-gray-700 font-medium">Sexo *</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="sexo" className="text-gray-700 font-medium text-sm">Sexo *</Label>
                   <Select onValueChange={(value) => setUserData({...userData, sexo: value as 'masculino' | 'feminino'})}>
-                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
-                      validationErrors.sexo ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-14 bg-white text-gray-900 font-medium shadow-sm ${
+                      validationErrors.sexo ? 'border-red-400 focus:border-red-500' : 'border-gray-300 focus:border-primary hover:border-gray-400'
                     }`}>
-                      <SelectValue placeholder="Selecione" />
+                      <SelectValue placeholder="Selecione seu sexo" className="text-gray-900 font-medium" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="masculino">Masculino</SelectItem>
-                      <SelectItem value="feminino">Feminino</SelectItem>
+                    <SelectContent className="bg-white border-2 border-gray-200 rounded-xl shadow-xl z-50">
+                      <SelectItem value="masculino" className="hover:bg-blue-50 text-gray-900 font-medium text-base py-4 cursor-pointer">
+                        👨 Masculino
+                      </SelectItem>
+                      <SelectItem value="feminino" className="hover:bg-pink-50 text-gray-900 font-medium text-base py-4 cursor-pointer">
+                        👩 Feminino
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   {renderValidationError('sexo')}
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="altura" className="text-gray-700 font-medium">Altura (cm) *</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="altura" className="text-gray-700 font-medium text-sm">Altura (cm) *</Label>
                   <Input
                     id="altura"
                     type="number"
                     value={userData.altura || ''}
                     onChange={(e) => setUserData({...userData, altura: parseInt(e.target.value)})}
                     placeholder="175"
-                    className={`border-2 transition-colors rounded-xl h-12 ${
+                    className={`border-2 transition-colors rounded-xl h-14 text-base ${
                       validationErrors.altura ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                   {renderValidationError('altura')}
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="peso_atual" className="text-gray-700 font-medium">Peso Atual (kg) *</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="peso_atual" className="text-gray-700 font-medium text-sm">Peso Atual (kg) *</Label>
                   <Input
                     id="peso_atual"
                     type="number"
@@ -555,15 +559,15 @@ const EmagrecimentoAvancado: React.FC = () => {
                     value={userData.peso_atual || ''}
                     onChange={(e) => setUserData({...userData, peso_atual: parseFloat(e.target.value)})}
                     placeholder="70.5"
-                    className={`border-2 transition-colors rounded-xl h-12 ${
+                    className={`border-2 transition-colors rounded-xl h-14 text-base ${
                       validationErrors.peso_atual ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                   {renderValidationError('peso_atual')}
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="peso_objetivo" className="text-gray-700 font-medium">Peso Objetivo (kg) *</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="peso_objetivo" className="text-gray-700 font-medium text-sm">Peso Objetivo (kg) *</Label>
                   <Input
                     id="peso_objetivo"
                     type="number"
@@ -571,7 +575,7 @@ const EmagrecimentoAvancado: React.FC = () => {
                     value={userData.peso_objetivo || ''}
                     onChange={(e) => setUserData({...userData, peso_objetivo: parseFloat(e.target.value)})}
                     placeholder="65.0"
-                    className={`border-2 transition-colors rounded-xl h-12 ${
+                    className={`border-2 transition-colors rounded-xl h-14 text-base ${
                       validationErrors.peso_objetivo ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
@@ -1441,28 +1445,30 @@ const EmagrecimentoAvancado: React.FC = () => {
           {renderStep()}
         </div>
 
-        {/* Navigation Buttons com design moderno */}
-        <div className={`flex justify-center gap-6 transition-all duration-700 delay-500 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+        {/* Navigation Buttons com design moderno e melhor organização */}
+        <div className={`flex justify-center items-center gap-8 mt-12 transition-all duration-700 delay-500 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
           {step > 1 && (
             <Button 
               onClick={handlePrevious} 
-              className="bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-4 rounded-2xl text-lg font-semibold backdrop-blur-sm hover:scale-105 transition-all duration-300"
+              className="bg-white/20 hover:bg-white/30 text-white border-2 border-white/40 px-12 py-6 rounded-2xl text-xl font-semibold backdrop-blur-sm hover:scale-105 transition-all duration-300 shadow-lg min-w-[160px]"
             >
-              Anterior
+              ← Anterior
             </Button>
           )}
           <Button 
             onClick={handleNext}
-            className="text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
+            className="text-white px-12 py-6 rounded-2xl text-xl font-semibold shadow-2xl hover:scale-105 transition-all duration-300 min-w-[180px]"
             style={{ backgroundColor: colors.primary }}
           >
             {step === totalSteps ? (
               <>
-                <Rocket className="mr-2 h-5 w-5" />
+                <Rocket className="mr-3 h-6 w-6" />
                 Calcular Plano
               </>
             ) : (
-              'Próximo'
+              <>
+                Próximo →
+              </>
             )}
           </Button>
         </div>
