@@ -46,7 +46,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             <input
               type="email"
               value={email}
-              onChange={(e) => {
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setEmail(e.target.value);
                 setError(null);
               }}
@@ -66,7 +66,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             <input
               type={showPassword ? 'text' : 'password'}
               value={password}
-              onChange={(e) => {
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setPassword(e.target.value);
                 setError(null);
               }}
