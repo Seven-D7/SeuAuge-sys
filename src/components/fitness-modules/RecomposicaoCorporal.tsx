@@ -27,9 +27,7 @@ import {
 
 // Importar algoritmos avançados
 import {
-  GeneticFitnessProfile,
-  AdaptivePersonalizationEngine,
-
+  GeneticFitnessProfile
 } from '@/lib/fitness/advanced_fitness_algorithms';
 
 interface UserData {
@@ -122,9 +120,6 @@ const RecomposicaoCorporal: React.FC = () => {
     primaryLight: '#22d3aa', // Verde mais claro
     primaryDark: '#0f9d7a',  // Verde mais escuro
   };
-
-  // Algoritmos especializados
-  const [adaptiveEngine] = useState(new AdaptivePersonalizationEngine());
 
   // Animação de entrada
   useEffect(() => {
@@ -1044,24 +1039,33 @@ const RecomposicaoCorporal: React.FC = () => {
 
           {/* Botões de Ação */}
           <div className="flex flex-wrap gap-6 justify-center pt-8">
-            <Button 
-              onClick={() => window.print()} 
+            <Button
+              onClick={() => window.print()}
               className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
+              variant="default"
+              size="default"
             >
               <BarChart3 className="mr-2 h-5 w-5" />
               Imprimir Plano
             </Button>
-            <Button 
+            <Button
               onClick={() => navigate('/progress')}
               className="text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
               style={{ backgroundColor: colors.primary }}
+              variant="default"
+              size="default"
             >
               <TrendingUp className="mr-2 h-5 w-5" />
               Iniciar Acompanhamento
             </Button>
-            <Button 
-              onClick={() => {setResults(null); setStep(1);}} 
+            <Button
+              onClick={() => {
+                setResults(null);
+                setStep(1);
+              }}
               className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
+              variant="default"
+              size="default"
             >
               <Sparkles className="mr-2 h-5 w-5" />
               Nova Análise
@@ -1129,17 +1133,21 @@ const RecomposicaoCorporal: React.FC = () => {
         {/* Navigation Buttons com design moderno */}
         <div className={`flex justify-center gap-6 transition-all duration-700 delay-500 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
           {step > 1 && (
-            <Button 
-              onClick={handlePrevious} 
+            <Button
+              onClick={handlePrevious}
               className="bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-4 rounded-2xl text-lg font-semibold backdrop-blur-sm hover:scale-105 transition-all duration-300"
+              variant="default"
+              size="default"
             >
               Anterior
             </Button>
           )}
-          <Button 
+          <Button
             onClick={handleNext}
             className="text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
             style={{ backgroundColor: colors.primary }}
+            variant="default"
+            size="default"
           >
             {step === totalSteps ? (
               <>

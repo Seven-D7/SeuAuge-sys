@@ -47,7 +47,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
             <input
               type="text"
               value={name}
-              onChange={(e) => {
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setName(e.target.value);
                 setError(null);
               }}
@@ -67,7 +67,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
             <input
               type="email"
               value={email}
-              onChange={(e) => {
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setEmail(e.target.value);
                 setError(null);
               }}
@@ -87,7 +87,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
             <input
               type={showPassword ? 'text' : 'password'}
               value={password}
-              onChange={(e) => {
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setPassword(e.target.value);
                 setError(null);
               }}

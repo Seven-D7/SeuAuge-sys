@@ -103,7 +103,7 @@ const Store: React.FC = () => {
                 <label className="block text-sm font-medium text-slate-300 mb-3">Ordenar por</label>
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSortBy(e.target.value)}
                   className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 >
                   {sortOptions.map((option) => (
