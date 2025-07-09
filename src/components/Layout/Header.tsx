@@ -3,6 +3,7 @@ import { Search, ShoppingCart, Bell, Menu, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCartStore } from '../../stores/cartStore';
+import { PLANS } from '../../data/plans';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -12,6 +13,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const { user } = useAuth();
   const { getTotalItems, toggleCart, showAddedAnimation } = useCartStore();
   const [searchQuery, setSearchQuery] = useState('');
+
+  const planName = PLANS.find((p) => p.id === (user?.plan ?? 'A'))?.name ?? 'Gratuito';
 
   const totalCartItems = getTotalItems();
 
@@ -74,7 +77,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           >
             <div className="hidden sm:block text-right">
               <p className="text-sm font-medium text-slate-900 dark:text-white">{user?.name}</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400">Membro Premium</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">{planName}</p>
             </div>
             <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-r from-teal-500 to-emerald-500 flex items-center justify-center">
               {user?.avatar ? (
@@ -89,5 +92,4 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     </header>
   );
 };
-
 export default Header;
