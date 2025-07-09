@@ -13,12 +13,9 @@ import {
   TrendingUp, 
   Dumbbell, 
   Brain, 
-  Activity, 
   Calendar,
-  Zap,
   Heart,
   Scale,
-  Clock,
   CheckCircle,
   AlertTriangle,
   Info,
@@ -26,12 +23,7 @@ import {
   BarChart3,
   Trophy,
   Sparkles,
-  Flame,
   Award,
-  PieChart,
-  LineChart,
-  Users,
-  Shield,
   Rocket,
   X
 } from 'lucide-react';
@@ -528,7 +520,7 @@ const GanhoMassaMuscular: React.FC = () => {
     switch (step) {
       case 1:
         return (
-          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <Card className={`w-full max-w-7xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
             <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
               <CardTitle className="flex items-center gap-3 text-2xl">
                 <div className="p-2 bg-white/20 rounded-lg">
@@ -540,23 +532,23 @@ const GanhoMassaMuscular: React.FC = () => {
                 Informações básicas para análise personalizada de hipertrofia
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6 p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
+            <CardContent className="space-y-12 p-16">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                <div className="space-y-3">
                   <Label htmlFor="nome" className="text-gray-700 font-medium">Nome *</Label>
                   <Input
                     id="nome"
                     value={userData.nome || ''}
                     onChange={(e) => setUserData({...userData, nome: e.target.value})}
                     placeholder="Seu nome"
-                    className={`border-2 transition-colors rounded-xl h-12 ${
+                    className={`border-2 transition-colors rounded-xl h-14 ${
                       validationErrors.nome ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                   {renderValidationError('nome')}
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Label htmlFor="idade" className="text-gray-700 font-medium">Idade *</Label>
                   <Input
                     id="idade"
@@ -564,29 +556,33 @@ const GanhoMassaMuscular: React.FC = () => {
                     value={userData.idade || ''}
                     onChange={(e) => setUserData({...userData, idade: parseInt(e.target.value)})}
                     placeholder="Anos"
-                    className={`border-2 transition-colors rounded-xl h-12 ${
+                    className={`border-2 transition-colors rounded-xl h-14 ${
                       validationErrors.idade ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                   {renderValidationError('idade')}
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="sexo" className="text-gray-700 font-medium">Sexo *</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="sexo" className="text-gray-700 font-medium text-sm">Sexo *</Label>
                   <Select onValueChange={(value) => setUserData({...userData, sexo: value as 'masculino' | 'feminino'})}>
-                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
-                      validationErrors.sexo ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-14 bg-white text-gray-900 font-medium shadow-sm ${
+                      validationErrors.sexo ? 'border-red-400 focus:border-red-500' : 'border-gray-300 focus:border-primary hover:border-gray-400'
                     }`}>
-                      <SelectValue placeholder="Selecione" />
+                      <SelectValue placeholder="Selecione seu sexo" className="text-gray-900 font-medium" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="masculino">Masculino</SelectItem>
-                      <SelectItem value="feminino">Feminino</SelectItem>
+                    <SelectContent className="bg-white border-2 border-gray-200 rounded-xl shadow-xl z-50">
+                      <SelectItem value="masculino" className="hover:bg-blue-50 text-gray-900 font-medium text-base py-4 cursor-pointer">
+                        👨 Masculino
+                      </SelectItem>
+                      <SelectItem value="feminino" className="hover:bg-pink-50 text-gray-900 font-medium text-base py-4 cursor-pointer">
+                        👩 Feminino
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   {renderValidationError('sexo')}
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Label htmlFor="altura" className="text-gray-700 font-medium">Altura (cm) *</Label>
                   <Input
                     id="altura"
@@ -594,14 +590,14 @@ const GanhoMassaMuscular: React.FC = () => {
                     value={userData.altura || ''}
                     onChange={(e) => setUserData({...userData, altura: parseInt(e.target.value)})}
                     placeholder="175"
-                    className={`border-2 transition-colors rounded-xl h-12 ${
+                    className={`border-2 transition-colors rounded-xl h-14 ${
                       validationErrors.altura ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                   {renderValidationError('altura')}
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Label htmlFor="peso_atual" className="text-gray-700 font-medium">Peso Atual (kg) *</Label>
                   <Input
                     id="peso_atual"
@@ -610,14 +606,14 @@ const GanhoMassaMuscular: React.FC = () => {
                     value={userData.peso_atual || ''}
                     onChange={(e) => setUserData({...userData, peso_atual: parseFloat(e.target.value)})}
                     placeholder="70.5"
-                    className={`border-2 transition-colors rounded-xl h-12 ${
+                    className={`border-2 transition-colors rounded-xl h-14 ${
                       validationErrors.peso_atual ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                   {renderValidationError('peso_atual')}
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Label htmlFor="peso_objetivo" className="text-gray-700 font-medium">Peso Objetivo (kg) *</Label>
                   <Input
                     id="peso_objetivo"
@@ -626,7 +622,7 @@ const GanhoMassaMuscular: React.FC = () => {
                     value={userData.peso_objetivo || ''}
                     onChange={(e) => setUserData({...userData, peso_objetivo: parseFloat(e.target.value)})}
                     placeholder="80.0"
-                    className={`border-2 transition-colors rounded-xl h-12 ${
+                    className={`border-2 transition-colors rounded-xl h-14 ${
                       validationErrors.peso_objetivo ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
@@ -640,7 +636,7 @@ const GanhoMassaMuscular: React.FC = () => {
 
       case 2:
         return (
-          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <Card className={`w-full max-w-7xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
             <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
               <CardTitle className="flex items-center gap-3 text-2xl">
                 <div className="p-2 bg-white/20 rounded-lg">
@@ -652,11 +648,11 @@ const GanhoMassaMuscular: React.FC = () => {
                 Informações sobre seu nível atual e metas específicas
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6 p-8">
-              <div className="space-y-2">
+            <CardContent className="space-y-12 p-16">
+              <div className="space-y-3">
                 <Label htmlFor="nivel_experiencia" className="text-gray-700 font-medium">Nível de Experiência *</Label>
                 <Select onValueChange={(value) => setUserData({...userData, nivel_experiencia: value as any})}>
-                  <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                  <SelectTrigger className={`border-2 transition-colors rounded-xl h-14 ${
                     validationErrors.nivel_experiencia ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                   }`}>
                     <SelectValue placeholder="Selecione seu nível" />
@@ -670,10 +666,10 @@ const GanhoMassaMuscular: React.FC = () => {
                 {renderValidationError('nivel_experiencia')}
               </div>
               
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Label htmlFor="objetivo_principal" className="text-gray-700 font-medium">Objetivo Principal *</Label>
                 <Select onValueChange={(value) => setUserData({...userData, objetivo_principal: value as any})}>
-                  <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                  <SelectTrigger className={`border-2 transition-colors rounded-xl h-14 ${
                     validationErrors.objetivo_principal ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                   }`}>
                     <SelectValue placeholder="Selecione seu objetivo" />
@@ -698,7 +694,7 @@ const GanhoMassaMuscular: React.FC = () => {
                   value={userData.confianca_exercicio || ''}
                   onChange={(e) => setUserData({...userData, confianca_exercicio: parseInt(e.target.value)})}
                   placeholder="5"
-                  className={`border-2 transition-colors rounded-xl h-12 ${
+                  className={`border-2 transition-colors rounded-xl h-14 ${
                     validationErrors.confianca_exercicio ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                   }`}
                   style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
@@ -717,7 +713,7 @@ const GanhoMassaMuscular: React.FC = () => {
 
       case 3:
         return (
-          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <Card className={`w-full max-w-7xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
             <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
               <CardTitle className="flex items-center gap-3 text-2xl">
                 <div className="p-2 bg-white/20 rounded-lg">
@@ -729,12 +725,12 @@ const GanhoMassaMuscular: React.FC = () => {
                 Configure sua rotina de treinos e prazos
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6 p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
+            <CardContent className="space-y-12 p-16">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                <div className="space-y-3">
                   <Label htmlFor="dias_treino" className="text-gray-700 font-medium">Dias de Treino por Semana *</Label>
                   <Select onValueChange={(value) => setUserData({...userData, dias_treino_semana: parseInt(value)})}>
-                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-14 ${
                       validationErrors.dias_treino_semana ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}>
                       <SelectValue placeholder="Selecione" />
@@ -750,10 +746,10 @@ const GanhoMassaMuscular: React.FC = () => {
                   </Select>
                   {renderValidationError('dias_treino_semana')}
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Label htmlFor="tempo_sessao" className="text-gray-700 font-medium">Tempo por Sessão (minutos) *</Label>
                   <Select onValueChange={(value) => setUserData({...userData, tempo_disponivel_sessao: parseInt(value)})}>
-                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-14 ${
                       validationErrors.tempo_disponivel_sessao ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}>
                       <SelectValue placeholder="Selecione" />
@@ -779,7 +775,7 @@ const GanhoMassaMuscular: React.FC = () => {
                   value={userData.prazo || ''}
                   onChange={(e) => setUserData({...userData, prazo: parseInt(e.target.value)})}
                   placeholder="6"
-                  className={`border-2 transition-colors rounded-xl h-12 ${
+                  className={`border-2 transition-colors rounded-xl h-14 ${
                     validationErrors.prazo ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                   }`}
                   style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
@@ -793,10 +789,10 @@ const GanhoMassaMuscular: React.FC = () => {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Label htmlFor="local_treino" className="text-gray-700 font-medium">Local de Treino</Label>
                 <Select onValueChange={(value) => setUserData({...userData, local_treino: value as any})}>
-                  <SelectTrigger className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12">
+                  <SelectTrigger className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-14">
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
@@ -812,7 +808,7 @@ const GanhoMassaMuscular: React.FC = () => {
 
       case 4:
         return (
-          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <Card className={`w-full max-w-7xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
             <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
               <CardTitle className="flex items-center gap-3 text-2xl">
                 <div className="p-2 bg-white/20 rounded-lg">
@@ -824,7 +820,7 @@ const GanhoMassaMuscular: React.FC = () => {
                 Dados de força atual para cálculos mais precisos
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6 p-8">
+            <CardContent className="space-y-12 p-16">
               <Alert className="border" style={{ backgroundColor: `${colors.primary}10`, borderColor: `${colors.primary}40` }}>
                 <Info className="h-4 w-4" style={{ color: colors.primary }} />
                 <AlertDescription style={{ color: colors.primaryDark }}>
@@ -832,8 +828,8 @@ const GanhoMassaMuscular: React.FC = () => {
                 </AlertDescription>
               </Alert>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="space-y-2">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div className="space-y-3">
                   <Label htmlFor="supino_1rm" className="text-gray-700 font-medium">Supino 1RM (kg)</Label>
                   <Input
                     id="supino_1rm"
@@ -842,11 +838,11 @@ const GanhoMassaMuscular: React.FC = () => {
                     value={userData.supino_1rm || ''}
                     onChange={(e) => setUserData({...userData, supino_1rm: parseFloat(e.target.value)})}
                     placeholder="80"
-                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-14"
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Label htmlFor="agachamento_1rm" className="text-gray-700 font-medium">Agachamento 1RM (kg)</Label>
                   <Input
                     id="agachamento_1rm"
@@ -855,11 +851,11 @@ const GanhoMassaMuscular: React.FC = () => {
                     value={userData.agachamento_1rm || ''}
                     onChange={(e) => setUserData({...userData, agachamento_1rm: parseFloat(e.target.value)})}
                     placeholder="100"
-                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-14"
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Label htmlFor="terra_1rm" className="text-gray-700 font-medium">Levantamento Terra 1RM (kg)</Label>
                   <Input
                     id="terra_1rm"
@@ -868,13 +864,13 @@ const GanhoMassaMuscular: React.FC = () => {
                     value={userData.levantamento_terra_1rm || ''}
                     onChange={(e) => setUserData({...userData, levantamento_terra_1rm: parseFloat(e.target.value)})}
                     placeholder="120"
-                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-14"
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Label htmlFor="lesoes" className="text-gray-700 font-medium">Lesões ou Limitações</Label>
                 <Textarea
                   id="lesoes"
@@ -892,7 +888,7 @@ const GanhoMassaMuscular: React.FC = () => {
 
       case 5:
         return (
-          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <Card className={`w-full max-w-7xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
             <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
               <CardTitle className="flex items-center gap-3 text-2xl">
                 <div className="p-2 bg-white/20 rounded-lg">
@@ -904,7 +900,7 @@ const GanhoMassaMuscular: React.FC = () => {
                 Dados opcionais para otimização máxima
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6 p-8">
+            <CardContent className="space-y-12 p-16">
               <Alert className="border" style={{ backgroundColor: `${colors.primary}10`, borderColor: `${colors.primary}40` }}>
                 <Info className="h-4 w-4" style={{ color: colors.primary }} />
                 <AlertDescription style={{ color: colors.primaryDark }}>
@@ -912,8 +908,8 @@ const GanhoMassaMuscular: React.FC = () => {
                 </AlertDescription>
               </Alert>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="space-y-2">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div className="space-y-3">
                   <Label htmlFor="massa_gorda" className="text-gray-700 font-medium">Massa Gorda (%)</Label>
                   <Input
                     id="massa_gorda"
@@ -922,11 +918,11 @@ const GanhoMassaMuscular: React.FC = () => {
                     value={userData.massa_gorda || ''}
                     onChange={(e) => setUserData({...userData, massa_gorda: parseFloat(e.target.value)})}
                     placeholder="12.5"
-                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-14"
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Label htmlFor="massa_magra" className="text-gray-700 font-medium">Massa Magra (kg)</Label>
                   <Input
                     id="massa_magra"
@@ -935,11 +931,11 @@ const GanhoMassaMuscular: React.FC = () => {
                     value={userData.massa_magra || ''}
                     onChange={(e) => setUserData({...userData, massa_magra: parseFloat(e.target.value)})}
                     placeholder="65.2"
-                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-14"
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Label htmlFor="massa_muscular" className="text-gray-700 font-medium">Massa Muscular (kg)</Label>
                   <Input
                     id="massa_muscular"
@@ -948,13 +944,13 @@ const GanhoMassaMuscular: React.FC = () => {
                     value={userData.massa_muscular || ''}
                     onChange={(e) => setUserData({...userData, massa_muscular: parseFloat(e.target.value)})}
                     placeholder="55.8"
-                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-14"
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Label htmlFor="suplementacao" className="text-gray-700 font-medium">Suplementação Atual</Label>
                 <Textarea
                   id="suplementacao"
@@ -1111,7 +1107,7 @@ const GanhoMassaMuscular: React.FC = () => {
             <CardContent>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2">
-                  <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-12">
                     <div className="relative w-32 h-32">
                       <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 36 36">
                         <path
@@ -1161,7 +1157,7 @@ const GanhoMassaMuscular: React.FC = () => {
                 <div className="space-y-4">
                   <h4 className="text-lg font-semibold text-white">Fatores Limitantes</h4>
                   {results.fatores_limitantes.length > 0 ? (
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {results.fatores_limitantes.map((fator, index) => (
                         <div key={index} className="flex items-start gap-2 p-3 bg-red-500/20 border border-red-500/30 rounded-lg backdrop-blur-sm">
                           <AlertTriangle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
@@ -1183,7 +1179,7 @@ const GanhoMassaMuscular: React.FC = () => {
           </Card>
 
           {/* Métricas Principais */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4 gap-12">
             <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl hover:scale-105 transition-transform duration-300">
               <CardContent className="p-6">
                 <div className="flex items-center gap-3 mb-4">
@@ -1241,7 +1237,7 @@ const GanhoMassaMuscular: React.FC = () => {
           {/* Por brevidade, vou incluir apenas alguns cards principais */}
 
           {/* Botões de Ação */}
-          <div className="flex flex-wrap gap-6 justify-center pt-8">
+          <div className="flex flex-wrap gap-12 justify-center pt-8">
             <Button 
               onClick={() => window.print()} 
               className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
@@ -1325,7 +1321,7 @@ const GanhoMassaMuscular: React.FC = () => {
         </div>
 
         {/* Navigation Buttons com design moderno */}
-        <div className={`flex justify-center gap-6 transition-all duration-700 delay-500 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+        <div className={`flex justify-center gap-12 transition-all duration-700 delay-500 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
           {step > 1 && (
             <Button 
               onClick={handlePrevious} 

@@ -22,17 +22,12 @@ import {
   CheckCircle,
   AlertTriangle,
   Info,
-  Star,
   Trophy,
   Sparkles,
   Flame,
   Award,
   BarChart3,
-  PieChart,
-  LineChart,
   TrendingUp,
-  Users,
-  Shield,
   Rocket,
   X
 } from 'lucide-react';

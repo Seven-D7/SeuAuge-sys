@@ -10,28 +10,16 @@ import { Progress } from '../ui/progress';
 import { Badge } from '../ui/badge';
 import { Alert, AlertDescription } from '../ui/alert';
 import { 
-  Zap, 
   Trophy, 
-  Target, 
-  Brain, 
-  Activity, 
   Calendar,
-  Timer,
-  Heart,
   Scale,
   TrendingUp,
   CheckCircle,
   AlertTriangle,
   Info,
   BarChart3,
-  Gauge,
   Sparkles,
-  Flame,
   Award,
-  PieChart,
-  LineChart,
-  Users,
-  Shield,
   Rocket,
   X
 } from 'lucide-react';
@@ -479,7 +467,7 @@ const PerformanceAtletica: React.FC = () => {
     switch (step) {
       case 1:
         return (
-          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <Card className={`w-full max-w-7xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
             <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
               <CardTitle className="flex items-center gap-3 text-2xl">
                 <div className="p-2 bg-white/20 rounded-lg">
@@ -491,23 +479,23 @@ const PerformanceAtletica: React.FC = () => {
                 Informações básicas para análise de performance atlética
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6 p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
+            <CardContent className="space-y-12 p-16">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                <div className="space-y-3">
                   <Label htmlFor="nome" className="text-gray-700 font-medium">Nome *</Label>
                   <Input
                     id="nome"
                     value={userData.nome || ''}
                     onChange={(e) => setUserData({...userData, nome: e.target.value})}
                     placeholder="Seu nome"
-                    className={`border-2 transition-colors rounded-xl h-12 ${
+                    className={`border-2 transition-colors rounded-xl h-14 ${
                       validationErrors.nome ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                   {renderValidationError('nome')}
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Label htmlFor="idade" className="text-gray-700 font-medium">Idade *</Label>
                   <Input
                     id="idade"
@@ -515,29 +503,33 @@ const PerformanceAtletica: React.FC = () => {
                     value={userData.idade || ''}
                     onChange={(e) => setUserData({...userData, idade: parseInt(e.target.value)})}
                     placeholder="Anos"
-                    className={`border-2 transition-colors rounded-xl h-12 ${
+                    className={`border-2 transition-colors rounded-xl h-14 ${
                       validationErrors.idade ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                   {renderValidationError('idade')}
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="sexo" className="text-gray-700 font-medium">Sexo *</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="sexo" className="text-gray-700 font-medium text-sm">Sexo *</Label>
                   <Select onValueChange={(value) => setUserData({...userData, sexo: value as 'masculino' | 'feminino'})}>
-                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
-                      validationErrors.sexo ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
+                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-14 bg-white text-gray-900 font-medium shadow-sm ${
+                      validationErrors.sexo ? 'border-red-400 focus:border-red-500' : 'border-gray-300 focus:border-primary hover:border-gray-400'
                     }`}>
-                      <SelectValue placeholder="Selecione" />
+                      <SelectValue placeholder="Selecione seu sexo" className="text-gray-900 font-medium" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="masculino">Masculino</SelectItem>
-                      <SelectItem value="feminino">Feminino</SelectItem>
+                    <SelectContent className="bg-white border-2 border-gray-200 rounded-xl shadow-xl z-50">
+                      <SelectItem value="masculino" className="hover:bg-blue-50 text-gray-900 font-medium text-base py-4 cursor-pointer">
+                        👨 Masculino
+                      </SelectItem>
+                      <SelectItem value="feminino" className="hover:bg-pink-50 text-gray-900 font-medium text-base py-4 cursor-pointer">
+                        👩 Feminino
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   {renderValidationError('sexo')}
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Label htmlFor="altura" className="text-gray-700 font-medium">Altura (cm) *</Label>
                   <Input
                     id="altura"
@@ -545,14 +537,14 @@ const PerformanceAtletica: React.FC = () => {
                     value={userData.altura || ''}
                     onChange={(e) => setUserData({...userData, altura: parseInt(e.target.value)})}
                     placeholder="175"
-                    className={`border-2 transition-colors rounded-xl h-12 ${
+                    className={`border-2 transition-colors rounded-xl h-14 ${
                       validationErrors.altura ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                   {renderValidationError('altura')}
                 </div>
-                <div className="space-y-2 md:col-span-2">
+                <div className="space-y-3 md:col-span-2">
                   <Label htmlFor="peso_atual" className="text-gray-700 font-medium">Peso Atual (kg) *</Label>
                   <Input
                     id="peso_atual"
@@ -561,7 +553,7 @@ const PerformanceAtletica: React.FC = () => {
                     value={userData.peso_atual || ''}
                     onChange={(e) => setUserData({...userData, peso_atual: parseFloat(e.target.value)})}
                     placeholder="70.5"
-                    className={`border-2 transition-colors rounded-xl h-12 ${
+                    className={`border-2 transition-colors rounded-xl h-14 ${
                       validationErrors.peso_atual ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
@@ -575,7 +567,7 @@ const PerformanceAtletica: React.FC = () => {
 
       case 2:
         return (
-          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <Card className={`w-full max-w-7xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
             <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
               <CardTitle className="flex items-center gap-3 text-2xl">
                 <div className="p-2 bg-white/20 rounded-lg">
@@ -587,15 +579,15 @@ const PerformanceAtletica: React.FC = () => {
                 Informações sobre sua modalidade e nível competitivo
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6 p-8">
-              <div className="space-y-2">
+            <CardContent className="space-y-12 p-16">
+              <div className="space-y-3">
                 <Label htmlFor="modalidade" className="text-gray-700 font-medium">Modalidade Principal *</Label>
                 <Input
                   id="modalidade"
                   value={userData.modalidade_principal || ''}
                   onChange={(e) => setUserData({...userData, modalidade_principal: e.target.value})}
                   placeholder="Ex: Futebol, Corrida, Natação, Tênis..."
-                  className={`border-2 transition-colors rounded-xl h-12 ${
+                  className={`border-2 transition-colors rounded-xl h-14 ${
                     validationErrors.modalidade_principal ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                   }`}
                   style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
@@ -603,10 +595,10 @@ const PerformanceAtletica: React.FC = () => {
                 {renderValidationError('modalidade_principal')}
               </div>
               
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Label htmlFor="nivel_competitivo" className="text-gray-700 font-medium">Nível Competitivo *</Label>
                 <Select onValueChange={(value) => setUserData({...userData, nivel_competitivo: value as any})}>
-                  <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                  <SelectTrigger className={`border-2 transition-colors rounded-xl h-14 ${
                     validationErrors.nivel_competitivo ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                   }`}>
                     <SelectValue placeholder="Selecione seu nível" />
@@ -621,8 +613,8 @@ const PerformanceAtletica: React.FC = () => {
                 {renderValidationError('nivel_competitivo')}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                <div className="space-y-3">
                   <Label htmlFor="anos_experiencia" className="text-gray-700 font-medium">Anos de Experiência *</Label>
                   <Input
                     id="anos_experiencia"
@@ -631,7 +623,7 @@ const PerformanceAtletica: React.FC = () => {
                     value={userData.anos_experiencia || ''}
                     onChange={(e) => setUserData({...userData, anos_experiencia: parseFloat(e.target.value)})}
                     placeholder="2.5"
-                    className={`border-2 transition-colors rounded-xl h-12 ${
+                    className={`border-2 transition-colors rounded-xl h-14 ${
                       validationErrors.anos_experiencia ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
@@ -648,7 +640,7 @@ const PerformanceAtletica: React.FC = () => {
                     value={userData.confianca_performance || ''}
                     onChange={(e) => setUserData({...userData, confianca_performance: parseInt(e.target.value)})}
                     placeholder="7"
-                    className={`border-2 transition-colors rounded-xl h-12 ${
+                    className={`border-2 transition-colors rounded-xl h-14 ${
                       validationErrors.confianca_performance ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
@@ -664,14 +656,14 @@ const PerformanceAtletica: React.FC = () => {
                 </p>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Label htmlFor="posicao" className="text-gray-700 font-medium">Posição/Função (Opcional)</Label>
                 <Input
                   id="posicao"
                   value={userData.posicao_funcao || ''}
                   onChange={(e) => setUserData({...userData, posicao_funcao: e.target.value})}
                   placeholder="Ex: Atacante, Meio-campista, Velocista..."
-                  className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                  className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-14"
                   style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                 />
               </div>
@@ -681,7 +673,7 @@ const PerformanceAtletica: React.FC = () => {
 
       case 3:
         return (
-          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <Card className={`w-full max-w-7xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
             <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
               <CardTitle className="flex items-center gap-3 text-2xl">
                 <div className="p-2 bg-white/20 rounded-lg">
@@ -693,12 +685,12 @@ const PerformanceAtletica: React.FC = () => {
                 Configure sua rotina de treinos para performance
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6 p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
+            <CardContent className="space-y-12 p-16">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                <div className="space-y-3">
                   <Label htmlFor="dias_treino" className="text-gray-700 font-medium">Dias de Treino por Semana *</Label>
                   <Select onValueChange={(value) => setUserData({...userData, dias_treino_semana: parseInt(value)})}>
-                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-14 ${
                       validationErrors.dias_treino_semana ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}>
                       <SelectValue placeholder="Selecione" />
@@ -714,10 +706,10 @@ const PerformanceAtletica: React.FC = () => {
                   </Select>
                   {renderValidationError('dias_treino_semana')}
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Label htmlFor="tempo_sessao" className="text-gray-700 font-medium">Tempo por Sessão (minutos) *</Label>
                   <Select onValueChange={(value) => setUserData({...userData, tempo_disponivel_sessao: parseInt(value)})}>
-                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-12 ${
+                    <SelectTrigger className={`border-2 transition-colors rounded-xl h-14 ${
                       validationErrors.tempo_disponivel_sessao ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-primary'
                     }`}>
                       <SelectValue placeholder="Selecione" />
@@ -736,10 +728,10 @@ const PerformanceAtletica: React.FC = () => {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Label htmlFor="objetivo_especifico" className="text-gray-700 font-medium">Objetivo Específico (Opcional)</Label>
                 <Select onValueChange={(value) => setUserData({...userData, objetivo_especifico: value as any})}>
-                  <SelectTrigger className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12">
+                  <SelectTrigger className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-14">
                     <SelectValue placeholder="Selecione o foco principal" />
                   </SelectTrigger>
                   <SelectContent>
@@ -764,7 +756,7 @@ const PerformanceAtletica: React.FC = () => {
 
       case 4:
         return (
-          <Card className={`w-full max-w-2xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <Card className={`w-full max-w-7xl backdrop-blur-lg bg-white/95 border-0 shadow-2xl transition-all duration-700 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
             <CardHeader style={{ backgroundColor: colors.primary }} className="text-white rounded-t-lg">
               <CardTitle className="flex items-center gap-3 text-2xl">
                 <div className="p-2 bg-white/20 rounded-lg">
@@ -776,7 +768,7 @@ const PerformanceAtletica: React.FC = () => {
                 Dados atuais para análise mais precisa
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6 p-8">
+            <CardContent className="space-y-12 p-16">
               <Alert className="border" style={{ backgroundColor: `${colors.primary}10`, borderColor: `${colors.primary}40` }}>
                 <Info className="h-4 w-4" style={{ color: colors.primary }} />
                 <AlertDescription style={{ color: colors.primaryDark }}>
@@ -784,8 +776,8 @@ const PerformanceAtletica: React.FC = () => {
                 </AlertDescription>
               </Alert>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                <div className="space-y-3">
                   <Label htmlFor="vo2_max" className="text-gray-700 font-medium">VO2 Máximo (ml/kg/min)</Label>
                   <Input
                     id="vo2_max"
@@ -794,11 +786,11 @@ const PerformanceAtletica: React.FC = () => {
                     value={userData.vo2_max || ''}
                     onChange={(e) => setUserData({...userData, vo2_max: parseFloat(e.target.value)})}
                     placeholder="45.0"
-                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-14"
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Label htmlFor="fc_repouso" className="text-gray-700 font-medium">FC Repouso (bpm)</Label>
                   <Input
                     id="fc_repouso"
@@ -806,11 +798,11 @@ const PerformanceAtletica: React.FC = () => {
                     value={userData.frequencia_cardiaca_repouso || ''}
                     onChange={(e) => setUserData({...userData, frequencia_cardiaca_repouso: parseInt(e.target.value)})}
                     placeholder="60"
-                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-14"
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Label htmlFor="tempo_5km" className="text-gray-700 font-medium">Tempo 5km (minutos)</Label>
                   <Input
                     id="tempo_5km"
@@ -819,11 +811,11 @@ const PerformanceAtletica: React.FC = () => {
                     value={userData.tempo_corrida_5km || ''}
                     onChange={(e) => setUserData({...userData, tempo_corrida_5km: parseFloat(e.target.value)})}
                     placeholder="25.0"
-                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-14"
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Label htmlFor="salto_vertical" className="text-gray-700 font-medium">Salto Vertical (cm)</Label>
                   <Input
                     id="salto_vertical"
@@ -831,13 +823,13 @@ const PerformanceAtletica: React.FC = () => {
                     value={userData.salto_vertical || ''}
                     onChange={(e) => setUserData({...userData, salto_vertical: parseInt(e.target.value)})}
                     placeholder="45"
-                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-12"
+                    className="border-2 border-gray-200 focus:border-primary transition-colors rounded-xl h-14"
                     style={{ '--tw-ring-color': colors.primary } as React.CSSProperties}
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Label htmlFor="lesoes" className="text-gray-700 font-medium">Lesões ou Limitações</Label>
                 <Textarea
                   id="lesoes"
@@ -850,7 +842,7 @@ const PerformanceAtletica: React.FC = () => {
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Label htmlFor="suplementacao" className="text-gray-700 font-medium">Suplementação Atual</Label>
                 <Textarea
                   id="suplementacao"
@@ -995,7 +987,7 @@ const PerformanceAtletica: React.FC = () => {
           </div>
 
           {/* Botões de Ação */}
-          <div className="flex flex-wrap gap-6 justify-center pt-8">
+          <div className="flex flex-wrap gap-12 justify-center pt-8">
             <Button 
               onClick={() => window.print()} 
               className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
@@ -1079,7 +1071,7 @@ const PerformanceAtletica: React.FC = () => {
         </div>
 
         {/* Navigation Buttons com design moderno */}
-        <div className={`flex justify-center gap-6 transition-all duration-700 delay-500 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+        <div className={`flex justify-center gap-12 transition-all duration-700 delay-500 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
           {step > 1 && (
             <Button 
               onClick={handlePrevious} 
