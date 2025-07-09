@@ -19,11 +19,12 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { PLANS } from '../data/plans';
+import { updateUserProfile } from '../services/user';
 import { updateUserPlan } from '../services/plan';
 import { useProgressStore } from '../stores/progressStore';
 
 const Profile: React.FC = () => {
-  const { user, updateUser, refreshPlan } = useAuth();
+  const { user, refreshPlan } = useAuth();
   const planName = PLANS.find((p) => p.id === (user?.plan ?? 'A'))?.name ?? 'Gratuito';
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
@@ -49,7 +50,7 @@ const Profile: React.FC = () => {
   };
 
   const handleSave = async () => {
-    await updateUser({ name: formData.name, email: formData.email, file });
+    await updateUserProfile({ name: formData.name, email: formData.email, file });
     setIsEditing(false);
     setFile(null);
     setPreview(null);
