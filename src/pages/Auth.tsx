@@ -1,101 +1,50 @@
-import React, { useState } from 'react';
-import { Navigate, useSearchParams } from 'react-router-dom';
-import { TrendingUp } from 'lucide-react';
+// src/pages/Auth.tsx
+import React from 'react';
+import { useLocation } from 'react-router-dom';
 import LoginForm from '../components/Auth/LoginForm';
 import RegisterForm from '../components/Auth/RegisterForm';
-import { useAuth } from '../contexts/AuthContext';
 
-const Auth: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const initialMode = searchParams.get('mode') === 'register' ? false : true;
-  const [isLogin, setIsLogin] = useState(initialMode);
-  const { user, loading } = useAuth();
+const AuthPage = () => {
+  const location = useLocation();
+  const mode = new URLSearchParams(location.search).get('mode') || 'login';
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+  const [authMode, setAuthMode] = React.useState<'login' | 'register'>(mode as 'login' | 'register');
 
-  if (user) {
-    return <Navigate to="/dashboard" replace />;
-  }
+  const toggleMode = () => {
+    setAuthMode((prev) => (prev === 'login' ? 'register' : 'login'));
+  };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex">
-      {/* Left side - Hero */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-emerald-600 to-cyan-600 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black bg-opacity-20" />
-        <div className="relative z-10 flex flex-col justify-center items-center text-white p-12">
-          <div className="text-center max-w-lg">
-            <div className="flex items-center justify-center mb-8">
-              <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                <TrendingUp className="w-8 h-8 text-white" />
-              </div>
-            </div>
-            <h1 className="text-4xl font-bold mb-6">Transforme Sua Jornada de Saúde</h1>
-            <p className="text-xl mb-8 text-primary">
-              Acesse conteúdo premium de bem-estar, orientação nutricional especializada e uma loja de produtos de saúde selecionados, tudo em uma plataforma.
-            </p>
-            <div className="flex items-center justify-center space-x-8 text-primary">
-              <div className="text-center">
-                <div className="text-2xl font-bold">500+</div>
-                <div className="text-sm">Vídeos</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">50k+</div>
-                <div className="text-sm">Membros</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">1000+</div>
-                <div className="text-sm">Produtos</div>
-              </div>
+    <div className="min-h-screen flex">
+      {/* Lado esquerdo */}
+      <div className="w-1/2 bg-gradient-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center p-8">
+        <div className="text-center max-w-md space-y-6">
+          <div className="flex justify-center">
+            <div className="bg-white/10 p-4 rounded-full">
+              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12l5 5L20 7" />
+              </svg>
             </div>
           </div>
+          <h1 className="text-3xl font-bold leading-snug">
+            Transforme Sua Jornada de <br /> Saúde
+          </h1>
+          <p className="text-emerald-100 text-sm">
+            Acesse conteúdo premium de bem-estar, orientação nutricional especializada e uma loja de produtos de saúde selecionados, tudo em uma plataforma.
+          </p>
         </div>
-        
-        {/* Decorative elements */}
-        <div className="absolute top-20 right-20 w-32 h-32 bg-white bg-opacity-10 rounded-full blur-xl" />
-        <div className="absolute bottom-20 left-20 w-24 h-24 bg-white bg-opacity-10 rounded-full blur-xl" />
       </div>
 
-      {/* Right side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
-          {/* Mobile logo */}
-          <div className="lg:hidden flex items-center justify-center mb-8">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-xl flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <span className="text-2xl font-bold text-white">Meu Auge</span>
-                <p className="text-xs text-slate-400">Transforme-se</p>
-              </div>
-            </div>
-          </div>
-
-          {isLogin ? (
-            <LoginForm
-              onToggleMode={() => {
-                setSearchParams({ mode: 'register' });
-                setIsLogin(false);
-              }}
-            />
-          ) : (
-            <RegisterForm
-              onToggleMode={() => {
-                setSearchParams({ mode: 'login' });
-                setIsLogin(true);
-              }}
-            />
-          )}
-        </div>
+      {/* Lado direito */}
+      <div className="w-1/2 bg-slate-900 flex items-center justify-center p-8">
+        {authMode === 'login' ? (
+          <LoginForm onToggleMode={toggleMode} />
+        ) : (
+          <RegisterForm onToggleMode={toggleMode} />
+        )}
       </div>
     </div>
   );
 };
 
-export default Auth;
+export default AuthPage;
