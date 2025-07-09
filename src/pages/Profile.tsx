@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   User, 
   Camera, 
@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProgressStore } from '../stores/progressStore';
+import { getUserMetrics } from '../services/user';
 
 const Profile: React.FC = () => {
   const { user, updateUser } = useAuth();
@@ -28,10 +29,21 @@ const Profile: React.FC = () => {
     name: user?.name || '',
     email: user?.email || '',
   });
-  const { metrics } = useProgressStore();
+  const { metrics, setMetrics } = useProgressStore();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    async function loadMetrics() {
+      const saved = await getUserMetrics();
+      if (saved) {
+        setMetrics(saved);
+      }
+    }
+    loadMetrics();
+  }, [user, setMetrics]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];

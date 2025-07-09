@@ -1,7 +1,8 @@
 import { updateProfile, updateEmail } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { auth, db, storage } from '../firebase';
+import type { BodyMetrics } from '../stores/progressStore';
 
 export interface UpdateUserInput {
   name: string;
@@ -53,4 +54,22 @@ export async function createUserDocument({
   avatar = null,
 }: CreateUserInput) {
   await setDoc(doc(db, 'users', uid), { name, email, avatar });
+}
+
+export async function updateUserMetrics(metrics: BodyMetrics) {
+  if (!auth.currentUser) return;
+  await setDoc(
+    doc(db, 'users', auth.currentUser.uid),
+    { metrics },
+    { merge: true }
+  );
+}
+
+export async function getUserMetrics(uid?: string): Promise<BodyMetrics | null> {
+  const userId = uid || auth.currentUser?.uid;
+  if (!userId) return null;
+  const snap = await getDoc(doc(db, 'users', userId));
+  if (!snap.exists()) return null;
+  const data = snap.data();
+  return (data.metrics as BodyMetrics) ?? null;
 }
