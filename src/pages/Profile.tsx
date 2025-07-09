@@ -22,7 +22,7 @@ import { PLANS } from '../data/plans';
 import { updateUserProfile } from '@/services/user';
 import { updateUserPlan } from '../services/plan';
 import { useProgressStore } from '../stores/progressStore';
-import { toast } from 'react-hot-toast';
+import { getUserMetrics } from '../services/user';
 
 const Profile: React.FC = () => {
   const { user, refreshPlan } = useAuth();
@@ -33,15 +33,22 @@ const Profile: React.FC = () => {
     name: user?.name || '',
     email: user?.email || '',
   });
-  const { metrics } = useProgressStore();
+  const { metrics, setMetrics } = useProgressStore();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setFormData({ name: user?.name || '', email: user?.email || '' });
-  }, [user]);
+    if (!user) return;
+    async function loadMetrics() {
+      const saved = await getUserMetrics();
+      if (saved) {
+        setMetrics(saved);
+      }
+    }
+    loadMetrics();
+  }, [user, setMetrics]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
