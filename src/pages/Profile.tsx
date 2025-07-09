@@ -24,7 +24,6 @@ import { updateUserProfile, getUserData } from '@/services/user';
 import { updateUserPlan } from '../services/plan';
 import { useProgressStore } from '../stores/progressStore';
 import { getUserMetrics } from '../services/user';
-import type { UserData } from '@/services/user';
 
 const Profile: React.FC = () => {
   const { user, refreshPlan } = useAuth();
@@ -36,7 +35,6 @@ const Profile: React.FC = () => {
     name: '',
     birthdate: '',
   });
-  const [userData, setUserData] = useState<UserData | null>(null);
   const { metrics, setMetrics } = useProgressStore();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -52,8 +50,9 @@ const Profile: React.FC = () => {
       }
       const data = await getUserData(user.id);
       if (data) {
-        setUserData(data);
         setFormData({ name: data.name ?? '', birthdate: data.birthdate ?? '' });
+      } else {
+        setFormData({ name: user.name, birthdate: '' });
       }
     }
     load();
@@ -97,11 +96,13 @@ const Profile: React.FC = () => {
     }
   };
 
-  const handleCancel = () => {
-    setFormData({
-      name: userData?.name || '',
-      birthdate: userData?.birthdate || '',
-    });
+  const handleCancel = async () => {
+    if (user) {
+      const data = await getUserData(user.id);
+      if (data) {
+        setFormData({ name: data.name ?? '', birthdate: data.birthdate ?? '' });
+      }
+    }
     setFile(null);
     setPreview(null);
     setIsEditing(false);
@@ -280,8 +281,7 @@ const Profile: React.FC = () => {
                 {!isEditing ? (
                   <div className="space-y-4">
                     <div>
-                      <h2 className="text-3xl font-bold text-white mb-2">{user?.name}</h2>
-                      <p className="text-slate-400 text-lg">{userData?.name || 'Usuário'}</p>
+                      <h2 className="text-3xl font-bold text-white mb-2">{formData.name || 'Usuário'}</h2>
                     </div>
                     
                     {/* Quick metrics */}
@@ -322,7 +322,9 @@ const Profile: React.FC = () => {
                           value={formData.birthdate}
                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                             const age = new Date().getFullYear() - new Date(e.target.value).getFullYear();
-                            if (age <= 100) setFormData({ ...formData, birthdate: e.target.value });
+                            if (age >= 16 && age <= 100) {
+                              setFormData({ ...formData, birthdate: e.target.value });
+                            }
                           }}
                           className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
                         />
