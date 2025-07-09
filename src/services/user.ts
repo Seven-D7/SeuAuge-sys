@@ -3,6 +3,12 @@ import { doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { auth, db, storage } from '../firebase';
 
+export async function uploadAvatar(file: File, uid: string): Promise<string> {
+  const avatarRef = ref(storage, `avatars/${uid}`);
+  await uploadBytes(avatarRef, file);
+  return await getDownloadURL(avatarRef);
+}
+
 export interface UpdateUserInput {
   name: string;
   email: string;
@@ -23,9 +29,7 @@ export async function updateUserProfile({ name, email, file }: UpdateUserInput) 
   let photoURL = auth.currentUser.photoURL || undefined;
 
   if (file) {
-    const fileRef = ref(storage, `avatars/${auth.currentUser.uid}`);
-    await uploadBytes(fileRef, file);
-    photoURL = await getDownloadURL(fileRef);
+    photoURL = await uploadAvatar(file, auth.currentUser.uid);
   }
 
   await updateProfile(auth.currentUser, {
