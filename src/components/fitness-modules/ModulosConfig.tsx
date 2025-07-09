@@ -278,9 +278,11 @@ const ModuleSelector: React.FC = () => {
                   </div>
 
                   {/* Botão de ação */}
-                  <Button 
+                  <Button
                     className={`w-full bg-gradient-to-r ${modulo.cor} hover:opacity-90 text-white`}
-                    onClick={() => window.location.href = modulo.rota}
+                    onClick={() => (window.location.href = modulo.rota)}
+                    variant="default"
+                    size="default"
                   >
                     Iniciar {modulo.nome}
                     <ArrowRight className="h-4 w-4 ml-2" />

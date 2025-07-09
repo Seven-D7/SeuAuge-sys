@@ -290,7 +290,9 @@ const Profile: React.FC = () => {
                         <input
                           type="text"
                           value={formData.name}
-                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setFormData({ ...formData, name: e.target.value })
+                          }
                           className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
                         />
                       </div>
@@ -299,7 +301,9 @@ const Profile: React.FC = () => {
                         <input
                           type="email"
                           value={formData.email}
-                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setFormData({ ...formData, email: e.target.value })
+                          }
                           className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
                         />
                       </div>

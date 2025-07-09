@@ -36,7 +36,6 @@ import {
 import {
   GeneticFitnessProfile,
   SuccessPredictionAlgorithm,
-  AdaptivePersonalizationEngine,
   AdaptiveNutritionAlgorithm
 } from '../../lib/fitness/advanced_fitness_algorithms.js';
 
@@ -69,6 +68,16 @@ interface UserData {
   gordura_visceral?: number;
 }
 
+import type { Exercicio } from '@/types/exercicio';
+
+interface PlanoTreino {
+  frequencia_semanal: number;
+  duracao_sessao: number;
+  tipo_principal: string;
+  exercicios: Exercicio[];
+  intensidade: string;
+}
+
 interface WeightLossResults {
   // Métricas calculadas
   imc: number;
@@ -87,7 +96,7 @@ interface WeightLossResults {
   recomendacoes_personalizadas: string[];
   
   // Plano personalizado
-  plano_treino: any;
+  plano_treino: PlanoTreino;
   plano_nutricional: any;
   cronograma_adaptativo: any;
   
@@ -108,13 +117,11 @@ const EmagrecimentoAvancado: React.FC = () => {
   const [userData, setUserData] = useState<Partial<UserData>>({});
   const [results, setResults] = useState<WeightLossResults | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
-  const [weeklyProgress, setWeeklyProgress] = useState<number[]>([]);
   const [animationStep, setAnimationStep] = useState(0);
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
 
   // Algoritmos avançados
   const [successPredictor] = useState(new SuccessPredictionAlgorithm());
-  const [adaptiveEngine] = useState(new AdaptivePersonalizationEngine());
 
   const totalSteps = 5;
   const progress = (step / totalSteps) * 100;
@@ -215,7 +222,7 @@ const EmagrecimentoAvancado: React.FC = () => {
       height: data.altura,
       activityLevel: data.nivel_atividade,
       confidence: data.confianca_exercicio
-    }, weeklyProgress);
+    }, []);
 
     // 6. Déficit calórico personalizado baseado em múltiplos fatores
     let deficit_base = 500; // Déficit padrão para 0.5kg/semana
@@ -350,10 +357,10 @@ const EmagrecimentoAvancado: React.FC = () => {
     return Math.round(pontos);
   };
 
-  const generatePersonalizedWorkout = (data: UserData, geneticProfile: any) => {
+  const generatePersonalizedWorkout = (data: UserData, geneticProfile: any): PlanoTreino => {
     const isBeginnerFriendly = data.experiencia_exercicio === 'iniciante' || data.confianca_exercicio < 5;
-    
-    const baseWorkout = {
+
+    const baseWorkout: PlanoTreino = {
       frequencia_semanal: isBeginnerFriendly ? 3 : 4,
       duracao_sessao: isBeginnerFriendly ? 30 : 45,
       tipo_principal: geneticProfile.geneticProfile.dominantType === 'power' ? 'Força + Cardio' : 'Cardio + Força',
@@ -1358,24 +1365,33 @@ const EmagrecimentoAvancado: React.FC = () => {
 
           {/* Botões de Ação */}
           <div className="flex flex-wrap gap-6 justify-center pt-8">
-            <Button 
-              onClick={() => window.print()} 
+            <Button
+              onClick={() => window.print()}
               className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
+              variant="default"
+              size="default"
             >
               <BarChart3 className="mr-2 h-5 w-5" />
               Imprimir Plano
             </Button>
-            <Button 
+            <Button
               onClick={() => navigate('/progress')}
               className="text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
               style={{ backgroundColor: colors.primary }}
+              variant="default"
+              size="default"
             >
               <TrendingUp className="mr-2 h-5 w-5" />
               Iniciar Acompanhamento
             </Button>
-            <Button 
-              onClick={() => {setResults(null); setStep(1);}} 
+            <Button
+              onClick={() => {
+                setResults(null);
+                setStep(1);
+              }}
               className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
+              variant="default"
+              size="default"
             >
               <Sparkles className="mr-2 h-5 w-5" />
               Nova Análise
@@ -1443,17 +1459,21 @@ const EmagrecimentoAvancado: React.FC = () => {
         {/* Navigation Buttons com design moderno e melhor organização */}
         <div className={`flex justify-center items-center gap-8 mt-12 transition-all duration-700 delay-500 ${animationStep ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
           {step > 1 && (
-            <Button 
-              onClick={handlePrevious} 
-              className="bg-white/20 hover:bg-white/30 text-white border-2 border-white/40 px-12 py-6 rounded-2xl text-xl font-semibold backdrop-blur-sm hover:scale-105 transition-all duration-300 shadow-lg min-w-[160px]"
+            <Button
+              onClick={handlePrevious}
+              className="bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-4 rounded-2xl text-lg font-semibold backdrop-blur-sm hover:scale-105 transition-all duration-300"
+              variant="default"
+              size="default"
             >
               ← Anterior
             </Button>
           )}
-          <Button 
+          <Button
             onClick={handleNext}
             className="text-white px-12 py-6 rounded-2xl text-xl font-semibold shadow-2xl hover:scale-105 transition-all duration-300 min-w-[180px]"
             style={{ backgroundColor: colors.primary }}
+            variant="default"
+            size="default"
           >
             {step === totalSteps ? (
               <>
