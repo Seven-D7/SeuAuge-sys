@@ -1,7 +1,23 @@
-import type { UserData } from '@/components/EmagrecimentoAvancado';
-import type { WeightLossResults } from '@/components/EmagrecimentoAvancado';
+export interface ContextoExplicacao {
+  nome: string;
+  idade: number;
+  sexo: 'masculino' | 'feminino';
+  tipoGenetico: string;
+  powerScore: number;
+  enduranceScore: number;
+  probabilidade: number;
+  calorias: number;
+  tipoTreino: string;
+  frequencia: number;
+  intensidade: string;
+  experiencia: string;
+  confianca: number;
+  recomendacoes: string[];
+}
 
-export function gerarContextoExplicacao(results: WeightLossResults, user: UserData) {
+import type { UserData, WeightLossResults } from '../../components/fitness-modules/EmagrecimentoAvancado';
+
+export function gerarContextoExplicacao(results: WeightLossResults, user: UserData): ContextoExplicacao {
   return {
     nome: user.nome,
     idade: user.idade,
@@ -20,43 +36,42 @@ export function gerarContextoExplicacao(results: WeightLossResults, user: UserDa
   };
 }
 
-export async function gerarExplicacaoFinal(contexto: ReturnType<typeof gerarContextoExplicacao>): Promise<{ paragrafo: string, bullets: string[] }> {
+export async function gerarExplicacaoFinal(contexto: ContextoExplicacao): Promise<{ paragrafo: string; bullets: string[] }> {
   const bullets = [
-    `Seu tipo genético dominante é "${contexto.tipoGenetico}" com score ${contexto.powerScore}/${contexto.enduranceScore}`,
-    `Seu treino foca em ${contexto.tipoTreino} com frequência de ${contexto.frequencia}x por semana`,
-    `A intensidade sugerida é ${contexto.intensidade}, ideal para seu nível de experiência (${contexto.experiencia})`,
-    `A meta calórica foi definida em ${contexto.calorias} kcal/dia com base no seu perfil`,
-    ...contexto.recomendacoes
+    `Perfil genético dominante: ${contexto.tipoGenetico} (power ${contexto.powerScore}/5, endurance ${contexto.enduranceScore}/5)`,
+    `Treino principal: ${contexto.tipoTreino} – ${contexto.frequencia}x por semana`,
+    `Intensidade ${contexto.intensidade} para nível ${contexto.experiencia}`,
+    `Calorias diárias sugeridas: ${contexto.calorias}`,
+    ...contexto.recomendacoes,
   ];
 
-  const prompt = `
-Crie um parágrafo motivacional explicando por que este plano é ideal para ${contexto.nome}, considerando que ela tem ${contexto.idade} anos, sexo ${contexto.sexo}, confiança ${contexto.confianca}/10, tipo genético ${contexto.tipoGenetico}, e um plano com treino ${contexto.tipoTreino}, ${contexto.frequencia}x/semana.
-Evite termos técnicos demais. Seja empático e realista.
-Probabilidade de sucesso estimada: ${(contexto.probabilidade * 100).toFixed(0)}%
-`;
+  const prompt = `Crie um parágrafo curto e motivacional explicando de forma amigável o plano de emagrecimento para ${contexto.nome} (${contexto.idade} anos, sexo ${contexto.sexo}). O treino é focado em ${contexto.tipoTreino} com intensidade ${contexto.intensidade} e frequência de ${contexto.frequencia} vezes por semana. As calorias recomendadas são ${contexto.calorias} por dia. Use tom encorajador e cite a probabilidade de sucesso de ${(contexto.probabilidade*100).toFixed(0)}%.`;
 
   try {
-    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${import.meta.env.VITE_OPENAI_KEY}`,
-        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model: 'gpt-4',
         messages: [{ role: 'user', content: prompt }],
-        temperature: 0.7
-      })
+        temperature: 0.7,
+      }),
     });
 
-    const json = await res.json();
-    const paragrafo = json.choices?.[0]?.message?.content || '';
+    if (!response.ok) throw new Error('OpenAI request failed');
+
+    const data = await response.json();
+    const paragrafo = data.choices?.[0]?.message?.content?.trim() || '';
+
     return { paragrafo, bullets };
   } catch (err) {
-    console.error('Erro ao gerar explicação com LLM:', err);
     return {
-      paragrafo: 'Não foi possível gerar uma explicação completa no momento.',
-      bullets
+      paragrafo:
+        'Não foi possível gerar a mensagem motivacional no momento. Siga seu plano e mantenha o foco!',
+      bullets,
     };
   }
 }
