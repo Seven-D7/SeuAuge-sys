@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { useNavigate, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -157,8 +157,7 @@ export const MODULOS_CONFIG = {
 // Componente de seleção de módulos
 const ModuleSelector: React.FC = () => {
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-slate-50 to-gray-100">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-gray-800">
@@ -182,16 +181,16 @@ const ModuleSelector: React.FC = () => {
             </Badge>
           </div>
           <nav className="flex justify-center gap-2 flex-wrap pt-4">
-            <Link to="/emagrecimento" className="gradient-emagrecimento text-white px-3 py-1 rounded-md text-sm flex items-center gap-1">
+            <Link to="/fitness/emagrecimento" className="gradient-emagrecimento text-white px-3 py-1 rounded-md text-sm flex items-center gap-1">
               🔥 Emagrecimento
             </Link>
-            <Link to="/ganho-massa" className="gradient-ganho-massa text-white px-3 py-1 rounded-md text-sm flex items-center gap-1">
+            <Link to="/fitness/ganho-massa" className="gradient-ganho-massa text-white px-3 py-1 rounded-md text-sm flex items-center gap-1">
               💪 Ganho de Massa
             </Link>
-            <Link to="/recomposicao" className="gradient-recomposicao text-white px-3 py-1 rounded-md text-sm flex items-center gap-1">
+            <Link to="/fitness/recomposicao" className="gradient-recomposicao text-white px-3 py-1 rounded-md text-sm flex items-center gap-1">
               🔄 Recomposição
             </Link>
-            <Link to="/performance" className="gradient-performance text-white px-3 py-1 rounded-md text-sm flex items-center gap-1">
+            <Link to="/fitness/performance" className="gradient-performance text-white px-3 py-1 rounded-md text-sm flex items-center gap-1">
               ⚡ Performance
             </Link>
           </nav>
@@ -205,7 +204,7 @@ const ModuleSelector: React.FC = () => {
             return (
               <Card 
                 key={modulo.id} 
-                className={`relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-gradient-to-br ${modulo.corFundo}`}
+                className={`relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-gradient-to-br ${modulo.corFundo} dark:bg-slate-800`}
               >
                 {/* Gradient overlay */}
                 <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${modulo.cor} opacity-10 rounded-full -mr-16 -mt-16`}></div>
@@ -217,9 +216,11 @@ const ModuleSelector: React.FC = () => {
                     </div>
                     <div>
                       <CardTitle className="text-xl text-gray-800">
+                      <CardTitle className="text-xl text-gray-800 dark:text-white">
                         {modulo.nome}
                       </CardTitle>
                       <CardDescription className="text-gray-600">
+                      <CardDescription className="text-gray-600 dark:text-gray-300">
                         {modulo.descricao}
                       </CardDescription>
                     </div>
@@ -231,22 +232,28 @@ const ModuleSelector: React.FC = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm font-medium text-gray-700">Nível</p>
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Nível</p>
                       <p className="text-sm text-gray-600">{modulo.nivel_dificuldade}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{modulo.nivel_dificuldade}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-700">Duração</p>
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Duração</p>
                       <p className="text-sm text-gray-600">{modulo.tempo_estimado}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{modulo.tempo_estimado}</p>
                     </div>
                   </div>
 
                   {/* Características principais */}
                   <div>
                     <h4 className="font-semibold text-gray-800 mb-2">Características</h4>
+                    <h4 className="font-semibold text-gray-800 dark:text-white mb-2">Características</h4>
                     <div className="space-y-1">
                       {modulo.caracteristicas.slice(0, 3).map((caracteristica, index) => (
                         <div key={index} className="flex items-center gap-2">
                           <CheckCircle className="h-4 w-4 text-green-600" />
                           <span className="text-sm text-gray-700">{caracteristica}</span>
+                          <span className="text-sm text-gray-700 dark:text-gray-300">{caracteristica}</span>
                         </div>
                       ))}
                     </div>
@@ -255,6 +262,7 @@ const ModuleSelector: React.FC = () => {
                   {/* Ideal para */}
                   <div>
                     <h4 className="font-semibold text-gray-800 mb-2">Ideal Para</h4>
+                    <h4 className="font-semibold text-gray-800 dark:text-white mb-2">Ideal Para</h4>
                     <div className="flex flex-wrap gap-2">
                       {modulo.ideal_para.slice(0, 2).map((perfil, index) => (
                         <Badge key={index} variant="secondary" className="text-xs">
@@ -267,11 +275,14 @@ const ModuleSelector: React.FC = () => {
                   {/* Resultados esperados */}
                   <div>
                     <h4 className="font-semibold text-gray-800 mb-2">Resultados Esperados</h4>
+                    <h4 className="font-semibold text-gray-800 dark:text-white mb-2">Resultados Esperados</h4>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       {Object.entries(modulo.resultados_esperados).slice(0, 4).map(([metrica, valor]) => (
                         <div key={metrica} className="flex justify-between">
                           <span className="capitalize text-gray-600">{metrica.replace('_', ' ')}:</span>
+                          <span className="capitalize text-gray-600 dark:text-gray-400">{metrica.replace('_', ' ')}:</span>
                           <span className="font-medium text-gray-800">{valor}</span>
+                          <span className="font-medium text-gray-800 dark:text-white">{valor}</span>
                         </div>
                       ))}
                     </div>
@@ -281,6 +292,7 @@ const ModuleSelector: React.FC = () => {
                   <Button
                     className={`w-full bg-gradient-to-r ${modulo.cor} hover:opacity-90 text-white`}
                     onClick={() => (window.location.href = modulo.rota)}
+                    onClick={() => (window.location.href = `/fitness${modulo.rota}`)}
                     variant="default"
                     size="default"
                   >
@@ -294,7 +306,7 @@ const ModuleSelector: React.FC = () => {
         </div>
 
         {/* Seção de comparação */}
-        <Card className="mt-12">
+        <Card className="mt-12 bg-white dark:bg-slate-800">
           <CardHeader>
             <CardTitle className="text-center">Comparação de Módulos</CardTitle>
             <CardDescription className="text-center">
@@ -306,6 +318,7 @@ const ModuleSelector: React.FC = () => {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b">
+                  <tr className="border-b border-slate-200 dark:border-slate-700">
                     <th className="text-left p-3">Módulo</th>
                     <th className="text-center p-3">Dificuldade</th>
                     <th className="text-center p-3">Duração</th>
@@ -316,6 +329,7 @@ const ModuleSelector: React.FC = () => {
                 <tbody>
                   {Object.values(MODULOS_CONFIG).map((modulo) => (
                     <tr key={modulo.id} className="border-b hover:bg-gray-50">
+                    <tr key={modulo.id} className="border-b border-slate-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700">
                       <td className="p-3">
                         <div className="flex items-center gap-2">
                           <modulo.icone className="h-4 w-4" />
@@ -344,7 +358,7 @@ const ModuleSelector: React.FC = () => {
         </Card>
 
         {/* Seção de tecnologia */}
-        <Card className="bg-gradient-to-r from-blue-50 to-indigo-100 border-0">
+        <Card className="bg-gradient-to-r from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 border-0">
           <CardHeader>
             <CardTitle className="text-center flex items-center justify-center gap-2">
               <Brain className="h-6 w-6" />
@@ -355,27 +369,33 @@ const ModuleSelector: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
               <div>
                 <div className="bg-white p-4 rounded-lg shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm">
                   <Target className="h-8 w-8 mx-auto mb-2 text-blue-600" />
                   <h4 className="font-semibold mb-2">Algoritmos Científicos</h4>
                   <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     Baseados em pesquisas científicas recentes e machine learning
                   </p>
                 </div>
               </div>
               <div>
                 <div className="bg-white p-4 rounded-lg shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm">
                   <Users className="h-8 w-8 mx-auto mb-2 text-green-600" />
                   <h4 className="font-semibold mb-2">Personalização Total</h4>
                   <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     Adaptação baseada em genética, metabolismo e preferências
                   </p>
                 </div>
               </div>
               <div>
                 <div className="bg-white p-4 rounded-lg shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm">
                   <Star className="h-8 w-8 mx-auto mb-2 text-purple-600" />
                   <h4 className="font-semibold mb-2">Resultados Comprovados</h4>
                   <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     Metodologias testadas e validadas por profissionais
                   </p>
                 </div>
@@ -384,7 +404,6 @@ const ModuleSelector: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-    </div>
   );
 };
 

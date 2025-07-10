@@ -14,7 +14,6 @@ const Videos = lazy(() => import('@pages/Videos'));
 const Store = lazy(() => import('@pages/Store'));
 const Favorites = lazy(() => import('@pages/Favorites'));
 const Profile = lazy(() => import('@pages/Profile'));
-const Settings = lazy(() => import('@pages/Settings'));
 const Payment = lazy(() => import('@pages/Payment'));
 const Plans = lazy(() => import('@pages/Plans'));
 const AdminDashboard = lazy(() => import('@pages/AdminDashboard'));
@@ -60,7 +59,6 @@ function App() {
             />
             <Route path="plans" element={<Suspense fallback={<div className="p-4 text-white">Carregando...</div>}><Plans /></Suspense>} />
             <Route path="payment" element={<Suspense fallback={<div className="p-4 text-white">Carregando...</div>}><Payment /></Suspense>} />
-            <Route path="settings" element={<Suspense fallback={<div className="p-4 text-white">Carregando...</div>}><Settings /></Suspense>} />
 
             <Route
               path="apps"

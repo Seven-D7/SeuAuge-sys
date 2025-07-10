@@ -16,9 +16,12 @@ import {
   ChevronRight,
   Settings,
   Bell,
-  Shield
+  Shield,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { PLANS } from '../data/plans';
 import { updateUserProfile, getUserData } from '@/services/user';
 import { updateUserPlan } from '../services/plan';
@@ -27,6 +30,7 @@ import { getUserMetrics } from '../services/user';
 
 const Profile: React.FC = () => {
   const { user, refreshPlan } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const planName = PLANS.find((p) => p.id === (user?.plan ?? 'A'))?.name ?? 'Gratuito';
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
@@ -485,6 +489,35 @@ const Profile: React.FC = () => {
                 Configurações
               </h3>
               <div className="space-y-4">
+                {/* Tema */}
+                <div className="flex items-center justify-between p-4 bg-slate-700/30 rounded-xl hover:bg-slate-700/50 transition-all duration-200 group">
+                  <div className="flex items-center space-x-4">
+                    {theme === 'dark' ? (
+                      <Moon className="w-6 h-6 text-slate-400 group-hover:text-white transition-colors duration-200" />
+                    ) : (
+                      <Sun className="w-6 h-6 text-slate-400 group-hover:text-white transition-colors duration-200" />
+                    )}
+                    <div>
+                      <div className="text-white font-medium">Tema</div>
+                      <div className="text-slate-400 text-sm">
+                        Alternar entre tema claro e escuro
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={toggleTheme}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+                      theme === 'dark' ? 'bg-primary' : 'bg-slate-600'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        theme === 'dark' ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+                
                 {[
                   { title: 'Notificações', description: 'Gerencie suas preferências de notificação', icon: Bell },
                   { title: 'Privacidade', description: 'Controle suas configurações de privacidade', icon: Shield },

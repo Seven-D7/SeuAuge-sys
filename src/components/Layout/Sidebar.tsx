@@ -8,7 +8,6 @@ import {
   Sparkles,
   Home,
   AppWindow,
-  Settings,
   LogOut,
   TrendingUp,
   ShieldCheck
@@ -126,14 +125,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
         {/* Bottom section */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900">
-          <Link
-            to="/settings"
-            className="flex items-center px-4 py-3 mb-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800/50 transition-all duration-200 group"
-          >
-            <Settings className="w-5 h-5 mr-4 text-slate-600 dark:text-slate-400 group-hover:text-primary" />
-            <span className="font-medium">Configurações</span>
-          </Link>
-          
           <button
             onClick={() => {
               logout();

@@ -223,31 +223,31 @@ const EmagrecimentoAvancado: React.FC = () => {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Nome</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Nome</label>
                 <input
                   type="text"
                   value={userData.nome || ''}
                   onChange={(e) => handleInputChange('nome', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="Seu nome completo"
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Idade</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Idade</label>
                 <input
                   type="number"
                   value={userData.idade || ''}
                   onChange={(e) => handleInputChange('idade', Number(e.target.value))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="Sua idade"
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Sexo</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Sexo</label>
                 <select
                   value={userData.sexo || ''}
                   onChange={(e) => handleInputChange('sexo', e.target.value as 'masculino' | 'feminino')}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
                   <option value="">Selecione</option>
                   <option value="masculino">Masculino</option>
@@ -255,12 +255,12 @@ const EmagrecimentoAvancado: React.FC = () => {
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Altura (cm)</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Altura (cm)</label>
                 <input
                   type="number"
                   value={userData.altura || ''}
                   onChange={(e) => handleInputChange('altura', Number(e.target.value))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="Sua altura em centímetros"
                 />
               </div>
@@ -273,32 +273,32 @@ const EmagrecimentoAvancado: React.FC = () => {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Peso Atual (kg)</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Peso Atual (kg)</label>
                 <input
                   type="number"
                   value={userData.peso_atual || ''}
                   onChange={(e) => handleInputChange('peso_atual', Number(e.target.value))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="Seu peso atual"
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Peso Objetivo (kg)</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Peso Objetivo (kg)</label>
                 <input
                   type="number"
                   value={userData.peso_objetivo || ''}
                   onChange={(e) => handleInputChange('peso_objetivo', Number(e.target.value))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="Seu peso objetivo"
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Prazo (semanas)</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Prazo (semanas)</label>
                 <input
                   type="number"
                   value={userData.prazo || ''}
                   onChange={(e) => handleInputChange('prazo', Number(e.target.value))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="Prazo em semanas"
                 />
               </div>
@@ -311,11 +311,11 @@ const EmagrecimentoAvancado: React.FC = () => {
           <div className="space-y-6">
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Nível de Atividade</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Nível de Atividade</label>
                 <select
                   value={userData.nivel_atividade || ''}
                   onChange={(e) => handleInputChange('nivel_atividade', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
                   <option value="">Selecione</option>
                   <option value="sedentario">Sedentário</option>
@@ -325,11 +325,11 @@ const EmagrecimentoAvancado: React.FC = () => {
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Experiência com Exercícios</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Experiência com Exercícios</label>
                 <select
                   value={userData.experiencia_exercicio || ''}
                   onChange={(e) => handleInputChange('experiencia_exercicio', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
                   <option value="">Selecione</option>
                   <option value="iniciante">Iniciante</option>
@@ -338,7 +338,7 @@ const EmagrecimentoAvancado: React.FC = () => {
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                   Confiança com Exercícios (1-10)
                 </label>
                 <input
@@ -349,7 +349,7 @@ const EmagrecimentoAvancado: React.FC = () => {
                   onChange={(e) => handleInputChange('confianca_exercicio', Number(e.target.value))}
                   className="w-full"
                 />
-                <div className="text-center text-sm text-gray-600">
+                <div className="text-center text-sm text-slate-600 dark:text-slate-400">
                   {userData.confianca_exercicio || 5}/10
                 </div>
               </div>
@@ -362,21 +362,21 @@ const EmagrecimentoAvancado: React.FC = () => {
           <div className="space-y-6">
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Histórico de Dietas</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Histórico de Dietas</label>
                 <textarea
                   value={userData.historico_dietas || ''}
                   onChange={(e) => handleInputChange('historico_dietas', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                   rows={3}
                   placeholder="Descreva suas experiências anteriores com dietas..."
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Restrições Alimentares</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Restrições Alimentares</label>
                 <textarea
                   value={userData.restricoes_alimentares || ''}
                   onChange={(e) => handleInputChange('restricoes_alimentares', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                   rows={3}
                   placeholder="Alergias, intolerâncias, preferências alimentares..."
                 />
@@ -391,89 +391,89 @@ const EmagrecimentoAvancado: React.FC = () => {
         return (
           <div className="space-y-8">
             {/* Resumo dos Resultados */}
-            <div className="bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl p-6 border border-red-200">
+            <div className="bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-2xl p-6 border border-red-200 dark:border-red-800">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-600 rounded-full flex items-center justify-center">
                   <Trophy className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900">Seu Plano Personalizado</h3>
-                  <p className="text-gray-600">Baseado em algoritmos científicos avançados</p>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">Seu Plano Personalizado</h3>
+                  <p className="text-slate-600 dark:text-slate-400">Baseado em algoritmos científicos avançados</p>
                 </div>
               </div>
               
               {explanation && (
                 <div className="mb-6">
-                  <p className="text-gray-700 leading-relaxed">{explanation.paragrafo}</p>
+                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{explanation.paragrafo}</p>
                 </div>
               )}
             </div>
 
             {/* Métricas Principais */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20">
                 <CardContent className="p-6 text-center">
                   <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
                     <BarChart3 className="w-6 h-6 text-white" />
                   </div>
-                  <div className="text-2xl font-bold text-blue-700">{results.imc.toFixed(1)}</div>
-                  <div className="text-sm text-blue-600">IMC Atual</div>
-                  <div className="text-xs text-gray-600 mt-1">{results.classificacao_imc}</div>
+                  <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">{results.imc.toFixed(1)}</div>
+                  <div className="text-sm text-blue-600 dark:text-blue-400">IMC Atual</div>
+                  <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">{results.classificacao_imc}</div>
                 </CardContent>
               </Card>
 
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20">
                 <CardContent className="p-6 text-center">
                   <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
                     <Target className="w-6 h-6 text-white" />
                   </div>
-                  <div className="text-2xl font-bold text-green-700">{results.calorias_diarias}</div>
-                  <div className="text-sm text-green-600">Calorias/Dia</div>
-                  <div className="text-xs text-gray-600 mt-1">Meta diária</div>
+                  <div className="text-2xl font-bold text-green-700 dark:text-green-300">{results.calorias_diarias}</div>
+                  <div className="text-sm text-green-600 dark:text-green-400">Calorias/Dia</div>
+                  <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">Meta diária</div>
                 </CardContent>
               </Card>
 
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20">
                 <CardContent className="p-6 text-center">
                   <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
                     <TrendingDown className="w-6 h-6 text-white" />
                   </div>
-                  <div className="text-2xl font-bold text-purple-700">{results.perda_semanal}kg</div>
-                  <div className="text-sm text-purple-600">Perda/Semana</div>
-                  <div className="text-xs text-gray-600 mt-1">Estimativa</div>
+                  <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">{results.perda_semanal}kg</div>
+                  <div className="text-sm text-purple-600 dark:text-purple-400">Perda/Semana</div>
+                  <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">Estimativa</div>
                 </CardContent>
               </Card>
 
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-orange-100">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
                 <CardContent className="p-6 text-center">
                   <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-3">
                     <Star className="w-6 h-6 text-white" />
                   </div>
-                  <div className="text-2xl font-bold text-orange-700">{(results.probabilidade_sucesso * 100).toFixed(0)}%</div>
-                  <div className="text-sm text-orange-600">Sucesso</div>
-                  <div className="text-xs text-gray-600 mt-1">Probabilidade</div>
+                  <div className="text-2xl font-bold text-orange-700 dark:text-orange-300">{(results.probabilidade_sucesso * 100).toFixed(0)}%</div>
+                  <div className="text-sm text-orange-600 dark:text-orange-400">Sucesso</div>
+                  <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">Probabilidade</div>
                 </CardContent>
               </Card>
             </div>
 
             {/* Plano de Treino */}
-            <Card className="border-0 shadow-lg">
+            <Card className="border-0 shadow-lg bg-white dark:bg-slate-800">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
                   <Activity className="w-5 h-5 text-red-500" />
                   Plano de Treino Personalizado
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-slate-600 dark:text-slate-400">
                   {results.plano_treino.frequencia_semanal}x por semana • {results.plano_treino.duracao_sessao} min por sessão
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {results.plano_treino.exercicios.map((exercicio, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div key={index} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
                       <div>
-                        <div className="font-medium">{exercicio.nome}</div>
-                        <div className="text-sm text-gray-600">
+                        <div className="font-medium text-slate-900 dark:text-white">{exercicio.nome}</div>
+                        <div className="text-sm text-slate-600 dark:text-slate-400">
                           {exercicio.series} séries • {exercicio.repeticoes} repetições
                         </div>
                       </div>
@@ -486,9 +486,9 @@ const EmagrecimentoAvancado: React.FC = () => {
 
             {/* Recomendações */}
             {explanation && (
-              <Card className="border-0 shadow-lg">
+              <Card className="border-0 shadow-lg bg-white dark:bg-slate-800">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
                     <Brain className="w-5 h-5 text-purple-500" />
                     Recomendações Personalizadas
                   </CardTitle>
@@ -498,7 +498,7 @@ const EmagrecimentoAvancado: React.FC = () => {
                     {explanation.bullets.map((bullet, index) => (
                       <div key={index} className="flex items-start gap-3">
                         <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span className="text-gray-700">{bullet}</span>
+                        <span className="text-slate-700 dark:text-slate-300">{bullet}</span>
                       </div>
                     ))}
                   </div>
@@ -514,98 +514,96 @@ const EmagrecimentoAvancado: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-orange-50 p-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-600 rounded-full flex items-center justify-center">
-              <Flame className="w-6 h-6 text-white" />
-            </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
-              Emagrecimento Inteligente
-            </h1>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="text-center">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-600 rounded-full flex items-center justify-center">
+            <Flame className="w-6 h-6 text-white" />
           </div>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Sistema avançado de emagrecimento com algoritmos de IA que se adaptam ao seu perfil único
-          </p>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
+            Emagrecimento Inteligente
+          </h1>
         </div>
-
-        {/* Progress Steps */}
-        <div className="flex items-center justify-center mb-8">
-          <div className="flex items-center space-x-4">
-            {steps.map((step, index) => (
-              <React.Fragment key={step.id}>
-                <div className="flex flex-col items-center">
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-                      currentStep >= step.id
-                        ? 'bg-gradient-to-r from-red-500 to-pink-600 text-white'
-                        : 'bg-gray-200 text-gray-500'
-                    }`}
-                  >
-                    {step.id}
-                  </div>
-                  <div className="text-xs text-center mt-2 max-w-20">
-                    <div className="font-medium">{step.title}</div>
-                    <div className="text-gray-500">{step.description}</div>
-                  </div>
-                </div>
-                {index < steps.length - 1 && (
-                  <div
-                    className={`w-12 h-1 rounded transition-all ${
-                      currentStep > step.id ? 'bg-gradient-to-r from-red-500 to-pink-600' : 'bg-gray-200'
-                    }`}
-                  />
-                )}
-              </React.Fragment>
-            ))}
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle>{steps[currentStep - 1]?.title}</CardTitle>
-            <CardDescription>{steps[currentStep - 1]?.description}</CardDescription>
-          </CardHeader>
-          <CardContent className="min-h-[400px]">
-            {renderStep()}
-          </CardContent>
-          
-          {/* Navigation */}
-          <div className="flex justify-between p-6 border-t">
-            <Button
-              variant="outline"
-              onClick={handlePrevious}
-              disabled={currentStep === 1}
-              className="flex items-center gap-2"
-            >
-              Anterior
-            </Button>
-            
-            <Button
-              onClick={handleNext}
-              disabled={loading}
-              className="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white flex items-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Calculando...
-                </>
-              ) : currentStep === 5 ? (
-                'Finalizar'
-              ) : (
-                <>
-                  Próximo
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </Button>
-          </div>
-        </Card>
+        <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+          Sistema avançado de emagrecimento com algoritmos de IA que se adaptam ao seu perfil único
+        </p>
       </div>
+
+      {/* Progress Steps */}
+      <div className="flex items-center justify-center mb-8">
+        <div className="flex items-center space-x-4">
+          {steps.map((step, index) => (
+            <React.Fragment key={step.id}>
+              <div className="flex flex-col items-center">
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
+                    currentStep >= step.id
+                      ? 'bg-gradient-to-r from-red-500 to-pink-600 text-white'
+                      : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
+                  }`}
+                >
+                  {step.id}
+                </div>
+                <div className="text-xs text-center mt-2 max-w-20">
+                  <div className="font-medium text-slate-900 dark:text-white">{step.title}</div>
+                  <div className="text-slate-500 dark:text-slate-400">{step.description}</div>
+                </div>
+              </div>
+              {index < steps.length - 1 && (
+                <div
+                  className={`w-12 h-1 rounded transition-all ${
+                    currentStep > step.id ? 'bg-gradient-to-r from-red-500 to-pink-600' : 'bg-slate-200 dark:bg-slate-700'
+                  }`}
+                />
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <Card className="border-0 shadow-xl bg-white dark:bg-slate-800">
+        <CardHeader>
+          <CardTitle className="text-slate-900 dark:text-white">{steps[currentStep - 1]?.title}</CardTitle>
+          <CardDescription className="text-slate-600 dark:text-slate-400">{steps[currentStep - 1]?.description}</CardDescription>
+        </CardHeader>
+        <CardContent className="min-h-[400px]">
+          {renderStep()}
+        </CardContent>
+        
+        {/* Navigation */}
+        <div className="flex justify-between p-6 border-t border-slate-200 dark:border-slate-700">
+          <Button
+            variant="outline"
+            onClick={handlePrevious}
+            disabled={currentStep === 1}
+            className="flex items-center gap-2"
+          >
+            Anterior
+          </Button>
+          
+          <Button
+            onClick={handleNext}
+            disabled={loading}
+            className="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white flex items-center gap-2"
+          >
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Calculando...
+              </>
+            ) : currentStep === 5 ? (
+              'Finalizar'
+            ) : (
+              <>
+                Próximo
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
+          </Button>
+        </div>
+      </Card>
     </div>
   );
 };
