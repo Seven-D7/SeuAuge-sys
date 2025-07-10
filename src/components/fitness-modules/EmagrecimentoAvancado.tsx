@@ -38,6 +38,12 @@ import {
   SuccessPredictionAlgorithm,
   AdaptiveNutritionAlgorithm
 } from '../../lib/fitness/advanced_fitness_algorithms.js';
+import {
+  gerarContextoExplicacao,
+  gerarExplicacaoFinal,
+} from '../../lib/fitness/explicacao';
+import { db } from '@/lib/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 interface UserData {
   // Dados básicos (obrigatórios)
@@ -116,6 +122,7 @@ const EmagrecimentoAvancado: React.FC = () => {
   const [step, setStep] = useState(1);
   const [userData, setUserData] = useState<Partial<UserData>>({});
   const [results, setResults] = useState<WeightLossResults | null>(null);
+  const [explicacao, setExplicacao] = useState<{ paragrafo: string; bullets: string[] } | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [animationStep, setAnimationStep] = useState(0);
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
@@ -450,12 +457,24 @@ const EmagrecimentoAvancado: React.FC = () => {
 
   const handleCalculate = async () => {
     setIsCalculating(true);
-    
+
     // Simular processamento complexo com animações
     await new Promise(resolve => setTimeout(resolve, 3000));
-    
+
     const calculatedResults = calculateAdvancedMetrics(userData as UserData);
     setResults(calculatedResults);
+    const contexto = gerarContextoExplicacao(calculatedResults, userData as UserData);
+    const explicacaoGerada = await gerarExplicacaoFinal(contexto);
+    setExplicacao(explicacaoGerada);
+
+    await setDoc(doc(db, 'explicacoes', 'usuario_exemplo'), {
+      userId: 'usuario_exemplo',
+      tipo: 'emagrecimento',
+      timestamp: Date.now(),
+      paragrafo: explicacaoGerada.paragrafo,
+      bullets: explicacaoGerada.bullets,
+    });
+
     setIsCalculating(false);
   };
 
@@ -1360,11 +1379,27 @@ const EmagrecimentoAvancado: React.FC = () => {
                   </div>
                 </div>
               </div>
+          </CardContent>
+        </Card>
+
+        {explicacao && (
+          <Card>
+            <CardHeader>
+              <CardTitle>📖 Entenda seu Plano</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="mb-4 text-gray-800 whitespace-pre-line">{explicacao.paragrafo}</p>
+              <ul className="list-disc pl-5 space-y-2">
+                {explicacao.bullets.map((item, i) => (
+                  <li key={i} className="text-gray-700">{item}</li>
+                ))}
+              </ul>
             </CardContent>
           </Card>
+        )}
 
-          {/* Botões de Ação */}
-          <div className="flex flex-wrap gap-6 justify-center pt-8">
+        {/* Botões de Ação */}
+        <div className="flex flex-wrap gap-6 justify-center pt-8">
             <Button
               onClick={() => window.print()}
               className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-2xl hover:scale-105 transition-all duration-300"
