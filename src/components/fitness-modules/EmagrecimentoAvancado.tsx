@@ -1,3 +1,4 @@
+import { gerarContextoExplicacao, gerarExplicacaoFinal } from '@/lib/fitness/explicacao';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
@@ -455,9 +456,9 @@ const EmagrecimentoAvancado: React.FC = () => {
     await new Promise(resolve => setTimeout(resolve, 3000));
     
     const calculatedResults = calculateAdvancedMetrics(userData as UserData);
-    setResults(calculatedResults);
-    setIsCalculating(false);
+    const contexto = gerarContextoExplicacao(calculatedResults, userData as UserData);
   };
+  
 
   const renderValidationError = (field: string) => {
     if (validationErrors[field]) {
