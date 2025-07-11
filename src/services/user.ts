@@ -29,6 +29,26 @@ export interface CreateUserInput {
 export async function updateUserProfile({ name, email, birthdate, file }: UpdateUserInput) {
   if (!auth.currentUser) return;
 
+  // Input validation and sanitization
+  if (name && (name.trim().length < 2 || name.trim().length > 50)) {
+    throw new Error('Nome deve ter entre 2 e 50 caracteres');
+  }
+  
+  if (email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      throw new Error('Email inválido');
+    }
+  }
+  
+  if (file && file.size > 5 * 1024 * 1024) { // 5MB limit
+    throw new Error('Arquivo muito grande. Máximo 5MB');
+  }
+  
+  if (file && !file.type.startsWith('image/')) {
+    throw new Error('Apenas imagens são permitidas');
+  }
+
   let photoURL = auth.currentUser.photoURL || undefined;
 
   if (file) {
@@ -36,16 +56,16 @@ export async function updateUserProfile({ name, email, birthdate, file }: Update
   }
 
   await updateProfile(auth.currentUser, {
-    displayName: name,
+    displayName: name?.trim(),
     photoURL: photoURL ?? null,
   });
 
   if (email && auth.currentUser.email !== email) {
-    await updateEmail(auth.currentUser, email);
+    await updateEmail(auth.currentUser, email.trim().toLowerCase());
   }
 
-  const data: Record<string, unknown> = { name };
-  if (email) data.email = email;
+  const data: Record<string, unknown> = { name: name?.trim() };
+  if (email) data.email = email.trim().toLowerCase();
   if (birthdate) data.birthdate = birthdate;
   if (photoURL !== undefined) {
     data.avatar = photoURL;

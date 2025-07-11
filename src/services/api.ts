@@ -5,7 +5,15 @@ export interface RequestOptions extends RequestInit {
 }
 
 export async function api(path: string, options: RequestOptions = {}) {
-  const response = await fetch(`${API_URL}${path}`, {
+  // Validate API URL
+  if (!API_URL) {
+    throw new Error('API URL not configured');
+  }
+  
+  // Sanitize path to prevent path traversal
+  const sanitizedPath = path.replace(/\.\./g, '').replace(/\/+/g, '/');
+  
+  const response = await fetch(`${API_URL}${sanitizedPath}`, {
     headers: {
       'Content-Type': 'application/json',
       ...(options.headers || {}),
@@ -14,8 +22,19 @@ export async function api(path: string, options: RequestOptions = {}) {
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || 'Erro na API');
+    // Don't expose detailed error messages from API
+    const status = response.status;
+    if (status === 401) {
+      throw new Error('Não autorizado');
+    } else if (status === 403) {
+      throw new Error('Acesso negado');
+    } else if (status === 404) {
+      throw new Error('Recurso não encontrado');
+    } else if (status >= 500) {
+      throw new Error('Erro interno do servidor');
+    } else {
+      throw new Error('Erro na requisição');
+    }
   }
 
   return response.json();

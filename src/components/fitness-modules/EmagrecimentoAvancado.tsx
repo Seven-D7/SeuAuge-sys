@@ -52,6 +52,23 @@ const EmagrecimentoAvancado: React.FC = () => {
   ];
 
   const handleInputChange = (field: keyof UserData, value: any) => {
+    // Input validation and sanitization
+    if (typeof value === 'string') {
+      value = value.trim();
+      if (field === 'nome' && value.length > 50) {
+        value = value.slice(0, 50);
+      }
+    }
+    
+    if (typeof value === 'number') {
+      if (field === 'idade' && (value < 16 || value > 100)) return;
+      if (field === 'altura' && (value < 100 || value > 250)) return;
+      if (field === 'peso_atual' && (value < 30 || value > 300)) return;
+      if (field === 'peso_objetivo' && (value < 30 || value > 300)) return;
+      if (field === 'prazo' && (value < 1 || value > 104)) return; // Max 2 years
+      if (field === 'confianca_exercicio' && (value < 1 || value > 10)) return;
+    }
+    
     setUserData(prev => ({ ...prev, [field]: value }));
   };
 

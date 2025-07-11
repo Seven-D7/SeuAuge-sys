@@ -25,12 +25,30 @@ const Payment: React.FC = () => {
   const { refreshPlan } = useAuth();
   const [search] = useSearchParams();
   const selectedPlan = search.get('plan');
+  
+  // Validate plan parameter
+  const validPlans = ['A', 'B', 'C'];
+  if (selectedPlan && !validPlans.includes(selectedPlan)) {
+    navigate('/plans');
+    return null;
+  }
 
   const [loadingConfirm, setLoadingConfirm] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
 
   const handlePay = () => {
-    window.open(PAYMENT_URL, '_blank');
+    // Validate payment URL before opening
+    try {
+      const url = new URL(PAYMENT_URL);
+      if (url.protocol === 'https:' || (import.meta.env.DEV && url.protocol === 'http:')) {
+        window.open(PAYMENT_URL, '_blank', 'noopener,noreferrer');
+      } else {
+        throw new Error('URL de pagamento inválida');
+      }
+    } catch (error) {
+      console.error('Invalid payment URL:', error);
+      alert('Erro: URL de pagamento inválida');
+    }
   };
 
   const handleConfirm = async () => {

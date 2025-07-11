@@ -38,8 +38,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
               placeholder="Buscar conteúdo de saúde..."
               value={searchQuery}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setSearchQuery(e.target.value)
+                setSearchQuery(e.target.value.slice(0, 100)) // Limit input length
               }
+              maxLength={100}
               className="w-full pl-10 pr-4 py-2 bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>

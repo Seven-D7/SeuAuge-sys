@@ -18,6 +18,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Input validation
+    if (!email.trim() || !password.trim()) {
+      setError('Email e senha são obrigatórios');
+      return;
+    }
+    
+    if (password.length < 6) {
+      setError('A senha deve ter pelo menos 6 caracteres');
+      return;
+    }
+    
     setLoading(true);
     
     try {
@@ -26,7 +38,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
       navigate('/dashboard');
     } catch (error) {
       console.error('Erro no login:', error);
-      setError('Falha ao entrar. Verifique suas credenciais.');
+      // Don't expose detailed error information
+      setError('Credenciais inválidas. Tente novamente.');
     } finally {
       setLoading(false);
     }

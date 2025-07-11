@@ -83,12 +83,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string) => {
     try {
-      const cred = await signInWithEmailAndPassword(auth, email, password);
+      // Sanitize inputs
+      const sanitizedEmail = email.trim().toLowerCase();
+      const cred = await signInWithEmailAndPassword(auth, sanitizedEmail, password);
       const mapped = await mapFirebaseUser(cred.user);
       setUser(mapped);
-      console.log('Usuário autenticado', mapped.email);
+      // Don't log sensitive information in production
+      if (import.meta.env.DEV) {
+        console.log('Usuário autenticado', mapped.email);
+      }
     } catch (err) {
-      console.error(err);
+      // Log error without exposing sensitive details
+      console.error('Login error:', err instanceof Error ? err.message : 'Unknown error');
+      throw new Error('Falha na autenticação');
     }
   };
 
@@ -99,23 +106,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     birthdate: string
   ) => {
     try {
-      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      // Sanitize inputs
+      const sanitizedEmail = email.trim().toLowerCase();
+      const sanitizedName = name.trim();
+      
+      const cred = await createUserWithEmailAndPassword(auth, sanitizedEmail, password);
       if (auth.currentUser) {
-        await updateProfile(auth.currentUser, { displayName: name });
+        await updateProfile(auth.currentUser, { displayName: sanitizedName });
       }
-      await createUserDocument({ uid: cred.user.uid, name, email, birthdate });
+      await createUserDocument({ uid: cred.user.uid, name: sanitizedName, email: sanitizedEmail, birthdate });
       const mapped = await mapFirebaseUser(cred.user);
       setUser(mapped);
-      console.log('Usuário registrado', mapped.email);
+      // Don't log sensitive information in production
+      if (import.meta.env.DEV) {
+        console.log('Usuário registrado', mapped.email);
+      }
     } catch (err) {
-      console.error(err);
+      // Log error without exposing sensitive details
+      console.error('Registration error:', err instanceof Error ? err.message : 'Unknown error');
+      throw new Error('Falha no registro');
     }
   };
 
   const logout = async () => {
     await signOut(auth);
     setUser(null);
-    console.log('Usuário desconectado');
+    if (import.meta.env.DEV) {
+      console.log('Usuário desconectado');
+    }
   };
 
   const updateUser = async (data: UpdateUserInput) => {

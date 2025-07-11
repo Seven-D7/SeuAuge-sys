@@ -22,24 +22,54 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Enhanced input validation
+    if (!name.trim() || !email.trim() || !password.trim() || !birthdate || !weight || !height) {
+      setError('Todos os campos são obrigatórios');
+      setLoading(false);
+      return;
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Email inválido');
+      setLoading(false);
+      return;
+    }
+    
+    // Password strength validation
+    if (password.length < 8) {
+      setError('A senha deve ter pelo menos 8 caracteres');
+      setLoading(false);
+      return;
+    }
+    
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
+    if (!passwordRegex.test(password)) {
+      setError('A senha deve conter pelo menos uma letra minúscula, uma maiúscula e um número');
+      setLoading(false);
+      return;
+    }
+    
     setLoading(true);
 
     if (name.trim().length < 2 || name.trim().length > 50) {
-      alert('Nome deve ter entre 2 e 50 caracteres');
+      setError('Nome deve ter entre 2 e 50 caracteres');
       setLoading(false);
       return;
     }
 
     const pesoNum = Number(weight);
     if (pesoNum < 30 || pesoNum > 300) {
-      alert('Peso deve estar entre 30kg e 300kg');
+      setError('Peso deve estar entre 30kg e 300kg');
       setLoading(false);
       return;
     }
 
     const alturaNum = Number(height);
     if (alturaNum < 100 || alturaNum > 250) {
-      alert('Altura deve estar entre 100 e 250 cm');
+      setError('Altura deve estar entre 100 e 250 cm');
       setLoading(false);
       return;
     }
@@ -47,7 +77,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
     const birth = new Date(birthdate);
     const age = new Date().getFullYear() - birth.getFullYear();
     if (age > 100 || age < 16) {
-      alert('Idade deve estar entre 16 e 100 anos.');
+      setError('Idade deve estar entre 16 e 100 anos');
       setLoading(false);
       return;
     }
@@ -58,7 +88,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
       navigate('/dashboard');
     } catch (error) {
       console.error('Erro no cadastro:', error);
-      setError('Falha ao criar conta. Verifique os dados informados.');
+      // Don't expose detailed error information
+      setError('Erro ao criar conta. Tente novamente ou use um email diferente.');
     } finally {
       setLoading(false);
     }
