@@ -1,5 +1,5 @@
 export interface Plan {
-  id: "A" | "B" | "C";
+  id: "A" | "B" | "C" | "D";
   name: string;
   fullName: string;
   period: string;
