@@ -214,6 +214,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const logout = async () => {
+    if (import.meta.env.VITE_DEV_MODE === "true") {
+      localStorage.removeItem("devUser");
+      setUser(null);
+      if (import.meta.env.DEV) {
+        console.log("Usuário desconectado (modo desenvolvimento)");
+      }
+      return;
+    }
+
     await signOut(auth);
     setUser(null);
     if (import.meta.env.DEV) {
