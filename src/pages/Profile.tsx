@@ -185,20 +185,6 @@ const Profile: React.FC = () => {
       color: "text-purple-500",
     },
     {
-      label: "Vídeos Assistidos",
-      value: "47",
-      change: "+12%",
-      icon: Video,
-      color: "text-emerald-400",
-    },
-    {
-      label: "Produtos Comprados",
-      value: "12",
-      change: "+3",
-      icon: ShoppingBag,
-      color: "text-blue-400",
-    },
-    {
       label: "Streak Atual",
       value: `${currentStreak} dias`,
       change: "Novo recorde!",
