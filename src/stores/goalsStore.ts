@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useLevelStore, XP_VALUES } from "./levelStore";
 
 export interface SmartGoal {
   id: string;
