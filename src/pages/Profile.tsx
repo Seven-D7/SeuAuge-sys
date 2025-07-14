@@ -92,6 +92,9 @@ const Profile: React.FC = () => {
       if (goals.length === 0) {
         generateSmartGoals(user);
       }
+
+      // Verificar login diário para XP
+      checkDailyLogin();
     }
     load();
   }, [user, setMetrics, goals.length, generateSmartGoals]);
