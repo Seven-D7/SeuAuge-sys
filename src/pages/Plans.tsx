@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Check, Crown, Zap, Star } from "lucide-react";
+import { Check, Crown, Zap, Star, Loader2 } from "lucide-react";
+import { toast } from "react-hot-toast";
 import { PLANS, Plan } from "../data/plans";
 import usePlan from "../hooks/usePlan";
+import { useAuth } from "../contexts/AuthContext";
+import { redirectToStripeCheckout } from "../services/stripe";
 
 const Plans: React.FC = () => {
   const navigate = useNavigate();
