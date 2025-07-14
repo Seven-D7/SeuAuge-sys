@@ -117,6 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           isAdmin: email === ADMIN_EMAIL,
         };
         setUser(mockUser);
+        localStorage.setItem("devUser", JSON.stringify(mockUser));
         if (import.meta.env.DEV) {
           console.log(
             "Usuário autenticado (modo desenvolvimento)",
