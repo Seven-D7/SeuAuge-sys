@@ -35,7 +35,10 @@ import { updateUserProfile, getUserData } from "@/services/user";
 import { updateUserPlan } from "../services/plan";
 import { useProgressStore } from "../stores/progressStore";
 import { useGoalsStore } from "../stores/goalsStore";
+import { useLevelStore } from "../stores/levelStore";
 import { getUserMetrics } from "../services/user";
+import LevelProgressBar from "../components/Common/LevelProgressBar";
+import XPHistory from "../components/Common/XPHistory";
 
 const Profile: React.FC = () => {
   const { user, refreshPlan } = useAuth();
