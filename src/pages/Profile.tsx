@@ -37,6 +37,7 @@ import { useLevelStore } from "../stores/levelStore";
 import { getUserMetrics } from "../services/user";
 import LevelProgressBar from "../components/Common/LevelProgressBar";
 import XPHistory from "../components/Common/XPHistory";
+import PreferencesSetup from "../components/Preferences/PreferencesSetup";
 
 const Profile: React.FC = () => {
   const { user, refreshPlan } = useAuth();
