@@ -71,6 +71,7 @@ const Profile: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [showPreferences, setShowPreferences] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
