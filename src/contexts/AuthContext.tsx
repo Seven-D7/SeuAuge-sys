@@ -147,8 +147,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           id: "dev-user-" + Date.now(),
           email: email.trim().toLowerCase(),
           name: name.trim(),
-          plan: "A",
-          isPremium: false,
+          plan: "D", // Acesso total para teste
+          isPremium: true,
           isAdmin: email === ADMIN_EMAIL,
         };
         setUser(mockUser);
