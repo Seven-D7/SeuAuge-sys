@@ -20,8 +20,6 @@ import {
   Flame,
   Trophy,
   Star,
-  Video,
-  ShoppingBag,
   Plus,
   CheckCircle,
   Circle,
