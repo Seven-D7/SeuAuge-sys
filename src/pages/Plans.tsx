@@ -10,11 +10,49 @@ import { redirectToStripeCheckout } from "../services/stripe";
 const Plans: React.FC = () => {
   const navigate = useNavigate();
   const { plan } = usePlan();
+  const { user } = useAuth();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
   const canUpgrade = (target: Plan) => {
     if (!plan) return true;
     const order = ["A", "B", "C", "D"];
     return order.indexOf(target.id) > order.indexOf(plan);
+  };
+
+  const handlePlanSubscription = async (selectedPlan: Plan) => {
+    if (selectedPlan.id === "A") {
+      // Plano gratuito - redirecionar para dashboard
+      navigate("/dashboard");
+      return;
+    }
+
+    if (!user) {
+      toast.error("Faça login para assinar um plano");
+      navigate("/auth");
+      return;
+    }
+
+    try {
+      setLoadingPlan(selectedPlan.id);
+
+      // Extrair valor numérico do preço
+      const priceMatch = selectedPlan.price.match(/\d+/);
+      const price = priceMatch ? parseFloat(priceMatch[0]) : 0;
+
+      await redirectToStripeCheckout({
+        planId: selectedPlan.id,
+        planName: selectedPlan.fullName,
+        price: price,
+        currency: "BRL",
+        userId: user.id,
+        userEmail: user.email,
+      });
+    } catch (error) {
+      console.error("Erro ao iniciar checkout:", error);
+      toast.error("Erro ao iniciar pagamento. Tente novamente.");
+    } finally {
+      setLoadingPlan(null);
+    }
   };
 
   const getPlanIcon = (planId: string) => {
