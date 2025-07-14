@@ -84,7 +84,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           setUser(parsedUser);
         } catch (error) {
           console.error("Error parsing saved user:", error);
+          // Create default dev user if parse fails
+          const defaultDevUser = {
+            id: "dev-user-default",
+            email: "dev@example.com",
+            name: "Dev User",
+            plan: "D",
+            isPremium: true,
+            isAdmin: false,
+          };
+          setUser(defaultDevUser);
+          localStorage.setItem("devUser", JSON.stringify(defaultDevUser));
         }
+      } else {
+        // Create default dev user if none exists
+        const defaultDevUser = {
+          id: "dev-user-default",
+          email: "dev@example.com",
+          name: "Dev User",
+          plan: "D",
+          isPremium: true,
+          isAdmin: false,
+        };
+        setUser(defaultDevUser);
+        localStorage.setItem("devUser", JSON.stringify(defaultDevUser));
       }
       setLoading(false);
       return;
