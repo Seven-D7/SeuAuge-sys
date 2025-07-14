@@ -68,6 +68,7 @@ const Profile: React.FC = () => {
     completeChallenge,
     generateSmartGoals,
   } = useGoalsStore();
+  const { levelSystem, checkDailyLogin } = useLevelStore();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
