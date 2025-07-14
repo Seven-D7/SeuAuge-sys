@@ -10,24 +10,23 @@ import {
   Award,
   Heart,
   Activity,
-  Calendar,
   Target,
   Zap,
-  ChevronRight,
   Settings,
-  Bell,
-  Shield,
   Moon,
   Sun,
   BarChart3,
-  Users,
   Timer,
   Flame,
   Trophy,
   Star,
-  Clock,
   Video,
   ShoppingBag,
+  Plus,
+  CheckCircle,
+  Circle,
+  Gift,
+  Lightbulb,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
@@ -35,20 +34,8 @@ import { PLANS } from "../data/plans";
 import { updateUserProfile, getUserData } from "@/services/user";
 import { updateUserPlan } from "../services/plan";
 import { useProgressStore } from "../stores/progressStore";
+import { useGoalsStore } from "../stores/goalsStore";
 import { getUserMetrics } from "../services/user";
-
-// Store para dados de engajamento
-interface EngagementStore {
-  currentStreak: number;
-  longestStreak: number;
-  totalVideosWatched: number;
-  totalPurchases: number;
-  totalFavorites: number;
-  weeklyGoal: number;
-  weeklyProgress: number;
-  dailyActivity: { date: string; completed: boolean }[];
-  lastActivityDate: string;
-}
 
 const Profile: React.FC = () => {
   const { user, refreshPlan } = useAuth();
@@ -68,31 +55,20 @@ const Profile: React.FC = () => {
     birthdate: "",
   });
   const { metrics, setMetrics } = useProgressStore();
+  const {
+    goals,
+    dailyChallenges,
+    totalPoints,
+    currentStreak,
+    longestStreak,
+    updateGoalProgress,
+    completeChallenge,
+    generateSmartGoals,
+  } = useGoalsStore();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-
-  // Dados de engajamento (normalmente viriam do backend)
-  const [engagement, setEngagement] = useState<EngagementStore>({
-    currentStreak: 15,
-    longestStreak: 23,
-    totalVideosWatched: 47,
-    totalPurchases: 12,
-    totalFavorites: 23,
-    weeklyGoal: 5,
-    weeklyProgress: 4,
-    dailyActivity: [
-      { date: "2024-01-14", completed: true },
-      { date: "2024-01-13", completed: true },
-      { date: "2024-01-12", completed: true },
-      { date: "2024-01-11", completed: false },
-      { date: "2024-01-10", completed: true },
-      { date: "2024-01-09", completed: true },
-      { date: "2024-01-08", completed: true },
-    ],
-    lastActivityDate: "2024-01-14",
-  });
 
   useEffect(() => {
     if (!user) return;
@@ -107,9 +83,14 @@ const Profile: React.FC = () => {
       } else {
         setFormData({ name: user.name, birthdate: "" });
       }
+
+      // Gerar metas inteligentes se ainda não existirem
+      if (goals.length === 0) {
+        generateSmartGoals(user);
+      }
     }
     load();
-  }, [user, setMetrics]);
+  }, [user, setMetrics, goals.length, generateSmartGoals]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
@@ -176,73 +157,36 @@ const Profile: React.FC = () => {
 
   const tabs = [
     { id: "overview", label: "Visão Geral", icon: Activity },
-    { id: "metrics", label: "Progresso", icon: TrendingUp },
-    { id: "activity", label: "Atividade", icon: Calendar },
     { id: "goals", label: "Metas", icon: Target },
+    { id: "metrics", label: "Progresso", icon: TrendingUp },
     { id: "settings", label: "Configurações", icon: Settings },
-  ];
-
-  // Sistema de metas e progresso diário
-  const dailyGoals = [
-    {
-      title: "Assistir Vídeo",
-      description: "Complete pelo menos 1 vídeo hoje",
-      progress: 100,
-      completed: true,
-      icon: Video,
-      color: "text-blue-400",
-    },
-    {
-      title: "Beber ��gua",
-      description: "Meta de 2L de água",
-      progress: 75,
-      completed: false,
-      icon: Timer,
-      color: "text-cyan-400",
-    },
-    {
-      title: "Exercitar-se",
-      description: "30 min de atividade física",
-      progress: 60,
-      completed: false,
-      icon: Zap,
-      color: "text-yellow-400",
-    },
-    {
-      title: "Meditação",
-      description: "10 min de mindfulness",
-      progress: 100,
-      completed: true,
-      icon: Star,
-      color: "text-purple-400",
-    },
   ];
 
   const quickStats = [
     {
+      label: "Pontos Totais",
+      value: totalPoints.toString(),
+      change: "+25 hoje",
+      icon: Star,
+      color: "text-yellow-500",
+    },
+    {
       label: "Vídeos Assistidos",
-      value: engagement.totalVideosWatched.toString(),
+      value: "47",
       change: "+12%",
       icon: Video,
       color: "text-emerald-400",
     },
     {
       label: "Produtos Comprados",
-      value: engagement.totalPurchases.toString(),
+      value: "12",
       change: "+3",
       icon: ShoppingBag,
       color: "text-blue-400",
     },
     {
-      label: "Favoritos",
-      value: engagement.totalFavorites.toString(),
-      change: "+5",
-      icon: Heart,
-      color: "text-pink-400",
-    },
-    {
       label: "Streak Atual",
-      value: `${engagement.currentStreak} dias`,
+      value: `${currentStreak} dias`,
       change: "Novo recorde!",
       icon: Flame,
       color: "text-orange-400",
@@ -252,72 +196,45 @@ const Profile: React.FC = () => {
   const bodyMetrics = [
     {
       label: "Peso Corporal",
-      value: metrics.totalWeight,
+      value: metrics.totalWeight || 70,
       unit: "kg",
       trend: "down",
       icon: BarChart3,
     },
     {
       label: "IMC",
-      value: metrics.bmi,
+      value: metrics.bmi || 23.5,
       unit: "",
       trend: "stable",
       icon: Target,
     },
     {
       label: "Gordura Corporal",
-      value: metrics.bodyFatPercent,
+      value: metrics.bodyFatPercent || 15,
       unit: "%",
       trend: "down",
       icon: TrendingUp,
     },
     {
       label: "Massa Muscular",
-      value: metrics.skeletalMuscleMass,
+      value: metrics.skeletalMuscleMass || 32,
       unit: "kg",
       trend: "up",
       icon: Trophy,
     },
     {
       label: "Água Corporal",
-      value: metrics.totalBodyWater,
+      value: metrics.totalBodyWater || 45,
       unit: "L",
       trend: "stable",
       icon: Timer,
     },
     {
       label: "TMB",
-      value: metrics.bmr,
+      value: metrics.bmr || 1850,
       unit: "kcal",
       trend: "up",
       icon: Flame,
-    },
-  ];
-
-  const recentActivities = [
-    {
-      action: "Assistiu",
-      item: "Yoga Matinal Energizante",
-      time: "2 horas atrás",
-      type: "video",
-    },
-    {
-      action: "Comprou",
-      item: "Whey Protein Premium",
-      time: "1 dia atrás",
-      type: "purchase",
-    },
-    {
-      action: "Adicionou aos favoritos",
-      item: "HIIT Cardio Explosivo",
-      time: "2 dias atrás",
-      type: "favorite",
-    },
-    {
-      action: "Completou",
-      item: "Meditação para Alívio do Estresse",
-      time: "3 dias atrás",
-      type: "complete",
     },
   ];
 
@@ -332,26 +249,33 @@ const Profile: React.FC = () => {
     }
   };
 
-  const getActivityIcon = (type: string) => {
-    switch (type) {
-      case "video":
-        return "📹";
-      case "purchase":
-        return "🛒";
-      case "favorite":
-        return "❤️";
-      case "complete":
-        return "✅";
-      default:
-        return "📝";
-    }
-  };
-
   const getStreakColor = (streak: number) => {
     if (streak >= 30) return "from-purple-500 to-pink-500";
     if (streak >= 14) return "from-orange-500 to-red-500";
     if (streak >= 7) return "from-green-500 to-emerald-500";
     return "from-blue-500 to-cyan-500";
+  };
+
+  const handleGoalProgress = (goalId: string, increment: number) => {
+    const goal = goals.find((g) => g.id === goalId);
+    if (goal) {
+      const newValue = Math.min(
+        goal.currentValue + increment,
+        goal.targetValue,
+      );
+      updateGoalProgress(goalId, newValue);
+      if (newValue >= goal.targetValue) {
+        toast.success(`🎉 Meta "${goal.title}" concluída!`);
+      }
+    }
+  };
+
+  const handleCompleteChallenge = (challengeId: string) => {
+    completeChallenge(challengeId);
+    const challenge = dailyChallenges.find((c) => c.id === challengeId);
+    if (challenge) {
+      toast.success(`+${challenge.points} pontos! 🎯`);
+    }
   };
 
   return (
@@ -369,12 +293,6 @@ const Profile: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="p-2 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-all duration-200 hover:scale-105 border border-slate-200 dark:border-slate-700">
-              <Bell className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-            </button>
-            <button className="p-2 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-all duration-200 hover:scale-105 border border-slate-200 dark:border-slate-700">
-              <Shield className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-            </button>
             {!isEditing ? (
               <>
                 {user?.plan && user.plan !== "A" && (
@@ -431,10 +349,10 @@ const Profile: React.FC = () => {
             {/* Streak Badge */}
             <div className="absolute top-4 left-4">
               <div
-                className={`inline-flex items-center px-4 py-2 bg-gradient-to-r ${getStreakColor(engagement.currentStreak)} text-white rounded-full text-sm font-medium shadow-lg`}
+                className={`inline-flex items-center px-4 py-2 bg-gradient-to-r ${getStreakColor(currentStreak)} text-white rounded-full text-sm font-medium shadow-lg`}
               >
                 <Flame className="w-4 h-4 mr-2" />
-                {engagement.currentStreak} dias
+                {currentStreak} dias
               </div>
             </div>
           </div>
@@ -489,11 +407,18 @@ const Profile: React.FC = () => {
                   <div className="space-y-4">
                     <div>
                       <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
-                        {formData.name || "Usuário"}
+                        {formData.name || user?.name || "Usuário"}
                       </h2>
-                      <p className="text-slate-600 dark:text-slate-400">
-                        {user?.email}
-                      </p>
+                      <div className="flex items-center justify-center lg:justify-start gap-4 text-slate-600 dark:text-slate-400">
+                        <span className="flex items-center gap-2">
+                          <Star className="w-4 h-4 text-yellow-500" />
+                          {totalPoints} pontos
+                        </span>
+                        <span className="flex items-center gap-2">
+                          <Trophy className="w-4 h-4 text-purple-500" />
+                          Recorde: {longestStreak} dias
+                        </span>
+                      </div>
                     </div>
 
                     {/* Quick metrics */}
@@ -506,7 +431,7 @@ const Profile: React.FC = () => {
                         },
                         {
                           label: "IMC",
-                          value: metrics.bmi || "23.5",
+                          value: (metrics.bmi || 23.5).toString(),
                           color: "text-green-600 dark:text-green-400",
                         },
                         {
@@ -641,65 +566,192 @@ const Profile: React.FC = () => {
                 })}
               </section>
 
-              {/* Metas Diárias */}
+              {/* Desafios Diários */}
               <section className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
-                  <Target className="w-6 h-6 mr-3 text-primary" />
-                  Metas de Hoje
+                  <Zap className="w-6 h-6 mr-3 text-yellow-500" />
+                  Desafios Diários
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {dailyGoals.map((goal, index) => {
-                    const Icon = goal.icon;
+                  {dailyChallenges.map((challenge) => (
+                    <div
+                      key={challenge.id}
+                      className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+                        challenge.completed
+                          ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                          : "bg-slate-50 dark:bg-slate-700/30 border-slate-200 dark:border-slate-600/50 hover:border-slate-300 dark:hover:border-slate-500"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-3">
+                          <span className="text-2xl">{challenge.icon}</span>
+                          <div>
+                            <h4 className="font-semibold text-slate-900 dark:text-white">
+                              {challenge.title}
+                            </h4>
+                            <p className="text-sm text-slate-600 dark:text-slate-400">
+                              {challenge.description}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm font-medium text-slate-900 dark:text-white">
+                            +{challenge.points}pts
+                          </span>
+                          <button
+                            onClick={() =>
+                              !challenge.completed &&
+                              handleCompleteChallenge(challenge.id)
+                            }
+                            disabled={challenge.completed}
+                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                              challenge.completed
+                                ? "bg-green-500 text-white"
+                                : "bg-slate-200 dark:bg-slate-600 hover:bg-primary hover:text-white"
+                            }`}
+                          >
+                            {challenge.completed ? (
+                              <CheckCircle className="w-5 h-5" />
+                            ) : (
+                              <Plus className="w-5 h-5" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </div>
+          )}
+
+          {activeTab === "goals" && (
+            <section className="space-y-6">
+              <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
+                  <Target className="w-6 h-6 mr-3 text-primary" />
+                  Metas Inteligentes
+                </h3>
+                <div className="space-y-6">
+                  {goals.map((goal) => {
+                    const progressPercentage =
+                      (goal.currentValue / goal.targetValue) * 100;
                     return (
                       <div
-                        key={index}
-                        className="bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 border border-slate-200 dark:border-slate-600/50"
+                        key={goal.id}
+                        className={`p-6 rounded-xl border-2 transition-all duration-200 ${
+                          goal.completed
+                            ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                            : "bg-slate-50 dark:bg-slate-700/30 border-slate-200 dark:border-slate-600/50"
+                        }`}
                       >
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center space-x-3">
-                            <Icon className={`w-5 h-5 ${goal.color}`} />
-                            <h4 className="font-semibold text-slate-900 dark:text-white">
-                              {goal.title}
-                            </h4>
-                          </div>
-                          {goal.completed && (
-                            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                              <svg
-                                className="w-3 h-3 text-white"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-3 mb-2">
+                              <span className="text-2xl">{goal.icon}</span>
+                              <div>
+                                <h4 className="text-lg font-semibold text-slate-900 dark:text-white">
+                                  {goal.title}
+                                  {goal.completed && (
+                                    <span className="ml-2 text-green-500">
+                                      ✓
+                                    </span>
+                                  )}
+                                </h4>
+                                <p className="text-sm text-slate-600 dark:text-slate-400">
+                                  {goal.description}
+                                </p>
+                              </div>
                             </div>
-                          )}
-                        </div>
-                        <p className="text-slate-600 dark:text-slate-400 text-sm mb-3">
-                          {goal.description}
-                        </p>
-                        <div className="w-full bg-slate-200 dark:bg-slate-600 rounded-full h-2">
-                          <div
-                            className={`h-2 rounded-full transition-all duration-300 ${
-                              goal.completed
-                                ? "bg-green-500"
-                                : "bg-gradient-to-r from-primary to-emerald-500"
-                            }`}
-                            style={{ width: `${goal.progress}%` }}
-                          />
-                        </div>
-                        <div className="text-right text-xs text-slate-500 dark:text-slate-400 mt-1">
-                          {goal.progress}%
+
+                            <div className="mb-4">
+                              <div className="flex justify-between items-center mb-2">
+                                <span className="text-sm text-slate-600 dark:text-slate-400">
+                                  Progresso: {goal.currentValue} /{" "}
+                                  {goal.targetValue} {goal.unit}
+                                </span>
+                                <span className="text-sm font-medium text-slate-900 dark:text-white">
+                                  {Math.round(progressPercentage)}%
+                                </span>
+                              </div>
+                              <div className="w-full bg-slate-200 dark:bg-slate-600 rounded-full h-3">
+                                <div
+                                  className={`h-3 rounded-full transition-all duration-500 ${
+                                    goal.completed
+                                      ? "bg-green-500"
+                                      : "bg-gradient-to-r from-primary to-emerald-500"
+                                  }`}
+                                  style={{
+                                    width: `${Math.min(progressPercentage, 100)}%`,
+                                  }}
+                                />
+                              </div>
+                            </div>
+
+                            {!goal.completed && (
+                              <div className="flex gap-2 mb-4">
+                                <button
+                                  onClick={() => handleGoalProgress(goal.id, 1)}
+                                  className="flex items-center space-x-2 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                                >
+                                  <Plus className="w-4 h-4" />
+                                  <span>+1 {goal.unit}</span>
+                                </button>
+                                {goal.targetValue > 5 && (
+                                  <button
+                                    onClick={() =>
+                                      handleGoalProgress(goal.id, 5)
+                                    }
+                                    className="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                                  >
+                                    <Plus className="w-4 h-4" />
+                                    <span>+5 {goal.unit}</span>
+                                  </button>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Recompensas */}
+                            <div className="mb-3">
+                              <h5 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center">
+                                <Gift className="w-4 h-4 mr-1" />
+                                Benefícios:
+                              </h5>
+                              <div className="flex flex-wrap gap-2">
+                                {goal.rewards.map((reward, index) => (
+                                  <span
+                                    key={index}
+                                    className="text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full"
+                                  >
+                                    {reward}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Dicas */}
+                            <div>
+                              <h5 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center">
+                                <Lightbulb className="w-4 h-4 mr-1" />
+                                Dicas:
+                              </h5>
+                              <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
+                                {goal.tips.slice(0, 2).map((tip, index) => (
+                                  <li key={index} className="flex items-start">
+                                    <span className="mr-2">•</span>
+                                    {tip}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     );
                   })}
                 </div>
-              </section>
-            </div>
+              </div>
+            </section>
           )}
 
           {activeTab === "metrics" && (
@@ -727,7 +779,7 @@ const Profile: React.FC = () => {
                           {getTrendIcon(metric.trend)}
                         </div>
                         <div className="text-2xl font-bold text-slate-900 dark:text-white">
-                          {metric.value || "0"}{" "}
+                          {metric.value}{" "}
                           <span className="text-lg text-slate-500 dark:text-slate-400">
                             {metric.unit}
                           </span>
@@ -735,129 +787,6 @@ const Profile: React.FC = () => {
                       </div>
                     );
                   })}
-                </div>
-              </div>
-            </section>
-          )}
-
-          {activeTab === "activity" && (
-            <section className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
-                <Calendar className="w-6 h-6 mr-3 text-blue-500" />
-                Atividade Recente
-              </h3>
-              <div className="space-y-4">
-                {recentActivities.map((activity, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group cursor-pointer border border-slate-200 dark:border-slate-600/50"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className="w-10 h-10 bg-slate-200 dark:bg-slate-600 rounded-xl flex items-center justify-center text-lg group-hover:scale-110 transition-transform duration-200">
-                        {getActivityIcon(activity.type)}
-                      </div>
-                      <div>
-                        <div className="text-slate-900 dark:text-white">
-                          <span className="text-slate-600 dark:text-slate-300">
-                            {activity.action}
-                          </span>
-                          <span className="text-primary ml-1 font-medium">
-                            {activity.item}
-                          </span>
-                        </div>
-                        <div className="text-slate-500 dark:text-slate-400 text-sm">
-                          {activity.time}
-                        </div>
-                      </div>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 group-hover:translate-x-1 transition-all duration-200" />
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {activeTab === "goals" && (
-            <section className="space-y-6">
-              <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
-                  <Target className="w-6 h-6 mr-3 text-primary" />
-                  Progresso Semanal
-                </h3>
-                <div className="mb-6">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-slate-600 dark:text-slate-400">
-                      Meta da Semana: {engagement.weeklyGoal} atividades
-                    </span>
-                    <span className="text-slate-900 dark:text-white font-semibold">
-                      {engagement.weeklyProgress}/{engagement.weeklyGoal}
-                    </span>
-                  </div>
-                  <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3">
-                    <div
-                      className="h-3 bg-gradient-to-r from-primary to-emerald-500 rounded-full transition-all duration-500"
-                      style={{
-                        width: `${(engagement.weeklyProgress / engagement.weeklyGoal) * 100}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <h4 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
-                  Últimos 7 Dias
-                </h4>
-                <div className="grid grid-cols-7 gap-2">
-                  {engagement.dailyActivity.map((day, index) => (
-                    <div key={index} className="text-center">
-                      <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">
-                        {new Date(day.date).toLocaleDateString("pt-BR", {
-                          weekday: "short",
-                        })}
-                      </div>
-                      <div
-                        className={`w-8 h-8 rounded-full mx-auto flex items-center justify-center ${
-                          day.completed
-                            ? "bg-green-500 text-white"
-                            : "bg-slate-200 dark:bg-slate-700 text-slate-400"
-                        }`}
-                      >
-                        {day.completed ? "✓" : new Date(day.date).getDate()}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
-                  <Trophy className="w-6 h-6 mr-3 text-yellow-500" />
-                  Conquistas & Streaks
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="text-center p-6 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-xl border border-orange-200 dark:border-orange-800">
-                    <Flame className="w-12 h-12 text-orange-500 mx-auto mb-3" />
-                    <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">
-                      {engagement.currentStreak}
-                    </div>
-                    <div className="text-orange-700 dark:text-orange-300 font-medium">
-                      Dias Consecutivos
-                    </div>
-                    <div className="text-orange-600 dark:text-orange-400 text-sm mt-1">
-                      Streak Atual
-                    </div>
-                  </div>
-                  <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl border border-purple-200 dark:border-purple-800">
-                    <Trophy className="w-12 h-12 text-purple-500 mx-auto mb-3" />
-                    <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
-                      {engagement.longestStreak}
-                    </div>
-                    <div className="text-purple-700 dark:text-purple-300 font-medium">
-                      Dias Consecutivos
-                    </div>
-                    <div className="text-purple-600 dark:text-purple-400 text-sm mt-1">
-                      Recorde Pessoal
-                    </div>
-                  </div>
                 </div>
               </div>
             </section>
@@ -900,50 +829,6 @@ const Profile: React.FC = () => {
                     />
                   </button>
                 </div>
-
-                {[
-                  {
-                    title: "Notificações",
-                    description: "Gerencie suas preferências de notificação",
-                    icon: Bell,
-                  },
-                  {
-                    title: "Privacidade",
-                    description: "Controle suas configurações de privacidade",
-                    icon: Shield,
-                  },
-                  {
-                    title: "Metas",
-                    description: "Defina e acompanhe suas metas pessoais",
-                    icon: Target,
-                  },
-                  {
-                    title: "Conta",
-                    description: "Configurações da sua conta",
-                    icon: User,
-                  },
-                ].map((setting, index) => {
-                  const Icon = setting.icon;
-                  return (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group cursor-pointer border border-slate-200 dark:border-slate-600/50"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <Icon className="w-6 h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
-                        <div>
-                          <div className="text-slate-900 dark:text-white font-medium">
-                            {setting.title}
-                          </div>
-                          <div className="text-slate-600 dark:text-slate-400 text-sm">
-                            {setting.description}
-                          </div>
-                        </div>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 group-hover:translate-x-1 transition-all duration-200" />
-                    </div>
-                  );
-                })}
               </div>
             </section>
           )}
