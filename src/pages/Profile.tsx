@@ -527,7 +527,7 @@ const Profile: React.FC = () => {
           </div>
         </section>
 
-        {/* Tabs de navegação */}
+        {/* Tabs de navega��ão */}
         <div className="flex flex-wrap gap-2 bg-white dark:bg-slate-800 p-2 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-x-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -636,6 +636,12 @@ const Profile: React.FC = () => {
                   ))}
                 </div>
               </section>
+
+              {/* Barra de Progresso de Nível */}
+              <LevelProgressBar size="lg" />
+
+              {/* Histórico de XP */}
+              <XPHistory limit={5} />
             </div>
           )}
 
