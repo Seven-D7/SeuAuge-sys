@@ -833,11 +833,33 @@ const Profile: React.FC = () => {
                         theme === "dark" ? "translate-x-6" : "translate-x-1"
                       }`}
                     />
-                  </button>
+                                    </button>
+                </div>
+
+                {/* Configurar Preferências */}
+                <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group cursor-pointer border border-slate-200 dark:border-slate-600/50"
+                     onClick={() => setShowPreferences(true)}>
+                  <div className="flex items-center space-x-4">
+                    <User className="w-6 h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
+                    <div>
+                      <div className="text-slate-900 dark:text-white font-medium">Personalização</div>
+                      <div className="text-slate-600 dark:text-slate-400 text-sm">
+                        Configure suas preferências alimentares e de treino
+                      </div>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 group-hover:translate-x-1 transition-all duration-200" />
                 </div>
               </div>
             </section>
           )}
+        </div>
+
+        {/* Modal de Preferências */}
+        <PreferencesSetup
+          isOpen={showPreferences}
+          onClose={() => setShowPreferences(false)}
+        />
         </div>
       </div>
     </div>
