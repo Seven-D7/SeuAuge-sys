@@ -140,6 +140,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     birthdate: string,
   ) => {
     try {
+      // Development mode bypass for Firebase registration
+      if (import.meta.env.VITE_DEV_MODE === "true") {
+        // Simulate a successful registration in development mode
+        const mockUser: User = {
+          id: "dev-user-" + Date.now(),
+          email: email.trim().toLowerCase(),
+          name: name.trim(),
+          plan: "A",
+          isPremium: false,
+          isAdmin: email === ADMIN_EMAIL,
+        };
+        setUser(mockUser);
+        if (import.meta.env.DEV) {
+          console.log(
+            "Usuário registrado (modo desenvolvimento)",
+            mockUser.email,
+          );
+        }
+        return;
+      }
+
       // Sanitize inputs
       const sanitizedEmail = email.trim().toLowerCase();
       const sanitizedName = name.trim();
