@@ -171,11 +171,18 @@ const Profile: React.FC = () => {
 
   const quickStats = [
     {
-      label: "Pontos Totais",
-      value: totalPoints.toString(),
-      change: "+25 hoje",
+      label: "Nível Atual",
+      value: `Nível ${levelSystem.currentLevel}`,
+      change: `${levelSystem.xpToNextLevel} XP para próximo`,
       icon: Star,
       color: "text-yellow-500",
+    },
+    {
+      label: "XP Total",
+      value: levelSystem.totalXP.toString(),
+      change: "+25 hoje",
+      icon: Zap,
+      color: "text-purple-500",
     },
     {
       label: "Vídeos Assistidos",
