@@ -74,6 +74,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
+    // Development mode bypass for Firebase authentication
+    if (import.meta.env.VITE_DEV_MODE === "true") {
+      // Check if user is already logged in (from localStorage or sessionStorage)
+      const savedUser = localStorage.getItem("devUser");
+      if (savedUser) {
+        try {
+          const parsedUser = JSON.parse(savedUser);
+          setUser(parsedUser);
+        } catch (error) {
+          console.error("Error parsing saved user:", error);
+        }
+      }
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const mapped = await mapFirebaseUser(firebaseUser);
