@@ -23,6 +23,7 @@ import {
   Plus,
   CheckCircle,
   Circle,
+  ChevronRight,
   Gift,
   Lightbulb,
 } from "lucide-react";
