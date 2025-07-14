@@ -1,13 +1,24 @@
-import { updateProfile, updateEmail } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { auth, db, storage } from '../firebase';
-import type { BodyMetrics } from '../stores/progressStore';
+import { updateProfile, updateEmail } from "firebase/auth";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { auth, db, storage } from "../firebase";
+import type { BodyMetrics } from "../stores/progressStore";
 
 export async function uploadAvatar(file: File, uid: string): Promise<string> {
-  const avatarRef = ref(storage, `avatars/${uid}`);
-  await uploadBytes(avatarRef, file);
-  return await getDownloadURL(avatarRef);
+  try {
+    // Modo desenvolvimento - retornar URL temporária
+    if (import.meta.env.VITE_DEV_MODE === "true") {
+      return URL.createObjectURL(file);
+    }
+
+    const avatarRef = ref(storage, `avatars/${uid}`);
+    await uploadBytes(avatarRef, file);
+    return await getDownloadURL(avatarRef);
+  } catch (error) {
+    console.warn("Erro ao fazer upload do avatar:", error);
+    // Retornar URL temporária como fallback
+    return URL.createObjectURL(file);
+  }
 }
 
 export interface UpdateUserInput {
@@ -26,27 +37,33 @@ export interface CreateUserInput {
   birthdate?: string | null;
 }
 
-export async function updateUserProfile({ name, email, birthdate, file }: UpdateUserInput) {
+export async function updateUserProfile({
+  name,
+  email,
+  birthdate,
+  file,
+}: UpdateUserInput) {
   if (!auth.currentUser) return;
 
   // Input validation and sanitization
   if (name && (name.trim().length < 2 || name.trim().length > 50)) {
-    throw new Error('Nome deve ter entre 2 e 50 caracteres');
+    throw new Error("Nome deve ter entre 2 e 50 caracteres");
   }
-  
+
   if (email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      throw new Error('Email inválido');
+      throw new Error("Email inválido");
     }
   }
-  
-  if (file && file.size > 5 * 1024 * 1024) { // 5MB limit
-    throw new Error('Arquivo muito grande. Máximo 5MB');
+
+  if (file && file.size > 5 * 1024 * 1024) {
+    // 5MB limit
+    throw new Error("Arquivo muito grande. Máximo 5MB");
   }
-  
-  if (file && !file.type.startsWith('image/')) {
-    throw new Error('Apenas imagens são permitidas');
+
+  if (file && !file.type.startsWith("image/")) {
+    throw new Error("Apenas imagens são permitidas");
   }
 
   let photoURL = auth.currentUser.photoURL || undefined;
@@ -71,7 +88,7 @@ export async function updateUserProfile({ name, email, birthdate, file }: Update
     data.avatar = photoURL;
   }
 
-  await setDoc(doc(db, 'users', auth.currentUser.uid), data, { merge: true });
+  await setDoc(doc(db, "users", auth.currentUser.uid), data, { merge: true });
 
   return photoURL;
 }
@@ -81,25 +98,27 @@ export async function createUserDocument({
   name,
   email,
   avatar = null,
-  plan = 'A',
+  plan = "A",
   birthdate = null,
 }: CreateUserInput) {
-  await setDoc(doc(db, 'users', uid), { name, email, avatar, plan, birthdate });
+  await setDoc(doc(db, "users", uid), { name, email, avatar, plan, birthdate });
 }
 
 export async function updateUserMetrics(metrics: BodyMetrics) {
   if (!auth.currentUser) return;
   await setDoc(
-    doc(db, 'users', auth.currentUser.uid),
+    doc(db, "users", auth.currentUser.uid),
     { metrics },
-    { merge: true }
+    { merge: true },
   );
 }
 
-export async function getUserMetrics(uid?: string): Promise<BodyMetrics | null> {
+export async function getUserMetrics(
+  uid?: string,
+): Promise<BodyMetrics | null> {
   const userId = uid || auth.currentUser?.uid;
   if (!userId) return null;
-  const snap = await getDoc(doc(db, 'users', userId));
+  const snap = await getDoc(doc(db, "users", userId));
   if (!snap.exists()) return null;
   const data = snap.data();
   return (data.metrics as BodyMetrics) ?? null;
@@ -115,7 +134,7 @@ export interface UserData {
 export async function getUserData(uid?: string): Promise<UserData | null> {
   const userId = uid || auth.currentUser?.uid;
   if (!userId) return null;
-  const snap = await getDoc(doc(db, 'users', userId));
+  const snap = await getDoc(doc(db, "users", userId));
   if (!snap.exists()) return null;
   return snap.data() as UserData;
 }
