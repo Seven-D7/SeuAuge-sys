@@ -258,4 +258,10 @@ export const mockProducts: Product[] = [
  *    - Faça upload da miniatura para videos/thumbnails/
  *    - Crie documento no Firestore com metadados
  *    - O sistema automaticamente vinculará os arquivos
+ *
+ * 5. O serviço videoService em src/services/video.ts gerencia:
+ *    - Cache inteligente para performance
+ *    - Fallback para dados offline
+ *    - Busca automática no Storage quando URLs estão vazias
+ *    - Sincronização entre Firestore e Storage
  */
