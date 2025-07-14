@@ -162,6 +162,16 @@ function App() {
                 </Suspense>
               }
             />
+            <Route
+              path="payment-success"
+              element={
+                <Suspense
+                  fallback={<div className="p-4 text-white">Carregando...</div>}
+                >
+                  <PaymentSuccess />
+                </Suspense>
+              }
+            />
 
             <Route
               path="apps"
