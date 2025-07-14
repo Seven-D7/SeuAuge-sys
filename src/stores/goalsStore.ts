@@ -257,19 +257,35 @@ export const useGoalsStore = create<GoalsStore>()(
         })),
 
       updateGoalProgress: (id, newValue) =>
-        set((state) => ({
-          goals: state.goals.map((goal) => {
+        set((state) => {
+          const updatedGoals = state.goals.map((goal) => {
             if (goal.id === id) {
               const updated = { ...goal, currentValue: newValue };
               if (newValue >= goal.targetValue && !goal.completed) {
                 updated.completed = true;
                 updated.streak = goal.streak + 1;
+
+                // Dar XP pela conclusão da meta
+                const { addXP } = useLevelStore.getState();
+                let xpAmount = XP_VALUES.GOAL_COMPLETED;
+
+                // Bonus XP baseado na dificuldade
+                if (goal.difficulty === "hard") xpAmount += 25;
+                else if (goal.difficulty === "medium") xpAmount += 10;
+
+                // Bonus XP baseado no timeframe
+                if (goal.timeframe === "monthly") xpAmount += 50;
+                else if (goal.timeframe === "weekly") xpAmount += 25;
+
+                addXP(xpAmount, `Meta concluída: ${goal.title}`, "goal");
               }
               return updated;
             }
             return goal;
-          }),
-        })),
+          });
+
+          return { ...state, goals: updatedGoals };
+        }),
 
       completeChallenge: (id) =>
         set((state) => {
