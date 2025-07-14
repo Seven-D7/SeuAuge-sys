@@ -299,6 +299,23 @@ export const useGoalsStore = create<GoalsStore>()(
                 ? state.currentStreak + 1
                 : state.currentStreak;
 
+            // Dar XP pelo desafio concluído
+            const { addXP } = useLevelStore.getState();
+            addXP(
+              XP_VALUES.CHALLENGE_COMPLETED,
+              `Desafio concluído: ${challenge.title}`,
+              "challenge",
+            );
+
+            // Bonus XP se completou todos os desafios do dia
+            if (completedChallenges >= state.dailyChallenges.length) {
+              addXP(
+                XP_VALUES.PERFECT_DAY,
+                "🎯 Dia perfeito - todos os desafios concluídos!",
+                "bonus",
+              );
+            }
+
             return {
               dailyChallenges: state.dailyChallenges.map((c) =>
                 c.id === id ? { ...c, completed: true } : c,
