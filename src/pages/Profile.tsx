@@ -193,7 +193,7 @@ const Profile: React.FC = () => {
       color: "text-blue-400",
     },
     {
-      title: "Beber Água",
+      title: "Beber ��gua",
       description: "Meta de 2L de água",
       progress: 75,
       completed: false,
@@ -237,7 +237,7 @@ const Profile: React.FC = () => {
       label: "Favoritos",
       value: engagement.totalFavorites.toString(),
       change: "+5",
-      icon: BookmarkHeart,
+      icon: Heart,
       color: "text-pink-400",
     },
     {
