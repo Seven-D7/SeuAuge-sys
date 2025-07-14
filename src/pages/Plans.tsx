@@ -218,9 +218,9 @@ const Plans: React.FC = () => {
                     </button>
                   ) : (
                     <button
-                      onClick={() => navigate(`/payment?plan=${p.id}`)}
-                      disabled={!canUpgradeToThis}
-                      className={`w-full py-3 rounded-xl font-medium transition-all duration-200 ${
+                      onClick={() => handlePlanSubscription(p)}
+                      disabled={!canUpgradeToThis || loadingPlan === p.id}
+                      className={`w-full py-3 rounded-xl font-medium transition-all duration-200 flex items-center justify-center ${
                         canUpgradeToThis
                           ? p.isPopular
                             ? "bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl"
@@ -228,11 +228,20 @@ const Plans: React.FC = () => {
                           : "bg-slate-400 cursor-not-allowed text-slate-600"
                       }`}
                     >
-                      {canUpgradeToThis
-                        ? p.id === "A"
-                          ? "Gratuito"
-                          : "Assinar Agora"
-                        : "Indisponível"}
+                      {loadingPlan === p.id ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Processando...
+                        </>
+                      ) : canUpgradeToThis ? (
+                        p.id === "A" ? (
+                          "Acessar Grátis"
+                        ) : (
+                          "Assinar Agora"
+                        )
+                      ) : (
+                        "Indisponível"
+                      )}
                     </button>
                   )}
                 </div>
