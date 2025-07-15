@@ -109,8 +109,18 @@ const EmagrecimentoAvancado: React.FC = () => {
       preferencias_exercicio: userData.preferencias_exercicio || [],
     };
 
+    // Adaptar dados para o algoritmo genético (converte PT->EN)
+    const adaptedUserData = {
+      age: completeUserData.idade,
+      sex: completeUserData.sexo,
+      height: completeUserData.altura,
+      weight: completeUserData.peso_atual,
+      activityLevel: completeUserData.nivel_atividade,
+      fitnessHistory: [],
+    };
+
     // Criar perfil genético
-    const geneticProfile = new GeneticFitnessProfile(completeUserData);
+    const geneticProfile = new GeneticFitnessProfile(adaptedUserData);
 
     // Calcular probabilidade de sucesso
     const successAlgorithm = new SuccessPredictionAlgorithm();
