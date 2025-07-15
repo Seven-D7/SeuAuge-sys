@@ -53,7 +53,9 @@ const EmagrecimentoAvancado: React.FC = () => {
     bullets: string[];
   } | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loadingProfile, setLoadingProfile] = useState(true);
   const { setWeightLoss, setReportData } = useProgressStore();
+  const { user } = useAuth();
 
   const steps = [
     { id: 1, title: "Dados Pessoais", description: "Informações básicas" },
