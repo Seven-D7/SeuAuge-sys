@@ -351,9 +351,16 @@ const EmagrecimentoAvancado: React.FC = () => {
                   type="text"
                   value={userData.nome || ""}
                   onChange={(e) => handleInputChange("nome", e.target.value)}
-                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className={`w-full px-4 py-3 bg-white dark:bg-slate-800 border rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:border-transparent ${
+                    errors.nome
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-slate-300 dark:border-slate-600 focus:ring-primary"
+                  }`}
                   placeholder="Seu nome completo"
                 />
+                {errors.nome && (
+                  <p className="text-xs text-red-500">{errors.nome}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
