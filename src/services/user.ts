@@ -218,3 +218,6 @@ export async function getUserMetrics(): Promise<Partial<BodyMetrics> | null> {
     return localMetrics ? JSON.parse(localMetrics) : null;
   }
 }
+
+// Alias for backward compatibility
+export const updateUserMetrics = saveUserMetrics;
