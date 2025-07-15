@@ -50,6 +50,7 @@ const EmagrecimentoAvancado: React.FC = () => {
     paragrafo: string;
     bullets: string[];
   } | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const { setWeightLoss, setReportData } = useProgressStore();
 
   const steps = [
