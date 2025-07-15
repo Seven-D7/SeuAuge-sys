@@ -190,7 +190,7 @@ function App() {
             <Route
               path="fitness/*"
               element={
-                <PlanGuard allowedPlans={["B", "C"]}>
+                <PlanGuard allowedPlans={["B", "C", "D"]}>
                   <Suspense
                     fallback={
                       <div className="p-4 text-white">Carregando...</div>
