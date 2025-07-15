@@ -629,7 +629,7 @@ const EmagrecimentoAvancado: React.FC = () => {
               </div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  Restrições Alimentares
+                  Restriç��es Alimentares
                 </label>
                 <textarea
                   value={userData.restricoes_alimentares || ""}
