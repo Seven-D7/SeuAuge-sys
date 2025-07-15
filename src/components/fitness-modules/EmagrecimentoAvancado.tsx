@@ -842,6 +842,15 @@ const EmagrecimentoAvancado: React.FC = () => {
           Sistema avançado de emagrecimento com algoritmos de IA que se adaptam
           ao seu perfil ��nico
         </p>
+
+        {/* Indicador de dados pré-preenchidos */}
+        {(userData.nome || userData.peso_atual || userData.altura) && (
+          <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg max-w-md mx-auto">
+            <p className="text-sm text-green-700 dark:text-green-300">
+              ✓ Dados do seu perfil foram carregados automaticamente
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Progress Steps */}
