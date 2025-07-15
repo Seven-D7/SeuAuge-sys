@@ -57,6 +57,46 @@ const EmagrecimentoAvancado: React.FC = () => {
   const { setWeightLoss, setReportData } = useProgressStore();
   const { user } = useAuth();
 
+  // Carregar dados do perfil ao inicializar
+  useEffect(() => {
+    const loadProfileData = async () => {
+      if (!user) return;
+
+      try {
+        const metrics = await getUserMetrics();
+        if (metrics) {
+          // Pré-preencher dados com base nas métricas do perfil
+          const prefilledData: Partial<UserData> = {};
+
+          if (metrics.totalWeight) {
+            prefilledData.peso_atual = metrics.totalWeight;
+          }
+
+          // Calcular altura estimada a partir do IMC e peso (se disponível)
+          if (metrics.bmi && metrics.totalWeight) {
+            const estimatedHeight = Math.sqrt(
+              (metrics.totalWeight / metrics.bmi) * 10000,
+            );
+            prefilledData.altura = Math.round(estimatedHeight);
+          }
+
+          // Pré-preencher nome do usuário se disponível
+          if (user.name) {
+            prefilledData.nome = user.name;
+          }
+
+          setUserData(prefilledData);
+        }
+      } catch (error) {
+        console.warn("Erro ao carregar dados do perfil:", error);
+      } finally {
+        setLoadingProfile(false);
+      }
+    };
+
+    loadProfileData();
+  }, [user]);
+
   const steps = [
     { id: 1, title: "Dados Pessoais", description: "Informações básicas" },
     { id: 2, title: "Objetivos", description: "Metas de emagrecimento" },
@@ -786,7 +826,7 @@ const EmagrecimentoAvancado: React.FC = () => {
         </div>
         <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
           Sistema avançado de emagrecimento com algoritmos de IA que se adaptam
-          ao seu perfil único
+          ao seu perfil ��nico
         </p>
       </div>
 
