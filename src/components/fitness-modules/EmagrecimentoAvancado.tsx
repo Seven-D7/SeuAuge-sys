@@ -62,21 +62,58 @@ const EmagrecimentoAvancado: React.FC = () => {
   ];
 
   const handleInputChange = (field: keyof UserData, value: any) => {
+    // Clear previous error for this field
+    setErrors((prev) => ({ ...prev, [field]: "" }));
+
     // Input validation and sanitization
     if (typeof value === "string") {
       value = value.trim();
-      if (field === "nome" && value.length > 50) {
-        value = value.slice(0, 50);
+      if (field === "nome") {
+        if (value.length > 50) {
+          value = value.slice(0, 50);
+        }
+        if (value.length < 2 && value.length > 0) {
+          setErrors((prev) => ({
+            ...prev,
+            [field]: "Nome deve ter pelo menos 2 caracteres",
+          }));
+        }
       }
     }
 
     if (typeof value === "number") {
-      if (field === "idade" && (value < 16 || value > 100)) return;
-      if (field === "altura" && (value < 100 || value > 250)) return;
-      if (field === "peso_atual" && (value < 30 || value > 300)) return;
-      if (field === "peso_objetivo" && (value < 30 || value > 300)) return;
-      if (field === "prazo" && (value < 1 || value > 104)) return; // Max 2 years
-      if (field === "confianca_exercicio" && (value < 1 || value > 10)) return;
+      let errorMessage = "";
+
+      if (field === "idade") {
+        if (value < 16) errorMessage = "Idade mínima: 16 anos";
+        else if (value > 100) errorMessage = "Idade máxima: 100 anos";
+      }
+
+      if (field === "altura") {
+        if (value < 100) errorMessage = "Altura mínima: 100 cm";
+        else if (value > 250) errorMessage = "Altura máxima: 250 cm";
+      }
+
+      if (field === "peso_atual" || field === "peso_objetivo") {
+        if (value < 30) errorMessage = "Peso mínimo: 30 kg";
+        else if (value > 300) errorMessage = "Peso máximo: 300 kg";
+      }
+
+      if (field === "prazo") {
+        if (value < 4) errorMessage = "Prazo mínimo: 4 semanas";
+        else if (value > 104)
+          errorMessage = "Prazo máximo: 104 semanas (2 anos)";
+      }
+
+      if (field === "confianca_exercicio") {
+        if (value < 1 || value > 10)
+          errorMessage = "Confiança deve estar entre 1 e 10";
+      }
+
+      if (errorMessage) {
+        setErrors((prev) => ({ ...prev, [field]: errorMessage }));
+        return; // Don't update if there's an error
+      }
     }
 
     setUserData((prev) => ({ ...prev, [field]: value }));
