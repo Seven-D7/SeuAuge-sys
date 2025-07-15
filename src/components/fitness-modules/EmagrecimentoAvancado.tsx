@@ -390,13 +390,19 @@ const EmagrecimentoAvancado: React.FC = () => {
                 </label>
                 <input
                   type="number"
+                  min="30"
+                  max="300"
+                  step="0.1"
                   value={userData.peso_atual || ""}
                   onChange={(e) =>
                     handleInputChange("peso_atual", Number(e.target.value))
                   }
                   className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
-                  placeholder="Seu peso atual"
+                  placeholder="Ex: 70.5"
                 />
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Entre 30 e 300 kg
+                </p>
               </div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -404,13 +410,19 @@ const EmagrecimentoAvancado: React.FC = () => {
                 </label>
                 <input
                   type="number"
+                  min="30"
+                  max="300"
+                  step="0.1"
                   value={userData.peso_objetivo || ""}
                   onChange={(e) =>
                     handleInputChange("peso_objetivo", Number(e.target.value))
                   }
                   className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
-                  placeholder="Seu peso objetivo"
+                  placeholder="Ex: 65.0"
                 />
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Entre 30 e 300 kg
+                </p>
               </div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -418,13 +430,19 @@ const EmagrecimentoAvancado: React.FC = () => {
                 </label>
                 <input
                   type="number"
+                  min="4"
+                  max="104"
+                  step="1"
                   value={userData.prazo || ""}
                   onChange={(e) =>
                     handleInputChange("prazo", Number(e.target.value))
                   }
                   className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
-                  placeholder="Prazo em semanas"
+                  placeholder="Ex: 12"
                 />
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Entre 4 e 104 semanas (2 anos)
+                </p>
               </div>
             </div>
           </div>
