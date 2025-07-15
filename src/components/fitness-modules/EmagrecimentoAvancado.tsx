@@ -323,13 +323,19 @@ const EmagrecimentoAvancado: React.FC = () => {
                 </label>
                 <input
                   type="number"
+                  min="16"
+                  max="100"
+                  step="1"
                   value={userData.idade || ""}
                   onChange={(e) =>
                     handleInputChange("idade", Number(e.target.value))
                   }
                   className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
-                  placeholder="Sua idade"
+                  placeholder="Ex: 25"
                 />
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Entre 16 e 100 anos
+                </p>
               </div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
