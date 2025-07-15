@@ -39,6 +39,8 @@ import {
 } from "../../lib/fitness/explicacao";
 import { db } from "../../firebase";
 import { useProgressStore } from "../../stores/progressStore";
+import { getUserMetrics } from "../../services/user";
+import { useAuth } from "../../contexts/AuthContext";
 import type { UserData, WeightLossResults } from "@/types/fitness";
 
 const EmagrecimentoAvancado: React.FC = () => {
