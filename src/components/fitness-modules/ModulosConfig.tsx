@@ -3,6 +3,9 @@ import { Routes, Route } from "react-router-dom";
 
 // Lazy load fitness modules
 const EmagrecimentoAvancado = lazy(() => import("./EmagrecimentoAvancado"));
+const GanhoMassa = lazy(() => import("./GanhoMassa"));
+const RecomposicaoCorporal = lazy(() => import("./RecomposicaoCorporal"));
+const PerformanceAtletica = lazy(() => import("./PerformanceAtletica"));
 
 const ModulosConfig: React.FC = () => {
   return (
