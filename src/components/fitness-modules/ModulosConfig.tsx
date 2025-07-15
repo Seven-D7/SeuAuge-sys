@@ -7,7 +7,18 @@ const EmagrecimentoAvancado = lazy(() => import("./EmagrecimentoAvancado"));
 const ModulosConfig: React.FC = () => {
   return (
     <div className="fitness-modules">
-      <Suspense fallback={<div className="loading">Carregando módulo...</div>}>
+      <Suspense
+        fallback={
+          <div className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-900">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto mb-4"></div>
+              <p className="text-slate-600 dark:text-slate-400">
+                Carregando módulo de emagrecimento...
+              </p>
+            </div>
+          </div>
+        }
+      >
         <Routes>
           <Route path="/emagrecimento" element={<EmagrecimentoAvancado />} />
           <Route
