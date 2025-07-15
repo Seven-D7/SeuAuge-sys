@@ -89,6 +89,10 @@ const EmagrecimentoAvancado: React.FC = () => {
         }
       } catch (error) {
         console.warn("Erro ao carregar dados do perfil:", error);
+        // Em caso de erro, apenas pré-preencher o nome se disponível
+        if (user?.name) {
+          setUserData((prev) => ({ ...prev, nome: user.name }));
+        }
       } finally {
         setLoadingProfile(false);
       }
