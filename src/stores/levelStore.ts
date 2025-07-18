@@ -186,7 +186,7 @@ export const useLevelStore = create<LevelStore>()(
             ? state.levelSystem.consecutiveDays + 1
             : 1;
 
-          let updatedState = {
+          const updatedState = {
             ...state,
             levelSystem: {
               ...state.levelSystem,

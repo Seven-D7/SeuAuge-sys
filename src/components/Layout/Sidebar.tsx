@@ -1,20 +1,19 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { 
-  Play, 
-  User, 
-  Heart, 
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import {
+  Play,
+  Heart,
   ShoppingBag,
   Sparkles,
   Home,
   AppWindow,
   LogOut,
   TrendingUp,
-  ShieldCheck
-} from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
-import { PLANS } from '../../data/plans';
-import { storeEnabled } from '../../lib/config';
+  ShieldCheck,
+} from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
+import { PLANS } from "../../data/plans";
+import { storeEnabled } from "../../lib/config";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -24,17 +23,25 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
   const { user, logout } = useAuth();
-  const planName = PLANS.find((p) => p.id === (user?.plan ?? 'A'))?.name ?? 'Gratuito';
+  const planName =
+    PLANS.find((p) => p.id === (user?.plan ?? "A"))?.name ?? "Gratuito";
 
   const menuItems = [
-    { icon: Home, label: 'Início', path: '/dashboard' },
-    { icon: Play, label: 'Vídeos', path: '/videos' },
-    { icon: ShoppingBag, label: 'Loja', path: '/store', disabled: !storeEnabled },
-    { icon: Sparkles, label: 'Planos', path: '/plans' },
-    { icon: Heart, label: 'Favoritos', path: '/favorites' },
-    { icon: TrendingUp, label: 'Progresso', path: '/progress' },
-    { icon: AppWindow, label: 'Apps', path: '/apps' },
-    ...(user?.isAdmin ? [{ icon: ShieldCheck, label: 'Admin', path: '/admin' }] : []),
+    { icon: Home, label: "Início", path: "/dashboard" },
+    { icon: Play, label: "Vídeos", path: "/videos" },
+    {
+      icon: ShoppingBag,
+      label: "Loja",
+      path: "/store",
+      disabled: !storeEnabled,
+    },
+    { icon: Sparkles, label: "Planos", path: "/plans" },
+    { icon: Heart, label: "Favoritos", path: "/favorites" },
+    { icon: TrendingUp, label: "Progresso", path: "/progress" },
+    { icon: AppWindow, label: "Apps", path: "/apps" },
+    ...(user?.isAdmin
+      ? [{ icon: ShieldCheck, label: "Admin", path: "/admin" }]
+      : []),
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -43,19 +50,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     <>
       {/* Mobile overlay */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={onClose}
         />
       )}
-      
+
       {/* Sidebar */}
-      <div className={`
+      <div
+        className={`
         fixed top-0 left-0 h-screen w-72 overflow-y-auto bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-white border-r border-slate-200 dark:border-slate-800 z-50
         transform transition-transform duration-300 ease-in-out
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}
         lg:translate-x-0 lg:static lg:z-auto
-      `}>
+      `}
+      >
         {/* Logo */}
         <div className="flex items-center px-6 py-6 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center space-x-3">
@@ -63,8 +72,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               <TrendingUp className="w-5 h-5 text-white" />
             </div>
             <div>
-              <span className="text-2xl font-bold text-slate-900 dark:text-white">Meu Auge</span>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Transforme-se</p>
+              <span className="text-2xl font-bold text-slate-900 dark:text-white">
+                Meu Auge
+              </span>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Transforme-se
+              </p>
             </div>
           </div>
         </div>
@@ -76,10 +89,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               const Icon = item.icon;
               const baseClasses = `
                 flex items-center px-4 py-3 rounded-xl transition-all duration-200 group
-                ${isActive(item.path)
-                  ? 'bg-gradient-to-r from-primary to-emerald-600 text-white shadow-lg shadow-primary-dark/25'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800/50'}
-                ${item.disabled ? 'pointer-events-none opacity-50' : ''}
+                ${
+                  isActive(item.path)
+                    ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-lg shadow-primary-dark/25"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800/50"
+                }
+                ${item.disabled ? "pointer-events-none opacity-50" : ""}
               `;
 
               if (item.disabled) {
@@ -87,7 +102,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   <div key={item.path} className={baseClasses}>
                     <Icon className="w-5 h-5 mr-4 text-slate-600 dark:text-slate-400" />
                     <span className="font-medium">{item.label}</span>
-                    <span className="ml-auto text-xs text-slate-400">Em breve</span>
+                    <span className="ml-auto text-xs text-slate-400">
+                      Em breve
+                    </span>
                   </div>
                 );
               }
@@ -99,7 +116,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   onClick={onClose}
                   className={baseClasses}
                 >
-                  <Icon className={`w-5 h-5 mr-4 ${isActive(item.path) ? 'text-white' : 'text-slate-600 dark:text-slate-400 group-hover:text-primary'}`} />
+                  <Icon
+                    className={`w-5 h-5 mr-4 ${isActive(item.path) ? "text-white" : "text-slate-600 dark:text-slate-400 group-hover:text-primary"}`}
+                  />
                   <span className="font-medium">{item.label}</span>
                   {isActive(item.path) && (
                     <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
@@ -117,8 +136,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-900 dark:text-white">{planName}</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400">Plano atual</p>
+              <p className="text-sm font-medium text-slate-900 dark:text-white">
+                {planName}
+              </p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">
+                Plano atual
+              </p>
             </div>
           </div>
         </div>

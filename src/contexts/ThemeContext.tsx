@@ -9,7 +9,7 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue>({
   theme: 'light',
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+   
   toggleTheme: () => {},
 });
 

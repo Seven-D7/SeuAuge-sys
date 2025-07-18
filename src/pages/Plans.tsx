@@ -34,6 +34,7 @@ const Plans: React.FC = () => {
 
     try {
       setLoadingPlan(selectedPlan.id);
+      toast.loading("Preparando checkout...", { id: "checkout" });
 
       // Extrair valor numérico do preço
       const priceMatch = selectedPlan.price.match(/\d+/);
@@ -49,6 +50,7 @@ const Plans: React.FC = () => {
       });
     } catch (error) {
       console.error("Erro ao iniciar checkout:", error);
+      toast.dismiss("checkout");
       toast.error("Erro ao iniciar pagamento. Tente novamente.");
     } finally {
       setLoadingPlan(null);
