@@ -43,12 +43,12 @@ export default function usePlan(): UsePlan {
         setLoading(true);
         const currentPlan = await getPlanFromToken();
         if (!active) return;
-        setPlan(currentPlan || "A"); // Default para plano A se não encontrar
+        setPlan(currentPlan || null); // Sem plano se não encontrar
         console.log("Plano obtido:", currentPlan);
       } catch (error) {
-        console.warn("Erro ao obter plano, usando padrão:", error);
+        console.warn("Erro ao obter plano:", error);
         if (!active) return;
-        setPlan("A"); // Default em caso de erro
+        setPlan(null); // Sem plano em caso de erro
       } finally {
         if (active) {
           setLoading(false);

@@ -13,7 +13,6 @@ export async function getPlans(): Promise<PlanData[]> {
   if (isDemoMode) {
     // Retornar planos mock em modo demo
     return [
-      { id: "A", name: "Gratuito", price: "R$ 0", features: ["Acesso básico"] },
       { id: "B", name: "Base", price: "R$ 97", features: ["Acesso completo"] },
       {
         id: "C",

@@ -61,14 +61,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const mapFirebaseUser = async (firebaseUser: FirebaseUser): Promise<User> => {
     const planFromToken = await getPlanFromToken();
-    const plan = planFromToken ?? "A";
+    const plan = planFromToken;
     return {
       id: firebaseUser.uid,
       email: firebaseUser.email || "",
       name: firebaseUser.displayName || "",
       avatar: firebaseUser.photoURL || undefined,
       plan,
-      isPremium: plan !== "A",
+      isPremium: !!plan, // Tem plano = é premium
       isAdmin: firebaseUser.email === ADMIN_EMAIL,
     };
   };
@@ -149,7 +149,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         id: `demo-user-${Date.now()}`,
         email: sanitizedEmail,
         name: sanitizedName,
-        plan: "A",
+        plan: null,
         isPremium: false,
         isAdmin: sanitizedEmail === ADMIN_EMAIL,
       };
@@ -235,7 +235,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!auth.currentUser) return;
     const newPlan = await getPlanFromToken(true);
     setUser((prev) =>
-      prev ? { ...prev, plan: newPlan, isPremium: newPlan !== "A" } : prev,
+      prev ? { ...prev, plan: newPlan, isPremium: !!newPlan } : prev,
     );
   };
 

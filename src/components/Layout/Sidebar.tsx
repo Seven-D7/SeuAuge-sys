@@ -23,8 +23,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
   const { user, logout } = useAuth();
-  const planName =
-    PLANS.find((p) => p.id === (user?.plan ?? "A"))?.name ?? "Gratuito";
+  const planName = PLANS.find((p) => p.id === user?.plan)?.name ?? "Nenhum";
 
   const menuItems = [
     { icon: Home, label: "Início", path: "/dashboard" },

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Search, ShoppingCart, Bell, Menu, User } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { useCartStore } from '../../stores/cartStore';
-import { PLANS } from '../../data/plans';
+import React, { useState } from "react";
+import { Search, ShoppingCart, Bell, Menu, User } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import { useCartStore } from "../../stores/cartStore";
+import { PLANS } from "../../data/plans";
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -12,9 +12,9 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const { user } = useAuth();
   const { getTotalItems, toggleCart, showAddedAnimation } = useCartStore();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const planName = PLANS.find((p) => p.id === (user?.plan ?? 'A'))?.name ?? 'Gratuito';
+  const planName = PLANS.find((p) => p.id === user?.plan)?.name ?? "Nenhum";
 
   const totalCartItems = getTotalItems();
 
@@ -37,8 +37,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
               type="text"
               placeholder="Buscar conteúdo de saúde..."
               value={searchQuery}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setSearchQuery(e.target.value.slice(0, 100)) // Limit input length
+              onChange={
+                (e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearchQuery(e.target.value.slice(0, 100)) // Limit input length
               }
               maxLength={100}
               className="w-full pl-10 pr-4 py-2 bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -58,14 +59,16 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           <button
             onClick={toggleCart}
             className={`relative p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ${
-              showAddedAnimation ? 'animate-bounce bg-primary text-white' : ''
+              showAddedAnimation ? "animate-bounce bg-primary text-white" : ""
             }`}
           >
             <ShoppingCart className="w-5 h-5" />
             {totalCartItems > 0 && (
-              <span className={`absolute -top-1 -right-1 w-5 h-5 bg-teal-500 text-white text-xs rounded-full flex items-center justify-center transition-all duration-200 ${
-                showAddedAnimation ? 'animate-pulse scale-110' : ''
-              }`}>
+              <span
+                className={`absolute -top-1 -right-1 w-5 h-5 bg-teal-500 text-white text-xs rounded-full flex items-center justify-center transition-all duration-200 ${
+                  showAddedAnimation ? "animate-pulse scale-110" : ""
+                }`}
+              >
                 {totalCartItems}
               </span>
             )}
@@ -77,12 +80,20 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
             className="flex items-center space-x-3 focus:outline-none"
           >
             <div className="hidden sm:block text-right">
-              <p className="text-sm font-medium text-slate-900 dark:text-white">{user?.name}</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400">{planName}</p>
+              <p className="text-sm font-medium text-slate-900 dark:text-white">
+                {user?.name}
+              </p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">
+                {planName}
+              </p>
             </div>
             <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-r from-teal-500 to-emerald-500 flex items-center justify-center">
               {user?.avatar ? (
-                <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 <User className="w-4 h-4 text-white" />
               )}

@@ -43,8 +43,7 @@ import PreferencesSetup from "../components/Preferences/PreferencesSetup";
 const Profile: React.FC = () => {
   const { user, refreshPlan } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const planName =
-    PLANS.find((p) => p.id === (user?.plan ?? "A"))?.name ?? "Gratuito";
+  const planName = PLANS.find((p) => p.id === user?.plan)?.name ?? "Nenhum";
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const [userData, setUserData] = useState<{

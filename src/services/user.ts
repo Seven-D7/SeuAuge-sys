@@ -112,7 +112,7 @@ export async function createUserDocument({
   name,
   email,
   avatar = null,
-  plan = "A",
+  plan = null,
   birthdate = null,
 }: CreateUserInput) {
   try {

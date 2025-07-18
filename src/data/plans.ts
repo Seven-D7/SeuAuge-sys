@@ -1,5 +1,5 @@
 export interface Plan {
-  id: "A" | "B" | "C" | "D";
+  id: "B" | "C" | "D";
   name: string;
   fullName: string;
   period: string;
@@ -15,19 +15,6 @@ export interface Plan {
 }
 
 export const PLANS: Plan[] = [
-  {
-    id: "A",
-    name: "Gratuito",
-    fullName: "Plano Gratuito",
-    period: "Sempre",
-    price: "Gratuito",
-    description: "Acesso básico para conhecer a plataforma",
-    features: [
-      "Acesso limitado aos vídeos gratuitos",
-      "Cadastro básico na plataforma",
-      "Comunidade básica",
-    ],
-  },
   {
     id: "B",
     name: "Plano Base",
