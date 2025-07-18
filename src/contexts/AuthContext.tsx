@@ -8,7 +8,7 @@ import {
   updateProfile,
   User as FirebaseUser,
 } from "firebase/auth";
-import { auth } from "../firebase";
+
 import {
   updateUserProfile,
   UpdateUserInput,
@@ -74,41 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    // Development mode bypass for Firebase authentication
-    if (import.meta.env.VITE_DEV_MODE === "true") {
-      // Check if user is already logged in (from localStorage or sessionStorage)
-      const savedUser = localStorage.getItem("devUser");
-      if (savedUser) {
-        try {
-          const parsedUser = JSON.parse(savedUser);
-          setUser(parsedUser);
-        } catch (error) {
-          console.error("Error parsing saved user:", error);
-          // Create default dev user if parse fails
-          const defaultDevUser = {
-            id: "dev-user-default",
-            email: "dev@example.com",
-            name: "Dev User",
-            plan: "D",
-            isPremium: true,
-            isAdmin: false,
-          };
-          setUser(defaultDevUser);
-          localStorage.setItem("devUser", JSON.stringify(defaultDevUser));
-        }
-      } else {
-        // Create default dev user if none exists
-        const defaultDevUser = {
-          id: "dev-user-default",
-          email: "dev@example.com",
-          name: "Dev User",
-          plan: "D",
-          isPremium: true,
-          isAdmin: false,
-        };
-        setUser(defaultDevUser);
-        localStorage.setItem("devUser", JSON.stringify(defaultDevUser));
-      }
+
       setLoading(false);
       return;
     }
@@ -127,6 +93,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = async (email: string, password: string) => {
+    if (isDemoMode) {
+      // Modo demo - simular login
+      const sanitizedEmail = email.trim().toLowerCase();
+      const mockUser: User = {
+        id: "demo-user-123",
+        email: sanitizedEmail,
+        name: "Usuário Demo",
+        plan: "B",
+        isPremium: true,
+        isAdmin: sanitizedEmail === ADMIN_EMAIL,
+      };
+      setUser(mockUser);
+      console.log("🔧 Login demo realizado:", sanitizedEmail);
+      return;
+    }
+
     try {
       // Development mode bypass for Firebase authentication
       if (import.meta.env.VITE_DEV_MODE === "true") {
@@ -179,6 +161,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     name: string,
     birthdate: string,
   ) => {
+    if (isDemoMode) {
+      // Modo demo - simular registro
+      const sanitizedEmail = email.trim().toLowerCase();
+      const sanitizedName = name.trim();
+      const mockUser: User = {
+        id: `demo-user-${Date.now()}`,
+        email: sanitizedEmail,
+        name: sanitizedName,
+        plan: "A",
+        isPremium: false,
+        isAdmin: sanitizedEmail === ADMIN_EMAIL,
+      };
+      setUser(mockUser);
+      console.log("🔧 Registro demo realizado:", sanitizedEmail);
+      return;
+    }
+
     try {
       // Development mode bypass for Firebase registration
       if (import.meta.env.VITE_DEV_MODE === "true") {
@@ -237,12 +236,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const logout = async () => {
-    if (import.meta.env.VITE_DEV_MODE === "true") {
-      localStorage.removeItem("devUser");
-      setUser(null);
-      if (import.meta.env.DEV) {
-        console.log("Usuário desconectado (modo desenvolvimento)");
-      }
       return;
     }
 
@@ -254,6 +247,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const updateUser = async (data: UpdateUserInput) => {
+    if (isDemoMode) {
+      setUser((prev) => (prev ? { ...prev, name: data.name } : prev));
+      console.log("🔧 Update user demo realizado");
+      return;
+    }
+
     try {
       await updateUserProfile(data);
       if (auth.currentUser) {
@@ -267,6 +266,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const refreshPlan = async () => {
+    if (isDemoMode) {
+      console.log("🔧 Refresh plan demo - mantendo plano atual");
+      return;
+    }
+
     if (!auth.currentUser) return;
     const newPlan = await getPlanFromToken(true);
     setUser((prev) =>

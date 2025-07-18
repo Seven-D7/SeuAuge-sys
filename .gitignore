@@ -39,6 +39,7 @@ firestore-debug.log
 *.key
 *.crt
 *.p12
+*.env
 
 # Temporary files
 .tmp
