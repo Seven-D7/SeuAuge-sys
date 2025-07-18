@@ -8,86 +8,86 @@ import {
 } from "../ui/card";
 import { Button } from "../ui/button";
 import {
-  Zap,
-  Trophy,
+  Dumbbell,
+  TrendingUp,
   Target,
   Activity,
   Star,
   Construction,
 } from "lucide-react";
 
-const PerformanceAtletica: React.FC = () => {
+const GanhoMassa: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center">
         <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-full flex items-center justify-center">
-            <Zap className="w-6 h-6 text-white" />
+          <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+            <Dumbbell className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
-            Performance Atlética
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Ganho de Massa Muscular
           </h1>
         </div>
         <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-          Maximize seu desempenho esportivo com treinamento científico
-          personalizado
+          Sistema avançado de hipertrofia com algoritmos de IA para maximizar
+          seu ganho muscular
         </p>
       </div>
 
       {/* Coming Soon Card */}
       <Card className="border-0 shadow-xl bg-white dark:bg-slate-800">
         <CardHeader className="text-center">
-          <div className="w-20 h-20 bg-gradient-to-r from-yellow-100 to-orange-100 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Construction className="w-10 h-10 text-yellow-600 dark:text-yellow-400" />
+          <div className="w-20 h-20 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Construction className="w-10 h-10 text-blue-600 dark:text-blue-400" />
           </div>
           <CardTitle className="text-slate-900 dark:text-white">
             Módulo em Desenvolvimento
           </CardTitle>
           <CardDescription className="text-slate-600 dark:text-slate-400">
-            Sistema especializado em otimização da performance esportiva baseado
-            em ciência do esporte
+            Este módulo avançado está sendo desenvolvido com as mais recentes
+            pesquisas em hipertrofia
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
-              <Trophy className="w-8 h-8 text-yellow-500 mx-auto mb-2" />
+              <TrendingUp className="w-8 h-8 text-blue-500 mx-auto mb-2" />
               <h3 className="font-semibold text-slate-900 dark:text-white mb-1">
-                Esporte Específico
+                Progressão Otimizada
               </h3>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                Treinamento personalizado para sua modalidade
+                Algoritmos que adaptam cargas e volume automaticamente
               </p>
             </div>
             <div className="p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
-              <Target className="w-8 h-8 text-orange-500 mx-auto mb-2" />
+              <Target className="w-8 h-8 text-purple-500 mx-auto mb-2" />
               <h3 className="font-semibold text-slate-900 dark:text-white mb-1">
-                Periodização
+                Foco Muscular
               </h3>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                Picos de performance para competições
+                Periodização específica para cada grupo muscular
               </p>
             </div>
             <div className="p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
-              <Activity className="w-8 h-8 text-red-500 mx-auto mb-2" />
+              <Activity className="w-8 h-8 text-green-500 mx-auto mb-2" />
               <h3 className="font-semibold text-slate-900 dark:text-white mb-1">
-                Análise Biomecânica
+                Recuperação
               </h3>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                Otimização de movimentos e técnicas
+                Monitoramento inteligente da recuperação muscular
               </p>
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-lg p-6">
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-6">
             <Star className="w-8 h-8 text-yellow-500 mx-auto mb-3" />
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
               Em Breve
             </h3>
             <p className="text-slate-600 dark:text-slate-400 mb-4">
-              Este módulo incluirá análise de movimentos, periodização para
-              competições e estratégias de recuperação avançadas.
+              Este módulo incluirá análise genética simulada, periodização
+              automatizada e planos nutricionais específicos para hipertrofia.
             </p>
             <Button
               disabled
@@ -102,4 +102,4 @@ const PerformanceAtletica: React.FC = () => {
   );
 };
 
-export default PerformanceAtletica;
+export default GanhoMassa;

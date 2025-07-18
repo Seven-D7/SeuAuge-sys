@@ -8,7 +8,7 @@ import {
   updateProfile,
   User as FirebaseUser,
 } from "firebase/auth";
-import { auth, isDemoMode } from "../firebase";
+
 import {
   updateUserProfile,
   UpdateUserInput,
@@ -74,9 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    if (isDemoMode) {
-      // Modo demo - autenticação simulada
-      console.log("🔧 Modo demo ativo - autenticação simulada");
+
       setLoading(false);
       return;
     }
@@ -112,6 +110,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
+      // Development mode bypass for Firebase authentication
+      if (import.meta.env.VITE_DEV_MODE === "true") {
+        // Simulate a successful login in development mode
+        const mockUser: User = {
+          id: "dev-user-" + Date.now(),
+          email: email.trim().toLowerCase(),
+          name: "Dev User",
+          plan: "D", // Acesso total para teste
+          isPremium: true,
+          isAdmin: email === ADMIN_EMAIL,
+        };
+        setUser(mockUser);
+        localStorage.setItem("devUser", JSON.stringify(mockUser));
+        if (import.meta.env.DEV) {
+          console.log(
+            "Usuário autenticado (modo desenvolvimento)",
+            mockUser.email,
+          );
+        }
+        return;
+      }
+
       // Sanitize inputs
       const sanitizedEmail = email.trim().toLowerCase();
       const cred = await signInWithEmailAndPassword(
@@ -159,6 +179,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
+      // Development mode bypass for Firebase registration
+      if (import.meta.env.VITE_DEV_MODE === "true") {
+        // Simulate a successful registration in development mode
+        const mockUser: User = {
+          id: "dev-user-" + Date.now(),
+          email: email.trim().toLowerCase(),
+          name: name.trim(),
+          plan: "D", // Acesso total para teste
+          isPremium: true,
+          isAdmin: email === ADMIN_EMAIL,
+        };
+        setUser(mockUser);
+        localStorage.setItem("devUser", JSON.stringify(mockUser));
+        if (import.meta.env.DEV) {
+          console.log(
+            "Usuário registrado (modo desenvolvimento)",
+            mockUser.email,
+          );
+        }
+        return;
+      }
+
       // Sanitize inputs
       const sanitizedEmail = email.trim().toLowerCase();
       const sanitizedName = name.trim();
@@ -194,9 +236,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const logout = async () => {
-    if (isDemoMode) {
-      setUser(null);
-      console.log("🔧 Logout demo realizado");
       return;
     }
 

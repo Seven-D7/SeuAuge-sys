@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   CreditCard,
   Smartphone,
@@ -6,30 +6,31 @@ import {
   ArrowLeft,
   ExternalLink,
   Check,
-} from 'lucide-react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { updateUserPlan } from '../services/plan';
-import { useAuth } from '../contexts/AuthContext';
-import { motion } from 'framer-motion';
+} from "lucide-react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { updateUserPlan } from "../services/plan";
+import { useAuth } from "../contexts/AuthContext";
+import { motion } from "framer-motion";
 
-const PAYMENT_URL = import.meta.env.VITE_PAYMENT_URL || 'https://pagamento.exemplo.com';
+const PAYMENT_URL =
+  import.meta.env.VITE_PAYMENT_URL || "https://pagamento.exemplo.com";
 
 const paymentMethods = [
-  { icon: Smartphone, color: 'text-blue-600', label: 'PIX' },
-  { icon: CreditCard, color: 'text-purple-600', label: 'Cartão' },
-  { icon: Barcode, color: 'text-orange-600', label: 'Boleto' },
+  { icon: Smartphone, color: "text-blue-600", label: "PIX" },
+  { icon: CreditCard, color: "text-purple-600", label: "Cartão" },
+  { icon: Barcode, color: "text-orange-600", label: "Boleto" },
 ];
 
 const Payment: React.FC = () => {
   const navigate = useNavigate();
   const { refreshPlan } = useAuth();
   const [search] = useSearchParams();
-  const selectedPlan = search.get('plan');
-  
+  const selectedPlan = search.get("plan");
+
   // Validate plan parameter
-  const validPlans = ['A', 'B', 'C'];
+  const validPlans = ["A", "B", "C", "D"];
   if (selectedPlan && !validPlans.includes(selectedPlan)) {
-    navigate('/plans');
+    navigate("/plans");
     return null;
   }
 
@@ -40,14 +41,17 @@ const Payment: React.FC = () => {
     // Validate payment URL before opening
     try {
       const url = new URL(PAYMENT_URL);
-      if (url.protocol === 'https:' || (import.meta.env.DEV && url.protocol === 'http:')) {
-        window.open(PAYMENT_URL, '_blank', 'noopener,noreferrer');
+      if (
+        url.protocol === "https:" ||
+        (import.meta.env.DEV && url.protocol === "http:")
+      ) {
+        window.open(PAYMENT_URL, "_blank", "noopener,noreferrer");
       } else {
-        throw new Error('URL de pagamento inválida');
+        throw new Error("URL de pagamento inválida");
       }
     } catch (error) {
-      console.error('Invalid payment URL:', error);
-      alert('Erro: URL de pagamento inválida');
+      console.error("Invalid payment URL:", error);
+      alert("Erro: URL de pagamento inválida");
     }
   };
 
@@ -57,7 +61,7 @@ const Payment: React.FC = () => {
     try {
       await updateUserPlan(selectedPlan);
       await refreshPlan();
-      navigate('/plans');
+      navigate("/plans");
     } catch (error) {
       console.error("Falha ao confirmar o pagamento:", error);
       // Aqui você poderia exibir uma notificação de erro para o usuário
@@ -69,16 +73,23 @@ const Payment: React.FC = () => {
   return (
     <section className="max-w-2xl mx-auto p-6 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Pagamento</h1>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+          Pagamento
+        </h1>
         {selectedPlan && (
           <p className="text-slate-600 dark:text-slate-400 text-base">
-            Você está adquirindo o <span className="font-semibold text-slate-900 dark:text-white">Plano {selectedPlan}</span>
+            Você está adquirindo o{" "}
+            <span className="font-semibold text-slate-900 dark:text-white">
+              Plano {selectedPlan}
+            </span>
           </p>
         )}
       </div>
 
       <div>
-        <p className="text-slate-700 dark:text-slate-300 font-medium mb-3">Escolha a forma de pagamento:</p>
+        <p className="text-slate-700 dark:text-slate-300 font-medium mb-3">
+          Escolha a forma de pagamento:
+        </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {paymentMethods.map(({ icon: Icon, color, label }) => (
             <motion.button
@@ -90,13 +101,15 @@ const Payment: React.FC = () => {
                 transition-all backdrop-blur bg-white/20 dark:bg-slate-800/30 shadow-md
                 ${
                   selectedMethod === label
-                    ? 'ring-2 ring-primary border-transparent'
-                    : 'border-slate-200 dark:border-slate-700'
+                    ? "ring-2 ring-primary border-transparent"
+                    : "border-slate-200 dark:border-slate-700"
                 }`}
               aria-pressed={selectedMethod === label}
             >
               <Icon className={`w-8 h-8 mb-2 ${color}`} />
-              <span className="font-medium text-sm text-slate-800 dark:text-slate-200">{label}</span>
+              <span className="font-medium text-sm text-slate-800 dark:text-slate-200">
+                {label}
+              </span>
             </motion.button>
           ))}
         </div>
@@ -113,8 +126,8 @@ const Payment: React.FC = () => {
           className={`inline-flex items-center justify-center px-5 py-3 text-sm font-semibold rounded-lg transition-colors
             ${
               selectedMethod
-                ? 'bg-primary hover:bg-primary-dark text-white'
-                : 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                ? "bg-primary hover:bg-primary-dark text-white"
+                : "bg-slate-300 text-slate-500 cursor-not-allowed"
             }`}
         >
           <ExternalLink className="w-4 h-4 mr-2" /> Realizar Pagamento
