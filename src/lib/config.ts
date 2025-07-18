@@ -1,1 +1,1 @@
-export const storeEnabled = import.meta.env.VITE_STORE_ENABLED === 'true';
+export const storeEnabled = false; // Temporariamente desabilitada - Em breve
