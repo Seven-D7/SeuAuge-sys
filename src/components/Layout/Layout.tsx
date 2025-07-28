@@ -15,10 +15,10 @@ const Layout: React.FC = () => {
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
         {/* Main content */}
-        <div className="flex-1 lg:ml-0">
+        <div className="flex-1 lg:ml-72">
           <Header onMenuClick={() => setSidebarOpen(true)} />
 
-          <main className="p-6">
+          <main className="p-3 sm:p-4 lg:p-6 max-w-full">
             <Outlet />
           </main>
         </div>

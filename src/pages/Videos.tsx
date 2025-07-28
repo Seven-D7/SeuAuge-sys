@@ -131,14 +131,14 @@ const Videos: React.FC = () => {
         </div>
 
         {/* Video Info */}
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Main Content */}
             <div className="lg:col-span-2">
-              <h1 className="text-3xl font-bold text-white mb-4">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-4">
                 {selectedVideo.metadata.title}
               </h1>
-              <div className="flex items-center space-x-4 text-slate-400 mb-6">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-slate-400 mb-4 sm:mb-6 text-sm sm:text-base">
                 <span>{selectedVideo.metadata.instructor}</span>
                 <span>•</span>
                 <span>{selectedVideo.metadata.category}</span>
@@ -147,16 +147,16 @@ const Videos: React.FC = () => {
                   {Math.floor(selectedVideo.metadata.duration / 60)} min
                 </span>
               </div>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-slate-300 leading-relaxed text-sm sm:text-base">
                 {selectedVideo.metadata.description}
               </p>
 
               {/* Tags */}
-              <div className="flex flex-wrap gap-2 mt-6">
+              <div className="flex flex-wrap gap-2 mt-4 sm:mt-6">
                 {selectedVideo.metadata.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="bg-slate-800 text-slate-300 px-3 py-1 rounded-full text-sm"
+                    className="bg-slate-800 text-slate-300 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm"
                   >
                     #{tag}
                   </span>
@@ -207,14 +207,14 @@ const Videos: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div className="flex flex-col gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
             Biblioteca de Vídeos
           </h1>
-          <p className="text-slate-400">
+          <p className="text-sm sm:text-base text-slate-400">
             {isDemoMode && (
-              <span className="inline-flex items-center px-2 py-1 bg-blue-900/20 text-blue-300 rounded-full text-sm mr-3">
+              <span className="inline-flex items-center px-2 py-1 bg-blue-900/20 text-blue-300 rounded-full text-xs sm:text-sm mr-3">
                 🔧 Modo Demo - Vídeos simulados
               </span>
             )}
@@ -223,8 +223,8 @@ const Videos: React.FC = () => {
         </div>
 
         {/* Search */}
-        <div className="flex items-center space-x-4">
-          <div className="relative">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+          <div className="relative flex-1 sm:max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
             <input
               type="text"
@@ -232,13 +232,13 @@ const Videos: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-              className="pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <button
             onClick={handleSearch}
             disabled={searchLoading}
-            className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+            className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 text-sm sm:text-base"
           >
             {searchLoading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -287,7 +287,7 @@ const Videos: React.FC = () => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
               {filteredVideos.map((video) => (
                 <VideoCard
                   key={video.id}

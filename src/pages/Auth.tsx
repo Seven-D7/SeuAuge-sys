@@ -15,28 +15,30 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Lado esquerdo */}
-      <div className="w-1/2 bg-gradient-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center p-8">
-        <div className="text-center max-w-md space-y-6">
+    <div className="min-h-screen flex flex-col lg:flex-row">
+      {/* Lado esquerdo - Hero section */}
+      <div className="w-full lg:w-1/2 bg-gradient-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center p-6 sm:p-8 min-h-[40vh] lg:min-h-screen">
+        <div className="text-center max-w-md space-y-4 lg:space-y-6">
           <div className="flex justify-center">
-            <div className="bg-white/10 p-4 rounded-full">
-              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="bg-white/10 p-3 sm:p-4 rounded-full">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12l5 5L20 7" />
               </svg>
             </div>
           </div>
-          <h1 className="text-3xl font-bold leading-snug">
-            Transforme Sua Jornada de <br /> Saúde
+          <h1 className="text-2xl sm:text-3xl font-bold leading-snug">
+            Transforme Sua Jornada de <br className="hidden sm:block" />
+            <span className="sm:hidden">Saúde</span>
+            <span className="hidden sm:inline">Saúde</span>
           </h1>
-          <p className="text-emerald-100 text-sm">
+          <p className="text-emerald-100 text-sm sm:text-base px-4 lg:px-0">
             Acesse conteúdo premium de bem-estar, orientação nutricional especializada e uma loja de produtos de saúde selecionados, tudo em uma plataforma.
           </p>
         </div>
       </div>
 
-      {/* Lado direito */}
-      <div className="w-1/2 bg-slate-900 flex items-center justify-center p-8">
+      {/* Lado direito - Form */}
+      <div className="w-full lg:w-1/2 bg-slate-900 flex items-center justify-center p-4 sm:p-6 lg:p-8 min-h-[60vh] lg:min-h-screen">
         {authMode === 'login' ? (
           <LoginForm onToggleMode={toggleMode} />
         ) : (

@@ -30,10 +30,10 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
       onClick={onClick}
     >
       <div className="relative">
-        <img 
-          src={video.thumbnail} 
+        <img
+          src={video.thumbnail}
           alt={video.title}
-          className="w-full h-48 object-cover"
+          className="w-full h-40 sm:h-48 object-cover"
         />
         
         {/* Overlay */}
@@ -47,23 +47,24 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
 
         {/* Premium badge */}
         {!video.isFree && (
-          <div className="absolute top-3 left-3">
-            <div className="bg-yellow-500 text-black px-2 py-1 rounded-full text-xs font-medium flex items-center">
+          <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
+            <div className="bg-yellow-500 text-black px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium flex items-center">
               <Lock className="w-3 h-3 mr-1" />
-              Premium
+              <span className="hidden sm:inline">Premium</span>
+              <span className="sm:hidden">P</span>
             </div>
           </div>
         )}
 
         {/* Category badge */}
-        <div className="absolute top-3 right-3">
-          <span className="bg-primary text-white px-2 py-1 rounded-full text-xs font-medium">
+        <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
+          <span className="bg-primary text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium">
             {video.category}
           </span>
         </div>
 
         {/* Duration */}
-        <div className="absolute bottom-3 right-3 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm flex items-center">
+        <div className="absolute bottom-2 sm:bottom-3 right-2 sm:right-3 bg-black bg-opacity-70 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm flex items-center">
           <Clock className="w-3 h-3 mr-1" />
           {video.duration}
         </div>
@@ -71,17 +72,17 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
         {/* Favorite button */}
         <button
           onClick={toggleFavorite}
-          className="absolute bottom-3 left-3 p-2 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-full transition-all duration-200"
+          className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 p-1.5 sm:p-2 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-full transition-all duration-200"
         >
-          <Heart 
-            className={`w-4 h-4 ${isFavorite ? 'text-red-500 fill-current' : 'text-white'}`} 
+          <Heart
+            className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isFavorite ? 'text-red-500 fill-current' : 'text-white'}`}
           />
         </button>
       </div>
 
-      <div className="p-4">
-        <h3 className="font-semibold text-white mb-2 line-clamp-2">{video.title}</h3>
-        <p className="text-sm text-slate-400 mb-2">{video.instructor}</p>
+      <div className="p-3 sm:p-4">
+        <h3 className="font-semibold text-white mb-2 line-clamp-2 text-sm sm:text-base">{video.title}</h3>
+        <p className="text-xs sm:text-sm text-slate-400 mb-2">{video.instructor}</p>
         <p className="text-xs text-slate-500 line-clamp-2">{video.description}</p>
       </div>
     </div>

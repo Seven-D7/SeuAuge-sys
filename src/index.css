@@ -494,14 +494,75 @@
   .animate-blob {
     animation-duration: 10s;
   }
-  
+
   .hover-lift:hover {
     transform: translateY(-4px) scale(1.01);
   }
-  
+
   .glass-effect,
   .glass-effect-dark {
     backdrop-filter: blur(8px);
+  }
+
+  /* Melhorias para mobile */
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Ajustes para botões em mobile */
+  .btn-primary {
+    @apply min-h-[44px] touch-manipulation;
+  }
+
+  /* Melhor espaçamento para mobile */
+  .space-y-mobile > * + * {
+    margin-top: 0.75rem;
+  }
+
+  .space-x-mobile > * + * {
+    margin-left: 0.75rem;
+  }
+
+  /* Cards mais compactos em mobile */
+  .card-mobile {
+    @apply p-3 rounded-lg;
+  }
+
+  /* Texto responsivo */
+  .text-responsive-sm {
+    @apply text-xs;
+  }
+
+  .text-responsive-base {
+    @apply text-sm;
+  }
+
+  .text-responsive-lg {
+    @apply text-base;
+  }
+
+  .text-responsive-xl {
+    @apply text-lg;
+  }
+
+  .text-responsive-2xl {
+    @apply text-xl;
+  }
+}
+
+/* Utilitários para touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .hover-lift:hover {
+    transform: none;
+  }
+
+  .hover-glow:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .hover-tilt:hover {
+    transform: none;
   }
 }
 
@@ -528,4 +589,3 @@
 .backdrop-blur-strong {
   backdrop-filter: blur(20px);
 }
-

@@ -19,10 +19,10 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const totalCartItems = getTotalItems();
 
   return (
-    <header className="bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-4">
+    <header className="bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-3 sm:px-4 py-3 sm:py-4">
       <div className="flex items-center justify-between">
         {/* Left section */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-4 flex-1">
           <button
             onClick={onMenuClick}
             className="lg:hidden p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors"
@@ -31,7 +31,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           </button>
 
           {/* Search bar */}
-          <div className="relative max-w-md w-full">
+          <div className="relative max-w-md w-full hidden sm:block">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
             <input
               type="text"
@@ -48,7 +48,12 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         </div>
 
         {/* Right section */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-4">
+          {/* Search button for mobile */}
+          <button className="sm:hidden p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors">
+            <Search className="w-5 h-5" />
+          </button>
+
           {/* Notifications */}
           <button className="relative p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors">
             <Bell className="w-5 h-5" />
@@ -77,9 +82,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           {/* User profile */}
           <Link
             to="/profile"
-            className="flex items-center space-x-3 focus:outline-none"
+            className="flex items-center space-x-2 sm:space-x-3 focus:outline-none"
           >
-            <div className="hidden sm:block text-right">
+            <div className="hidden md:block text-right">
               <p className="text-sm font-medium text-slate-900 dark:text-white">
                 {user?.name}
               </p>
