@@ -43,7 +43,7 @@ function Home() {
         <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="bg-gradient-to-r from-teal-400 to-emerald-400 text-white p-1.5 sm:p-2 rounded-xl shadow-lg">
+              <div className="bg-gradient-to-r from-slate-800 to-slate-900 text-white p-1.5 sm:p-2 rounded-xl shadow-lg">
                 <img
                   src="/src/assets/icone.png"
                   alt="Logo"
