@@ -164,7 +164,7 @@ export default function PlansSection() {
           </p>
           <Button
             variant="outline"
-            className="border-teal-400/50 text-teal-300 hover:bg-teal-400/20 px-3 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-2.5 md:py-3 text-xs sm:text-sm md:text-base lg:text-lg font-medium backdrop-blur-sm"
+            className="border-slate-300 text-slate-700 hover:bg-slate-100 px-3 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-2.5 md:py-3 text-xs sm:text-sm md:text-base lg:text-lg font-medium backdrop-blur-sm"
             onClick={() => navigate("/plans")}
           >
             <span className="hidden md:inline">Ver Comparação Completa</span>
