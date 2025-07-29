@@ -630,7 +630,7 @@ const Profile: React.FC = () => {
 
           {activeTab === "goals" && (
             <section className="space-y-6">
-              <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
                   <Target className="w-6 h-6 mr-3 text-primary" />
                   Metas Inteligentes
