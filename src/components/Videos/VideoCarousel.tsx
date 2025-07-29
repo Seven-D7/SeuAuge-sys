@@ -153,7 +153,7 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
                 key={video.id}
                 className="relative flex-shrink-0 group/card cursor-pointer"
                 style={{ width: `${100 / visibleCards}%` }}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: window.innerWidth >= 640 ? 1.05 : 1.02 }}
                 transition={{ duration: 0.2 }}
                 onClick={() => onVideoSelect(video.id)}
               >
@@ -171,13 +171,13 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
 
                   {/* Premium Badge */}
                   {!video.isFree && (
-                    <div className="absolute top-2 right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs font-bold px-2 py-1 rounded-full">
+                    <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs font-bold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full">
                       PRO
                     </div>
                   )}
 
                   {/* Duration */}
-                  <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">
+                  <div className="absolute bottom-1.5 right-1.5 sm:bottom-2 sm:right-2 bg-black/80 text-white text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded backdrop-blur-sm">
                     {video.duration}
                   </div>
 
