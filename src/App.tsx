@@ -222,7 +222,7 @@ function App() {
             <Route
               path="profile"
               element={
-                <Suspense fallback={<LoadingFallback page="perfil" />}>
+                <Suspense fallback={<LoadingFallback />}>
                   <Profile />
                 </Suspense>
               }
