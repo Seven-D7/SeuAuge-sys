@@ -44,10 +44,12 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
   useEffect(() => {
     const updateVisibleCards = () => {
       const width = window.innerWidth;
-      if (width < 640) setVisibleCards(2);
-      else if (width < 768) setVisibleCards(3);
-      else if (width < 1024) setVisibleCards(4);
-      else if (width < 1280) setVisibleCards(5);
+      if (width < 480) setVisibleCards(1);
+      else if (width < 640) setVisibleCards(2);
+      else if (width < 768) setVisibleCards(2);
+      else if (width < 1024) setVisibleCards(3);
+      else if (width < 1280) setVisibleCards(4);
+      else if (width < 1536) setVisibleCards(5);
       else setVisibleCards(6);
     };
 
@@ -93,9 +95,9 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
   const canGoRight = currentIndex < videos.length - visibleCards;
 
   return (
-    <div className="relative group mb-8">
+    <div className="relative group mb-6 sm:mb-8">
       {/* Section Title */}
-      <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-4 px-4 lg:px-12">
+      <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white mb-3 sm:mb-4 px-3 sm:px-4 lg:px-12">
         {title}
       </h2>
 
@@ -134,9 +136,9 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
         </AnimatePresence>
 
         {/* Video Cards */}
-        <div className="px-4 lg:px-12">
+        <div className="px-3 sm:px-4 lg:px-12">
           <motion.div
-            className="flex gap-2 lg:gap-4"
+            className="flex gap-1.5 sm:gap-2 lg:gap-4"
             animate={{
               x: `-${currentIndex * (100 / visibleCards)}%`,
             }}
