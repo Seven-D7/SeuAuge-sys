@@ -58,10 +58,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       {/* Sidebar */}
       <div
         className={`
-        fixed top-0 left-0 h-screen w-72 max-w-[85vw] sm:max-w-none overflow-y-auto bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-white border-r border-slate-200 dark:border-slate-800 z-50
+        fixed top-0 left-0 h-full w-72 max-w-[85vw] sm:max-w-none overflow-y-auto bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-white border-r border-slate-200 dark:border-slate-800 z-50
         transform transition-transform duration-300 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        lg:translate-x-0 lg:static lg:z-auto lg:w-72
+        lg:translate-x-0 lg:fixed lg:z-auto lg:w-72
       `}
       >
         {/* Logo */}
