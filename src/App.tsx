@@ -267,7 +267,7 @@ function App() {
               path="apps"
               element={
                 <PlanGuard allowedPlans={["B", "C"]}>
-                  <Suspense fallback={<LoadingFallback page="aplicativos" />}>
+                  <Suspense fallback={<LoadingFallback />}>
                     <AppsPage />
                   </Suspense>
                 </PlanGuard>
