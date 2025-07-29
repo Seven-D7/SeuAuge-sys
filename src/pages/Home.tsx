@@ -86,7 +86,7 @@ function Home() {
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 text-slate-900">
             Alcance Seu
-            <span className="bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent block animate-pulse">
+            <span className="bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 bg-clip-text text-transparent block">
               AUGE
             </span>
           </h1>
