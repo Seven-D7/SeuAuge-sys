@@ -81,7 +81,7 @@ export default function PlansSection() {
                       <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-slate-900 mb-1 sm:mb-2">
                         {plan.name}
                       </h3>
-                      <p className="text-xs sm:text-sm md:text-base text-white/70 mb-3 sm:mb-4 leading-relaxed min-h-[2rem] sm:min-h-[2.5rem] md:min-h-[3rem] px-1 sm:px-2">
+                      <p className="text-xs sm:text-sm md:text-base text-slate-600 mb-3 sm:mb-4 leading-relaxed min-h-[2rem] sm:min-h-[2.5rem] md:min-h-[3rem] px-1 sm:px-2">
                         {plan.description}
                       </p>
 
