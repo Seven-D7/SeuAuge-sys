@@ -150,12 +150,12 @@ function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-            <Card className="text-center p-4 sm:p-6 lg:p-8 border-0 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-[1.02] sm:hover:scale-105">
-              <div className="bg-gradient-to-r from-blue-400/20 to-blue-600/20 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 backdrop-blur-sm border border-blue-400/30">
-                <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-blue-300" />
+            <Card className="text-center p-4 sm:p-6 lg:p-8 border-0 bg-white/80 backdrop-blur-md border border-slate-200 hover:bg-white/90 transition-all duration-300 transform hover:scale-[1.02] sm:hover:scale-105 shadow-sm">
+              <div className="bg-gradient-to-r from-slate-100 to-slate-200 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 backdrop-blur-sm border border-slate-300">
+                <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-slate-700" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-white">Resultados Científicos</h3>
-              <p className="text-white/70 text-sm sm:text-base leading-relaxed">
+              <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-slate-900">Resultados Científicos</h3>
+              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
                 Metodologia baseada em estudos científicos com mais de 15.000 casos de sucesso comprovados.
               </p>
             </Card>
