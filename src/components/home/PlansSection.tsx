@@ -69,8 +69,8 @@ export default function PlansSection() {
                       <div
                         className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 mx-auto mb-2 sm:mb-3 md:mb-4 rounded-full flex items-center justify-center backdrop-blur-sm border ${
                           plan.isPopular
-                            ? "bg-gradient-to-r from-teal-400/30 to-emerald-400/30 border-teal-400/50"
-                            : "bg-white/20 border-white/30"
+                            ? "bg-gradient-to-r from-slate-100 to-slate-200 border-slate-300"
+                            : "bg-slate-50 border-slate-200"
                         }`}
                       >
                         <Icon
