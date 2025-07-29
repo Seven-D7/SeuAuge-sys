@@ -358,7 +358,7 @@ const Profile: React.FC = () => {
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
               {/* Avatar */}
               <div className="relative group">
-                <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-r from-teal-500 to-emerald-500 flex items-center justify-center ring-4 ring-white dark:ring-slate-800 shadow-2xl transition-all duration-300 group-hover:scale-105">
+                <div className="w-24 h-24 rounded-full overflow-hidden bg-gradient-to-r from-slate-600 to-slate-700 flex items-center justify-center ring-2 ring-white dark:ring-slate-800 shadow-lg transition-all duration-300">
                   {preview ? (
                     <img
                       src={preview}
