@@ -796,7 +796,7 @@ const Profile: React.FC = () => {
           )}
 
           {activeTab === "settings" && (
-            <section className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+            <section className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
                 <Settings className="w-6 h-6 mr-3 text-slate-600 dark:text-slate-400" />
                 Configurações
