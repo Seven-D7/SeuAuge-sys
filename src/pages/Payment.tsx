@@ -17,7 +17,7 @@ const PAYMENT_URL =
 
 const paymentMethods = [
   { icon: Smartphone, color: "text-blue-600", label: "PIX" },
-  { icon: CreditCard, color: "text-purple-600", label: "Cartão" },
+  { icon: CreditCard, color: "text-blue-600", label: "Cartão" },
   { icon: Barcode, color: "text-orange-600", label: "Boleto" },
 ];
 
