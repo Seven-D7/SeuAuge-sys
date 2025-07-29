@@ -338,20 +338,17 @@ const Profile: React.FC = () => {
 
         {/* Profile Card */}
         <section className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700">
-          <div className="h-32 bg-gradient-to-r from-primary via-emerald-600 to-cyan-600 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
+          <div className="h-24 bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 relative overflow-hidden">
             <div className="absolute top-4 right-4">
-              <div className="inline-flex items-center px-4 py-2 bg-black/30 backdrop-blur-sm text-white rounded-full text-sm font-medium border border-white/20">
+              <div className="inline-flex items-center px-3 py-1.5 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm text-slate-900 dark:text-white rounded-lg text-sm font-medium border border-slate-200 dark:border-slate-600">
                 <Award className="w-4 h-4 mr-2" />
                 {planName}
               </div>
             </div>
             {/* Streak Badge */}
             <div className="absolute top-4 left-4">
-              <div
-                className={`inline-flex items-center px-4 py-2 bg-gradient-to-r ${getStreakColor(currentStreak)} text-white rounded-full text-sm font-medium shadow-lg`}
-              >
-                <Flame className="w-4 h-4 mr-2" />
+              <div className="inline-flex items-center px-3 py-1.5 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm text-slate-900 dark:text-white rounded-lg text-sm font-medium border border-slate-200 dark:border-slate-600">
+                <Flame className="w-4 h-4 mr-2 text-orange-500" />
                 {currentStreak} dias
               </div>
             </div>
