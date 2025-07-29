@@ -206,7 +206,7 @@ function App() {
             <Route
               path="store"
               element={
-                <Suspense fallback={<LoadingFallback page="loja" />}>
+                <Suspense fallback={<LoadingFallback />}>
                   <Store />
                 </Suspense>
               }
