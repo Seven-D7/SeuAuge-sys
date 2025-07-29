@@ -88,7 +88,7 @@ export default function PlansSection() {
                       <div className="mb-3 sm:mb-4 md:mb-6">
                         <div className="mb-1 sm:mb-2">
                           {plan.originalPrice && (
-                            <span className="text-xs sm:text-sm md:text-base lg:text-lg text-white/50 line-through mr-1 sm:mr-2">
+                            <span className="text-xs sm:text-sm md:text-base lg:text-lg text-slate-400 line-through mr-1 sm:mr-2">
                               {plan.originalPrice}
                             </span>
                           )}
