@@ -117,7 +117,7 @@ const FitnessModulesApp = lazy(() =>
 
 // Enhanced loading component
 const LoadingFallback: React.FC<{ page?: string }> = ({ page }) => (
-  <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 flex items-center justify-center">
+  <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-900 flex items-center justify-center">
     <div className="text-center">
       <div className="relative">
         <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mb-4 mx-auto border border-white/20">
