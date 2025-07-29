@@ -57,7 +57,7 @@ export default function PlansSection() {
                   }`}
                 >
                   {plan.isPopular && (
-                    <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-teal-400 to-emerald-400 text-white text-center py-1.5 sm:py-2 text-xs sm:text-sm font-medium">
+                    <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-slate-800 to-slate-900 text-white text-center py-1.5 sm:py-2 text-xs sm:text-sm font-medium">
                       🔥 {plan.badge}
                     </div>
                   )}
