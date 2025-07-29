@@ -50,10 +50,10 @@ export default function PlansSection() {
               return (
                 <Card
                   key={plan.id}
-                  className={`relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.01] sm:hover:scale-[1.02] lg:hover:scale-105 flex flex-col h-full backdrop-blur-md border border-white/20 ${
+                  className={`relative overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.01] sm:hover:scale-[1.02] lg:hover:scale-105 flex flex-col h-full backdrop-blur-md border border-slate-200 ${
                     plan.isPopular
-                      ? "ring-2 ring-teal-400/50 bg-gradient-to-br from-teal-400/20 to-emerald-400/20 transform scale-[1.01] sm:scale-[1.02] lg:scale-105"
-                      : "bg-white/10 hover:bg-white/15"
+                      ? "ring-2 ring-slate-300 bg-white/90 transform scale-[1.01] sm:scale-[1.02] lg:scale-105"
+                      : "bg-white/80 hover:bg-white/90"
                   }`}
                 >
                   {plan.isPopular && (
