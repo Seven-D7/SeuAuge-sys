@@ -241,7 +241,7 @@ function App() {
             <Route
               path="plans"
               element={
-                <Suspense fallback={<LoadingFallback page="planos" />}>
+                <Suspense fallback={<LoadingFallback />}>
                   <Plans />
                 </Suspense>
               }
