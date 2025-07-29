@@ -100,7 +100,7 @@ function Home() {
             <Button
               size="lg"
               onClick={handleStartJourney}
-              className="h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-500 hover:to-emerald-500 shadow-2xl hover:shadow-teal-500/25 transition-all duration-300 transform hover:scale-105 backdrop-blur-sm border border-white/20"
+              className="h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg bg-slate-900 hover:bg-slate-800 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-slate-300"
             >
               <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               <span className="hidden sm:inline">Iniciar Transformação</span>
