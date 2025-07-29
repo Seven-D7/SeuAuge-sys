@@ -10,18 +10,16 @@ const Layout: React.FC = () => {
   // Container principal do layout
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white">
-      <div className="flex h-screen overflow-hidden">
+      <div className="flex">
         {/* Sidebar */}
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
         {/* Main content */}
-        <div className="flex-1 flex flex-col lg:ml-72 overflow-hidden">
+        <div className="flex-1 flex flex-col min-h-screen lg:ml-72">
           <Header onMenuClick={() => setSidebarOpen(true)} />
 
-          <main className="flex-1 overflow-y-auto p-2 sm:p-3 md:p-4 lg:p-6">
-            <div className="max-w-full">
-              <Outlet />
-            </div>
+          <main className="flex-1 p-3 sm:p-4 md:p-6">
+            <Outlet />
           </main>
         </div>
       </div>
