@@ -79,7 +79,7 @@ function Home() {
       <section className="py-12 sm:py-16 lg:py-20 px-3 sm:px-4 relative z-10">
         <div className="max-w-7xl mx-auto text-center">
           <div className="mb-6 sm:mb-8">
-            <Badge className="bg-gradient-to-r from-teal-400/20 to-emerald-400/20 text-teal-200 border-teal-400/30 backdrop-blur-sm mb-4 shadow-lg text-xs sm:text-sm">
+            <Badge className="bg-slate-100 text-slate-700 border-slate-300 mb-4 shadow-sm text-xs sm:text-sm">
               🏆 #1 em Transformação Corporal
             </Badge>
           </div>
