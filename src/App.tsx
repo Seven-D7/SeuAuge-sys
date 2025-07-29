@@ -157,7 +157,7 @@ function App() {
           <Route
             path="/about"
             element={
-              <Suspense fallback={<LoadingFallback page="sobre" />}>
+              <Suspense fallback={<LoadingFallback />}>
                 <About />
               </Suspense>
             }
