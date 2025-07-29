@@ -120,7 +120,7 @@ export default function PlansSection() {
                             <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 bg-green-400/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 backdrop-blur-sm border border-green-400/30">
                               <Check className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 text-green-300" />
                             </div>
-                            <span className="text-white/80 text-xs sm:text-sm leading-relaxed">
+                            <span className="text-slate-700 text-xs sm:text-sm leading-relaxed">
                               {feature}
                             </span>
                           </div>
