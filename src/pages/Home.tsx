@@ -91,7 +91,7 @@ function Home() {
             </span>
           </h1>
 
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/80 mb-6 sm:mb-8 max-w-4xl mx-auto leading-relaxed px-2">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-slate-600 mb-6 sm:mb-8 max-w-4xl mx-auto leading-relaxed px-2">
             Transforme seu corpo e mente com nossos planos personalizados de emagrecimento.
             Resultados científicos, acompanhamento profissional e a motivação que você precisa.
           </p>
