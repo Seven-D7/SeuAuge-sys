@@ -51,7 +51,7 @@ function Home() {
                 />
               </div>
               <div>
-                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-white to-cyan-100 bg-clip-text text-transparent">
+                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900">
                   Meu Auge
                 </h1>
                 <p className="text-xs sm:text-sm text-white/70 hidden sm:block">Transforme Sua Vida</p>
