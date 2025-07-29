@@ -74,7 +74,7 @@ export default function PlansSection() {
                         }`}
                       >
                         <Icon
-                          className={`w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 ${plan.isPopular ? "text-teal-200" : "text-white/80"}`}
+                          className={`w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 ${plan.isPopular ? "text-slate-700" : "text-slate-600"}`}
                         />
                       </div>
 
