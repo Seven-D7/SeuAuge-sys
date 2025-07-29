@@ -489,6 +489,16 @@
   gap: 0.5rem;
 }
 
+/* Prevenção de overflow horizontal */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
 /* Responsividade aprimorada */
 @media (max-width: 768px) {
   .animate-blob {
@@ -507,6 +517,13 @@
   /* Melhorias para mobile */
   body {
     overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Melhora tap targets em mobile */
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
   }
 
   /* Ajustes para botões em mobile */
