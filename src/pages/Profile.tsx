@@ -337,31 +337,28 @@ const Profile: React.FC = () => {
         </div>
 
         {/* Profile Card */}
-        <section className="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-700">
-          <div className="h-32 bg-gradient-to-r from-primary via-emerald-600 to-cyan-600 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
+        <section className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700">
+          <div className="h-24 bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 relative overflow-hidden">
             <div className="absolute top-4 right-4">
-              <div className="inline-flex items-center px-4 py-2 bg-black/30 backdrop-blur-sm text-white rounded-full text-sm font-medium border border-white/20">
+              <div className="inline-flex items-center px-3 py-1.5 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm text-slate-900 dark:text-white rounded-lg text-sm font-medium border border-slate-200 dark:border-slate-600">
                 <Award className="w-4 h-4 mr-2" />
                 {planName}
               </div>
             </div>
             {/* Streak Badge */}
             <div className="absolute top-4 left-4">
-              <div
-                className={`inline-flex items-center px-4 py-2 bg-gradient-to-r ${getStreakColor(currentStreak)} text-white rounded-full text-sm font-medium shadow-lg`}
-              >
-                <Flame className="w-4 h-4 mr-2" />
+              <div className="inline-flex items-center px-3 py-1.5 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm text-slate-900 dark:text-white rounded-lg text-sm font-medium border border-slate-200 dark:border-slate-600">
+                <Flame className="w-4 h-4 mr-2 text-orange-500" />
                 {currentStreak} dias
               </div>
             </div>
           </div>
 
-          <div className="-mt-16 p-8">
+          <div className="-mt-12 p-6">
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
               {/* Avatar */}
               <div className="relative group">
-                <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-r from-teal-500 to-emerald-500 flex items-center justify-center ring-4 ring-white dark:ring-slate-800 shadow-2xl transition-all duration-300 group-hover:scale-105">
+                <div className="w-24 h-24 rounded-full overflow-hidden bg-gradient-to-r from-slate-600 to-slate-700 flex items-center justify-center ring-2 ring-white dark:ring-slate-800 shadow-lg transition-all duration-300">
                   {preview ? (
                     <img
                       src={preview}
@@ -447,7 +444,7 @@ const Profile: React.FC = () => {
                       ].map((metric, index) => (
                         <div
                           key={index}
-                          className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-3 sm:p-4 text-center hover:bg-slate-100 dark:hover:bg-slate-700/70 transition-all duration-200 border border-slate-200 dark:border-slate-600/50"
+                          className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3 text-center hover:bg-slate-100 dark:hover:bg-slate-700/70 transition-all duration-200 border border-slate-200 dark:border-slate-600/50"
                         >
                           <div
                             className={`text-lg sm:text-xl font-bold ${metric.color}`}
@@ -514,7 +511,7 @@ const Profile: React.FC = () => {
         </section>
 
         {/* Tabs de navega��ão */}
-        <div className="flex flex-wrap gap-2 bg-white dark:bg-slate-800 p-2 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-x-auto">
+        <div className="flex flex-wrap gap-2 bg-white dark:bg-slate-800 p-2 rounded-lg border border-slate-200 dark:border-slate-700 overflow-x-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
@@ -545,7 +542,7 @@ const Profile: React.FC = () => {
                   return (
                     <div
                       key={index}
-                      className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-300 hover:scale-105 group"
+                      className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-300 group"
                     >
                       <div className="flex items-center justify-between mb-4">
                         <Icon
@@ -567,7 +564,7 @@ const Profile: React.FC = () => {
               </section>
 
               {/* Desafios Diários */}
-              <section className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+              <section className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
                   <Zap className="w-6 h-6 mr-3 text-yellow-500" />
                   Desafios Diários
@@ -633,7 +630,7 @@ const Profile: React.FC = () => {
 
           {activeTab === "goals" && (
             <section className="space-y-6">
-              <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
                   <Target className="w-6 h-6 mr-3 text-primary" />
                   Metas Inteligentes
@@ -762,7 +759,7 @@ const Profile: React.FC = () => {
 
           {activeTab === "metrics" && (
             <section className="space-y-6">
-              <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
                   <TrendingUp className="w-6 h-6 mr-3 text-emerald-500" />
                   Métricas Corporais
@@ -799,7 +796,7 @@ const Profile: React.FC = () => {
           )}
 
           {activeTab === "settings" && (
-            <section className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+            <section className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
                 <Settings className="w-6 h-6 mr-3 text-slate-600 dark:text-slate-400" />
                 Configurações

@@ -6,7 +6,7 @@ import AdminRoute from "@components/AdminRoute";
 import Layout from "@components/Layout/Layout";
 import PlanGuard from "@components/PlanGuard";
 import { Toaster } from "react-hot-toast";
-import { Loader2 } from "lucide-react";
+
 import { performanceMonitor, registerServiceWorker, addResourceHint } from "./lib/performance";
 
 // Lazy load components with better chunking
@@ -115,22 +115,8 @@ const FitnessModulesApp = lazy(() =>
   })
 );
 
-// Enhanced loading component
-const LoadingFallback: React.FC<{ page?: string }> = ({ page }) => (
-  <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-900 flex items-center justify-center">
-    <div className="text-center">
-      <div className="relative">
-        <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mb-4 mx-auto border border-white/20">
-          <Loader2 className="w-8 h-8 text-teal-400 animate-spin" />
-        </div>
-        <div className="absolute inset-0 w-16 h-16 bg-gradient-to-r from-teal-400/20 to-emerald-400/20 rounded-full blur-xl animate-pulse mx-auto"></div>
-      </div>
-      <p className="text-white/70 text-sm">
-        {page ? `Carregando ${page}...` : 'Carregando...'}
-      </p>
-    </div>
-  </div>
-);
+// Minimal loading fallback - empty div for instant loading feel
+const LoadingFallback: React.FC = () => <div />;
 
 function App() {
   useEffect(() => {
@@ -163,7 +149,7 @@ function App() {
           <Route
             path="/"
             element={
-              <Suspense fallback={<LoadingFallback page="página inicial" />}>
+              <Suspense fallback={<LoadingFallback />}>
                 <Home />
               </Suspense>
             }
@@ -171,7 +157,7 @@ function App() {
           <Route
             path="/about"
             element={
-              <Suspense fallback={<LoadingFallback page="sobre" />}>
+              <Suspense fallback={<LoadingFallback />}>
                 <About />
               </Suspense>
             }
@@ -179,7 +165,7 @@ function App() {
           <Route
             path="/auth"
             element={
-              <Suspense fallback={<LoadingFallback page="autenticação" />}>
+              <Suspense fallback={<LoadingFallback />}>
                 <Auth />
               </Suspense>
             }
@@ -204,7 +190,7 @@ function App() {
             <Route
               path="dashboard"
               element={
-                <Suspense fallback={<LoadingFallback page="dashboard" />}>
+                <Suspense fallback={<LoadingFallback />}>
                   <Dashboard />
                 </Suspense>
               }
@@ -212,7 +198,7 @@ function App() {
             <Route
               path="videos"
               element={
-                <Suspense fallback={<LoadingFallback page="vídeos" />}>
+                <Suspense fallback={<LoadingFallback />}>
                   <Videos />
                 </Suspense>
               }
@@ -220,7 +206,7 @@ function App() {
             <Route
               path="store"
               element={
-                <Suspense fallback={<LoadingFallback page="loja" />}>
+                <Suspense fallback={<LoadingFallback />}>
                   <Store />
                 </Suspense>
               }
@@ -228,7 +214,7 @@ function App() {
             <Route
               path="favorites"
               element={
-                <Suspense fallback={<LoadingFallback page="favoritos" />}>
+                <Suspense fallback={<LoadingFallback />}>
                   <Favorites />
                 </Suspense>
               }
@@ -236,7 +222,7 @@ function App() {
             <Route
               path="profile"
               element={
-                <Suspense fallback={<LoadingFallback page="perfil" />}>
+                <Suspense fallback={<LoadingFallback />}>
                   <Profile />
                 </Suspense>
               }
@@ -246,7 +232,7 @@ function App() {
               path="progress"
               element={
                 <PlanGuard allowedPlans={["B", "C"]}>
-                  <Suspense fallback={<LoadingFallback page="progresso" />}>
+                  <Suspense fallback={<LoadingFallback />}>
                     <Progress />
                   </Suspense>
                 </PlanGuard>
@@ -255,7 +241,7 @@ function App() {
             <Route
               path="plans"
               element={
-                <Suspense fallback={<LoadingFallback page="planos" />}>
+                <Suspense fallback={<LoadingFallback />}>
                   <Plans />
                 </Suspense>
               }
@@ -263,7 +249,7 @@ function App() {
             <Route
               path="payment"
               element={
-                <Suspense fallback={<LoadingFallback page="pagamento" />}>
+                <Suspense fallback={<LoadingFallback />}>
                   <Payment />
                 </Suspense>
               }
@@ -271,7 +257,7 @@ function App() {
             <Route
               path="payment-success"
               element={
-                <Suspense fallback={<LoadingFallback page="confirmação" />}>
+                <Suspense fallback={<LoadingFallback />}>
                   <PaymentSuccess />
                 </Suspense>
               }
@@ -281,7 +267,7 @@ function App() {
               path="apps"
               element={
                 <PlanGuard allowedPlans={["B", "C"]}>
-                  <Suspense fallback={<LoadingFallback page="aplicativos" />}>
+                  <Suspense fallback={<LoadingFallback />}>
                     <AppsPage />
                   </Suspense>
                 </PlanGuard>
@@ -291,7 +277,7 @@ function App() {
               path="fitness/*"
               element={
                 <PlanGuard allowedPlans={["B", "C", "D"]}>
-                  <Suspense fallback={<LoadingFallback page="módulos fitness" />}>
+                  <Suspense fallback={<LoadingFallback />}>
                     <FitnessModulesApp />
                   </Suspense>
                 </PlanGuard>
@@ -301,7 +287,7 @@ function App() {
               path="admin"
               element={
                 <AdminRoute>
-                  <Suspense fallback={<LoadingFallback page="administração" />}>
+                  <Suspense fallback={<LoadingFallback />}>
                     <AdminDashboard />
                   </Suspense>
                 </AdminRoute>
