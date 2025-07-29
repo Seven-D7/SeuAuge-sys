@@ -51,8 +51,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
     }
 
     // Email validation
-    if (!validateEmail(formData.email)) {
-      newErrors.email = 'Email inválido';
+    const emailValidation = validateEmail(formData.email);
+    if (!emailValidation.isValid) {
+      newErrors.email = emailValidation.error || 'Email inválido';
     }
 
     // Password validation
@@ -61,7 +62,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
       newErrors.password = passwordValidation.errors[0] || 'Senha inválida';
     }
 
-    // Confirm password validation
+    // Confirm password
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'As senhas não coincidem';
     }
@@ -74,23 +75,27 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
       const today = new Date();
       const age = today.getFullYear() - birthDate.getFullYear();
       
-      if (age < 13) {
-        newErrors.birthdate = 'Idade mínima é 13 anos';
-      } else if (age > 120) {
+      if (age < 16) {
+        newErrors.birthdate = 'Você deve ter pelo menos 16 anos';
+      } else if (age > 100) {
         newErrors.birthdate = 'Data de nascimento inválida';
       }
     }
 
-    // Weight validation
-    const weight = parseFloat(formData.weight);
-    if (!formData.weight || isNaN(weight) || weight < 20 || weight > 500) {
-      newErrors.weight = 'Peso deve estar entre 20kg e 500kg';
+    // Weight validation (optional)
+    if (formData.weight) {
+      const weight = parseFloat(formData.weight);
+      if (isNaN(weight) || weight < 30 || weight > 300) {
+        newErrors.weight = 'Peso deve estar entre 30kg e 300kg';
+      }
     }
 
-    // Height validation
-    const height = parseFloat(formData.height);
-    if (!formData.height || isNaN(height) || height < 50 || height > 250) {
-      newErrors.height = 'Altura deve estar entre 50cm e 250cm';
+    // Height validation (optional)
+    if (formData.height) {
+      const height = parseFloat(formData.height);
+      if (isNaN(height) || height < 100 || height > 250) {
+        newErrors.height = 'Altura deve estar entre 100cm e 250cm';
+      }
     }
 
     setErrors(newErrors);
@@ -99,7 +104,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -110,23 +115,38 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
       // Sanitize inputs
       const sanitizedData = {
         name: sanitizeInput(formData.name),
-        email: sanitizeInput(formData.email.toLowerCase()),
-        password: formData.password, // Don't sanitize password
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
         birthdate: formData.birthdate,
+        weight: formData.weight ? parseFloat(formData.weight) : undefined,
+        height: formData.height ? parseFloat(formData.height) : undefined,
       };
 
       await register(
         sanitizedData.email,
         sanitizedData.password,
         sanitizedData.name,
-        sanitizedData.birthdate
+        {
+          birthdate: sanitizedData.birthdate,
+          weight: sanitizedData.weight,
+          height: sanitizedData.height,
+        }
       );
 
-      // Navigate to preferences setup after successful registration
       navigate('/preferences');
     } catch (error: any) {
-      console.error('Erro no registro:', error);
-      setErrors({ general: error.message || 'Erro no registro. Tente novamente.' });
+      console.error('Registration error:', error);
+      
+      // Handle specific error codes
+      if (error.code === 'auth/email-already-in-use') {
+        setErrors({ email: 'Este email já está em uso. Tente fazer login.' });
+      } else if (error.code === 'auth/weak-password') {
+        setErrors({ password: 'Senha muito fraca. Use pelo menos 6 caracteres.' });
+      } else if (error.code === 'auth/invalid-email') {
+        setErrors({ email: 'Email inválido. Verifique o formato.' });
+      } else {
+        setErrors({ general: 'Erro ao criar conta. Tente novamente.' });
+      }
     } finally {
       setLoading(false);
     }
@@ -134,152 +154,211 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
 
   const getPasswordStrengthColor = () => {
     switch (passwordStrength) {
-      case 'strong': return 'bg-green-500';
-      case 'medium': return 'bg-yellow-500';
-      default: return 'bg-red-500';
+      case 'weak': return 'bg-red-400';
+      case 'medium': return 'bg-yellow-400';
+      case 'strong': return 'bg-green-400';
     }
   };
 
   const getPasswordStrengthText = () => {
     switch (passwordStrength) {
-      case 'strong': return 'Forte';
+      case 'weak': return 'Fraca';
       case 'medium': return 'Média';
-      default: return 'Fraca';
+      case 'strong': return 'Forte';
     }
   };
 
   return (
     <div className="w-full max-w-md space-y-4 sm:space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-          Criar conta
+        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
+          Criar sua conta
         </h2>
-        <p className="text-white/70 text-sm sm:text-base">
-          Comece sua jornada de transformação hoje
+        <p className="text-slate-600 text-sm sm:text-base">
+          Comece sua jornada de transformação hoje mesmo
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-        {/* Name Field */}
+        {/* Nome */}
         <div>
-          <label className="block text-sm font-medium text-white/80 mb-2">
+          <label className="block text-sm font-medium text-slate-700 mb-2">
             Nome completo
           </label>
           <div className="relative">
-            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50 w-4 h-4 sm:w-5 sm:h-5" />
+            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 sm:w-5 sm:h-5" />
             <input
               type="text"
               value={formData.name}
               onChange={(e) => handleInputChange('name', e.target.value)}
-              className={`w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 bg-white/10 backdrop-blur-md border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent text-sm sm:text-base transition-all duration-300 ${
-                errors.name ? 'border-red-500/50' : 'border-white/20'
-              }`}
-              placeholder="Digite seu nome completo"
+              className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm sm:text-base transition-all duration-300"
+              placeholder="Digite seu nome"
               required
               autoComplete="name"
             />
           </div>
           {errors.name && (
-            <p className="mt-1 text-red-400 text-xs flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" />
+            <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
+              <AlertCircle className="w-4 h-4" />
               {errors.name}
             </p>
           )}
         </div>
 
-        {/* Email Field */}
+        {/* Email */}
         <div>
-          <label className="block text-sm font-medium text-white/80 mb-2">
-            Email
+          <label className="block text-sm font-medium text-slate-700 mb-2">
+            Endereço de Email
           </label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50 w-4 h-4 sm:w-5 sm:h-5" />
+            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 sm:w-5 sm:h-5" />
             <input
               type="email"
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
-              className={`w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 bg-white/10 backdrop-blur-md border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent text-sm sm:text-base transition-all duration-300 ${
-                errors.email ? 'border-red-500/50' : 'border-white/20'
-              }`}
+              className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm sm:text-base transition-all duration-300"
               placeholder="Digite seu email"
               required
               autoComplete="email"
             />
           </div>
           {errors.email && (
-            <p className="mt-1 text-red-400 text-xs flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" />
+            <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
+              <AlertCircle className="w-4 h-4" />
               {errors.email}
             </p>
           )}
         </div>
 
-        {/* Password Field */}
+        {/* Data de nascimento */}
         <div>
-          <label className="block text-sm font-medium text-white/80 mb-2">
+          <label className="block text-sm font-medium text-slate-700 mb-2">
+            Data de nascimento
+          </label>
+          <div className="relative">
+            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 sm:w-5 sm:h-5" />
+            <input
+              type="date"
+              value={formData.birthdate}
+              onChange={(e) => handleInputChange('birthdate', e.target.value)}
+              className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm sm:text-base transition-all duration-300"
+              required
+            />
+          </div>
+          {errors.birthdate && (
+            <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
+              <AlertCircle className="w-4 h-4" />
+              {errors.birthdate}
+            </p>
+          )}
+        </div>
+
+        {/* Peso e Altura (opcionais) */}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              Peso (kg) - opcional
+            </label>
+            <div className="relative">
+              <Weight className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <input
+                type="number"
+                step="0.1"
+                min="30"
+                max="300"
+                value={formData.weight}
+                onChange={(e) => handleInputChange('weight', e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm transition-all duration-300"
+                placeholder="70"
+              />
+            </div>
+            {errors.weight && (
+              <p className="text-red-600 text-xs mt-1">{errors.weight}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              Altura (cm) - opcional
+            </label>
+            <div className="relative">
+              <Ruler className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <input
+                type="number"
+                min="100"
+                max="250"
+                value={formData.height}
+                onChange={(e) => handleInputChange('height', e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm transition-all duration-300"
+                placeholder="170"
+              />
+            </div>
+            {errors.height && (
+              <p className="text-red-600 text-xs mt-1">{errors.height}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Senha */}
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">
             Senha
           </label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50 w-4 h-4 sm:w-5 sm:h-5" />
+            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 sm:w-5 sm:h-5" />
             <input
               type={showPassword ? 'text' : 'password'}
               value={formData.password}
               onChange={(e) => handleInputChange('password', e.target.value)}
-              className={`w-full pl-10 sm:pl-12 pr-10 sm:pr-12 py-2.5 sm:py-3 bg-white/10 backdrop-blur-md border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent text-sm sm:text-base transition-all duration-300 ${
-                errors.password ? 'border-red-500/50' : 'border-white/20'
-              }`}
-              placeholder="Crie uma senha segura"
+              className="w-full pl-10 sm:pl-12 pr-10 sm:pr-12 py-2.5 sm:py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm sm:text-base transition-all duration-300"
+              placeholder="Digite sua senha"
               required
               autoComplete="new-password"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/50 hover:text-white transition-colors"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
             >
               {showPassword ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
           </div>
           
-          {/* Password Strength Indicator */}
+          {/* Password strength indicator */}
           {formData.password && (
             <div className="mt-2">
-              <div className="flex items-center gap-2">
-                <div className="flex-1 bg-white/20 rounded-full h-1">
+              <div className="flex items-center gap-2 text-xs">
+                <div className="flex-1 bg-slate-200 rounded-full h-1.5">
                   <div 
-                    className={`h-full rounded-full transition-all duration-300 ${getPasswordStrengthColor()}`}
-                    style={{ 
-                      width: passwordStrength === 'weak' ? '33%' : passwordStrength === 'medium' ? '66%' : '100%' 
-                    }}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${getPasswordStrengthColor()}`}
+                    style={{ width: passwordStrength === 'weak' ? '33%' : passwordStrength === 'medium' ? '66%' : '100%' }}
                   />
                 </div>
-                <span className="text-xs text-white/70">{getPasswordStrengthText()}</span>
+                <span className="text-slate-600">{getPasswordStrengthText()}</span>
               </div>
             </div>
           )}
-          
+
           {errors.password && (
-            <p className="mt-1 text-red-400 text-xs flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" />
+            <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
+              <AlertCircle className="w-4 h-4" />
               {errors.password}
             </p>
           )}
         </div>
 
-        {/* Confirm Password Field */}
+        {/* Confirmar Senha */}
         <div>
-          <label className="block text-sm font-medium text-white/80 mb-2">
+          <label className="block text-sm font-medium text-slate-700 mb-2">
             Confirmar senha
           </label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50 w-4 h-4 sm:w-5 sm:h-5" />
+            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 sm:w-5 sm:h-5" />
             <input
               type={showConfirmPassword ? 'text' : 'password'}
               value={formData.confirmPassword}
               onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-              className={`w-full pl-10 sm:pl-12 pr-10 sm:pr-12 py-2.5 sm:py-3 bg-white/10 backdrop-blur-md border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent text-sm sm:text-base transition-all duration-300 ${
-                errors.confirmPassword ? 'border-red-500/50' : 'border-white/20'
-              }`}
+              className="w-full pl-10 sm:pl-12 pr-10 sm:pr-12 py-2.5 sm:py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm sm:text-base transition-all duration-300"
               placeholder="Confirme sua senha"
               required
               autoComplete="new-password"
@@ -287,131 +366,54 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/50 hover:text-white transition-colors"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
             >
               {showConfirmPassword ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
           </div>
           {errors.confirmPassword && (
-            <p className="mt-1 text-red-400 text-xs flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" />
+            <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
+              <AlertCircle className="w-4 h-4" />
               {errors.confirmPassword}
             </p>
           )}
         </div>
 
-        {/* Personal Information */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {/* Birthdate */}
-          <div>
-            <label className="block text-sm font-medium text-white/80 mb-2">
-              Nascimento
-            </label>
-            <div className="relative">
-              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50 w-4 h-4" />
-              <input
-                type="date"
-                value={formData.birthdate}
-                onChange={(e) => handleInputChange('birthdate', e.target.value)}
-                className={`w-full pl-10 pr-4 py-2.5 bg-white/10 backdrop-blur-md border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent text-sm transition-all duration-300 ${
-                  errors.birthdate ? 'border-red-500/50' : 'border-white/20'
-                }`}
-                required
-              />
-            </div>
-            {errors.birthdate && (
-              <p className="mt-1 text-red-400 text-xs">
-                {errors.birthdate}
-              </p>
-            )}
-          </div>
-
-          {/* Weight */}
-          <div>
-            <label className="block text-sm font-medium text-white/80 mb-2">
-              Peso (kg)
-            </label>
-            <div className="relative">
-              <Weight className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50 w-4 h-4" />
-              <input
-                type="number"
-                value={formData.weight}
-                onChange={(e) => handleInputChange('weight', e.target.value)}
-                className={`w-full pl-10 pr-4 py-2.5 bg-white/10 backdrop-blur-md border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent text-sm transition-all duration-300 ${
-                  errors.weight ? 'border-red-500/50' : 'border-white/20'
-                }`}
-                placeholder="70"
-                min="20"
-                max="500"
-                required
-              />
-            </div>
-            {errors.weight && (
-              <p className="mt-1 text-red-400 text-xs">
-                {errors.weight}
-              </p>
-            )}
-          </div>
-
-          {/* Height */}
-          <div>
-            <label className="block text-sm font-medium text-white/80 mb-2">
-              Altura (cm)
-            </label>
-            <div className="relative">
-              <Ruler className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50 w-4 h-4" />
-              <input
-                type="number"
-                value={formData.height}
-                onChange={(e) => handleInputChange('height', e.target.value)}
-                className={`w-full pl-10 pr-4 py-2.5 bg-white/10 backdrop-blur-md border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent text-sm transition-all duration-300 ${
-                  errors.height ? 'border-red-500/50' : 'border-white/20'
-                }`}
-                placeholder="170"
-                min="50"
-                max="250"
-                required
-              />
-            </div>
-            {errors.height && (
-              <p className="mt-1 text-red-400 text-xs">
-                {errors.height}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* General Error */}
+        {/* General error */}
         {errors.general && (
-          <div className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 rounded-lg p-3">
-            <p className="text-red-300 text-sm flex items-center gap-2">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+            <p className="text-red-600 text-sm flex items-center gap-2">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
               {errors.general}
             </p>
           </div>
         )}
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-500 hover:to-emerald-500 text-white font-medium py-2.5 sm:py-3 px-4 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base min-h-[44px] transform hover:scale-105 shadow-lg backdrop-blur-sm border border-teal-400/30"
-        >
-          {loading ? 'Criando conta...' : 'Criar conta'}
-        </button>
-      </form>
-
-      <div className="text-center">
-        <p className="text-white/70 text-sm sm:text-base">
-          Já tem uma conta?{' '}
+        <div className="space-y-3">
           <button
-            onClick={onToggleMode}
-            className="text-teal-300 hover:text-teal-200 font-medium transition-colors"
+            type="submit"
+            disabled={loading}
+            className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2.5 sm:py-3 px-4 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base min-h-[44px] transform hover:scale-105 shadow-lg"
           >
-            Entrar
+            {loading ? (
+              <div className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                Criando conta...
+              </div>
+            ) : (
+              'Criar conta'
+            )}
           </button>
-        </p>
-      </div>
+
+          <button
+            type="button"
+            onClick={onToggleMode}
+            className="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-medium py-2.5 sm:py-3 px-4 rounded-lg transition-all duration-300 text-sm sm:text-base border border-slate-200"
+          >
+            Já tem uma conta? Fazer login
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
