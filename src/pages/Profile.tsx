@@ -444,7 +444,7 @@ const Profile: React.FC = () => {
                       ].map((metric, index) => (
                         <div
                           key={index}
-                          className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-3 sm:p-4 text-center hover:bg-slate-100 dark:hover:bg-slate-700/70 transition-all duration-200 border border-slate-200 dark:border-slate-600/50"
+                          className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3 text-center hover:bg-slate-100 dark:hover:bg-slate-700/70 transition-all duration-200 border border-slate-200 dark:border-slate-600/50"
                         >
                           <div
                             className={`text-lg sm:text-xl font-bold ${metric.color}`}
