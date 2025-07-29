@@ -150,7 +150,7 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
           >
             {videos.map((video, index) => (
               <motion.div
-                key={video.id}
+                key={`${title}-${video.id}-${index}`}
                 className="relative flex-shrink-0 group/card cursor-pointer"
                 style={{ width: `${100 / visibleCards}%` }}
                 whileHover={{ scale: window.innerWidth >= 640 ? 1.05 : 1.02 }}
