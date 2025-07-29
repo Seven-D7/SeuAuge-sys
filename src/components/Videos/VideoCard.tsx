@@ -28,9 +28,9 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
 
   return (
     <div className={`
-      group cursor-pointer overflow-hidden rounded-xl
+      group cursor-pointer overflow-hidden rounded-lg sm:rounded-xl
       ${designUtils.glass('dark')}
-      hover:scale-105 transition-all duration-300 
+      hover:scale-[1.02] sm:hover:scale-105 transition-all duration-300
       hover:shadow-xl hover:shadow-primary/10
       ${COMMON_CLASSES.focus}
     `}>
@@ -51,11 +51,11 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
         {/* Play Button */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
           <div className={`
-            w-14 h-14 rounded-full flex items-center justify-center
+            w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center
             ${designUtils.gradient('primary')}
             shadow-lg hover:scale-110 transition-transform duration-200
           `}>
-            <Play className="w-6 h-6 text-white ml-0.5 fill-current" />
+            <Play className="w-5 h-5 sm:w-6 sm:h-6 text-white ml-0.5 fill-current" />
           </div>
         </div>
 
@@ -74,14 +74,15 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
         )}
 
         {/* Duration */}
-        <div className="absolute bottom-3 right-3">
+        <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3">
           <div className={`
-            flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium
+            flex items-center gap-1 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-md text-xs font-medium
             ${designUtils.glass('dark')}
             text-white
           `}>
             <Clock className="w-3 h-3" />
-            {video.duration}
+            <span className="hidden sm:inline">{video.duration}</span>
+            <span className="sm:hidden">{video.duration.split(':')[0]}m</span>
           </div>
         </div>
 
@@ -101,12 +102,12 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
       </div>
 
       {/* Video Info */}
-      <div className="p-4">
+      <div className="p-3 sm:p-4">
         <div className="mb-2">
           <h3 className={`
             font-semibold text-white line-clamp-2 mb-1
             ${COMMON_CLASSES.heading.h4}
-            text-sm sm:text-base
+            text-sm sm:text-base leading-tight
           `}>
             {video.title}
           </h3>
@@ -147,15 +148,15 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
         )}
 
         {/* Action Bar */}
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-3 sm:mt-4 flex items-center justify-between">
           <button
             onClick={onClick}
             disabled={!hasAccess}
             className={`
-              flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium
+              flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium
               transition-all duration-200
-              ${hasAccess 
-                ? `${designUtils.gradient('primary')} text-white hover:scale-105 shadow-md hover:shadow-lg`
+              ${hasAccess
+                ? `${designUtils.gradient('primary')} text-white hover:scale-[1.02] sm:hover:scale-105 shadow-md hover:shadow-lg`
                 : 'bg-gray-700 text-gray-400 cursor-not-allowed'
               }
               ${COMMON_CLASSES.focus}
@@ -166,7 +167,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
           </button>
 
           {video.description && (
-            <div className="text-xs text-gray-400 truncate ml-2 flex-1">
+            <div className="text-xs text-gray-400 truncate ml-2 flex-1 hidden sm:block">
               {video.description}
             </div>
           )}
