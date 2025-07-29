@@ -159,7 +159,7 @@ export default function PlansSection() {
         </div>
 
         <div className="text-center">
-          <p className="text-white/70 mb-3 sm:mb-4 text-xs sm:text-sm md:text-base lg:text-lg px-2 sm:px-4">
+          <p className="text-slate-600 mb-3 sm:mb-4 text-xs sm:text-sm md:text-base lg:text-lg px-2 sm:px-4">
             Não tem certeza qual plano escolher?
           </p>
           <Button
