@@ -48,7 +48,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         </div>
 
         {/* Right section */}
-        <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 flex-shrink-0">
+        <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
           {/* Search button for mobile */}
           <button className="md:hidden p-1.5 sm:p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors">
             <Search className="w-4 h-4 sm:w-5 sm:h-5" />
