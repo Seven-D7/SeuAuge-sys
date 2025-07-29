@@ -214,7 +214,7 @@ function App() {
             <Route
               path="favorites"
               element={
-                <Suspense fallback={<LoadingFallback page="favoritos" />}>
+                <Suspense fallback={<LoadingFallback />}>
                   <Favorites />
                 </Suspense>
               }
