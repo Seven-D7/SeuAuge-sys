@@ -225,15 +225,15 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
                 </div>
 
                 {/* Video Info */}
-                <div className="mt-2 px-1">
-                  <h3 className="text-white text-sm font-medium truncate mb-1">
+                <div className="mt-1.5 sm:mt-2 px-0.5 sm:px-1">
+                  <h3 className="text-white text-xs sm:text-sm font-medium truncate mb-1">
                     {video.title}
                   </h3>
-                  <div className="flex items-center text-xs text-gray-400 gap-2">
-                    <span className="bg-slate-700 px-2 py-0.5 rounded text-xs">
+                  <div className="flex flex-col sm:flex-row sm:items-center text-xs text-gray-400 gap-1 sm:gap-2">
+                    <span className="bg-slate-700 px-1.5 sm:px-2 py-0.5 rounded text-xs w-fit">
                       {video.category}
                     </span>
-                    <span>{video.instructor}</span>
+                    <span className="truncate">{video.instructor}</span>
                   </div>
                 </div>
 
