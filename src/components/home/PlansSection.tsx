@@ -144,8 +144,8 @@ export default function PlansSection() {
                       onClick={() => handlePlanSelect(plan.id)}
                       className={`w-full h-9 sm:h-10 md:h-12 text-xs sm:text-sm md:text-base lg:text-lg font-medium transition-all duration-200 mt-auto ${
                         plan.isPopular
-                          ? "bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-500 hover:to-emerald-500 text-white shadow-lg hover:shadow-xl transform hover:scale-[1.01] sm:hover:scale-[1.02] lg:hover:scale-105 border border-teal-400/30"
-                          : "bg-white/20 hover:bg-white/30 text-white hover:scale-[1.01] sm:hover:scale-[1.02] lg:hover:scale-105 backdrop-blur-sm border border-white/30"
+                          ? "bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transform hover:scale-[1.01] sm:hover:scale-[1.02] lg:hover:scale-105 border border-slate-700"
+                          : "bg-slate-100 hover:bg-slate-200 text-slate-800 hover:scale-[1.01] sm:hover:scale-[1.02] lg:hover:scale-105 backdrop-blur-sm border border-slate-200"
                       }`}
                     >
                       <span className="hidden sm:inline">Escolher {plan.name}</span>
