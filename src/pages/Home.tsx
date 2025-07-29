@@ -61,7 +61,7 @@ function Home() {
               <a href="#planos" className="text-slate-700 hover:text-slate-900 transition-all duration-300 font-medium text-sm lg:text-base">Planos</a>
               <a href="#sobre" className="text-slate-700 hover:text-slate-900 transition-all duration-300 font-medium text-sm lg:text-base">Sobre</a>
               <a href="#depoimentos" className="text-slate-700 hover:text-slate-900 transition-all duration-300 font-medium text-sm lg:text-base">Depoimentos</a>
-              <Button onClick={handleStartJourney} className="bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-500 hover:to-emerald-500 shadow-lg hover:shadow-xl transition-all duration-300 text-sm lg:text-base">
+              <Button onClick={handleStartJourney} className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-300 text-sm lg:text-base">
                 Começar Agora
               </Button>
             </div>
