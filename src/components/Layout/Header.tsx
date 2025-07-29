@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-3 sm:px-4 md:px-6 py-3 sm:py-4">
       <div className="flex items-center justify-between gap-3 sm:gap-4">
         {/* Left section */}
-        <div className="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0">
+        <div className="flex items-center space-x-3 sm:space-x-4 flex-1 min-w-0">
           <button
             onClick={onMenuClick}
             className="lg:hidden p-1.5 sm:p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors flex-shrink-0"
