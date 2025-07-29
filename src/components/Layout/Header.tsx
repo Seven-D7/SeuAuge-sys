@@ -82,17 +82,17 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           {/* User profile */}
           <Link
             to="/profile"
-            className="flex items-center space-x-2 sm:space-x-3 focus:outline-none ml-1 sm:ml-2"
+            className="flex items-center space-x-2 sm:space-x-3 focus:outline-none hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg p-1.5 transition-colors duration-200"
           >
             <div className="hidden lg:block text-right">
-              <p className="text-sm font-medium text-slate-900 dark:text-white truncate max-w-24">
+              <p className="text-sm font-medium text-slate-900 dark:text-white truncate max-w-28">
                 {user?.name}
               </p>
               <p className="text-xs text-slate-600 dark:text-slate-400 truncate">
                 {planName}
               </p>
             </div>
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden bg-gradient-to-r from-teal-500 to-emerald-500 flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden bg-gradient-to-r from-slate-600 to-slate-700 flex items-center justify-center flex-shrink-0 border border-slate-200 dark:border-slate-600">
               {user?.avatar ? (
                 <img
                   src={user.avatar}
@@ -100,7 +100,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <User className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+                <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               )}
             </div>
           </Link>
