@@ -21,7 +21,7 @@ const AchievementCard: React.FC<AchievementCardProps> = ({
     switch (rarity) {
       case 'common': return 'from-gray-400 to-gray-600';
       case 'rare': return 'from-blue-400 to-blue-600';
-      case 'epic': return 'from-purple-400 to-purple-600';
+      case 'epic': return 'from-blue-400 to-cyan-600';
       case 'legendary': return 'from-yellow-400 to-orange-500';
       default: return 'from-gray-400 to-gray-600';
     }
@@ -30,7 +30,7 @@ const AchievementCard: React.FC<AchievementCardProps> = ({
   const getRarityGlow = (rarity: string) => {
     switch (rarity) {
       case 'rare': return 'shadow-blue-500/50';
-      case 'epic': return 'shadow-purple-500/50';
+      case 'epic': return 'shadow-blue-500/50';
       case 'legendary': return 'shadow-yellow-500/50';
       default: return 'shadow-gray-500/50';
     }

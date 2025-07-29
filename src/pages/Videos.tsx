@@ -160,7 +160,7 @@ const Videos: React.FC = () => {
           <VideoPlayer
             streamData={selectedVideo}
             autoPlay={true}
-            className="w-full h-[50vh] sm:h-[60vh] lg:h-[70vh]"
+            className="w-full h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh]"
             onComplete={() => console.log("Vídeo concluído")}
             onProgress={(progress) => console.log("Progresso:", progress)}
           />
@@ -168,21 +168,22 @@ const Videos: React.FC = () => {
           {/* Back Button */}
           <button
             onClick={() => setSelectedVideo(null)}
-            className="absolute top-4 left-4 bg-black/60 hover:bg-black/80 text-white px-3 sm:px-4 py-2 rounded-lg transition-all duration-200 backdrop-blur-sm text-sm sm:text-base"
+            className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-black/60 hover:bg-black/80 text-white px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-lg transition-all duration-200 backdrop-blur-sm text-xs sm:text-sm md:text-base"
           >
-            ← Voltar aos vídeos
+            <span className="hidden sm:inline">← Voltar aos vídeos</span>
+            <span className="sm:hidden">← Voltar</span>
           </button>
         </div>
 
         {/* Video Info */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {/* Main Content */}
             <div className="lg:col-span-2">
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-4">
+              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white mb-3 sm:mb-4">
                 {selectedVideo.metadata.title}
               </h1>
-              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-slate-400 mb-4 sm:mb-6 text-sm sm:text-base">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-slate-400 mb-3 sm:mb-4 md:mb-6 text-xs sm:text-sm md:text-base">
                 <span>{selectedVideo.metadata.instructor}</span>
                 <span>•</span>
                 <span>{selectedVideo.metadata.category}</span>
@@ -196,11 +197,11 @@ const Videos: React.FC = () => {
               </p>
 
               {/* Tags */}
-              <div className="flex flex-wrap gap-2 mt-4 sm:mt-6">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 sm:mt-4 md:mt-6">
                 {selectedVideo.metadata.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="bg-slate-800 text-slate-300 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm"
+                    className="bg-slate-800 text-slate-300 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm"
                   >
                     #{tag}
                   </span>
@@ -210,11 +211,11 @@ const Videos: React.FC = () => {
 
             {/* Sidebar - Related Videos */}
             <div className="lg:col-span-1">
-              <div className="bg-slate-800 rounded-lg p-4 sm:p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">
+              <div className="bg-slate-800 rounded-lg p-3 sm:p-4 md:p-6">
+                <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">
                   Vídeos relacionados
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {videos
                     .filter((v) => v.id !== selectedVideo.videoId && v.category === selectedVideo.metadata.category)
                     .slice(0, 5)
@@ -222,15 +223,15 @@ const Videos: React.FC = () => {
                       <div
                         key={video.id}
                         onClick={() => handleVideoSelect(video.id)}
-                        className="flex items-center space-x-3 cursor-pointer hover:bg-slate-700 p-2 rounded-lg transition-colors"
+                        className="flex items-center space-x-2 sm:space-x-3 cursor-pointer hover:bg-slate-700 p-2 rounded-lg transition-colors"
                       >
                         <img
                           src={video.thumbnail}
                           alt={video.title}
-                          className="w-16 h-9 object-cover rounded"
+                          className="w-12 h-7 sm:w-16 sm:h-9 object-cover rounded flex-shrink-0"
                         />
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-white text-sm font-medium truncate">
+                          <h4 className="text-white text-xs sm:text-sm font-medium truncate">
                             {video.title}
                           </h4>
                           <p className="text-slate-400 text-xs">
@@ -251,25 +252,25 @@ const Videos: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-900">
       {/* Header */}
-      <div className="px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-4">
-        <div className="flex flex-col gap-4">
+      <div className="px-3 sm:px-4 md:px-6 lg:px-8 pt-4 sm:pt-6 md:pt-8 pb-3 sm:pb-4">
+        <div className="flex flex-col gap-3 sm:gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2">
               Biblioteca de Vídeos
             </h1>
-            <p className="text-sm sm:text-base text-slate-400">
+            <p className="text-xs sm:text-sm md:text-base text-slate-400">
               {isDemoMode && (
-                <span className="inline-flex items-center px-2 py-1 bg-blue-900/20 text-blue-300 rounded-full text-xs sm:text-sm mr-3">
+                <span className="inline-flex items-center px-2 py-1 bg-blue-900/20 text-blue-300 rounded-full text-xs sm:text-sm mr-2 sm:mr-3 mb-1 sm:mb-0">
                   🔧 Modo Demo - Vídeos simulados
                 </span>
               )}
-              Acesso completo aos treinos e aulas especializadas
+              <span className="block sm:inline">Acesso completo aos treinos e aulas especializadas</span>
             </p>
           </div>
 
           {/* Search */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-            <div className="relative flex-1 sm:max-w-md">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 md:gap-4">
+            <div className="relative flex-1 sm:max-w-md md:max-w-lg">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
               <input
                 type="text"
@@ -277,44 +278,49 @@ const Videos: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-                className="w-full pl-10 pr-4 py-2.5 sm:py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm sm:text-base"
+                className="w-full pl-10 pr-4 py-2 sm:py-2.5 md:py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm sm:text-base"
               />
             </div>
             <button
               onClick={handleSearch}
               disabled={searchLoading}
-              className="bg-primary hover:bg-primary-dark text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg transition-colors disabled:opacity-50 text-sm sm:text-base min-w-[100px] flex items-center justify-center"
+              className="bg-primary hover:bg-primary-dark text-white px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg transition-colors disabled:opacity-50 text-sm sm:text-base min-w-[80px] sm:min-w-[100px] flex items-center justify-center"
             >
               {searchLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                "Buscar"
+                <>
+                  <span className="hidden sm:inline">Buscar</span>
+                  <span className="sm:hidden">🔍</span>
+                </>
               )}
             </button>
           </div>
 
           {/* Filters */}
-          <div className="flex items-center space-x-2 sm:space-x-4 overflow-x-auto pb-2">
-            <Filter className="text-slate-400 w-5 h-5 flex-shrink-0" />
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => {
-                  setSelectedCategory(category);
-                  if (category === "Todos") {
-                    setShowCarousels(true);
-                    setSearchQuery("");
-                  }
-                }}
-                className={`px-3 sm:px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
-                  selectedCategory === category
-                    ? "bg-primary text-white"
-                    : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 overflow-x-auto pb-2 scrollbar-hide">
+            <Filter className="text-slate-400 w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+            <div className="flex gap-2 sm:gap-3">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => {
+                    setSelectedCategory(category);
+                    if (category === "Todos") {
+                      setShowCarousels(true);
+                      setSearchQuery("");
+                    }
+                  }}
+                  className={`px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
+                    selectedCategory === category
+                      ? "bg-primary text-white"
+                      : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -369,18 +375,18 @@ const Videos: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="px-4 sm:px-6 lg:px-8 pb-8">
+            <div className="px-3 sm:px-4 md:px-6 lg:px-8 pb-6 sm:pb-8">
               {/* Results Header */}
-              <div className="mb-6">
-                <h2 className="text-lg sm:text-xl font-semibold text-white mb-2">
-                  {searchQuery 
+              <div className="mb-4 sm:mb-6">
+                <h2 className="text-base sm:text-lg md:text-xl font-semibold text-white mb-2">
+                  {searchQuery
                     ? `Resultados para "${searchQuery}"`
-                    : selectedCategory === "Todos" 
-                      ? "Todos os vídeos" 
+                    : selectedCategory === "Todos"
+                      ? "Todos os vídeos"
                       : `Categoria: ${selectedCategory}`
                   }
                 </h2>
-                <p className="text-slate-400 text-sm">
+                <p className="text-slate-400 text-xs sm:text-sm">
                   {filteredVideos.length} vídeo{filteredVideos.length !== 1 ? 's' : ''} encontrado{filteredVideos.length !== 1 ? 's' : ''}
                 </p>
               </div>
@@ -409,7 +415,7 @@ const Videos: React.FC = () => {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6">
                   {filteredVideos.map((video) => (
                     <VideoCard
                       key={video.id}

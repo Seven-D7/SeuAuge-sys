@@ -20,7 +20,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   // Enhanced loading state with better UX
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-900 flex items-center justify-center">
         <div className="text-center">
           <div className="relative">
             <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mb-4 mx-auto border border-white/20">
@@ -50,7 +50,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   // User doesn't have required role
   if (!hasRequiredRole()) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-900 flex items-center justify-center p-4">
         <div className="text-center max-w-md">
           <div className="w-16 h-16 bg-red-500/20 backdrop-blur-md rounded-full flex items-center justify-center mb-6 mx-auto border border-red-500/30">
             <Shield className="w-8 h-8 text-red-400" />

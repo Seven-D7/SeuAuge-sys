@@ -121,7 +121,7 @@ const Cart: React.FC = () => {
                   <Smartphone className="w-3 h-3" />
                   <span>PIX</span>
                 </button>
-                <button className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-2 rounded-lg transition-colors text-xs sm:text-sm">
+                <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-2 rounded-lg transition-colors text-xs sm:text-sm">
                   Cartão
                 </button>
                 <button className="bg-orange-600 hover:bg-orange-700 text-white font-medium py-2 px-2 rounded-lg transition-colors text-xs sm:text-sm">

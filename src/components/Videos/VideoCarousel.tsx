@@ -44,10 +44,12 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
   useEffect(() => {
     const updateVisibleCards = () => {
       const width = window.innerWidth;
-      if (width < 640) setVisibleCards(2);
-      else if (width < 768) setVisibleCards(3);
-      else if (width < 1024) setVisibleCards(4);
-      else if (width < 1280) setVisibleCards(5);
+      if (width < 480) setVisibleCards(1);
+      else if (width < 640) setVisibleCards(2);
+      else if (width < 768) setVisibleCards(2);
+      else if (width < 1024) setVisibleCards(3);
+      else if (width < 1280) setVisibleCards(4);
+      else if (width < 1536) setVisibleCards(5);
       else setVisibleCards(6);
     };
 
@@ -93,9 +95,9 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
   const canGoRight = currentIndex < videos.length - visibleCards;
 
   return (
-    <div className="relative group mb-8">
+    <div className="relative group mb-6 sm:mb-8">
       {/* Section Title */}
-      <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-4 px-4 lg:px-12">
+      <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white mb-3 sm:mb-4 px-3 sm:px-4 lg:px-12">
         {title}
       </h2>
 
@@ -134,9 +136,9 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
         </AnimatePresence>
 
         {/* Video Cards */}
-        <div className="px-4 lg:px-12">
+        <div className="px-3 sm:px-4 lg:px-12">
           <motion.div
-            className="flex gap-2 lg:gap-4"
+            className="flex gap-1.5 sm:gap-2 lg:gap-4"
             animate={{
               x: `-${currentIndex * (100 / visibleCards)}%`,
             }}
@@ -151,7 +153,7 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
                 key={video.id}
                 className="relative flex-shrink-0 group/card cursor-pointer"
                 style={{ width: `${100 / visibleCards}%` }}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: window.innerWidth >= 640 ? 1.05 : 1.02 }}
                 transition={{ duration: 0.2 }}
                 onClick={() => onVideoSelect(video.id)}
               >
@@ -169,13 +171,13 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
 
                   {/* Premium Badge */}
                   {!video.isFree && (
-                    <div className="absolute top-2 right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs font-bold px-2 py-1 rounded-full">
+                    <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs font-bold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full">
                       PRO
                     </div>
                   )}
 
                   {/* Duration */}
-                  <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">
+                  <div className="absolute bottom-1.5 right-1.5 sm:bottom-2 sm:right-2 bg-black/80 text-white text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded backdrop-blur-sm">
                     {video.duration}
                   </div>
 
@@ -192,20 +194,20 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
                           e.stopPropagation();
                           onVideoSelect(video.id);
                         }}
-                        className="bg-white hover:bg-gray-200 text-black p-2 rounded-full transition-colors"
+                        className="bg-white hover:bg-gray-200 text-black p-1.5 sm:p-2 rounded-full transition-colors"
                       >
-                        <Play className="w-4 h-4 fill-current" />
+                        <Play className="w-3 h-3 sm:w-4 sm:h-4 fill-current" />
                       </button>
                       
                       {onAddToWatchlist && (
                         <button
                           onClick={(e) => handleWatchlistToggle(video.id, e)}
-                          className="bg-black/60 hover:bg-black/80 text-white p-2 rounded-full transition-colors backdrop-blur-sm"
+                          className="bg-black/60 hover:bg-black/80 text-white p-1.5 sm:p-2 rounded-full transition-colors backdrop-blur-sm"
                         >
                           {isInWatchlist(video.id) ? (
-                            <Check className="w-4 h-4" />
+                            <Check className="w-3 h-3 sm:w-4 sm:h-4" />
                           ) : (
-                            <Plus className="w-4 h-4" />
+                            <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                           )}
                         </button>
                       )}
@@ -213,9 +215,9 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
                       {showInfo && (
                         <button
                           onClick={(e) => e.stopPropagation()}
-                          className="bg-black/60 hover:bg-black/80 text-white p-2 rounded-full transition-colors backdrop-blur-sm"
+                          className="bg-black/60 hover:bg-black/80 text-white p-1.5 sm:p-2 rounded-full transition-colors backdrop-blur-sm"
                         >
-                          <Info className="w-4 h-4" />
+                          <Info className="w-3 h-3 sm:w-4 sm:h-4" />
                         </button>
                       )}
                     </div>
@@ -223,15 +225,15 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
                 </div>
 
                 {/* Video Info */}
-                <div className="mt-2 px-1">
-                  <h3 className="text-white text-sm font-medium truncate mb-1">
+                <div className="mt-1.5 sm:mt-2 px-0.5 sm:px-1">
+                  <h3 className="text-white text-xs sm:text-sm font-medium truncate mb-1">
                     {video.title}
                   </h3>
-                  <div className="flex items-center text-xs text-gray-400 gap-2">
-                    <span className="bg-slate-700 px-2 py-0.5 rounded text-xs">
+                  <div className="flex flex-col sm:flex-row sm:items-center text-xs text-gray-400 gap-1 sm:gap-2">
+                    <span className="bg-slate-700 px-1.5 sm:px-2 py-0.5 rounded text-xs w-fit">
                       {video.category}
                     </span>
-                    <span>{video.instructor}</span>
+                    <span className="truncate">{video.instructor}</span>
                   </div>
                 </div>
 
