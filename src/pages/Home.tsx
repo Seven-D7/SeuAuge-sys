@@ -15,7 +15,10 @@ import {
   TrendingUp,
   Sparkles,
   Phone,
-  Mail
+  Mail,
+  Shield,
+  Target,
+  Award
 } from 'lucide-react';
 import PlansSection from '../components/home/PlansSection';
 
@@ -27,32 +30,45 @@ function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-emerald-50 to-cyan-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-teal-400/20 to-emerald-400/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-cyan-400/10 to-blue-400/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+      </div>
+
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm shadow-sm border-b sticky top-0 z-50">
+      <header className="bg-white/10 backdrop-blur-md shadow-xl border-b border-white/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white p-2 rounded-xl">
+              <div className="bg-gradient-to-r from-teal-400 to-emerald-400 text-white p-2 rounded-xl shadow-lg">
                 <img
-  src="/src/assets/icone.png" 
-  alt="Logo"
-  className="w-12 h-12 object-contain"
-/>
+                  src="/src/assets/icone.png" 
+                  alt="Logo"
+                  className="w-12 h-12 object-contain"
+                />
               </div>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-cyan-100 bg-clip-text text-transparent">
                   Meu Auge
                 </h1>
-                <p className="text-sm text-gray-600">Transforme Sua Vida</p>
+                <p className="text-sm text-white/70">Transforme Sua Vida</p>
               </div>
             </div>
             <div className="hidden md:flex items-center gap-6">
-              <a href="#planos" className="text-gray-700 hover:text-teal-600 transition-colors">Planos</a>
-              <a href="#sobre" className="text-gray-700 hover:text-teal-600 transition-colors">Sobre</a>
-              <a href="#depoimentos" className="text-gray-700 hover:text-teal-600 transition-colors">Depoimentos</a>
-              <Button onClick={handleStartJourney} className="bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600">
+              <a href="#planos" className="text-white/80 hover:text-teal-300 transition-all duration-300 font-medium">Planos</a>
+              <a href="#sobre" className="text-white/80 hover:text-teal-300 transition-all duration-300 font-medium">Sobre</a>
+              <a href="#depoimentos" className="text-white/80 hover:text-teal-300 transition-all duration-300 font-medium">Depoimentos</a>
+              <Button onClick={handleStartJourney} className="bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-500 hover:to-emerald-500 shadow-lg hover:shadow-xl transition-all duration-300">
                 Começar Agora
+              </Button>
+            </div>
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <Button onClick={handleStartJourney} size="sm" className="bg-gradient-to-r from-teal-400 to-emerald-400">
+                Entrar
               </Button>
             </div>
           </div>
@@ -60,22 +76,22 @@ function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="py-20 px-4">
+      <section className="py-20 px-4 relative z-10">
         <div className="max-w-7xl mx-auto text-center">
           <div className="mb-8">
-            <Badge className="bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-700 border-teal-200 mb-4">
+            <Badge className="bg-gradient-to-r from-teal-400/20 to-emerald-400/20 text-teal-200 border-teal-400/30 backdrop-blur-sm mb-4 shadow-lg">
               🏆 #1 em Transformação Corporal
             </Badge>
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-bold mb-6">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 text-white">
             Alcance Seu
-            <span className="bg-gradient-to-r from-teal-500 to-emerald-500 bg-clip-text text-transparent block">
+            <span className="bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent block animate-pulse">
               AUGE
             </span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-gray-700 mb-8 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl md:text-2xl text-white/80 mb-8 max-w-4xl mx-auto leading-relaxed">
             Transforme seu corpo e mente com nossos planos personalizados de emagrecimento. 
             Resultados científicos, acompanhamento profissional e a motivação que você precisa.
           </p>
@@ -84,7 +100,7 @@ function Home() {
             <Button 
               size="lg" 
               onClick={handleStartJourney}
-              className="h-14 px-8 text-lg bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 shadow-lg"
+              className="h-14 px-8 text-lg bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-500 hover:to-emerald-500 shadow-2xl hover:shadow-teal-500/25 transition-all duration-300 transform hover:scale-105 backdrop-blur-sm border border-white/20"
             >
               <Sparkles className="w-5 h-5 mr-2" />
               Iniciar Transformação
@@ -93,100 +109,102 @@ function Home() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-teal-600 mb-2">15K+</div>
-              <p className="text-gray-600">Vidas Transformadas</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 max-w-4xl mx-auto">
+            <div className="text-center bg-white/10 backdrop-blur-md rounded-xl p-4 sm:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent mb-2">15K+</div>
+              <p className="text-white/70 text-sm sm:text-base">Vidas Transformadas</p>
             </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-emerald-600 mb-2">94%</div>
-              <p className="text-gray-600">Taxa de Sucesso</p>
+            <div className="text-center bg-white/10 backdrop-blur-md rounded-xl p-4 sm:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-2">94%</div>
+              <p className="text-white/70 text-sm sm:text-base">Taxa de Sucesso</p>
             </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-teal-600 mb-2">-18kg</div>
-              <p className="text-gray-600">Média de Perda</p>
+            <div className="text-center bg-white/10 backdrop-blur-md rounded-xl p-4 sm:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent mb-2">-18kg</div>
+              <p className="text-white/70 text-sm sm:text-base">Média de Perda</p>
             </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-emerald-600 mb-2">90 dias</div>
-              <p className="text-gray-600">Tempo Médio</p>
+            <div className="text-center bg-white/10 backdrop-blur-md rounded-xl p-4 sm:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-2">90 dias</div>
+              <p className="text-white/70 text-sm sm:text-base">Tempo Médio</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Planos Section */}
-      <PlansSection />
+      <div className="relative z-10">
+        <PlansSection />
+      </div>
 
       {/* Benefícios Section */}
-      <section className="py-20 px-4">
+      <section className="py-20 px-4 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-white">
               Por Que Escolher o
-              <span className="bg-gradient-to-r from-teal-500 to-emerald-500 bg-clip-text text-transparent"> Meu Auge?</span>
+              <span className="bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent"> Meu Auge?</span>
             </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-white/80 max-w-3xl mx-auto">
               Metodologia científica comprovada com acompanhamento humano personalizado.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="text-center p-8 border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="bg-gradient-to-r from-blue-100 to-blue-200 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <TrendingUp className="w-8 h-8 text-blue-600" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            <Card className="text-center p-6 sm:p-8 border-0 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105">
+              <div className="bg-gradient-to-r from-blue-400/20 to-blue-600/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-blue-400/30">
+                <TrendingUp className="w-8 h-8 text-blue-300" />
               </div>
-              <h3 className="text-xl font-bold mb-4">Resultados Científicos</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-bold mb-4 text-white">Resultados Científicos</h3>
+              <p className="text-white/70">
                 Metodologia baseada em estudos científicos com mais de 15.000 casos de sucesso comprovados.
               </p>
             </Card>
 
-            <Card className="text-center p-8 border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="bg-gradient-to-r from-green-100 to-green-200 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Heart className="w-8 h-8 text-green-600" />
+            <Card className="text-center p-6 sm:p-8 border-0 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105">
+              <div className="bg-gradient-to-r from-green-400/20 to-green-600/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-green-400/30">
+                <Heart className="w-8 h-8 text-green-300" />
               </div>
-              <h3 className="text-xl font-bold mb-4">Acompanhamento Humano</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-bold mb-4 text-white">Acompanhamento Humano</h3>
+              <p className="text-white/70">
                 Equipe de nutricionistas, personal trainers e coaches dedicados ao seu sucesso.
               </p>
             </Card>
 
-            <Card className="text-center p-8 border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="bg-gradient-to-r from-purple-100 to-purple-200 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Zap className="w-8 h-8 text-purple-600" />
+            <Card className="text-center p-6 sm:p-8 border-0 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105">
+              <div className="bg-gradient-to-r from-purple-400/20 to-purple-600/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-purple-400/30">
+                <Zap className="w-8 h-8 text-purple-300" />
               </div>
-              <h3 className="text-xl font-bold mb-4">Tecnologia Avançada</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-bold mb-4 text-white">Tecnologia Avançada</h3>
+              <p className="text-white/70">
                 App inteligente que se adapta ao seu progresso e ajusta automaticamente seu plano.
               </p>
             </Card>
 
-            <Card className="text-center p-8 border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="bg-gradient-to-r from-teal-100 to-emerald-200 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Dumbbell className="w-8 h-8 text-teal-600" />
+            <Card className="text-center p-6 sm:p-8 border-0 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105">
+              <div className="bg-gradient-to-r from-teal-400/20 to-emerald-400/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-teal-400/30">
+                <Dumbbell className="w-8 h-8 text-teal-300" />
               </div>
-              <h3 className="text-xl font-bold mb-4">Treinos Personalizados</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-bold mb-4 text-white">Treinos Personalizados</h3>
+              <p className="text-white/70">
                 Exercícios adaptados ao seu nível, equipamentos disponíveis e preferências pessoais.
               </p>
             </Card>
 
-            <Card className="text-center p-8 border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="bg-gradient-to-r from-red-100 to-red-200 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <UtensilsCrossed className="w-8 h-8 text-red-600" />
+            <Card className="text-center p-6 sm:p-8 border-0 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105">
+              <div className="bg-gradient-to-r from-red-400/20 to-red-600/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-red-400/30">
+                <UtensilsCrossed className="w-8 h-8 text-red-300" />
               </div>
-              <h3 className="text-xl font-bold mb-4">Nutrição Inteligente</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-bold mb-4 text-white">Nutrição Inteligente</h3>
+              <p className="text-white/70">
                 Cardápios que consideram suas preferências, restrições e rotina alimentar.
               </p>
             </Card>
 
-            <Card className="text-center p-8 border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="bg-gradient-to-r from-indigo-100 to-indigo-200 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Users className="w-8 h-8 text-indigo-600" />
+            <Card className="text-center p-6 sm:p-8 border-0 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105">
+              <div className="bg-gradient-to-r from-indigo-400/20 to-indigo-600/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-indigo-400/30">
+                <Users className="w-8 h-8 text-indigo-300" />
               </div>
-              <h3 className="text-xl font-bold mb-4">Comunidade Ativa</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-bold mb-4 text-white">Comunidade Ativa</h3>
+              <p className="text-white/70">
                 Faça parte de uma comunidade motivadora com pessoas que compartilham seus objetivos.
               </p>
             </Card>
@@ -195,27 +213,27 @@ function Home() {
       </section>
 
       {/* Depoimentos Section */}
-      <section id="depoimentos" className="py-20 px-4 bg-white/50">
+      <section id="depoimentos" className="py-20 px-4 bg-white/5 backdrop-blur-sm relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-white">
               Histórias de
-              <span className="bg-gradient-to-r from-teal-500 to-emerald-500 bg-clip-text text-transparent"> Transformação</span>
+              <span className="bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent"> Transformação</span>
             </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-white/80 max-w-3xl mx-auto">
               Veja como nossos alunos alcançaram seus objetivos e transformaram suas vidas.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="p-8 border-0 shadow-lg">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+            <Card className="p-6 sm:p-8 border-0 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 transition-all duration-300">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 bg-gradient-to-r from-pink-400 to-pink-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
                   M
                 </div>
                 <div>
-                  <h4 className="font-bold text-lg">Maria Silva</h4>
-                  <p className="text-gray-600">Perdeu 22kg em 4 meses</p>
+                  <h4 className="font-bold text-lg text-white">Maria Silva</h4>
+                  <p className="text-white/70">Perdeu 22kg em 4 meses</p>
                 </div>
               </div>
               <div className="flex mb-4">
@@ -223,19 +241,19 @@ function Home() {
                   <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                 ))}
               </div>
-              <p className="text-gray-700 italic">
+              <p className="text-white/80 italic">
                 "Nunca pensei que conseguiria emagrecer de forma tão saudável. O acompanhamento foi fundamental para manter a motivação!"
               </p>
             </Card>
 
-            <Card className="p-8 border-0 shadow-lg">
+            <Card className="p-6 sm:p-8 border-0 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 transition-all duration-300">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
                   J
                 </div>
                 <div>
-                  <h4 className="font-bold text-lg">João Santos</h4>
-                  <p className="text-gray-600">Perdeu 18kg em 3 meses</p>
+                  <h4 className="font-bold text-lg text-white">João Santos</h4>
+                  <p className="text-white/70">Perdeu 18kg em 3 meses</p>
                 </div>
               </div>
               <div className="flex mb-4">
@@ -243,19 +261,19 @@ function Home() {
                   <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                 ))}
               </div>
-              <p className="text-gray-700 italic">
+              <p className="text-white/80 italic">
                 "O app é incrível! Consegui seguir o plano mesmo com a correria do trabalho. Recomendo para todos!"
               </p>
             </Card>
 
-            <Card className="p-8 border-0 shadow-lg">
+            <Card className="p-6 sm:p-8 border-0 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 transition-all duration-300">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 bg-gradient-to-r from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
                   A
                 </div>
                 <div>
-                  <h4 className="font-bold text-lg">Ana Costa</h4>
-                  <p className="text-gray-600">Perdeu 15kg em 2 meses</p>
+                  <h4 className="font-bold text-lg text-white">Ana Costa</h4>
+                  <p className="text-white/70">Perdeu 15kg em 2 meses</p>
                 </div>
               </div>
               <div className="flex mb-4">
@@ -263,7 +281,7 @@ function Home() {
                   <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                 ))}
               </div>
-              <p className="text-gray-700 italic">
+              <p className="text-white/80 italic">
                 "Finalmente encontrei um método que funciona! A equipe é muito atenciosa e os resultados são reais."
               </p>
             </Card>
@@ -272,12 +290,12 @@ function Home() {
       </section>
 
       {/* CTA Final */}
-      <section className="py-20 px-4 bg-gradient-to-r from-teal-500 to-emerald-500 text-white">
+      <section className="py-20 px-4 bg-gradient-to-r from-teal-500/80 to-emerald-500/80 backdrop-blur-md text-white relative z-10">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
             Pronto Para Alcançar Meu Auge?
           </h2>
-          <p className="text-xl mb-8 opacity-90">
+          <p className="text-lg sm:text-xl mb-8 opacity-90">
             Junte-se a mais de 15.000 pessoas que já transformaram suas vidas. 
             Comece hoje mesmo sua jornada rumo ao seu melhor eu.
           </p>
@@ -286,7 +304,7 @@ function Home() {
               size="lg" 
               variant="secondary"
               onClick={handleStartJourney}
-              className="h-14 px-8 text-lg bg-white text-teal-600 hover:bg-gray-50"
+              className="h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg bg-white text-teal-600 hover:bg-gray-50 transition-all duration-300 transform hover:scale-105"
             >
               <Crown className="w-5 h-5 mr-2" />
               Começar Transformação
@@ -294,7 +312,7 @@ function Home() {
             <Button 
               size="lg" 
               variant="outline"
-              className="h-14 px-8 text-lg border-white text-white hover:bg-white/10"
+              className="h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg border-white text-white hover:bg-white/10 transition-all duration-300"
             >
               <Phone className="w-5 h-5 mr-2" />
               Falar com Especialista
@@ -304,17 +322,17 @@ function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4">
+      <footer className="bg-slate-900/90 backdrop-blur-md text-white py-12 px-4 relative z-10 border-t border-white/10">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <div className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white p-2 rounded-xl">
+                <div className="bg-gradient-to-r from-teal-400 to-emerald-400 text-white p-2 rounded-xl">
                   <img
-  src="/src/assets/icone.png" 
-  alt="Logo"
-  className="w-12 h-12 object-contain"
-  />
+                    src="/src/assets/icone.png" 
+                    alt="Logo"
+                    className="w-12 h-12 object-contain"
+                  />
                 </div>
                 <span className="text-xl font-bold">Meu Auge</span>
               </div>
@@ -322,13 +340,13 @@ function Home() {
                 Transformando vidas através da ciência e do acompanhamento humano personalizado.
               </p>
               <div className="flex gap-4">
-                <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors cursor-pointer">
+                <div className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors cursor-pointer border border-white/20">
                   <span className="text-sm">f</span>
                 </div>
-                <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors cursor-pointer">
+                <div className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors cursor-pointer border border-white/20">
                   <span className="text-sm">@</span>
                 </div>
-                <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors cursor-pointer">
+                <div className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors cursor-pointer border border-white/20">
                   <span className="text-sm">in</span>
                 </div>
               </div>
@@ -369,7 +387,7 @@ function Home() {
             </div>
           </div>
           
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+          <div className="border-t border-white/20 mt-8 pt-8 text-center text-gray-400">
             <p>&copy; 2025 Meu Auge. Todos os direitos reservados.</p>
           </div>
         </div>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Filter, Search, Play, Loader2 } from "lucide-react";
+import { Filter, Search, Play, Loader2, Bookmark, TrendingUp } from "lucide-react";
 import VideoCard from "../components/Videos/VideoCard";
 import VideoPlayer from "../components/Videos/VideoPlayer";
+import VideoCarousel from "../components/Videos/VideoCarousel";
 import {
   getVideosByCategory,
   searchVideos,
@@ -15,6 +16,7 @@ import { isDemoMode } from "../firebase";
 const Videos: React.FC = () => {
   const { user } = useAuth();
   const [videos, setVideos] = useState<VideoMetadata[]>([]);
+  const [categorizedVideos, setCategorizedVideos] = useState<Record<string, VideoMetadata[]>>({});
   const [categories] = useState([
     "Todos",
     "Treino",
@@ -26,33 +28,38 @@ const Videos: React.FC = () => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedVideo, setSelectedVideo] = useState<VideoStreamData | null>(
-    null,
-  );
+  const [selectedVideo, setSelectedVideo] = useState<VideoStreamData | null>(null);
   const [playerLoading, setPlayerLoading] = useState(false);
+  const [watchlist, setWatchlist] = useState<string[]>([]);
+  const [showCarousels, setShowCarousels] = useState(true);
 
   useEffect(() => {
     loadVideos();
-  }, [selectedCategory]);
+    loadWatchlist();
+  }, []);
 
   const loadVideos = async () => {
     try {
       setLoading(true);
-      let videosData: VideoMetadata[];
+      
+      // Load videos by category for carousels
+      const categoryPromises = categories.slice(1).map(async (category) => {
+        const categoryVideos = await getVideosByCategory(category, 1, 12);
+        return { category, videos: categoryVideos };
+      });
 
-      if (selectedCategory === "Todos") {
-        // Carregar vídeos de todas as categorias
-        const allVideos = await Promise.all(
-          categories
-            .slice(1)
-            .map((category) => getVideosByCategory(category, 1, 5)),
-        );
-        videosData = allVideos.flat();
-      } else {
-        videosData = await getVideosByCategory(selectedCategory);
-      }
+      const categoryResults = await Promise.all(categoryPromises);
+      const categorizedData: Record<string, VideoMetadata[]> = {};
+      
+      categoryResults.forEach(({ category, videos }) => {
+        categorizedData[category] = videos;
+      });
 
-      setVideos(videosData);
+      setCategorizedVideos(categorizedData);
+      
+      // Set all videos for the main grid
+      const allVideos = categoryResults.flatMap(({ videos }) => videos);
+      setVideos(allVideos);
     } catch (error) {
       console.error("Erro ao carregar vídeos:", error);
     } finally {
@@ -60,14 +67,25 @@ const Videos: React.FC = () => {
     }
   };
 
+  const loadWatchlist = () => {
+    // Load watchlist from localStorage or API
+    const saved = localStorage.getItem('video_watchlist');
+    if (saved) {
+      setWatchlist(JSON.parse(saved));
+    }
+  };
+
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
+      setShowCarousels(true);
       loadVideos();
       return;
     }
 
     try {
       setSearchLoading(true);
+      setShowCarousels(false);
+      
       const results = await searchVideos(searchQuery, {
         category: selectedCategory !== "Todos" ? selectedCategory : undefined,
       });
@@ -93,6 +111,17 @@ const Videos: React.FC = () => {
     }
   };
 
+  const handleAddToWatchlist = (videoId: string) => {
+    setWatchlist(prev => {
+      const newWatchlist = prev.includes(videoId)
+        ? prev.filter(id => id !== videoId)
+        : [...prev, videoId];
+      
+      localStorage.setItem('video_watchlist', JSON.stringify(newWatchlist));
+      return newWatchlist;
+    });
+  };
+
   const hasAccess = (video: VideoMetadata) => {
     return video.isFree || user?.isPremium || isDemoMode;
   };
@@ -108,6 +137,21 @@ const Videos: React.FC = () => {
     return categoryMatch && searchMatch;
   });
 
+  // Convert videos to carousel format
+  const convertToCarouselFormat = (videos: VideoMetadata[]) => {
+    return videos.map(video => ({
+      id: video.id,
+      title: video.title,
+      description: video.description,
+      thumbnail: video.thumbnail,
+      duration: `${Math.floor(video.duration / 60)}:${String(video.duration % 60).padStart(2, '0')}`,
+      category: video.category,
+      instructor: video.instructor,
+      isFree: video.isFree,
+      tags: video.tags,
+    }));
+  };
+
   if (selectedVideo) {
     return (
       <div className="min-h-screen bg-slate-900">
@@ -116,7 +160,7 @@ const Videos: React.FC = () => {
           <VideoPlayer
             streamData={selectedVideo}
             autoPlay={true}
-            className="w-full h-[60vh]"
+            className="w-full h-[50vh] sm:h-[60vh] lg:h-[70vh]"
             onComplete={() => console.log("Vídeo concluído")}
             onProgress={(progress) => console.log("Progresso:", progress)}
           />
@@ -124,14 +168,14 @@ const Videos: React.FC = () => {
           {/* Back Button */}
           <button
             onClick={() => setSelectedVideo(null)}
-            className="absolute top-4 left-4 bg-black bg-opacity-50 hover:bg-opacity-70 text-white px-4 py-2 rounded-lg transition-all duration-200"
+            className="absolute top-4 left-4 bg-black/60 hover:bg-black/80 text-white px-3 sm:px-4 py-2 rounded-lg transition-all duration-200 backdrop-blur-sm text-sm sm:text-base"
           >
             ← Voltar aos vídeos
           </button>
         </div>
 
         {/* Video Info */}
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Main Content */}
             <div className="lg:col-span-2">
@@ -164,15 +208,15 @@ const Videos: React.FC = () => {
               </div>
             </div>
 
-            {/* Sidebar */}
+            {/* Sidebar - Related Videos */}
             <div className="lg:col-span-1">
-              <div className="bg-slate-800 rounded-lg p-6">
+              <div className="bg-slate-800 rounded-lg p-4 sm:p-6">
                 <h3 className="text-lg font-semibold text-white mb-4">
-                  Próximos vídeos
+                  Vídeos relacionados
                 </h3>
                 <div className="space-y-4">
                   {videos
-                    .filter((v) => v.id !== selectedVideo.videoId)
+                    .filter((v) => v.id !== selectedVideo.videoId && v.category === selectedVideo.metadata.category)
                     .slice(0, 5)
                     .map((video) => (
                       <div
@@ -205,107 +249,187 @@ const Videos: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="min-h-screen bg-slate-900">
       {/* Header */}
-      <div className="flex flex-col gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-            Biblioteca de Vídeos
-          </h1>
-          <p className="text-sm sm:text-base text-slate-400">
-            {isDemoMode && (
-              <span className="inline-flex items-center px-2 py-1 bg-blue-900/20 text-blue-300 rounded-full text-xs sm:text-sm mr-3">
-                🔧 Modo Demo - Vídeos simulados
-              </span>
-            )}
-            Acesso completo aos treinos e aulas especializadas
-          </p>
-        </div>
-
-        {/* Search */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-          <div className="relative flex-1 sm:max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
-            <input
-              type="text"
-              placeholder="Buscar vídeos..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-              className="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
-            />
+      <div className="px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-4">
+        <div className="flex flex-col gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
+              Biblioteca de Vídeos
+            </h1>
+            <p className="text-sm sm:text-base text-slate-400">
+              {isDemoMode && (
+                <span className="inline-flex items-center px-2 py-1 bg-blue-900/20 text-blue-300 rounded-full text-xs sm:text-sm mr-3">
+                  🔧 Modo Demo - Vídeos simulados
+                </span>
+              )}
+              Acesso completo aos treinos e aulas especializadas
+            </p>
           </div>
-          <button
-            onClick={handleSearch}
-            disabled={searchLoading}
-            className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 text-sm sm:text-base"
-          >
-            {searchLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              "Buscar"
-            )}
-          </button>
+
+          {/* Search */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+            <div className="relative flex-1 sm:max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Buscar vídeos..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+                className="w-full pl-10 pr-4 py-2.5 sm:py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm sm:text-base"
+              />
+            </div>
+            <button
+              onClick={handleSearch}
+              disabled={searchLoading}
+              className="bg-primary hover:bg-primary-dark text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg transition-colors disabled:opacity-50 text-sm sm:text-base min-w-[100px] flex items-center justify-center"
+            >
+              {searchLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                "Buscar"
+              )}
+            </button>
+          </div>
+
+          {/* Filters */}
+          <div className="flex items-center space-x-2 sm:space-x-4 overflow-x-auto pb-2">
+            <Filter className="text-slate-400 w-5 h-5 flex-shrink-0" />
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => {
+                  setSelectedCategory(category);
+                  if (category === "Todos") {
+                    setShowCarousels(true);
+                    setSearchQuery("");
+                  }
+                }}
+                className={`px-3 sm:px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
+                  selectedCategory === category
+                    ? "bg-primary text-white"
+                    : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="flex items-center space-x-4 overflow-x-auto pb-2">
-        <Filter className="text-slate-400 w-5 h-5 flex-shrink-0" />
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
-              selectedCategory === category
-                ? "bg-primary text-white"
-                : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-            }`}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
-
-      {/* Video Grid */}
+      {/* Content */}
       {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center">
+            <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
+            <p className="text-slate-400">Carregando vídeos...</p>
+          </div>
         </div>
       ) : (
         <>
-          {filteredVideos.length === 0 ? (
-            <div className="text-center py-12">
-              <Play className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">
-                Nenhum vídeo encontrado
-              </h3>
-              <p className="text-slate-400">
-                {searchQuery
-                  ? "Tente ajustar sua busca ou filtros"
-                  : "Vídeos serão adicionados em breve"}
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-              {filteredVideos.map((video) => (
-                <VideoCard
-                  key={video.id}
-                  video={{
-                    id: video.id,
-                    title: video.title,
-                    duration: `${Math.floor(video.duration / 60)}:${String(video.duration % 60).padStart(2, "0")}`,
-                    category: video.category,
-                    isFree: video.isFree,
-                    videoUrl: video.videoUrl,
-                    thumbnail: video.thumbnail,
-                    description: video.description,
-                    instructor: video.instructor,
-                    tags: video.tags,
-                  }}
-                  onClick={() => handleVideoSelect(video.id)}
+          {showCarousels && !searchQuery ? (
+            <div className="pb-8">
+              {/* My Watchlist */}
+              {watchlist.length > 0 && (
+                <VideoCarousel
+                  title="Minha Lista"
+                  videos={convertToCarouselFormat(
+                    videos.filter(video => watchlist.includes(video.id))
+                  )}
+                  onVideoSelect={handleVideoSelect}
+                  onAddToWatchlist={handleAddToWatchlist}
+                  watchlist={watchlist}
+                  autoPlay={false}
+                />
+              )}
+
+              {/* Trending Now */}
+              <VideoCarousel
+                title="Em Alta"
+                videos={convertToCarouselFormat(videos.slice(0, 12))}
+                onVideoSelect={handleVideoSelect}
+                onAddToWatchlist={handleAddToWatchlist}
+                watchlist={watchlist}
+                autoPlay={true}
+              />
+
+              {/* Category Carousels */}
+              {Object.entries(categorizedVideos).map(([category, categoryVideos]) => (
+                <VideoCarousel
+                  key={category}
+                  title={category}
+                  videos={convertToCarouselFormat(categoryVideos)}
+                  onVideoSelect={handleVideoSelect}
+                  onAddToWatchlist={handleAddToWatchlist}
+                  watchlist={watchlist}
+                  autoPlay={false}
                 />
               ))}
+            </div>
+          ) : (
+            <div className="px-4 sm:px-6 lg:px-8 pb-8">
+              {/* Results Header */}
+              <div className="mb-6">
+                <h2 className="text-lg sm:text-xl font-semibold text-white mb-2">
+                  {searchQuery 
+                    ? `Resultados para "${searchQuery}"`
+                    : selectedCategory === "Todos" 
+                      ? "Todos os vídeos" 
+                      : `Categoria: ${selectedCategory}`
+                  }
+                </h2>
+                <p className="text-slate-400 text-sm">
+                  {filteredVideos.length} vídeo{filteredVideos.length !== 1 ? 's' : ''} encontrado{filteredVideos.length !== 1 ? 's' : ''}
+                </p>
+              </div>
+
+              {/* Video Grid */}
+              {filteredVideos.length === 0 ? (
+                <div className="text-center py-20">
+                  <Play className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    Nenhum vídeo encontrado
+                  </h3>
+                  <p className="text-slate-400 mb-6">
+                    {searchQuery
+                      ? "Tente ajustar sua busca ou filtros"
+                      : "Vídeos serão adicionados em breve"}
+                  </p>
+                  <button
+                    onClick={() => {
+                      setSearchQuery("");
+                      setSelectedCategory("Todos");
+                      setShowCarousels(true);
+                    }}
+                    className="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg transition-colors"
+                  >
+                    Ver todos os vídeos
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6">
+                  {filteredVideos.map((video) => (
+                    <VideoCard
+                      key={video.id}
+                      video={{
+                        id: video.id,
+                        title: video.title,
+                        duration: `${Math.floor(video.duration / 60)}:${String(video.duration % 60).padStart(2, "0")}`,
+                        category: video.category,
+                        isFree: video.isFree,
+                        videoUrl: video.videoUrl,
+                        thumbnail: video.thumbnail,
+                        description: video.description,
+                        instructor: video.instructor,
+                        tags: video.tags,
+                      }}
+                      onClick={() => handleVideoSelect(video.id)}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </>
@@ -313,10 +437,10 @@ const Videos: React.FC = () => {
 
       {/* Player Loading Modal */}
       {playerLoading && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-slate-800 rounded-lg p-8 text-center">
+        <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50">
+          <div className="bg-slate-800 rounded-lg p-6 sm:p-8 text-center max-w-sm mx-4">
             <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
-            <p className="text-white">Carregando vídeo...</p>
+            <p className="text-white text-sm sm:text-base">Carregando vídeo...</p>
           </div>
         </div>
       )}
