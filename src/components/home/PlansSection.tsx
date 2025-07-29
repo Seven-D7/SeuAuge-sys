@@ -26,7 +26,7 @@ export default function PlansSection() {
   };
 
   return (
-    <section id="planos" className="py-8 sm:py-12 md:py-16 lg:py-20 px-3 sm:px-4 bg-white/5 backdrop-blur-sm border-y border-white/10">
+    <section id="planos" className="py-8 sm:py-12 md:py-16 lg:py-20 px-3 sm:px-4 bg-slate-50/80 backdrop-blur-sm border-y border-slate-200">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-6 sm:mb-8 md:mb-12 lg:mb-16">
           <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 sm:mb-4 lg:mb-6 text-white">
