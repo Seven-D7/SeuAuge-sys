@@ -144,7 +144,7 @@ function Home() {
               Por Que Escolher o
               <span className="bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text text-transparent"> Meu Auge?</span>
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-white/80 max-w-3xl mx-auto px-2">
+            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto px-2">
               Metodologia científica comprovada com acompanhamento humano personalizado.
             </p>
           </div>
