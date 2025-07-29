@@ -198,7 +198,7 @@ function App() {
             <Route
               path="videos"
               element={
-                <Suspense fallback={<LoadingFallback page="vídeos" />}>
+                <Suspense fallback={<LoadingFallback />}>
                   <Videos />
                 </Suspense>
               }
