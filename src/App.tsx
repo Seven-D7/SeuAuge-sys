@@ -190,7 +190,7 @@ function App() {
             <Route
               path="dashboard"
               element={
-                <Suspense fallback={<LoadingFallback page="dashboard" />}>
+                <Suspense fallback={<LoadingFallback />}>
                   <Dashboard />
                 </Suspense>
               }
