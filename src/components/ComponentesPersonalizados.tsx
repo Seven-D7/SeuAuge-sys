@@ -114,14 +114,14 @@ export const CustomBadge: React.FC<{
   const rarityColors = {
     common: 'from-gray-500 to-gray-600',
     rare: 'from-blue-500 to-blue-600',
-    epic: 'from-purple-500 to-purple-600',
+    epic: 'from-blue-500 to-cyan-600',
     legendary: 'from-yellow-500 to-orange-500'
   };
 
   const rarityGlow = {
     common: 'shadow-gray-500/20',
     rare: 'shadow-blue-500/30',
-    epic: 'shadow-purple-500/30',
+    epic: 'shadow-blue-500/30',
     legendary: 'shadow-yellow-500/40'
   };
 
@@ -164,7 +164,7 @@ export const LevelProgress: React.FC<{
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex justify-between items-center">
-          <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 text-lg">
+          <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-4 py-2 text-lg">
             {currentLevel}
           </Badge>
           <div className="text-right">
@@ -176,7 +176,7 @@ export const LevelProgress: React.FC<{
         <div className="relative">
           <Progress value={progressPercentage} className="h-4 bg-white/20" />
           <div 
-            className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-1000 ease-out"
+            className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all duration-1000 ease-out"
             style={{ width: `${progressPercentage}%` }}
           ></div>
         </div>
@@ -187,7 +187,7 @@ export const LevelProgress: React.FC<{
               key={i}
               className={`h-2 rounded-full transition-all duration-500 ${
                 i < Math.floor(progressPercentage / 20) 
-                  ? 'bg-gradient-to-r from-purple-500 to-pink-500' 
+                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500' 
                   : 'bg-white/20'
               }`}
               style={{ animationDelay: `${i * 100}ms` }}
@@ -407,4 +407,3 @@ export default {
   CustomTimeline,
   ComparisonStats
 };
-
