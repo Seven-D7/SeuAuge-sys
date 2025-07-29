@@ -564,7 +564,7 @@ const Profile: React.FC = () => {
               </section>
 
               {/* Desafios Diários */}
-              <section className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+              <section className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
                   <Zap className="w-6 h-6 mr-3 text-yellow-500" />
                   Desafios Diários
