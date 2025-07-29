@@ -257,7 +257,7 @@ function App() {
             <Route
               path="payment-success"
               element={
-                <Suspense fallback={<LoadingFallback page="confirmação" />}>
+                <Suspense fallback={<LoadingFallback />}>
                   <PaymentSuccess />
                 </Suspense>
               }
