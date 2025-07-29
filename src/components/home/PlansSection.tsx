@@ -37,7 +37,7 @@ export default function PlansSection() {
             </span>
           </h2>
           <p className="text-sm sm:text-base md:text-lg lg:text-xl text-slate-600 max-w-3xl mx-auto px-2">
-            Encontre o plano perfeito para sua jornada de transforma��ão. Todos
+            Encontre o plano perfeito para sua jornada de transformação. Todos
             os planos incluem garantia de 30 dias.
           </p>
         </div>
@@ -97,7 +97,7 @@ export default function PlansSection() {
                           </span>
                         </div>
                         {plan.monthlyPrice && (
-                          <span className="text-xs sm:text-sm md:text-base text-white/70 font-medium">
+                          <span className="text-xs sm:text-sm md:text-base text-slate-600 font-medium">
                             {plan.monthlyPrice}
                           </span>
                         )}
