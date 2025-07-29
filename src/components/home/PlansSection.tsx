@@ -36,7 +36,7 @@ export default function PlansSection() {
               Plano
             </span>
           </h2>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white/80 max-w-3xl mx-auto px-2">
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-slate-600 max-w-3xl mx-auto px-2">
             Encontre o plano perfeito para sua jornada de transformação. Todos
             os planos incluem garantia de 30 dias.
           </p>
