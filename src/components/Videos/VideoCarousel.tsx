@@ -194,20 +194,20 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
                           e.stopPropagation();
                           onVideoSelect(video.id);
                         }}
-                        className="bg-white hover:bg-gray-200 text-black p-2 rounded-full transition-colors"
+                        className="bg-white hover:bg-gray-200 text-black p-1.5 sm:p-2 rounded-full transition-colors"
                       >
-                        <Play className="w-4 h-4 fill-current" />
+                        <Play className="w-3 h-3 sm:w-4 sm:h-4 fill-current" />
                       </button>
                       
                       {onAddToWatchlist && (
                         <button
                           onClick={(e) => handleWatchlistToggle(video.id, e)}
-                          className="bg-black/60 hover:bg-black/80 text-white p-2 rounded-full transition-colors backdrop-blur-sm"
+                          className="bg-black/60 hover:bg-black/80 text-white p-1.5 sm:p-2 rounded-full transition-colors backdrop-blur-sm"
                         >
                           {isInWatchlist(video.id) ? (
-                            <Check className="w-4 h-4" />
+                            <Check className="w-3 h-3 sm:w-4 sm:h-4" />
                           ) : (
-                            <Plus className="w-4 h-4" />
+                            <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                           )}
                         </button>
                       )}
@@ -215,9 +215,9 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
                       {showInfo && (
                         <button
                           onClick={(e) => e.stopPropagation()}
-                          className="bg-black/60 hover:bg-black/80 text-white p-2 rounded-full transition-colors backdrop-blur-sm"
+                          className="bg-black/60 hover:bg-black/80 text-white p-1.5 sm:p-2 rounded-full transition-colors backdrop-blur-sm"
                         >
-                          <Info className="w-4 h-4" />
+                          <Info className="w-3 h-3 sm:w-4 sm:h-4" />
                         </button>
                       )}
                     </div>
