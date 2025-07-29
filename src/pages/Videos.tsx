@@ -251,25 +251,25 @@ const Videos: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-900">
       {/* Header */}
-      <div className="px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-4">
-        <div className="flex flex-col gap-4">
+      <div className="px-3 sm:px-4 md:px-6 lg:px-8 pt-4 sm:pt-6 md:pt-8 pb-3 sm:pb-4">
+        <div className="flex flex-col gap-3 sm:gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2">
               Biblioteca de Vídeos
             </h1>
-            <p className="text-sm sm:text-base text-slate-400">
+            <p className="text-xs sm:text-sm md:text-base text-slate-400">
               {isDemoMode && (
-                <span className="inline-flex items-center px-2 py-1 bg-blue-900/20 text-blue-300 rounded-full text-xs sm:text-sm mr-3">
+                <span className="inline-flex items-center px-2 py-1 bg-blue-900/20 text-blue-300 rounded-full text-xs sm:text-sm mr-2 sm:mr-3 mb-1 sm:mb-0">
                   🔧 Modo Demo - Vídeos simulados
                 </span>
               )}
-              Acesso completo aos treinos e aulas especializadas
+              <span className="block sm:inline">Acesso completo aos treinos e aulas especializadas</span>
             </p>
           </div>
 
           {/* Search */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-            <div className="relative flex-1 sm:max-w-md">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 md:gap-4">
+            <div className="relative flex-1 sm:max-w-md md:max-w-lg">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
               <input
                 type="text"
@@ -277,44 +277,49 @@ const Videos: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-                className="w-full pl-10 pr-4 py-2.5 sm:py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm sm:text-base"
+                className="w-full pl-10 pr-4 py-2 sm:py-2.5 md:py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm sm:text-base"
               />
             </div>
             <button
               onClick={handleSearch}
               disabled={searchLoading}
-              className="bg-primary hover:bg-primary-dark text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg transition-colors disabled:opacity-50 text-sm sm:text-base min-w-[100px] flex items-center justify-center"
+              className="bg-primary hover:bg-primary-dark text-white px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg transition-colors disabled:opacity-50 text-sm sm:text-base min-w-[80px] sm:min-w-[100px] flex items-center justify-center"
             >
               {searchLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                "Buscar"
+                <>
+                  <span className="hidden sm:inline">Buscar</span>
+                  <span className="sm:hidden">🔍</span>
+                </>
               )}
             </button>
           </div>
 
           {/* Filters */}
-          <div className="flex items-center space-x-2 sm:space-x-4 overflow-x-auto pb-2">
-            <Filter className="text-slate-400 w-5 h-5 flex-shrink-0" />
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => {
-                  setSelectedCategory(category);
-                  if (category === "Todos") {
-                    setShowCarousels(true);
-                    setSearchQuery("");
-                  }
-                }}
-                className={`px-3 sm:px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
-                  selectedCategory === category
-                    ? "bg-primary text-white"
-                    : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 overflow-x-auto pb-2 scrollbar-hide">
+            <Filter className="text-slate-400 w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+            <div className="flex gap-2 sm:gap-3">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => {
+                    setSelectedCategory(category);
+                    if (category === "Todos") {
+                      setShowCarousels(true);
+                      setSearchQuery("");
+                    }
+                  }}
+                  className={`px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
+                    selectedCategory === category
+                      ? "bg-primary text-white"
+                      : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
