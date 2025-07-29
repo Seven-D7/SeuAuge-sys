@@ -232,7 +232,7 @@ function App() {
               path="progress"
               element={
                 <PlanGuard allowedPlans={["B", "C"]}>
-                  <Suspense fallback={<LoadingFallback page="progresso" />}>
+                  <Suspense fallback={<LoadingFallback />}>
                     <Progress />
                   </Suspense>
                 </PlanGuard>
