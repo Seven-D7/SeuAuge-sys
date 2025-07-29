@@ -251,9 +251,9 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
                         {video.description}
                       </p>
                       <div className="flex flex-wrap gap-1">
-                        {video.tags.slice(0, 3).map((tag) => (
+                        {video.tags.slice(0, 3).map((tag, tagIndex) => (
                           <span
-                            key={tag}
+                            key={`${video.id}-tag-${tagIndex}`}
                             className="bg-slate-700 text-gray-300 px-1.5 py-0.5 rounded text-xs"
                           >
                             {tag}
