@@ -126,7 +126,7 @@ export default function PlansSection() {
                           </div>
                         ))}
                       {plan.features.length > 5 && (
-                        <div className="text-white/60 text-xs sm:text-sm text-center pt-2 font-medium">
+                        <div className="text-slate-500 text-xs sm:text-sm text-center pt-2 font-medium">
                           +{plan.features.length - 5} recursos adicionais
                         </div>
                       )}
