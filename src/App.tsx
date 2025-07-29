@@ -165,7 +165,7 @@ function App() {
           <Route
             path="/auth"
             element={
-              <Suspense fallback={<LoadingFallback page="autenticação" />}>
+              <Suspense fallback={<LoadingFallback />}>
                 <Auth />
               </Suspense>
             }
