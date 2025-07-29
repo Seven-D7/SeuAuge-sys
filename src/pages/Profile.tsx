@@ -542,7 +542,7 @@ const Profile: React.FC = () => {
                   return (
                     <div
                       key={index}
-                      className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-300 hover:scale-105 group"
+                      className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-300 group"
                     >
                       <div className="flex items-center justify-between mb-4">
                         <Icon
