@@ -249,7 +249,7 @@ function App() {
             <Route
               path="payment"
               element={
-                <Suspense fallback={<LoadingFallback page="pagamento" />}>
+                <Suspense fallback={<LoadingFallback />}>
                   <Payment />
                 </Suspense>
               }
