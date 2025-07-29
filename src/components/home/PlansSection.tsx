@@ -134,7 +134,7 @@ export default function PlansSection() {
 
                     {plan.discount && (
                       <div className="mb-4 sm:mb-6 text-center">
-                        <div className="inline-block bg-gradient-to-r from-purple-400/30 to-pink-400/30 text-purple-200 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold backdrop-blur-sm border border-purple-400/30">
+                        <div className="inline-block bg-gradient-to-r from-cyan-400/30 to-blue-400/30 text-cyan-200 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold backdrop-blur-sm border border-cyan-400/30">
                           🛍️ {plan.discount} de desconto
                         </div>
                       </div>
