@@ -119,9 +119,9 @@ function Home() {
               <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-1 sm:mb-2">94%</div>
               <p className="text-slate-600 text-xs sm:text-sm md:text-base">Taxa de Sucesso</p>
             </div>
-            <div className="text-center bg-white/10 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
-              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent mb-1 sm:mb-2">-18kg</div>
-              <p className="text-white/70 text-xs sm:text-sm md:text-base">Média de Perda</p>
+            <div className="text-center bg-white/80 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-slate-200 hover:bg-white/90 transition-all duration-300 shadow-sm">
+              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-1 sm:mb-2">-18kg</div>
+              <p className="text-slate-600 text-xs sm:text-sm md:text-base">Média de Perda</p>
             </div>
             <div className="text-center bg-white/10 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
               <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-1 sm:mb-2">90 dias</div>
