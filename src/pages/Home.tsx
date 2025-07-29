@@ -67,7 +67,7 @@ function Home() {
             </div>
             {/* Mobile menu button */}
             <div className="md:hidden">
-              <Button onClick={handleStartJourney} size="sm" className="bg-gradient-to-r from-teal-400 to-emerald-400 text-xs sm:text-sm">
+              <Button onClick={handleStartJourney} size="sm" className="bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm">
                 Entrar
               </Button>
             </div>
