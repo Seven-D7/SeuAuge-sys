@@ -54,7 +54,7 @@ function Home() {
                 <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900">
                   Meu Auge
                 </h1>
-                <p className="text-xs sm:text-sm text-white/70 hidden sm:block">Transforme Sua Vida</p>
+                <p className="text-xs sm:text-sm text-slate-600 hidden sm:block">Transforme Sua Vida</p>
               </div>
             </div>
             <div className="hidden md:flex items-center gap-4 lg:gap-6">
