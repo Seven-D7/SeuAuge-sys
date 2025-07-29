@@ -337,7 +337,7 @@ const Profile: React.FC = () => {
         </div>
 
         {/* Profile Card */}
-        <section className="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-700">
+        <section className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700">
           <div className="h-32 bg-gradient-to-r from-primary via-emerald-600 to-cyan-600 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
             <div className="absolute top-4 right-4">
