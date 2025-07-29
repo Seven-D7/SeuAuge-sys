@@ -511,7 +511,7 @@ const Profile: React.FC = () => {
         </section>
 
         {/* Tabs de navega��ão */}
-        <div className="flex flex-wrap gap-2 bg-white dark:bg-slate-800 p-2 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-x-auto">
+        <div className="flex flex-wrap gap-2 bg-white dark:bg-slate-800 p-2 rounded-lg border border-slate-200 dark:border-slate-700 overflow-x-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
