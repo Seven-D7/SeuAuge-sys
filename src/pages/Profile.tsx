@@ -354,7 +354,7 @@ const Profile: React.FC = () => {
             </div>
           </div>
 
-          <div className="-mt-16 p-8">
+          <div className="-mt-12 p-6">
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
               {/* Avatar */}
               <div className="relative group">
