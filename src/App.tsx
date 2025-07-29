@@ -115,22 +115,8 @@ const FitnessModulesApp = lazy(() =>
   })
 );
 
-// Enhanced loading component
-const LoadingFallback: React.FC<{ page?: string }> = ({ page }) => (
-  <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-900 flex items-center justify-center">
-    <div className="text-center">
-      <div className="relative">
-        <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mb-4 mx-auto border border-white/20">
-          <Loader2 className="w-8 h-8 text-teal-400 animate-spin" />
-        </div>
-        <div className="absolute inset-0 w-16 h-16 bg-gradient-to-r from-teal-400/20 to-emerald-400/20 rounded-full blur-xl animate-pulse mx-auto"></div>
-      </div>
-      <p className="text-white/70 text-sm">
-        {page ? `Carregando ${page}...` : 'Carregando...'}
-      </p>
-    </div>
-  </div>
-);
+// Minimal loading fallback - empty div for instant loading feel
+const LoadingFallback: React.FC = () => <div />;
 
 function App() {
   useEffect(() => {
