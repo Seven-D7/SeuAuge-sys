@@ -287,7 +287,7 @@ function App() {
               path="admin"
               element={
                 <AdminRoute>
-                  <Suspense fallback={<LoadingFallback page="administração" />}>
+                  <Suspense fallback={<LoadingFallback />}>
                     <AdminDashboard />
                   </Suspense>
                 </AdminRoute>
