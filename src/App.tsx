@@ -6,7 +6,7 @@ import AdminRoute from "@components/AdminRoute";
 import Layout from "@components/Layout/Layout";
 import PlanGuard from "@components/PlanGuard";
 import { Toaster } from "react-hot-toast";
-import { Loader2 } from "lucide-react";
+
 import { performanceMonitor, registerServiceWorker, addResourceHint } from "./lib/performance";
 
 // Lazy load components with better chunking
