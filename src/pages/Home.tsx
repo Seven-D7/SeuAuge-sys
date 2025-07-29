@@ -40,34 +40,34 @@ function Home() {
 
       {/* Header */}
       <header className="bg-white/10 backdrop-blur-md shadow-xl border-b border-white/20 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="bg-gradient-to-r from-teal-400 to-emerald-400 text-white p-2 rounded-xl shadow-lg">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="bg-gradient-to-r from-teal-400 to-emerald-400 text-white p-1.5 sm:p-2 rounded-xl shadow-lg">
                 <img
-                  src="/src/assets/icone.png" 
+                  src="/src/assets/icone.png"
                   alt="Logo"
-                  className="w-12 h-12 object-contain"
+                  className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 object-contain"
                 />
               </div>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-cyan-100 bg-clip-text text-transparent">
+                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-white to-cyan-100 bg-clip-text text-transparent">
                   Meu Auge
                 </h1>
-                <p className="text-sm text-white/70">Transforme Sua Vida</p>
+                <p className="text-xs sm:text-sm text-white/70 hidden sm:block">Transforme Sua Vida</p>
               </div>
             </div>
-            <div className="hidden md:flex items-center gap-6">
-              <a href="#planos" className="text-white/80 hover:text-teal-300 transition-all duration-300 font-medium">Planos</a>
-              <a href="#sobre" className="text-white/80 hover:text-teal-300 transition-all duration-300 font-medium">Sobre</a>
-              <a href="#depoimentos" className="text-white/80 hover:text-teal-300 transition-all duration-300 font-medium">Depoimentos</a>
-              <Button onClick={handleStartJourney} className="bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-500 hover:to-emerald-500 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="hidden md:flex items-center gap-4 lg:gap-6">
+              <a href="#planos" className="text-white/80 hover:text-teal-300 transition-all duration-300 font-medium text-sm lg:text-base">Planos</a>
+              <a href="#sobre" className="text-white/80 hover:text-teal-300 transition-all duration-300 font-medium text-sm lg:text-base">Sobre</a>
+              <a href="#depoimentos" className="text-white/80 hover:text-teal-300 transition-all duration-300 font-medium text-sm lg:text-base">Depoimentos</a>
+              <Button onClick={handleStartJourney} className="bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-500 hover:to-emerald-500 shadow-lg hover:shadow-xl transition-all duration-300 text-sm lg:text-base">
                 Começar Agora
               </Button>
             </div>
             {/* Mobile menu button */}
             <div className="md:hidden">
-              <Button onClick={handleStartJourney} size="sm" className="bg-gradient-to-r from-teal-400 to-emerald-400">
+              <Button onClick={handleStartJourney} size="sm" className="bg-gradient-to-r from-teal-400 to-emerald-400 text-xs sm:text-sm">
                 Entrar
               </Button>
             </div>
@@ -76,55 +76,56 @@ function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="py-20 px-4 relative z-10">
+      <section className="py-12 sm:py-16 lg:py-20 px-3 sm:px-4 relative z-10">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="mb-8">
-            <Badge className="bg-gradient-to-r from-teal-400/20 to-emerald-400/20 text-teal-200 border-teal-400/30 backdrop-blur-sm mb-4 shadow-lg">
+          <div className="mb-6 sm:mb-8">
+            <Badge className="bg-gradient-to-r from-teal-400/20 to-emerald-400/20 text-teal-200 border-teal-400/30 backdrop-blur-sm mb-4 shadow-lg text-xs sm:text-sm">
               🏆 #1 em Transformação Corporal
             </Badge>
           </div>
-          
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 text-white">
+
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 text-white">
             Alcance Seu
             <span className="bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent block animate-pulse">
               AUGE
             </span>
           </h1>
-          
-          <p className="text-lg sm:text-xl md:text-2xl text-white/80 mb-8 max-w-4xl mx-auto leading-relaxed">
-            Transforme seu corpo e mente com nossos planos personalizados de emagrecimento. 
+
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/80 mb-6 sm:mb-8 max-w-4xl mx-auto leading-relaxed px-2">
+            Transforme seu corpo e mente com nossos planos personalizados de emagrecimento.
             Resultados científicos, acompanhamento profissional e a motivação que você precisa.
           </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button 
-              size="lg" 
+
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-12 px-4">
+            <Button
+              size="lg"
               onClick={handleStartJourney}
-              className="h-14 px-8 text-lg bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-500 hover:to-emerald-500 shadow-2xl hover:shadow-teal-500/25 transition-all duration-300 transform hover:scale-105 backdrop-blur-sm border border-white/20"
+              className="h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-500 hover:to-emerald-500 shadow-2xl hover:shadow-teal-500/25 transition-all duration-300 transform hover:scale-105 backdrop-blur-sm border border-white/20"
             >
-              <Sparkles className="w-5 h-5 mr-2" />
-              Iniciar Transformação
-              <ArrowRight className="w-5 h-5 ml-2" />
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+              <span className="hidden sm:inline">Iniciar Transformação</span>
+              <span className="sm:hidden">Iniciar Agora</span>
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
             </Button>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 max-w-4xl mx-auto">
-            <div className="text-center bg-white/10 backdrop-blur-md rounded-xl p-4 sm:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent mb-2">15K+</div>
-              <p className="text-white/70 text-sm sm:text-base">Vidas Transformadas</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8 max-w-4xl mx-auto px-2">
+            <div className="text-center bg-white/10 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
+              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent mb-1 sm:mb-2">15K+</div>
+              <p className="text-white/70 text-xs sm:text-sm md:text-base">Vidas Transformadas</p>
             </div>
-            <div className="text-center bg-white/10 backdrop-blur-md rounded-xl p-4 sm:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-2">94%</div>
-              <p className="text-white/70 text-sm sm:text-base">Taxa de Sucesso</p>
+            <div className="text-center bg-white/10 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
+              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-1 sm:mb-2">94%</div>
+              <p className="text-white/70 text-xs sm:text-sm md:text-base">Taxa de Sucesso</p>
             </div>
-            <div className="text-center bg-white/10 backdrop-blur-md rounded-xl p-4 sm:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent mb-2">-18kg</div>
-              <p className="text-white/70 text-sm sm:text-base">Média de Perda</p>
+            <div className="text-center bg-white/10 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
+              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent mb-1 sm:mb-2">-18kg</div>
+              <p className="text-white/70 text-xs sm:text-sm md:text-base">Média de Perda</p>
             </div>
-            <div className="text-center bg-white/10 backdrop-blur-md rounded-xl p-4 sm:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-2">90 dias</div>
-              <p className="text-white/70 text-sm sm:text-base">Tempo Médio</p>
+            <div className="text-center bg-white/10 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
+              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-1 sm:mb-2">90 dias</div>
+              <p className="text-white/70 text-xs sm:text-sm md:text-base">Tempo Médio</p>
             </div>
           </div>
         </div>
