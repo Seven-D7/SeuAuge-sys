@@ -30,11 +30,11 @@ function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-900 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-teal-400/20 to-emerald-400/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-cyan-400/10 to-blue-400/10 rounded-full blur-3xl animate-pulse delay-500"></div>
       </div>
 
@@ -171,8 +171,8 @@ function Home() {
             </Card>
 
             <Card className="text-center p-6 sm:p-8 border-0 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105">
-              <div className="bg-gradient-to-r from-purple-400/20 to-purple-600/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-purple-400/30">
-                <Zap className="w-8 h-8 text-purple-300" />
+              <div className="bg-gradient-to-r from-blue-400/20 to-blue-600/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-blue-400/30">
+                <Zap className="w-8 h-8 text-blue-300" />
               </div>
               <h3 className="text-xl font-bold mb-4 text-white">Tecnologia Avançada</h3>
               <p className="text-white/70">
@@ -201,8 +201,8 @@ function Home() {
             </Card>
 
             <Card className="text-center p-6 sm:p-8 border-0 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105">
-              <div className="bg-gradient-to-r from-indigo-400/20 to-indigo-600/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-indigo-400/30">
-                <Users className="w-8 h-8 text-indigo-300" />
+              <div className="bg-gradient-to-r from-cyan-400/20 to-cyan-600/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-cyan-400/30">
+                <Users className="w-8 h-8 text-cyan-300" />
               </div>
               <h3 className="text-xl font-bold mb-4 text-white">Comunidade Ativa</h3>
               <p className="text-white/70">
