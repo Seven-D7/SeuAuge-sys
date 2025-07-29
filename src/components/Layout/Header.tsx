@@ -19,8 +19,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const totalCartItems = getTotalItems();
 
   return (
-    <header className="bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">
-      <div className="flex items-center justify-between gap-2 sm:gap-4">
+    <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-3 sm:px-4 md:px-6 py-3 sm:py-4">
+      <div className="flex items-center justify-between gap-3 sm:gap-4">
         {/* Left section */}
         <div className="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0">
           <button
