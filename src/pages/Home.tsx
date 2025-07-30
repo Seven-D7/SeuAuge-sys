@@ -305,7 +305,7 @@ function Home() {
               size="lg"
               variant="secondary"
               onClick={handleStartJourney}
-              className="h-11 sm:h-12 lg:h-14 px-5 sm:px-6 lg:px-8 text-sm sm:text-base lg:text-lg bg-white text-slate-800 hover:bg-gray-50 transition-all duration-300 transform hover:scale-105"
+              className="h-11 sm:h-12 lg:h-14 px-5 sm:px-6 lg:px-8 text-sm sm:text-base lg:text-lg bg-white text-primary hover:bg-gray-50 transition-all duration-300 transform hover:scale-105"
             >
               <Crown className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               <span className="hidden sm:inline">Começar Transformação</span>
