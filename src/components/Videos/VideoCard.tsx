@@ -103,16 +103,16 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
       </div>
 
       {/* Video Info */}
-      <div className="p-3 sm:p-4">
+      <div className="p-2 sm:p-3 md:p-4">
         <div className="mb-2">
           <h3 className={`
             font-semibold text-white line-clamp-2 mb-1
             ${COMMON_CLASSES.heading.h4}
-            text-sm sm:text-base leading-tight
+            text-xs sm:text-sm md:text-base leading-tight
           `}>
             {video.title}
           </h3>
-          <p className="text-gray-400 text-xs sm:text-sm font-medium">
+          <p className="text-gray-400 text-xs font-medium">
             {video.instructor}
           </p>
         </div>
@@ -136,11 +136,11 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
 
         {/* Tags */}
         {video.tags && video.tags.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1">
-            {video.tags.slice(0, 3).map((tag) => (
+          <div className="mt-2 sm:mt-3 flex flex-wrap gap-1">
+            {video.tags.slice(0, 2).map((tag) => (
               <span
                 key={tag}
-                className="px-2 py-0.5 bg-gray-700/50 text-gray-300 text-xs rounded-md"
+                className="px-1.5 sm:px-2 py-0.5 bg-gray-700/50 text-gray-300 text-xs rounded-md"
               >
                 #{tag}
               </span>
@@ -149,12 +149,12 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
         )}
 
         {/* Action Bar */}
-        <div className="mt-3 sm:mt-4 flex items-center justify-between">
+        <div className="mt-2 sm:mt-3 md:mt-4 flex items-center justify-between">
           <button
             onClick={onClick}
             disabled={!hasAccess}
             className={`
-              flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium
+              flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg text-xs font-medium
               transition-all duration-200
               ${hasAccess
                 ? `${designUtils.gradient('primary')} text-white hover:scale-[1.02] sm:hover:scale-105 shadow-md hover:shadow-lg`
@@ -163,12 +163,12 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
               ${COMMON_CLASSES.focus}
             `}
           >
-            <Play className="w-3 h-3" />
+            <Play className="w-3 h-3 sm:w-4 sm:h-4" />
             {hasAccess ? 'Assistir' : 'Premium'}
           </button>
 
           {video.description && (
-            <div className="text-xs text-gray-400 truncate ml-2 flex-1 hidden sm:block">
+            <div className="text-xs text-gray-400 truncate ml-2 flex-1 hidden md:block">
               {video.description}
             </div>
           )}
