@@ -130,12 +130,12 @@ const Dashboard: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="space-y-8">
       {/* Personalized Welcome Section */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative bg-gradient-to-r from-primary via-emerald-600 to-cyan-600 rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden"
+        className="relative bg-gradient-to-r from-primary via-emerald-600 to-cyan-600 rounded-xl overflow-hidden"
       >
         <div className="absolute inset-0 bg-black bg-opacity-20" />
         <div className="relative z-10 px-3 py-6 sm:px-4 sm:py-8 md:px-6 md:py-10 lg:px-12 lg:py-16">
