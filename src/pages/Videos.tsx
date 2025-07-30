@@ -214,41 +214,48 @@ const Videos: React.FC = () => {
             </div>
 
             {/* Sidebar - Related Videos */}
-            <div className="lg:col-span-1">
-              <div className="bg-slate-800 rounded-lg p-3 sm:p-4 md:p-6">
-                <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">
+            <div className="xl:col-span-1 mt-6 xl:mt-0">
+              <div className="bg-slate-800 rounded-lg p-4 sm:p-6 sticky top-4">
+                <h3 className="text-base sm:text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <div className="w-1 h-6 bg-primary rounded"></div>
                   Vídeos relacionados
                 </h3>
-                <div className="space-y-2 sm:space-y-3">
+                <div className="space-y-3 max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-track-slate-700 scrollbar-thumb-slate-600">
                   {videos
                     .filter((v) => v.id !== selectedVideo.videoId && v.category === selectedVideo.metadata.category)
-                    .slice(0, 5)
+                    .slice(0, 8)
                     .map((video) => (
                       <div
                         key={video.id}
                         onClick={() => handleVideoSelect(video.id)}
-                        className="flex items-start space-x-2 sm:space-x-3 cursor-pointer hover:bg-slate-700 p-2 rounded-lg transition-colors group"
+                        className="flex items-start space-x-3 cursor-pointer hover:bg-slate-700 p-3 rounded-lg transition-all duration-200 group hover:scale-[1.02]"
                       >
                         <div className="relative flex-shrink-0">
                           <img
                             src={video.thumbnail}
                             alt={video.title}
-                            className="w-16 h-9 sm:w-20 sm:h-11 lg:w-24 lg:h-14 object-cover rounded"
+                            className="w-20 h-11 sm:w-24 sm:h-14 object-cover rounded-md"
                           />
-                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded flex items-center justify-center">
-                            <Play className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-200 rounded-md flex items-center justify-center">
+                            <div className="w-6 h-6 bg-white bg-opacity-90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                              <Play className="w-3 h-3 text-black ml-0.5" />
+                            </div>
                           </div>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-white text-xs sm:text-sm font-medium line-clamp-2 mb-1">
+                          <h4 className="text-white text-sm font-medium line-clamp-2 mb-1 group-hover:text-primary transition-colors">
                             {video.title}
                           </h4>
-                          <p className="text-slate-400 text-xs">
+                          <p className="text-slate-400 text-xs mb-1">
                             {video.instructor}
                           </p>
-                          <p className="text-slate-500 text-xs mt-1">
-                            {Math.floor(video.duration / 60)} min
-                          </p>
+                          <div className="flex items-center gap-2 text-xs text-slate-500">
+                            <span>{Math.floor(video.duration / 60)} min</span>
+                            <span>•</span>
+                            <span className="bg-slate-700 px-1.5 py-0.5 rounded text-xs">
+                              {video.category}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     ))}
