@@ -26,17 +26,17 @@ export default function PlansSection() {
   };
 
   return (
-    <section id="planos" className="py-8 sm:py-12 md:py-16 lg:py-20 px-3 sm:px-4 bg-slate-50/80 backdrop-blur-sm border-y border-slate-200">
+    <section id="planos" className="py-8 sm:py-12 md:py-16 lg:py-20 px-3 sm:px-4 bg-emerald-50/80 backdrop-blur-sm border-y border-emerald-200">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-6 sm:mb-8 md:mb-12 lg:mb-16">
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 sm:mb-4 lg:mb-6 text-slate-900">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 sm:mb-4 lg:mb-6 text-gray-800">
             Escolha Seu
-            <span className="bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-primary to-emerald-700 bg-clip-text text-transparent">
               {" "}
               Plano
             </span>
           </h2>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-slate-600 max-w-3xl mx-auto px-2">
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto px-2">
             Encontre o plano perfeito para sua jornada de transformação. Todos
             os planos incluem garantia de 30 dias.
           </p>
@@ -50,14 +50,14 @@ export default function PlansSection() {
               return (
                 <Card
                   key={plan.id}
-                  className={`relative overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.01] sm:hover:scale-[1.02] lg:hover:scale-105 flex flex-col h-full backdrop-blur-md border border-slate-200 ${
+                  className={`relative overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.01] sm:hover:scale-[1.02] lg:hover:scale-105 flex flex-col h-full backdrop-blur-md border border-emerald-200 ${
                     plan.isPopular
-                      ? "ring-2 ring-slate-300 bg-white/90 transform scale-[1.01] sm:scale-[1.02] lg:scale-105"
+                      ? "ring-2 ring-primary bg-white/90 transform scale-[1.01] sm:scale-[1.02] lg:scale-105"
                       : "bg-white/80 hover:bg-white/90"
                   }`}
                 >
                   {plan.isPopular && (
-                    <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-slate-800 to-slate-900 text-white text-center py-1.5 sm:py-2 text-xs sm:text-sm font-medium">
+                    <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-primary to-emerald-600 text-white text-center py-1.5 sm:py-2 text-xs sm:text-sm font-medium">
                       🔥 {plan.badge}
                     </div>
                   )}
