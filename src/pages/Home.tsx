@@ -325,7 +325,7 @@ function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-800 text-white py-8 sm:py-12 px-3 sm:px-4 relative z-10 border-t border-slate-700">
+      <footer className="bg-gray-800 text-white py-8 sm:py-12 px-3 sm:px-4 relative z-10 border-t border-gray-700">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
             <div>
