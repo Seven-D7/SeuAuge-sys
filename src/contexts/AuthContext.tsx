@@ -267,16 +267,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       throw new Error('Data de nascimento inválida');
     }
 
-    if (isDemoMode) {
-      // Modo demo - simular registro
+    // Demo mode only in development
+    if (isDemoMode && isDevelopment) {
       const mockUser: User = {
         id: `demo-user-${Date.now()}`,
         email: sanitizedEmail,
         name: sanitizedName,
         plan: null,
         isPremium: false,
-        isAdmin: isDevelopment && FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail),
-        role: (isDevelopment && FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail)) ? 'admin' : 'user',
+        isAdmin: FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail),
+        role: FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail) ? 'admin' : 'user',
       };
       setUser(mockUser);
       console.log("🔧 Registro demo realizado:", sanitizedEmail);
