@@ -16,7 +16,8 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "type-check": "tsc --noEmit",
-    "prepare-deploy": "npm run type-check && npm run lint && npm run test:coverage && npm run build:prod"
+    "prod-check": "node scripts/production-check.js",
+    "prepare-deploy": "npm run prod-check && npm run type-check && npm run lint && npm run test:coverage && npm run build:prod"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
