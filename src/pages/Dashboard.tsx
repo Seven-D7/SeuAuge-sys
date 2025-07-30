@@ -141,19 +141,19 @@ const Dashboard: React.FC = () => {
         <div className="relative z-10 px-6 py-8 lg:px-12 lg:py-16">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl mb-6 lg:mb-0">
-              <motion.h1 
+              <motion.h1
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
-                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3 sm:mb-4"
+                className="text-2xl lg:text-4xl font-bold text-white mb-4"
               >
                 {greeting}, {user?.name || 'Guerreiro'}! 👋
               </motion.h1>
-              <motion.p 
+              <motion.p
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-sm sm:text-base md:text-lg text-white/90 mb-4 sm:mb-6 leading-relaxed"
+                className="text-lg text-white/90 mb-6 leading-relaxed"
               >
                 Você está no <span className="font-semibold">{currentPlan?.name || 'Plano Gratuito'}</span>. 
                 Continue sua jornada de transformação!
