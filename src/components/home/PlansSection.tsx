@@ -120,13 +120,13 @@ export default function PlansSection() {
                             <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 bg-green-400/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 backdrop-blur-sm border border-green-400/30">
                               <Check className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 text-green-300" />
                             </div>
-                            <span className="text-slate-700 text-xs sm:text-sm leading-relaxed">
+                            <span className="text-gray-700 text-xs sm:text-sm leading-relaxed">
                               {feature}
                             </span>
                           </div>
                         ))}
                       {plan.features.length > 5 && (
-                        <div className="text-slate-500 text-xs sm:text-sm text-center pt-2 font-medium">
+                        <div className="text-gray-500 text-xs sm:text-sm text-center pt-2 font-medium">
                           +{plan.features.length - 5} recursos adicionais
                         </div>
                       )}
@@ -144,8 +144,8 @@ export default function PlansSection() {
                       onClick={() => handlePlanSelect(plan.id)}
                       className={`w-full h-9 sm:h-10 md:h-12 text-xs sm:text-sm md:text-base lg:text-lg font-medium transition-all duration-200 mt-auto ${
                         plan.isPopular
-                          ? "bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transform hover:scale-[1.01] sm:hover:scale-[1.02] lg:hover:scale-105 border border-slate-700"
-                          : "bg-slate-100 hover:bg-slate-200 text-slate-800 hover:scale-[1.01] sm:hover:scale-[1.02] lg:hover:scale-105 backdrop-blur-sm border border-slate-200"
+                          ? "bg-primary hover:bg-primary-dark text-white shadow-lg hover:shadow-xl transform hover:scale-[1.01] sm:hover:scale-[1.02] lg:hover:scale-105 border border-emerald-600"
+                          : "bg-emerald-100 hover:bg-emerald-200 text-primary hover:scale-[1.01] sm:hover:scale-[1.02] lg:hover:scale-105 backdrop-blur-sm border border-emerald-200"
                       }`}
                     >
                       <span className="hidden sm:inline">Escolher {plan.name}</span>
@@ -159,12 +159,12 @@ export default function PlansSection() {
         </div>
 
         <div className="text-center">
-          <p className="text-slate-600 mb-3 sm:mb-4 text-xs sm:text-sm md:text-base lg:text-lg px-2 sm:px-4">
+          <p className="text-gray-600 mb-3 sm:mb-4 text-xs sm:text-sm md:text-base lg:text-lg px-2 sm:px-4">
             Não tem certeza qual plano escolher?
           </p>
           <Button
             variant="outline"
-            className="border-slate-300 text-slate-700 hover:bg-slate-100 px-3 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-2.5 md:py-3 text-xs sm:text-sm md:text-base lg:text-lg font-medium backdrop-blur-sm"
+            className="border-emerald-300 text-primary hover:bg-emerald-100 px-3 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-2.5 md:py-3 text-xs sm:text-sm md:text-base lg:text-lg font-medium backdrop-blur-sm"
             onClick={() => navigate("/plans")}
           >
             <span className="hidden md:inline">Ver Comparação Completa</span>
