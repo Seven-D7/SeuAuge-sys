@@ -238,6 +238,15 @@ function App() {
             />
 
             <Route
+              path="achievements"
+              element={
+                <Suspense fallback={<LoadingFallback />}>
+                  <Achievements />
+                </Suspense>
+              }
+            />
+
+            <Route
               path="progress"
               element={
                 <PlanGuard allowedPlans={["B", "C"]}>
