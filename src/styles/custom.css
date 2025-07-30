@@ -606,3 +606,75 @@
   animation: slide-up 0.8s ease-out;
 }
 
+/* Scrollbar personalizada para modais de vídeo */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(71, 85, 105) rgb(51, 65, 85);
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-track-slate-700::-webkit-scrollbar-track {
+  background: rgb(51, 65, 85);
+  border-radius: 3px;
+}
+
+.scrollbar-thumb-slate-600::-webkit-scrollbar-thumb {
+  background: rgb(71, 85, 105);
+  border-radius: 3px;
+}
+
+.scrollbar-thumb-slate-600::-webkit-scrollbar-thumb:hover {
+  background: rgb(100, 116, 139);
+}
+
+/* Classes utilitárias para video modal responsivo */
+.video-modal-container {
+  @apply min-h-screen bg-slate-900 overflow-x-hidden;
+}
+
+.video-player-container {
+  @apply relative w-full;
+  height: clamp(45vh, 50vh, 70vh);
+}
+
+/* Melhorias específicas para mobile */
+@media (max-width: 640px) {
+  .video-player-container {
+    height: 45vh;
+  }
+
+  /* Controles do player mais acessíveis no mobile */
+  .video-controls-mobile {
+    padding: 0.5rem;
+  }
+
+  .video-controls-mobile button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .video-player-container {
+    height: 65vh;
+  }
+}
+
+/* Line-clamp utility para compatibilidade */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
