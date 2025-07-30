@@ -154,13 +154,13 @@ const Videos: React.FC = () => {
 
   if (selectedVideo) {
     return (
-      <div className="min-h-screen bg-slate-900">
+      <div className="min-h-screen bg-slate-900 overflow-x-hidden">
         {/* Video Player */}
         <div className="relative">
           <VideoPlayer
             streamData={selectedVideo}
             autoPlay={true}
-            className="w-full h-[50vh] sm:h-[55vh] md:h-[60vh] lg:h-[65vh] xl:h-[70vh]"
+            className="w-full h-[45vh] xs:h-[50vh] sm:h-[55vh] md:h-[60vh] lg:h-[65vh] xl:h-[70vh]"
             onComplete={() => console.log("Vídeo concluído")}
             onProgress={(progress) => console.log("Progresso:", progress)}
           />
