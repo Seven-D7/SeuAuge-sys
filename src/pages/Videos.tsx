@@ -268,10 +268,29 @@ const Videos: React.FC = () => {
         const video = videos.find(v => v.id === videoId) || featuredVideo;
         const demoStreamData: VideoStreamData = {
           videoId: video.id,
-          streamUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-          metadata: video,
-          subtitles: [],
-          thumbnails: []
+          qualities: [
+            {
+              resolution: "1080p",
+              url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+              bitrate: 5000,
+            },
+            {
+              resolution: "720p",
+              url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+              bitrate: 3000,
+            },
+            {
+              resolution: "480p",
+              url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+              bitrate: 1500,
+            },
+          ],
+          thumbnails: [
+            video.thumbnail || "https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?auto=compress&cs=tinysrgb&w=600",
+            video.thumbnail || "https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?auto=compress&cs=tinysrgb&w=600",
+            video.thumbnail || "https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?auto=compress&cs=tinysrgb&w=600"
+          ],
+          metadata: video
         };
         setSelectedVideo(demoStreamData);
         
