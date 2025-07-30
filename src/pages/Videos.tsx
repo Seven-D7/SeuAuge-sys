@@ -168,10 +168,13 @@ const Videos: React.FC = () => {
           {/* Back Button */}
           <button
             onClick={() => setSelectedVideo(null)}
-            className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-black/60 hover:bg-black/80 text-white px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-lg transition-all duration-200 backdrop-blur-sm text-xs sm:text-sm md:text-base"
+            className="absolute top-2 left-2 sm:top-4 sm:left-4 z-20 bg-black/70 hover:bg-black/90 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg transition-all duration-200 backdrop-blur-sm text-xs sm:text-sm font-medium shadow-lg hover:shadow-xl flex items-center gap-1 sm:gap-2"
           >
-            <span className="hidden sm:inline">← Voltar aos vídeos</span>
-            <span className="sm:hidden">← Voltar</span>
+            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="hidden sm:inline">Voltar aos vídeos</span>
+            <span className="sm:hidden">Voltar</span>
           </button>
         </div>
 
