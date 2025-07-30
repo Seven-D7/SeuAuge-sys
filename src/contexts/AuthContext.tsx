@@ -142,8 +142,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    if (isDemoMode) {
-      // Modo demo - autenticação simulada
+    // Production authentication flow
+    if (isDemoMode && isDevelopment) {
+      // Demo mode only in development
       console.log("🔧 Modo demo ativo - autenticação simulada");
       setLoading(false);
       return;
