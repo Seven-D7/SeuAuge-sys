@@ -214,14 +214,14 @@ function Home() {
       </section>
 
       {/* Depoimentos Section */}
-      <section id="depoimentos" className="py-12 sm:py-16 lg:py-20 px-3 sm:px-4 bg-slate-50/50 backdrop-blur-sm relative z-10">
+      <section id="depoimentos" className="py-12 sm:py-16 lg:py-20 px-3 sm:px-4 bg-emerald-50/50 backdrop-blur-sm relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-slate-900">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-gray-800">
               Histórias de
-              <span className="bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text text-transparent"> Transformação</span>
+              <span className="bg-gradient-to-r from-primary to-emerald-700 bg-clip-text text-transparent"> Transformação</span>
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto px-2">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-2">
               Veja como nossos alunos alcançaram seus objetivos e transformaram suas vidas.
             </p>
           </div>
