@@ -17,11 +17,12 @@ import {
 } from "../services/user";
 import { getPlanFromToken } from "../services/plan";
 
-// Secure admin check - in production, this should use Firebase custom claims
-const ADMIN_EMAILS = [
+// Production admin check using Firebase custom claims
+// Admin emails should NEVER be hardcoded in frontend for production
+const isDevelopment = import.meta.env.DEV;
+const FALLBACK_ADMIN_EMAILS = isDevelopment ? [
   import.meta.env.VITE_ADMIN_EMAIL || "admin@seuauge.com",
-  // Add more admin emails as needed
-].filter(Boolean);
+].filter(Boolean) : [];
 
 interface User {
   id: string;
