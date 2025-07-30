@@ -190,22 +190,22 @@ function Home() {
               </p>
             </Card>
 
-            <Card className="text-center p-6 sm:p-8 border-0 bg-white/80 backdrop-blur-md border border-slate-200 hover:bg-white/90 transition-all duration-300 transform hover:scale-105 shadow-sm">
-              <div className="bg-gradient-to-r from-slate-100 to-slate-200 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-slate-300">
-                <UtensilsCrossed className="w-8 h-8 text-slate-700" />
+            <Card className="text-center p-6 sm:p-8 border-0 bg-white/80 backdrop-blur-md border border-emerald-200 hover:bg-white/90 transition-all duration-300 transform hover:scale-105 shadow-sm">
+              <div className="bg-gradient-to-r from-emerald-100 to-emerald-200 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-emerald-300">
+                <UtensilsCrossed className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-slate-900">Nutrição Inteligente</h3>
-              <p className="text-slate-600">
+              <h3 className="text-xl font-bold mb-4 text-gray-800">Nutrição Inteligente</h3>
+              <p className="text-gray-600">
                 Cardápios que consideram suas preferências, restrições e rotina alimentar.
               </p>
             </Card>
 
-            <Card className="text-center p-6 sm:p-8 border-0 bg-white/80 backdrop-blur-md border border-slate-200 hover:bg-white/90 transition-all duration-300 transform hover:scale-105 shadow-sm">
-              <div className="bg-gradient-to-r from-slate-100 to-slate-200 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-slate-300">
-                <Users className="w-8 h-8 text-slate-700" />
+            <Card className="text-center p-6 sm:p-8 border-0 bg-white/80 backdrop-blur-md border border-emerald-200 hover:bg-white/90 transition-all duration-300 transform hover:scale-105 shadow-sm">
+              <div className="bg-gradient-to-r from-emerald-100 to-emerald-200 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-emerald-300">
+                <Users className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-slate-900">Comunidade Ativa</h3>
-              <p className="text-slate-600">
+              <h3 className="text-xl font-bold mb-4 text-gray-800">Comunidade Ativa</h3>
+              <p className="text-gray-600">
                 Faça parte de uma comunidade motivadora com pessoas que compartilham seus objetivos.
               </p>
             </Card>
