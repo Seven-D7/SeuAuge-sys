@@ -27,13 +27,13 @@ const Layout: React.FC = () => {
           <Header onMenuClick={() => setSidebarOpen(true)} />
 
           {/* Main content */}
-          <motion.main 
+          <motion.main
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="flex-1 p-4 sm:p-6 lg:p-8 overflow-hidden"
+            className="flex-1 p-2 sm:p-4 md:p-6 lg:p-8 overflow-hidden min-w-0"
           >
-            <div className="max-w-full">
+            <div className="max-w-full w-full">
               <Outlet />
             </div>
           </motion.main>
