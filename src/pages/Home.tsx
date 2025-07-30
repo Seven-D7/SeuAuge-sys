@@ -291,7 +291,7 @@ function Home() {
       </section>
 
       {/* CTA Final */}
-      <section className="py-12 sm:py-16 lg:py-20 px-3 sm:px-4 bg-slate-900 text-white relative z-10">
+      <section className="py-12 sm:py-16 lg:py-20 px-3 sm:px-4 bg-primary text-white relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
             Pronto Para Alcançar Meu Auge?
