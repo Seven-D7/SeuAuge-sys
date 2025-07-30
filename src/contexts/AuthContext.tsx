@@ -183,16 +183,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       throw new Error('Formato de email inválido');
     }
 
-    if (isDemoMode) {
-      // Modo demo - simular login
+    // Demo mode only in development
+    if (isDemoMode && isDevelopment) {
       const mockUser: User = {
         id: "demo-user-123",
         email: sanitizedEmail,
         name: "Usuário Demo",
         plan: "B",
         isPremium: true,
-        isAdmin: isDevelopment && FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail),
-        role: (isDevelopment && FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail)) ? 'admin' : 'user',
+        isAdmin: FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail),
+        role: FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail) ? 'admin' : 'user',
       };
       setUser(mockUser);
       console.log("🔧 Login demo realizado:", sanitizedEmail);
