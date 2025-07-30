@@ -540,7 +540,7 @@ const Videos: React.FC = () => {
         </div>
 
         {/* Video Info - Responsive Layout */}
-        <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+        <div className="px-2 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 xl:gap-8">
             {/* Main Content */}
             <motion.div 
@@ -667,7 +667,7 @@ const Videos: React.FC = () => {
 
       {/* Navigation & Search - Mobile Optimized */}
       <div className="relative z-10 bg-slate-900">
-        <div className="px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-4">
+        <div className="px-2 sm:px-4 md:px-6 lg:px-8 pt-4 sm:pt-6 pb-4">
           <div className="flex flex-col gap-4">
             {/* Header */}
             {!showCarousels || searchQuery ? (
@@ -809,7 +809,7 @@ const Videos: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="px-4 sm:px-6 lg:px-8 pb-8">
+            <div className="px-2 sm:px-4 md:px-6 lg:px-8 pb-8">
               {/* Results Header */}
               <div className="mb-6">
                 <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-white mb-2">
