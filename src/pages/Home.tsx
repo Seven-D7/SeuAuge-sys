@@ -227,14 +227,14 @@ function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-            <Card className="p-4 sm:p-6 lg:p-8 border-0 bg-white/80 backdrop-blur-md border border-slate-200 hover:bg-white/90 transition-all duration-300 shadow-sm">
+            <Card className="p-4 sm:p-6 lg:p-8 border-0 bg-white/80 backdrop-blur-md border border-emerald-200 hover:bg-white/90 transition-all duration-300 shadow-sm">
               <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gradient-to-r from-slate-700 to-slate-800 rounded-full flex items-center justify-center text-white font-bold text-lg sm:text-xl">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gradient-to-r from-primary to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-lg sm:text-xl">
                   M
                 </div>
                 <div>
-                  <h4 className="font-bold text-base sm:text-lg text-slate-900">Maria Silva</h4>
-                  <p className="text-slate-600 text-sm sm:text-base">Perdeu 22kg em 4 meses</p>
+                  <h4 className="font-bold text-base sm:text-lg text-gray-800">Maria Silva</h4>
+                  <p className="text-gray-600 text-sm sm:text-base">Perdeu 22kg em 4 meses</p>
                 </div>
               </div>
               <div className="flex mb-4">
@@ -242,7 +242,7 @@ function Home() {
                   <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                 ))}
               </div>
-              <p className="text-slate-700 italic">
+              <p className="text-gray-700 italic">
                 "Nunca pensei que conseguiria emagrecer de forma tão saudável. O acompanhamento foi fundamental para manter a motivação!"
               </p>
             </Card>
