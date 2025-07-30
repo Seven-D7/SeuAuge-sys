@@ -266,6 +266,24 @@ const Videos: React.FC = () => {
       if (isDemoMode) {
         // Demo video player
         const video = videos.find(v => v.id === videoId) || featuredVideo;
+
+        // Convert video to match VideoMetadata interface
+        const metadata = {
+          id: video.id,
+          title: video.title,
+          description: video.description,
+          duration: video.duration,
+          thumbnail: video.thumbnail,
+          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          category: video.category,
+          instructor: video.instructor,
+          isFree: video.isFree || false,
+          tags: video.tags || [],
+          uploadDate: new Date().toISOString(),
+          resolution: "1080p",
+          size: 512000000
+        };
+
         const demoStreamData: VideoStreamData = {
           videoId: video.id,
           qualities: [
@@ -290,7 +308,7 @@ const Videos: React.FC = () => {
             video.thumbnail || "https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?auto=compress&cs=tinysrgb&w=600",
             video.thumbnail || "https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?auto=compress&cs=tinysrgb&w=600"
           ],
-          metadata: video
+          metadata: metadata
         };
         setSelectedVideo(demoStreamData);
         
