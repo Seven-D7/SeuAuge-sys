@@ -41,13 +41,19 @@ const DEMO_FEATURED_VIDEO = {
   description: "Um treino intenso de alta intensidade que vai acelerar seu metabolismo e queimar gordura por até 24 horas após o exercício. Perfeito para quem tem pouco tempo mas quer resultados máximos.",
   thumbnail: "https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?auto=compress&cs=tinysrgb&w=1920",
   backgroundImage: "https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?auto=compress&cs=tinysrgb&w=1920",
+  videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
   instructor: "Carlos Mendes",
   category: "Treino",
   duration: 1200,
   rating: 4.9,
   watchCount: 15420,
   isFree: false,
-  tags: ["HIIT", "Cardio", "Força", "Avançado"]
+  tags: ["HIIT", "Cardio", "Força", "Avançado"],
+  uploadDate: new Date().toISOString(),
+  resolution: "1080p",
+  size: 512000000,
+  createdAt: new Date(),
+  updatedAt: new Date()
 };
 
 const Videos: React.FC = () => {
