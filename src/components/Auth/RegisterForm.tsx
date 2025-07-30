@@ -51,9 +51,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
     }
 
     // Email validation
-    const emailValidation = validateEmail(formData.email);
-    if (!emailValidation.isValid) {
-      newErrors.email = emailValidation.error || 'Email inválido';
+    if (!validateEmail(formData.email)) {
+      newErrors.email = 'Formato de email inválido';
     }
 
     // Password validation
