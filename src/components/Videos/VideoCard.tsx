@@ -28,14 +28,15 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
 
   return (
     <div className={`
-      group cursor-pointer overflow-hidden rounded-lg sm:rounded-xl
+      group cursor-pointer overflow-hidden rounded-md sm:rounded-lg md:rounded-xl
       ${designUtils.glass('dark')}
-      hover:scale-[1.02] sm:hover:scale-105 transition-all duration-300
+      hover:scale-[1.01] sm:hover:scale-[1.02] md:hover:scale-105 transition-all duration-300
       hover:shadow-xl hover:shadow-primary/10
       ${COMMON_CLASSES.focus}
+      w-full max-w-full
     `}>
       {/* Video Thumbnail */}
-      <div className="relative aspect-video overflow-hidden">
+      <div className="relative aspect-video overflow-hidden w-full">
         <LazyImage
           src={video.thumbnail}
           alt={video.title}
@@ -51,11 +52,11 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
         {/* Play Button */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
           <div className={`
-            w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center
+            w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center
             ${designUtils.gradient('primary')}
             shadow-lg hover:scale-110 transition-transform duration-200
           `}>
-            <Play className="w-5 h-5 sm:w-6 sm:h-6 text-white ml-0.5 fill-current" />
+            <Play className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 text-white ml-0.5 fill-current" />
           </div>
         </div>
 
