@@ -256,9 +256,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
           <div className="absolute inset-0 flex items-center justify-center">
             <button
               onClick={togglePlay}
-              className="w-20 h-20 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+              className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
             >
-              <Play className="w-8 h-8 text-black ml-1" />
+              <Play className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-black ml-0.5" />
             </button>
           </div>
         )}
