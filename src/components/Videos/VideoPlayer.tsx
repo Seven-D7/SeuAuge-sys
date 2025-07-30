@@ -380,9 +380,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       </div>
 
       {/* Video Info Overlay */}
-      <div className="absolute top-4 left-4 text-white">
-        <h3 className="text-lg font-semibold">{streamData.metadata.title}</h3>
-        <p className="text-sm text-white text-opacity-80">
+      <div className="absolute top-2 left-2 sm:top-4 sm:left-4 text-white max-w-[calc(100%-4rem)] sm:max-w-md">
+        <h3 className="text-sm sm:text-lg font-semibold truncate">{streamData.metadata.title}</h3>
+        <p className="text-xs sm:text-sm text-white text-opacity-80 truncate">
           {streamData.metadata.instructor}
         </p>
       </div>
