@@ -514,7 +514,7 @@ const Videos: React.FC = () => {
 
   if (selectedVideo) {
     return (
-      <div className="min-h-screen bg-slate-900 overflow-x-hidden">
+      <div className="min-h-screen bg-slate-900 w-full overflow-x-hidden">
         {/* Video Player - Responsive */}
         <div className="relative">
           <VideoPlayer
@@ -661,7 +661,7 @@ const Videos: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-slate-900 w-full overflow-x-hidden">
       {/* Hero Section */}
       {showCarousels && !searchQuery && <HeroSection />}
 
