@@ -330,7 +330,7 @@ function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
             <div>
               <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                <div className="bg-gradient-to-r from-slate-700 to-slate-800 text-white p-1.5 sm:p-2 rounded-xl">
+                <div className="bg-gradient-to-r from-primary to-emerald-600 text-white p-1.5 sm:p-2 rounded-xl">
                   <img
                     src="/src/assets/icone.png"
                     alt="Logo"
