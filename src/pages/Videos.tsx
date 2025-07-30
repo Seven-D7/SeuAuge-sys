@@ -177,31 +177,32 @@ const Videos: React.FC = () => {
 
         {/* Video Info */}
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 xl:gap-8">
             {/* Main Content */}
-            <div className="lg:col-span-2">
-              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white mb-3 sm:mb-4">
+            <div className="xl:col-span-2">
+              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white mb-3 sm:mb-4 leading-tight">
                 {selectedVideo.metadata.title}
               </h1>
-              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-slate-400 mb-3 sm:mb-4 md:mb-6 text-xs sm:text-sm md:text-base">
-                <span>{selectedVideo.metadata.instructor}</span>
-                <span>•</span>
-                <span>{selectedVideo.metadata.category}</span>
-                <span>•</span>
-                <span>
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-slate-400 mb-4 sm:mb-6 text-xs sm:text-sm md:text-base">
+                <span className="font-medium">{selectedVideo.metadata.instructor}</span>
+                <span className="hidden sm:inline">•</span>
+                <span className="bg-slate-700 px-2 py-1 rounded text-xs">{selectedVideo.metadata.category}</span>
+                <span className="hidden sm:inline">•</span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 bg-primary rounded-full"></span>
                   {Math.floor(selectedVideo.metadata.duration / 60)} min
                 </span>
               </div>
-              <p className="text-slate-300 leading-relaxed text-sm sm:text-base">
+              <p className="text-slate-300 leading-relaxed text-sm sm:text-base lg:text-lg">
                 {selectedVideo.metadata.description}
               </p>
 
               {/* Tags */}
-              <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 sm:mt-4 md:mt-6">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-4 sm:mt-6">
                 {selectedVideo.metadata.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="bg-slate-800 text-slate-300 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm"
+                    className="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-slate-200 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm transition-colors cursor-pointer"
                   >
                     #{tag}
                   </span>
