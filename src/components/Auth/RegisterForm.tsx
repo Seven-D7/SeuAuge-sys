@@ -51,9 +51,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
     }
 
     // Email validation
-    const emailValidation = validateEmail(formData.email);
-    if (!emailValidation.isValid) {
-      newErrors.email = emailValidation.error || 'Email inválido';
+    if (!validateEmail(formData.email)) {
+      newErrors.email = 'Formato de email inválido';
     }
 
     // Password validation
@@ -126,11 +125,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
         sanitizedData.email,
         sanitizedData.password,
         sanitizedData.name,
-        {
-          birthdate: sanitizedData.birthdate,
-          weight: sanitizedData.weight,
-          height: sanitizedData.height,
-        }
+        sanitizedData.birthdate
       );
 
       navigate('/preferences');

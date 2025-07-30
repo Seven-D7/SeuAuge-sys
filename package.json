@@ -6,9 +6,18 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:prod": "NODE_ENV=production vite build",
+    "build:analyze": "vite build --analyze",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "preview": "vite preview",
-    "test": "vitest"
+    "preview:prod": "vite build && vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "type-check": "tsc --noEmit",
+    "prod-check": "node scripts/production-check.js",
+    "prepare-deploy": "npm run prod-check && npm run type-check && npm run lint && npm run test:coverage && npm run build:prod"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",

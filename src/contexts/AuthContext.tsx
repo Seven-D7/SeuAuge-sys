@@ -17,11 +17,12 @@ import {
 } from "../services/user";
 import { getPlanFromToken } from "../services/plan";
 
-// Secure admin check - in production, this should use Firebase custom claims
-const ADMIN_EMAILS = [
+// Production admin check using Firebase custom claims
+// Admin emails should NEVER be hardcoded in frontend for production
+const isDevelopment = import.meta.env.DEV;
+const FALLBACK_ADMIN_EMAILS = isDevelopment ? [
   import.meta.env.VITE_ADMIN_EMAIL || "admin@seuauge.com",
-  // Add more admin emails as needed
-].filter(Boolean);
+].filter(Boolean) : [];
 
 interface User {
   id: string;
@@ -103,13 +104,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const planFromToken = await getPlanFromToken();
     const plan = planFromToken;
     
-    // Enhanced admin check with role-based access
+    // Production admin check using custom claims and Firestore
     let isAdmin = false;
     let role: 'user' | 'admin' | 'moderator' = 'user';
-    
+
     if (!isDemoMode) {
-      role = await getUserRole(firebaseUser.uid);
-      isAdmin = role === 'admin' || ADMIN_EMAILS.includes(firebaseUser.email || '');
+      // First check custom claims (production approach)
+      const idTokenResult = await firebaseUser.getIdTokenResult();
+      if (idTokenResult.claims.admin) {
+        isAdmin = true;
+        role = 'admin';
+      } else if (idTokenResult.claims.moderator) {
+        role = 'moderator';
+      } else {
+        // Fallback to Firestore role check
+        role = await getUserRole(firebaseUser.uid);
+        isAdmin = role === 'admin';
+
+        // Development fallback only
+        if (isDevelopment && !isAdmin) {
+          isAdmin = FALLBACK_ADMIN_EMAILS.includes(firebaseUser.email || '');
+          if (isAdmin) role = 'admin';
+        }
+      }
     }
     
     return {
@@ -125,8 +142,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    if (isDemoMode) {
-      // Modo demo - autenticação simulada
+    // Production authentication flow
+    if (isDemoMode && isDevelopment) {
+      // Demo mode only in development
       console.log("🔧 Modo demo ativo - autenticação simulada");
       setLoading(false);
       return;
@@ -165,16 +183,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       throw new Error('Formato de email inválido');
     }
 
-    if (isDemoMode) {
-      // Modo demo - simular login
+    // Demo mode only in development
+    if (isDemoMode && isDevelopment) {
       const mockUser: User = {
         id: "demo-user-123",
         email: sanitizedEmail,
         name: "Usuário Demo",
         plan: "B",
         isPremium: true,
-        isAdmin: ADMIN_EMAILS.includes(sanitizedEmail),
-        role: ADMIN_EMAILS.includes(sanitizedEmail) ? 'admin' : 'user',
+        isAdmin: FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail),
+        role: FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail) ? 'admin' : 'user',
       };
       setUser(mockUser);
       console.log("🔧 Login demo realizado:", sanitizedEmail);
@@ -249,16 +267,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       throw new Error('Data de nascimento inválida');
     }
 
-    if (isDemoMode) {
-      // Modo demo - simular registro
+    // Demo mode only in development
+    if (isDemoMode && isDevelopment) {
       const mockUser: User = {
         id: `demo-user-${Date.now()}`,
         email: sanitizedEmail,
         name: sanitizedName,
         plan: null,
         isPremium: false,
-        isAdmin: ADMIN_EMAILS.includes(sanitizedEmail),
-        role: ADMIN_EMAILS.includes(sanitizedEmail) ? 'admin' : 'user',
+        isAdmin: FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail),
+        role: FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail) ? 'admin' : 'user',
       };
       setUser(mockUser);
       console.log("🔧 Registro demo realizado:", sanitizedEmail);
@@ -307,7 +325,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const logout = async () => {
-    if (isDemoMode) {
+    // Demo mode only in development
+    if (isDemoMode && isDevelopment) {
       setUser(null);
       console.log("🔧 Logout demo realizado");
       return;

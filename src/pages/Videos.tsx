@@ -154,13 +154,13 @@ const Videos: React.FC = () => {
 
   if (selectedVideo) {
     return (
-      <div className="min-h-screen bg-slate-900">
+      <div className="min-h-screen bg-slate-900 overflow-x-hidden">
         {/* Video Player */}
         <div className="relative">
           <VideoPlayer
             streamData={selectedVideo}
             autoPlay={true}
-            className="w-full h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh]"
+            className="w-full h-[45vh] xs:h-[50vh] sm:h-[55vh] md:h-[60vh] lg:h-[65vh] xl:h-[70vh]"
             onComplete={() => console.log("Vídeo concluído")}
             onProgress={(progress) => console.log("Progresso:", progress)}
           />
@@ -168,40 +168,44 @@ const Videos: React.FC = () => {
           {/* Back Button */}
           <button
             onClick={() => setSelectedVideo(null)}
-            className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-black/60 hover:bg-black/80 text-white px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-lg transition-all duration-200 backdrop-blur-sm text-xs sm:text-sm md:text-base"
+            className="absolute top-2 left-2 sm:top-4 sm:left-4 z-20 bg-black/70 hover:bg-black/90 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg transition-all duration-200 backdrop-blur-sm text-xs sm:text-sm font-medium shadow-lg hover:shadow-xl flex items-center gap-1 sm:gap-2"
           >
-            <span className="hidden sm:inline">← Voltar aos vídeos</span>
-            <span className="sm:hidden">← Voltar</span>
+            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="hidden sm:inline">Voltar aos vídeos</span>
+            <span className="sm:hidden">Voltar</span>
           </button>
         </div>
 
         {/* Video Info */}
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 xl:gap-8">
             {/* Main Content */}
-            <div className="lg:col-span-2">
-              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white mb-3 sm:mb-4">
+            <div className="xl:col-span-2">
+              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white mb-3 sm:mb-4 leading-tight">
                 {selectedVideo.metadata.title}
               </h1>
-              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-slate-400 mb-3 sm:mb-4 md:mb-6 text-xs sm:text-sm md:text-base">
-                <span>{selectedVideo.metadata.instructor}</span>
-                <span>•</span>
-                <span>{selectedVideo.metadata.category}</span>
-                <span>•</span>
-                <span>
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-slate-400 mb-4 sm:mb-6 text-xs sm:text-sm md:text-base">
+                <span className="font-medium">{selectedVideo.metadata.instructor}</span>
+                <span className="hidden sm:inline">•</span>
+                <span className="bg-slate-700 px-2 py-1 rounded text-xs">{selectedVideo.metadata.category}</span>
+                <span className="hidden sm:inline">•</span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 bg-primary rounded-full"></span>
                   {Math.floor(selectedVideo.metadata.duration / 60)} min
                 </span>
               </div>
-              <p className="text-slate-300 leading-relaxed text-sm sm:text-base">
+              <p className="text-slate-300 leading-relaxed text-sm sm:text-base lg:text-lg">
                 {selectedVideo.metadata.description}
               </p>
 
               {/* Tags */}
-              <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 sm:mt-4 md:mt-6">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-4 sm:mt-6">
                 {selectedVideo.metadata.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="bg-slate-800 text-slate-300 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm"
+                    className="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-slate-200 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm transition-colors cursor-pointer"
                   >
                     #{tag}
                   </span>
@@ -210,33 +214,48 @@ const Videos: React.FC = () => {
             </div>
 
             {/* Sidebar - Related Videos */}
-            <div className="lg:col-span-1">
-              <div className="bg-slate-800 rounded-lg p-3 sm:p-4 md:p-6">
-                <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">
+            <div className="xl:col-span-1 mt-6 xl:mt-0">
+              <div className="bg-slate-800 rounded-lg p-4 sm:p-6 sticky top-4">
+                <h3 className="text-base sm:text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <div className="w-1 h-6 bg-primary rounded"></div>
                   Vídeos relacionados
                 </h3>
-                <div className="space-y-3 sm:space-y-4">
+                <div className="space-y-3 max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-track-slate-700 scrollbar-thumb-slate-600">
                   {videos
                     .filter((v) => v.id !== selectedVideo.videoId && v.category === selectedVideo.metadata.category)
-                    .slice(0, 5)
+                    .slice(0, 8)
                     .map((video) => (
                       <div
                         key={video.id}
                         onClick={() => handleVideoSelect(video.id)}
-                        className="flex items-center space-x-2 sm:space-x-3 cursor-pointer hover:bg-slate-700 p-2 rounded-lg transition-colors"
+                        className="flex items-start space-x-3 cursor-pointer hover:bg-slate-700 p-3 rounded-lg transition-all duration-200 group hover:scale-[1.02]"
                       >
-                        <img
-                          src={video.thumbnail}
-                          alt={video.title}
-                          className="w-12 h-7 sm:w-16 sm:h-9 object-cover rounded flex-shrink-0"
-                        />
+                        <div className="relative flex-shrink-0">
+                          <img
+                            src={video.thumbnail}
+                            alt={video.title}
+                            className="w-20 h-11 sm:w-24 sm:h-14 object-cover rounded-md"
+                          />
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-200 rounded-md flex items-center justify-center">
+                            <div className="w-6 h-6 bg-white bg-opacity-90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                              <Play className="w-3 h-3 text-black ml-0.5" />
+                            </div>
+                          </div>
+                        </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-white text-xs sm:text-sm font-medium truncate">
+                          <h4 className="text-white text-sm font-medium line-clamp-2 mb-1 group-hover:text-primary transition-colors">
                             {video.title}
                           </h4>
-                          <p className="text-slate-400 text-xs">
+                          <p className="text-slate-400 text-xs mb-1">
                             {video.instructor}
                           </p>
+                          <div className="flex items-center gap-2 text-xs text-slate-500">
+                            <span>{Math.floor(video.duration / 60)} min</span>
+                            <span>•</span>
+                            <span className="bg-slate-700 px-1.5 py-0.5 rounded text-xs">
+                              {video.category}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     ))}

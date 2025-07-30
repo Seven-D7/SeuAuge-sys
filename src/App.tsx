@@ -5,6 +5,7 @@ import ProtectedRoute from "@components/ProtectedRoute";
 import AdminRoute from "@components/AdminRoute";
 import Layout from "@components/Layout/Layout";
 import PlanGuard from "@components/PlanGuard";
+import ErrorBoundary from "@components/ErrorBoundary";
 import { Toaster } from "react-hot-toast";
 
 import { performanceMonitor, registerServiceWorker, addResourceHint } from "./lib/performance";
@@ -143,7 +144,8 @@ function App() {
   }, []);
 
   return (
-    <AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
       <div className="min-h-screen bg-slate-900">
         <Routes>
           <Route
@@ -324,7 +326,8 @@ function App() {
           },
         }}
       />
-    </AuthProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 
