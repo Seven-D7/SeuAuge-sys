@@ -150,22 +150,22 @@ function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-            <Card className="text-center p-4 sm:p-6 lg:p-8 border-0 bg-white/80 backdrop-blur-md border border-slate-200 hover:bg-white/90 transition-all duration-300 transform hover:scale-[1.02] sm:hover:scale-105 shadow-sm">
-              <div className="bg-gradient-to-r from-slate-100 to-slate-200 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 backdrop-blur-sm border border-slate-300">
-                <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-slate-700" />
+            <Card className="text-center p-4 sm:p-6 lg:p-8 border-0 bg-white/80 backdrop-blur-md border border-emerald-200 hover:bg-white/90 transition-all duration-300 transform hover:scale-[1.02] sm:hover:scale-105 shadow-sm">
+              <div className="bg-gradient-to-r from-emerald-100 to-emerald-200 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 backdrop-blur-sm border border-emerald-300">
+                <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-primary" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-slate-900">Resultados Científicos</h3>
-              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+              <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-800">Resultados Científicos</h3>
+              <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
                 Metodologia baseada em estudos científicos com mais de 15.000 casos de sucesso comprovados.
               </p>
             </Card>
 
-            <Card className="text-center p-6 sm:p-8 border-0 bg-white/80 backdrop-blur-md border border-slate-200 hover:bg-white/90 transition-all duration-300 transform hover:scale-105 shadow-sm">
-              <div className="bg-gradient-to-r from-slate-100 to-slate-200 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-slate-300">
-                <Heart className="w-8 h-8 text-slate-700" />
+            <Card className="text-center p-6 sm:p-8 border-0 bg-white/80 backdrop-blur-md border border-emerald-200 hover:bg-white/90 transition-all duration-300 transform hover:scale-105 shadow-sm">
+              <div className="bg-gradient-to-r from-emerald-100 to-emerald-200 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-emerald-300">
+                <Heart className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-slate-900">Acompanhamento Humano</h3>
-              <p className="text-slate-600">
+              <h3 className="text-xl font-bold mb-4 text-gray-800">Acompanhamento Humano</h3>
+              <p className="text-gray-600">
                 Equipe de nutricionistas, personal trainers e coaches dedicados ao seu sucesso.
               </p>
             </Card>
