@@ -144,7 +144,8 @@ function App() {
   }, []);
 
   return (
-    <AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
       <div className="min-h-screen bg-slate-900">
         <Routes>
           <Route
@@ -325,7 +326,8 @@ function App() {
           },
         }}
       />
-    </AuthProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 
