@@ -55,7 +55,7 @@ if (isDemoMode) {
   );
 }
 
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(finalConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
