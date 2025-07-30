@@ -125,11 +125,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
         sanitizedData.email,
         sanitizedData.password,
         sanitizedData.name,
-        {
-          birthdate: sanitizedData.birthdate,
-          weight: sanitizedData.weight,
-          height: sanitizedData.height,
-        }
+        sanitizedData.birthdate
       );
 
       navigate('/preferences');
