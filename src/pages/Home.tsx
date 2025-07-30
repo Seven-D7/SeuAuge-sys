@@ -140,11 +140,11 @@ function Home() {
       <section className="py-12 sm:py-16 lg:py-20 px-3 sm:px-4 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-slate-900">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-gray-800">
               Por Que Escolher o
-              <span className="bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text text-transparent"> Meu Auge?</span>
+              <span className="bg-gradient-to-r from-primary to-emerald-700 bg-clip-text text-transparent"> Meu Auge?</span>
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto px-2">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-2">
               Metodologia científica comprovada com acompanhamento humano personalizado.
             </p>
           </div>
