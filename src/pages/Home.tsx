@@ -33,17 +33,17 @@ function Home() {
     <div className="min-h-screen bg-white relative overflow-hidden">
       {/* Subtle background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-slate-100/60 to-slate-200/60 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-slate-100/40 to-slate-200/40 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-slate-50/30 to-slate-100/30 rounded-full blur-3xl"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-emerald-100/60 to-emerald-200/60 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-primary/40 to-emerald-300/40 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-emerald-50/30 to-emerald-100/30 rounded-full blur-3xl"></div>
       </div>
 
       {/* Header */}
-      <header className="bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-200 sticky top-0 z-50">
+      <header className="bg-white/95 backdrop-blur-md shadow-sm border-b border-emerald-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="bg-gradient-to-r from-slate-800 to-slate-900 text-white p-1.5 sm:p-2 rounded-xl shadow-lg">
+              <div className="bg-gradient-to-r from-primary to-emerald-600 text-white p-1.5 sm:p-2 rounded-xl shadow-lg">
                 <img
                   src="/src/assets/icone.png"
                   alt="Logo"
@@ -51,23 +51,23 @@ function Home() {
                 />
               </div>
               <div>
-                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900">
+                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800">
                   Meu Auge
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-600 hidden sm:block">Transforme Sua Vida</p>
+                <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">Transforme Sua Vida</p>
               </div>
             </div>
             <div className="hidden md:flex items-center gap-4 lg:gap-6">
-              <a href="#planos" className="text-slate-700 hover:text-slate-900 transition-all duration-300 font-medium text-sm lg:text-base">Planos</a>
-              <a href="#sobre" className="text-slate-700 hover:text-slate-900 transition-all duration-300 font-medium text-sm lg:text-base">Sobre</a>
-              <a href="#depoimentos" className="text-slate-700 hover:text-slate-900 transition-all duration-300 font-medium text-sm lg:text-base">Depoimentos</a>
-              <Button onClick={handleStartJourney} className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-300 text-sm lg:text-base">
+              <a href="#planos" className="text-gray-700 hover:text-primary transition-all duration-300 font-medium text-sm lg:text-base">Planos</a>
+              <a href="#sobre" className="text-gray-700 hover:text-primary transition-all duration-300 font-medium text-sm lg:text-base">Sobre</a>
+              <a href="#depoimentos" className="text-gray-700 hover:text-primary transition-all duration-300 font-medium text-sm lg:text-base">Depoimentos</a>
+              <Button onClick={handleStartJourney} className="bg-primary hover:bg-primary-dark text-white shadow-lg hover:shadow-xl transition-all duration-300 text-sm lg:text-base">
                 Começar Agora
               </Button>
             </div>
             {/* Mobile menu button */}
             <div className="md:hidden">
-              <Button onClick={handleStartJourney} size="sm" className="bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm">
+              <Button onClick={handleStartJourney} size="sm" className="bg-primary hover:bg-primary-dark text-white text-xs sm:text-sm">
                 Entrar
               </Button>
             </div>
@@ -79,19 +79,19 @@ function Home() {
       <section className="py-12 sm:py-16 lg:py-20 px-3 sm:px-4 relative z-10">
         <div className="max-w-7xl mx-auto text-center">
           <div className="mb-6 sm:mb-8">
-            <Badge className="bg-slate-100 text-slate-700 border-slate-300 mb-4 shadow-sm text-xs sm:text-sm">
+            <Badge className="bg-emerald-100 text-emerald-700 border-emerald-300 mb-4 shadow-sm text-xs sm:text-sm">
               🏆 #1 em Transformação Corporal
             </Badge>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 text-slate-900">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 text-gray-800">
             Alcance Seu
-            <span className="bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 bg-clip-text text-transparent block">
+            <span className="bg-gradient-to-r from-primary via-emerald-600 to-emerald-700 bg-clip-text text-transparent block">
               AUGE
             </span>
           </h1>
 
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-slate-600 mb-6 sm:mb-8 max-w-4xl mx-auto leading-relaxed px-2">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 mb-6 sm:mb-8 max-w-4xl mx-auto leading-relaxed px-2">
             Transforme seu corpo e mente com nossos planos personalizados de emagrecimento.
             Resultados científicos, acompanhamento profissional e a motivação que você precisa.
           </p>
@@ -100,7 +100,7 @@ function Home() {
             <Button
               size="lg"
               onClick={handleStartJourney}
-              className="h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg bg-slate-900 hover:bg-slate-800 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-slate-300"
+              className="h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg bg-primary hover:bg-primary-dark text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-emerald-300"
             >
               <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               <span className="hidden sm:inline">Iniciar Transformação</span>
@@ -111,21 +111,21 @@ function Home() {
 
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8 max-w-4xl mx-auto px-2">
-            <div className="text-center bg-white/80 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-slate-200 hover:bg-white/90 transition-all duration-300 shadow-sm">
-              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-1 sm:mb-2">15K+</div>
-              <p className="text-slate-600 text-xs sm:text-sm md:text-base">Vidas Transformadas</p>
+            <div className="text-center bg-white/80 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-emerald-200 hover:bg-white/90 transition-all duration-300 shadow-sm">
+              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-1 sm:mb-2">15K+</div>
+              <p className="text-gray-600 text-xs sm:text-sm md:text-base">Vidas Transformadas</p>
             </div>
-            <div className="text-center bg-white/80 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-slate-200 hover:bg-white/90 transition-all duration-300 shadow-sm">
-              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-1 sm:mb-2">94%</div>
-              <p className="text-slate-600 text-xs sm:text-sm md:text-base">Taxa de Sucesso</p>
+            <div className="text-center bg-white/80 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-emerald-200 hover:bg-white/90 transition-all duration-300 shadow-sm">
+              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-1 sm:mb-2">94%</div>
+              <p className="text-gray-600 text-xs sm:text-sm md:text-base">Taxa de Sucesso</p>
             </div>
-            <div className="text-center bg-white/80 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-slate-200 hover:bg-white/90 transition-all duration-300 shadow-sm">
-              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-1 sm:mb-2">-18kg</div>
-              <p className="text-slate-600 text-xs sm:text-sm md:text-base">Média de Perda</p>
+            <div className="text-center bg-white/80 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-emerald-200 hover:bg-white/90 transition-all duration-300 shadow-sm">
+              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-1 sm:mb-2">-18kg</div>
+              <p className="text-gray-600 text-xs sm:text-sm md:text-base">Média de Perda</p>
             </div>
-            <div className="text-center bg-white/80 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-slate-200 hover:bg-white/90 transition-all duration-300 shadow-sm">
-              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-1 sm:mb-2">90 dias</div>
-              <p className="text-slate-600 text-xs sm:text-sm md:text-base">Tempo Médio</p>
+            <div className="text-center bg-white/80 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-emerald-200 hover:bg-white/90 transition-all duration-300 shadow-sm">
+              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-1 sm:mb-2">90 dias</div>
+              <p className="text-gray-600 text-xs sm:text-sm md:text-base">Tempo Médio</p>
             </div>
           </div>
         </div>
