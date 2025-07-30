@@ -264,11 +264,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         )}
 
         {/* Bottom Controls */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2 sm:p-4">
           {/* Progress Bar */}
-          <div className="mb-4">
+          <div className="mb-2 sm:mb-4">
             <div
-              className="w-full h-1 bg-white bg-opacity-30 rounded-full cursor-pointer"
+              className="w-full h-1 sm:h-1.5 bg-white bg-opacity-30 rounded-full cursor-pointer"
               onClick={handleProgressClick}
             >
               <div
@@ -281,41 +281,41 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
           {/* Controls Row */}
           <div className="flex items-center justify-between text-white">
             {/* Left Controls */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-1 sm:space-x-3">
               <button
                 onClick={togglePlay}
-                className="hover:text-primary transition-colors"
+                className="hover:text-primary transition-colors p-1"
               >
                 {isPlaying ? (
-                  <Pause className="w-6 h-6" />
+                  <Pause className="w-4 h-4 sm:w-6 sm:h-6" />
                 ) : (
-                  <Play className="w-6 h-6" />
+                  <Play className="w-4 h-4 sm:w-6 sm:h-6" />
                 )}
               </button>
 
               <button
                 onClick={() => skip(-10)}
-                className="hover:text-primary transition-colors"
+                className="hover:text-primary transition-colors p-1 hidden sm:block"
               >
-                <SkipBack className="w-5 h-5" />
+                <SkipBack className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
 
               <button
                 onClick={() => skip(10)}
-                className="hover:text-primary transition-colors"
+                className="hover:text-primary transition-colors p-1 hidden sm:block"
               >
-                <SkipForward className="w-5 h-5" />
+                <SkipForward className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
 
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1 sm:space-x-2">
                 <button
                   onClick={toggleMute}
-                  className="hover:text-primary transition-colors"
+                  className="hover:text-primary transition-colors p-1"
                 >
                   {isMuted ? (
-                    <VolumeX className="w-5 h-5" />
+                    <VolumeX className="w-4 h-4 sm:w-5 sm:h-5" />
                   ) : (
-                    <Volume2 className="w-5 h-5" />
+                    <Volume2 className="w-4 h-4 sm:w-5 sm:h-5" />
                   )}
                 </button>
                 <input
@@ -325,34 +325,37 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                   step="0.1"
                   value={isMuted ? 0 : volume}
                   onChange={handleVolumeChange}
-                  className="w-20 h-1 bg-white bg-opacity-30 rounded-lg appearance-none cursor-pointer"
+                  className="w-12 sm:w-20 h-1 bg-white bg-opacity-30 rounded-lg appearance-none cursor-pointer"
                 />
               </div>
 
-              <span className="text-sm">
+              <span className="text-xs sm:text-sm hidden md:block">
                 {formatTime(currentTime)} / {formatTime(duration)}
+              </span>
+              <span className="text-xs sm:text-sm md:hidden">
+                {formatTime(currentTime)}
               </span>
             </div>
 
             {/* Right Controls */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-1 sm:space-x-3">
               {/* Quality Settings */}
               <div className="relative">
                 <button
                   onClick={() => setShowSettings(!showSettings)}
-                  className="hover:text-primary transition-colors"
+                  className="hover:text-primary transition-colors p-1"
                 >
-                  <Settings className="w-5 h-5" />
+                  <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
 
                 {showSettings && (
-                  <div className="absolute bottom-8 right-0 bg-black bg-opacity-90 rounded-lg p-3 min-w-32">
-                    <h4 className="text-sm font-semibold mb-2">Qualidade</h4>
+                  <div className="absolute bottom-8 right-0 bg-black bg-opacity-95 rounded-lg p-3 min-w-24 sm:min-w-32 z-10">
+                    <h4 className="text-xs sm:text-sm font-semibold mb-2">Qualidade</h4>
                     {streamData.qualities.map((quality) => (
                       <button
                         key={quality.resolution}
                         onClick={() => changeQuality(quality)}
-                        className={`block w-full text-left px-2 py-1 text-sm rounded hover:bg-white hover:bg-opacity-20 ${
+                        className={`block w-full text-left px-2 py-1 text-xs sm:text-sm rounded hover:bg-white hover:bg-opacity-20 ${
                           selectedQuality.resolution === quality.resolution
                             ? "text-primary"
                             : "text-white"
@@ -367,9 +370,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
               <button
                 onClick={toggleFullscreen}
-                className="hover:text-primary transition-colors"
+                className="hover:text-primary transition-colors p-1"
               >
-                <Maximize className="w-5 h-5" />
+                <Maximize className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
           </div>
