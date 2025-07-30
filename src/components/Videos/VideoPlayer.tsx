@@ -329,12 +329,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                 />
               </div>
 
-              <span className="text-xs sm:text-sm hidden md:block">
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </span>
-              <span className="text-xs sm:text-sm md:hidden">
-                {formatTime(currentTime)}
-              </span>
+              <div className="hidden sm:block">
+                <span className="text-xs sm:text-sm">
+                  {formatTime(currentTime)} / {formatTime(duration)}
+                </span>
+              </div>
+              <div className="sm:hidden">
+                <span className="text-xs">
+                  {formatTime(currentTime)}
+                </span>
+              </div>
             </div>
 
             {/* Right Controls */}
