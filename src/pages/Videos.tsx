@@ -160,7 +160,7 @@ const Videos: React.FC = () => {
           <VideoPlayer
             streamData={selectedVideo}
             autoPlay={true}
-            className="w-full h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh]"
+            className="w-full h-[50vh] sm:h-[55vh] md:h-[60vh] lg:h-[65vh] xl:h-[70vh]"
             onComplete={() => console.log("Vídeo concluído")}
             onProgress={(progress) => console.log("Progresso:", progress)}
           />
