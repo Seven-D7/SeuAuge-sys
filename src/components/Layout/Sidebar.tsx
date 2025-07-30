@@ -155,7 +155,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         variants={sidebarVariants}
         initial="closed"
         animate={isOpen ? "open" : "closed"}
-        className="fixed top-0 left-0 h-full w-72 max-w-[85vw] overflow-y-auto bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 z-50 lg:translate-x-0 lg:fixed lg:z-auto lg:w-72 flex flex-col"
+        className="fixed top-0 left-0 h-full w-72 max-w-[85vw] overflow-y-auto bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 z-50 lg:translate-x-0 lg:static lg:z-auto lg:w-72 flex flex-col lg:block"
       >
         {/* Logo Header */}
         <div className="p-6 border-b border-slate-200 dark:border-slate-800">

@@ -28,14 +28,15 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
 
   return (
     <div className={`
-      group cursor-pointer overflow-hidden rounded-lg sm:rounded-xl
+      group cursor-pointer overflow-hidden rounded-md sm:rounded-lg md:rounded-xl
       ${designUtils.glass('dark')}
-      hover:scale-[1.02] sm:hover:scale-105 transition-all duration-300
+      hover:scale-[1.01] sm:hover:scale-[1.02] md:hover:scale-105 transition-all duration-300
       hover:shadow-xl hover:shadow-primary/10
       ${COMMON_CLASSES.focus}
+      w-full max-w-full
     `}>
       {/* Video Thumbnail */}
-      <div className="relative aspect-video overflow-hidden">
+      <div className="relative aspect-video overflow-hidden w-full">
         <LazyImage
           src={video.thumbnail}
           alt={video.title}
@@ -51,11 +52,11 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
         {/* Play Button */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
           <div className={`
-            w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center
+            w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center
             ${designUtils.gradient('primary')}
             shadow-lg hover:scale-110 transition-transform duration-200
           `}>
-            <Play className="w-5 h-5 sm:w-6 sm:h-6 text-white ml-0.5 fill-current" />
+            <Play className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 text-white ml-0.5 fill-current" />
           </div>
         </div>
 
@@ -102,16 +103,16 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
       </div>
 
       {/* Video Info */}
-      <div className="p-3 sm:p-4">
+      <div className="p-2 sm:p-3 md:p-4">
         <div className="mb-2">
           <h3 className={`
             font-semibold text-white line-clamp-2 mb-1
             ${COMMON_CLASSES.heading.h4}
-            text-sm sm:text-base leading-tight
+            text-xs sm:text-sm md:text-base leading-tight
           `}>
             {video.title}
           </h3>
-          <p className="text-gray-400 text-xs sm:text-sm font-medium">
+          <p className="text-gray-400 text-xs font-medium">
             {video.instructor}
           </p>
         </div>
@@ -135,11 +136,11 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
 
         {/* Tags */}
         {video.tags && video.tags.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1">
-            {video.tags.slice(0, 3).map((tag) => (
+          <div className="mt-2 sm:mt-3 flex flex-wrap gap-1">
+            {video.tags.slice(0, 2).map((tag) => (
               <span
                 key={tag}
-                className="px-2 py-0.5 bg-gray-700/50 text-gray-300 text-xs rounded-md"
+                className="px-1.5 sm:px-2 py-0.5 bg-gray-700/50 text-gray-300 text-xs rounded-md"
               >
                 #{tag}
               </span>
@@ -148,12 +149,12 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
         )}
 
         {/* Action Bar */}
-        <div className="mt-3 sm:mt-4 flex items-center justify-between">
+        <div className="mt-2 sm:mt-3 md:mt-4 flex items-center justify-between">
           <button
             onClick={onClick}
             disabled={!hasAccess}
             className={`
-              flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium
+              flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg text-xs font-medium
               transition-all duration-200
               ${hasAccess
                 ? `${designUtils.gradient('primary')} text-white hover:scale-[1.02] sm:hover:scale-105 shadow-md hover:shadow-lg`
@@ -162,12 +163,12 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
               ${COMMON_CLASSES.focus}
             `}
           >
-            <Play className="w-3 h-3" />
+            <Play className="w-3 h-3 sm:w-4 sm:h-4" />
             {hasAccess ? 'Assistir' : 'Premium'}
           </button>
 
           {video.description && (
-            <div className="text-xs text-gray-400 truncate ml-2 flex-1 hidden sm:block">
+            <div className="text-xs text-gray-400 truncate ml-2 flex-1 hidden md:block">
               {video.description}
             </div>
           )}

@@ -97,7 +97,7 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
   return (
     <div className="relative group mb-6 sm:mb-8">
       {/* Section Title */}
-      <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white mb-3 sm:mb-4 px-3 sm:px-4 lg:px-12">
+      <h2 className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-white mb-2 sm:mb-3 md:mb-4 px-2 sm:px-3 md:px-4 lg:px-8 xl:px-12">
         {title}
       </h2>
 
@@ -136,9 +136,9 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
         </AnimatePresence>
 
         {/* Video Cards */}
-        <div className="px-3 sm:px-4 lg:px-12">
+        <div className="px-2 sm:px-3 md:px-4 lg:px-8 xl:px-12">
           <motion.div
-            className="flex gap-1.5 sm:gap-2 lg:gap-4"
+            className="flex gap-1 sm:gap-1.5 md:gap-2 lg:gap-3 xl:gap-4"
             animate={{
               x: `-${currentIndex * (100 / visibleCards)}%`,
             }}
@@ -171,13 +171,13 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
 
                   {/* Premium Badge */}
                   {!video.isFree && (
-                    <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs font-bold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full">
+                    <div className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 md:top-2 md:right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs font-bold px-1 py-0.5 sm:px-1.5 sm:py-0.5 md:px-2 md:py-1 rounded-full">
                       PRO
                     </div>
                   )}
 
                   {/* Duration */}
-                  <div className="absolute bottom-1.5 right-1.5 sm:bottom-2 sm:right-2 bg-black/80 text-white text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded backdrop-blur-sm">
+                  <div className="absolute bottom-1 right-1 sm:bottom-1.5 sm:right-1.5 md:bottom-2 md:right-2 bg-black/80 text-white text-xs px-1 py-0.5 sm:px-1.5 sm:py-0.5 md:px-2 md:py-1 rounded backdrop-blur-sm">
                     {video.duration}
                   </div>
 
@@ -225,15 +225,15 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
                 </div>
 
                 {/* Video Info */}
-                <div className="mt-1.5 sm:mt-2 px-0.5 sm:px-1">
-                  <h3 className="text-white text-xs sm:text-sm font-medium truncate mb-1">
+                <div className="mt-1 sm:mt-1.5 md:mt-2 px-0 sm:px-0.5 md:px-1">
+                  <h3 className="text-white text-xs font-medium truncate mb-0.5 sm:mb-1 leading-tight">
                     {video.title}
                   </h3>
-                  <div className="flex flex-col sm:flex-row sm:items-center text-xs text-gray-400 gap-1 sm:gap-2">
-                    <span className="bg-slate-700 px-1.5 sm:px-2 py-0.5 rounded text-xs w-fit">
+                  <div className="flex flex-col text-xs text-gray-400 gap-0.5 sm:gap-1">
+                    <span className="bg-slate-700 px-1 sm:px-1.5 py-0.5 rounded text-xs w-fit">
                       {video.category}
                     </span>
-                    <span className="truncate">{video.instructor}</span>
+                    <span className="truncate text-xs">{video.instructor}</span>
                   </div>
                 </div>
 

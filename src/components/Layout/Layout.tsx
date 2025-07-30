@@ -12,21 +12,28 @@ const Layout: React.FC = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
       <div className="flex">
         {/* Sidebar - Fixed positioning for desktop, overlay for mobile */}
-        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <div className="hidden lg:block lg:w-72 lg:flex-shrink-0">
+          <Sidebar isOpen={true} onClose={() => setSidebarOpen(false)} />
+        </div>
+
+        {/* Mobile Sidebar Overlay */}
+        <div className="lg:hidden">
+          <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        </div>
 
         {/* Main content area */}
-        <div className="flex-1 flex flex-col min-h-screen lg:ml-72">
+        <div className="flex-1 flex flex-col min-h-screen w-full lg:w-auto">
           {/* Header with menu toggle */}
           <Header onMenuClick={() => setSidebarOpen(true)} />
 
           {/* Main content */}
-          <motion.main 
+          <motion.main
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="flex-1 p-4 sm:p-6 lg:p-8 overflow-hidden"
+            className="flex-1 p-2 sm:p-4 md:p-6 lg:p-8 overflow-hidden min-w-0"
           >
-            <div className="max-w-full">
+            <div className="max-w-full w-full">
               <Outlet />
             </div>
           </motion.main>

@@ -514,7 +514,7 @@ const Videos: React.FC = () => {
 
   if (selectedVideo) {
     return (
-      <div className="min-h-screen bg-slate-900 overflow-x-hidden">
+      <div className="min-h-screen bg-slate-900 w-full overflow-x-hidden">
         {/* Video Player - Responsive */}
         <div className="relative">
           <VideoPlayer
@@ -540,7 +540,7 @@ const Videos: React.FC = () => {
         </div>
 
         {/* Video Info - Responsive Layout */}
-        <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+        <div className="px-2 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 xl:gap-8">
             {/* Main Content */}
             <motion.div 
@@ -661,13 +661,13 @@ const Videos: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-slate-900 w-full overflow-x-hidden">
       {/* Hero Section */}
       {showCarousels && !searchQuery && <HeroSection />}
 
       {/* Navigation & Search - Mobile Optimized */}
       <div className="relative z-10 bg-slate-900">
-        <div className="px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-4">
+        <div className="px-2 sm:px-4 md:px-6 lg:px-8 pt-4 sm:pt-6 pb-4">
           <div className="flex flex-col gap-4">
             {/* Header */}
             {!showCarousels || searchQuery ? (
@@ -809,7 +809,7 @@ const Videos: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="px-4 sm:px-6 lg:px-8 pb-8">
+            <div className="px-2 sm:px-4 md:px-6 lg:px-8 pb-8">
               {/* Results Header */}
               <div className="mb-6">
                 <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-white mb-2">
@@ -849,10 +849,10 @@ const Videos: React.FC = () => {
                   </button>
                 </div>
               ) : (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6"
+                  className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4 lg:gap-6"
                 >
                   {filteredVideos.map((video, index) => (
                     <motion.div
