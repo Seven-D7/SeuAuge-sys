@@ -69,35 +69,35 @@ export default function PlansSection() {
                       <div
                         className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 mx-auto mb-2 sm:mb-3 md:mb-4 rounded-full flex items-center justify-center backdrop-blur-sm border ${
                           plan.isPopular
-                            ? "bg-gradient-to-r from-slate-100 to-slate-200 border-slate-300"
-                            : "bg-slate-50 border-slate-200"
+                            ? "bg-gradient-to-r from-emerald-100 to-emerald-200 border-emerald-300"
+                            : "bg-emerald-50 border-emerald-200"
                         }`}
                       >
                         <Icon
-                          className={`w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 ${plan.isPopular ? "text-slate-700" : "text-slate-600"}`}
+                          className={`w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 ${plan.isPopular ? "text-primary" : "text-emerald-600"}`}
                         />
                       </div>
 
-                      <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-slate-900 mb-1 sm:mb-2">
+                      <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mb-1 sm:mb-2">
                         {plan.name}
                       </h3>
-                      <p className="text-xs sm:text-sm md:text-base text-slate-600 mb-3 sm:mb-4 leading-relaxed min-h-[2rem] sm:min-h-[2.5rem] md:min-h-[3rem] px-1 sm:px-2">
+                      <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-3 sm:mb-4 leading-relaxed min-h-[2rem] sm:min-h-[2.5rem] md:min-h-[3rem] px-1 sm:px-2">
                         {plan.description}
                       </p>
 
                       <div className="mb-3 sm:mb-4 md:mb-6">
                         <div className="mb-1 sm:mb-2">
                           {plan.originalPrice && (
-                            <span className="text-xs sm:text-sm md:text-base lg:text-lg text-slate-400 line-through mr-1 sm:mr-2">
+                            <span className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-400 line-through mr-1 sm:mr-2">
                               {plan.originalPrice}
                             </span>
                           )}
-                          <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900">
+                          <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800">
                             {plan.price}
                           </span>
                         </div>
                         {plan.monthlyPrice && (
-                          <span className="text-xs sm:text-sm md:text-base text-slate-600 font-medium">
+                          <span className="text-xs sm:text-sm md:text-base text-gray-600 font-medium">
                             {plan.monthlyPrice}
                           </span>
                         )}
