@@ -325,7 +325,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const logout = async () => {
-    if (isDemoMode) {
+    // Demo mode only in development
+    if (isDemoMode && isDevelopment) {
       setUser(null);
       console.log("🔧 Logout demo realizado");
       return;
