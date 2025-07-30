@@ -138,7 +138,7 @@ const Dashboard: React.FC = () => {
         className="relative bg-gradient-to-r from-primary via-emerald-600 to-cyan-600 rounded-xl overflow-hidden"
       >
         <div className="absolute inset-0 bg-black bg-opacity-20" />
-        <div className="relative z-10 px-3 py-6 sm:px-4 sm:py-8 md:px-6 md:py-10 lg:px-12 lg:py-16">
+        <div className="relative z-10 px-6 py-8 lg:px-12 lg:py-16">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl mb-6 lg:mb-0">
               <motion.h1 
