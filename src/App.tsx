@@ -102,9 +102,16 @@ const AppsPage = lazy(() =>
   })
 );
 
-const About = lazy(() => 
+const About = lazy(() =>
   import("@pages/About").then(module => {
     performanceMonitor.mark('about-loaded');
+    return module;
+  })
+);
+
+const Achievements = lazy(() =>
+  import("@pages/Achievements").then(module => {
+    performanceMonitor.mark('achievements-loaded');
     return module;
   })
 );
@@ -226,6 +233,15 @@ function App() {
               element={
                 <Suspense fallback={<LoadingFallback />}>
                   <Profile />
+                </Suspense>
+              }
+            />
+
+            <Route
+              path="achievements"
+              element={
+                <Suspense fallback={<LoadingFallback />}>
+                  <Achievements />
                 </Suspense>
               }
             />

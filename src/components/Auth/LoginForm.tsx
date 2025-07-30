@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react';
 import { sendPasswordResetEmail } from 'firebase/auth';
@@ -128,11 +129,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
 
   if (resetEmailSent) {
     return (
-      <div className="w-full max-w-md space-y-6">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-md space-y-6"
+      >
         <div className="text-center">
-          <div className="mx-auto w-16 h-16 bg-green-100 border border-green-200 rounded-full flex items-center justify-center mb-6">
-            <CheckCircle className="w-8 h-8 text-green-600" />
-          </div>
+          <motion.div 
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring" }}
+            className="mx-auto w-16 h-16 bg-emerald-100 border border-emerald-200 rounded-full flex items-center justify-center mb-6"
+          >
+            <CheckCircle className="w-8 h-8 text-emerald-600" />
+          </motion.div>
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">Email enviado!</h2>
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
             Enviamos um link de recuperação para <br />
@@ -144,16 +154,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
 
         <button
           onClick={resetForm}
-          className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+          className="w-full bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
         >
           Voltar ao login
         </button>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="w-full max-w-md space-y-4 sm:space-y-6">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="w-full max-w-md space-y-6"
+    >
       <div className="text-center">
         <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
           {forgotPasswordMode ? 'Recuperar senha' : 'Bem-vindo de volta'}
@@ -166,13 +180,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-        <div>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
+        >
           <label className="block text-sm font-medium text-slate-700 mb-2">
             Endereço de Email
           </label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 sm:w-5 sm:h-5" />
+            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
             <input
               type="email"
               value={email}
@@ -180,21 +198,25 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
                 setEmail(e.target.value);
                 setError(null);
               }}
-              className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm sm:text-base transition-all duration-300"
+              className="w-full pl-12 pr-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-base transition-all duration-300"
               placeholder="Digite seu email"
               required
               autoComplete="email"
             />
           </div>
-        </div>
+        </motion.div>
 
         {!forgotPasswordMode && (
-          <div>
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+          >
             <label className="block text-sm font-medium text-slate-700 mb-2">
               Senha
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 sm:w-5 sm:h-5" />
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
@@ -202,7 +224,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
                   setPassword(e.target.value);
                   setError(null);
                 }}
-                className="w-full pl-10 sm:pl-12 pr-10 sm:pr-12 py-2.5 sm:py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm sm:text-base transition-all duration-300"
+                className="w-full pl-12 pr-12 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-base transition-all duration-300"
                 placeholder="Digite sua senha"
                 required
                 autoComplete="current-password"
@@ -212,7 +234,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
               >
-                {showPassword ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />}
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
 
@@ -220,28 +242,37 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
               <button
                 type="button"
                 onClick={() => setForgotPasswordMode(true)}
-                className="text-slate-600 hover:text-slate-900 text-sm font-medium transition-colors"
+                className="text-primary hover:text-primary-dark text-sm font-medium transition-colors"
               >
                 Esqueci minha senha
               </button>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-red-50 border border-red-200 rounded-lg p-3"
+          >
             <p className="text-red-600 text-sm flex items-center gap-2">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
               {error}
             </p>
-          </div>
+          </motion.div>
         )}
 
-        <div className="space-y-3">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="space-y-3"
+        >
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2.5 sm:py-3 px-4 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base min-h-[44px] transform hover:scale-105 shadow-lg"
+            className="w-full bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-base min-h-[44px] transform hover:scale-105 shadow-lg"
           >
             {loading ? (
               <div className="flex items-center justify-center gap-2">
@@ -257,24 +288,26 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             <button
               type="button"
               onClick={onToggleMode}
-              className="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-medium py-2.5 sm:py-3 px-4 rounded-lg transition-all duration-300 text-sm sm:text-base border border-slate-200"
+              className="w-full bg-white hover:bg-slate-50 text-slate-700 font-medium py-3 px-4 rounded-lg transition-all duration-300 text-base border border-slate-300 hover:border-primary"
             >
-              Ainda não tem conta? Criar conta
+              Ainda não tem conta? <span className="text-primary font-semibold">Criar conta</span>
             </button>
           )}
-        </div>
+        </motion.div>
 
         {forgotPasswordMode && (
-          <button
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             type="button"
             onClick={resetForm}
-            className="w-full text-slate-600 hover:text-slate-900 font-medium py-2 text-sm transition-colors"
+            className="w-full text-slate-600 hover:text-primary font-medium py-2 text-sm transition-colors"
           >
             Voltar ao login
-          </button>
+          </motion.button>
         )}
       </form>
-    </div>
+    </motion.div>
   );
 };
 
