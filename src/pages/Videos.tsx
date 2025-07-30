@@ -215,7 +215,7 @@ const Videos: React.FC = () => {
                 <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">
                   Vídeos relacionados
                 </h3>
-                <div className="space-y-3 sm:space-y-4">
+                <div className="space-y-2 sm:space-y-3">
                   {videos
                     .filter((v) => v.id !== selectedVideo.videoId && v.category === selectedVideo.metadata.category)
                     .slice(0, 5)
@@ -223,19 +223,27 @@ const Videos: React.FC = () => {
                       <div
                         key={video.id}
                         onClick={() => handleVideoSelect(video.id)}
-                        className="flex items-center space-x-2 sm:space-x-3 cursor-pointer hover:bg-slate-700 p-2 rounded-lg transition-colors"
+                        className="flex items-start space-x-2 sm:space-x-3 cursor-pointer hover:bg-slate-700 p-2 rounded-lg transition-colors group"
                       >
-                        <img
-                          src={video.thumbnail}
-                          alt={video.title}
-                          className="w-12 h-7 sm:w-16 sm:h-9 object-cover rounded flex-shrink-0"
-                        />
+                        <div className="relative flex-shrink-0">
+                          <img
+                            src={video.thumbnail}
+                            alt={video.title}
+                            className="w-16 h-9 sm:w-20 sm:h-11 lg:w-24 lg:h-14 object-cover rounded"
+                          />
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded flex items-center justify-center">
+                            <Play className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                          </div>
+                        </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-white text-xs sm:text-sm font-medium truncate">
+                          <h4 className="text-white text-xs sm:text-sm font-medium line-clamp-2 mb-1">
                             {video.title}
                           </h4>
                           <p className="text-slate-400 text-xs">
                             {video.instructor}
+                          </p>
+                          <p className="text-slate-500 text-xs mt-1">
+                            {Math.floor(video.duration / 60)} min
                           </p>
                         </div>
                       </div>
