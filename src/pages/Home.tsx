@@ -267,14 +267,14 @@ function Home() {
               </p>
             </Card>
 
-            <Card className="p-6 sm:p-8 border-0 bg-white/80 backdrop-blur-md border border-slate-200 hover:bg-white/90 transition-all duration-300 shadow-sm">
+            <Card className="p-6 sm:p-8 border-0 bg-white/80 backdrop-blur-md border border-emerald-200 hover:bg-white/90 transition-all duration-300 shadow-sm">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-gradient-to-r from-slate-700 to-slate-800 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                <div className="w-16 h-16 bg-gradient-to-r from-primary to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
                   A
                 </div>
                 <div>
-                  <h4 className="font-bold text-lg text-slate-900">Ana Costa</h4>
-                  <p className="text-slate-600">Perdeu 15kg em 2 meses</p>
+                  <h4 className="font-bold text-lg text-gray-800">Ana Costa</h4>
+                  <p className="text-gray-600">Perdeu 15kg em 2 meses</p>
                 </div>
               </div>
               <div className="flex mb-4">
@@ -282,7 +282,7 @@ function Home() {
                   <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                 ))}
               </div>
-              <p className="text-slate-700 italic">
+              <p className="text-gray-700 italic">
                 "Finalmente encontrei um método que funciona! A equipe é muito atenciosa e os resultados são reais."
               </p>
             </Card>
