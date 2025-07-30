@@ -104,13 +104,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const planFromToken = await getPlanFromToken();
     const plan = planFromToken;
     
-    // Enhanced admin check with role-based access
+    // Production admin check using custom claims and Firestore
     let isAdmin = false;
     let role: 'user' | 'admin' | 'moderator' = 'user';
-    
+
     if (!isDemoMode) {
-      role = await getUserRole(firebaseUser.uid);
-      isAdmin = role === 'admin' || ADMIN_EMAILS.includes(firebaseUser.email || '');
+      // First check custom claims (production approach)
+      const idTokenResult = await firebaseUser.getIdTokenResult();
+      if (idTokenResult.claims.admin) {
+        isAdmin = true;
+        role = 'admin';
+      } else if (idTokenResult.claims.moderator) {
+        role = 'moderator';
+      } else {
+        // Fallback to Firestore role check
+        role = await getUserRole(firebaseUser.uid);
+        isAdmin = role === 'admin';
+
+        // Development fallback only
+        if (isDevelopment && !isAdmin) {
+          isAdmin = FALLBACK_ADMIN_EMAILS.includes(firebaseUser.email || '');
+          if (isAdmin) role = 'admin';
+        }
+      }
     }
     
     return {
