@@ -343,13 +343,13 @@ function Home() {
                 Transformando vidas através da ciência e do acompanhamento humano personalizado.
               </p>
               <div className="flex gap-4">
-                <div className="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center hover:bg-slate-600 transition-colors cursor-pointer border border-slate-600">
+                <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:bg-primary-dark transition-colors cursor-pointer border border-emerald-600">
                   <span className="text-sm">f</span>
                 </div>
-                <div className="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center hover:bg-slate-600 transition-colors cursor-pointer border border-slate-600">
+                <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:bg-primary-dark transition-colors cursor-pointer border border-emerald-600">
                   <span className="text-sm">@</span>
                 </div>
-                <div className="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center hover:bg-slate-600 transition-colors cursor-pointer border border-slate-600">
+                <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:bg-primary-dark transition-colors cursor-pointer border border-emerald-600">
                   <span className="text-sm">in</span>
                 </div>
               </div>
