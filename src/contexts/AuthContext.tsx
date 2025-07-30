@@ -190,8 +190,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         name: "Usuário Demo",
         plan: "B",
         isPremium: true,
-        isAdmin: ADMIN_EMAILS.includes(sanitizedEmail),
-        role: ADMIN_EMAILS.includes(sanitizedEmail) ? 'admin' : 'user',
+        isAdmin: isDevelopment && FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail),
+        role: (isDevelopment && FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail)) ? 'admin' : 'user',
       };
       setUser(mockUser);
       console.log("🔧 Login demo realizado:", sanitizedEmail);
