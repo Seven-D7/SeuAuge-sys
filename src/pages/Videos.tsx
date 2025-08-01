@@ -23,6 +23,7 @@ import {
 import VideoCard from "../components/Videos/VideoCard";
 import VideoPlayer from "../components/Videos/VideoPlayer";
 import VideoCarousel from "../components/Videos/VideoCarousel";
+
 import {
   getVideosByCategory,
   searchVideos,
@@ -102,7 +103,7 @@ const Videos: React.FC = () => {
             title: "Yoga Matinal - Despertar do Corpo",
             description: "Sequência suave de yoga para começar o dia com energia e flexibilidade",
             thumbnail: "https://images.pexels.com/photos/3822622/pexels-photo-3822622.jpeg?auto=compress&cs=tinysrgb&w=600",
-            videoUrl: "demo",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
             instructor: "Ana Silva",
             category: "Yoga",
             duration: 900,
@@ -116,7 +117,7 @@ const Videos: React.FC = () => {
             title: "Treino Funcional Completo",
             description: "Exercícios funcionais para fortalecer todo o corpo usando apenas o peso corporal",
             thumbnail: "https://images.pexels.com/photos/416778/pexels-photo-416778.jpeg?auto=compress&cs=tinysrgb&w=600",
-            videoUrl: "demo",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
             instructor: "Pedro Santos",
             category: "Treino",
             duration: 1800,
@@ -130,7 +131,7 @@ const Videos: React.FC = () => {
             title: "Nutrição: Smoothies Pós-Treino",
             description: "Aprenda a preparar smoothies nutritivos para potencializar sua recuperação",
             thumbnail: "https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg?auto=compress&cs=tinysrgb&w=600",
-            videoUrl: "demo",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
             instructor: "Dra. Maria Costa",
             category: "Nutrição",
             duration: 600,
@@ -144,7 +145,7 @@ const Videos: React.FC = () => {
             title: "Meditação para Atletas",
             description: "Técnicas de mindfulness específicas para melhorar o foco e performance",
             thumbnail: "https://images.pexels.com/photos/3820424/pexels-photo-3820424.jpeg?auto=compress&cs=tinysrgb&w=600",
-            videoUrl: "demo",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
             instructor: "Lucas Zen",
             category: "Mindfulness",
             duration: 1200,
@@ -158,7 +159,7 @@ const Videos: React.FC = () => {
             title: "Cardio Dance Energizante",
             description: "Dança aeróbica divertida que combina cardio com ritmos latinos",
             thumbnail: "https://images.pexels.com/photos/3775540/pexels-photo-3775540.jpeg?auto=compress&cs=tinysrgb&w=600",
-            videoUrl: "demo",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
             instructor: "Sofia Rodriguez",
             category: "Cardio",
             duration: 2400,
@@ -172,7 +173,7 @@ const Videos: React.FC = () => {
             title: "Alongamento Profundo",
             description: "Sessão completa de alongamento para relaxar e aumentar a flexibilidade",
             thumbnail: "https://images.pexels.com/photos/3822647/pexels-photo-3822647.jpeg?auto=compress&cs=tinysrgb&w=600",
-            videoUrl: "demo",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
             instructor: "Camila Flex",
             category: "Flexibilidade",
             duration: 1500,
@@ -268,7 +269,6 @@ const Videos: React.FC = () => {
   const handleVideoSelect = async (videoId: string) => {
     try {
       setPlayerLoading(true);
-      
       if (isDemoMode) {
         // Demo video player
         const video = videos.find(v => v.id === videoId) || featuredVideo;
@@ -290,22 +290,31 @@ const Videos: React.FC = () => {
           size: 512000000
         };
 
+        // URLs de vídeo com fallbacks
+        const videoUrls = [
+          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+          "https://sample-videos.com/zip/10/mp4/mp4/BigBuckBunny_320x180_1mb.mp4"
+        ];
+
         const demoStreamData: VideoStreamData = {
           videoId: video.id,
           qualities: [
             {
               resolution: "1080p",
-              url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+              url: videoUrls[0],
               bitrate: 5000,
             },
             {
               resolution: "720p",
-              url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+              url: videoUrls[1],
               bitrate: 3000,
             },
             {
               resolution: "480p",
-              url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+              url: videoUrls[2],
               bitrate: 1500,
             },
           ],
@@ -317,7 +326,7 @@ const Videos: React.FC = () => {
           metadata: metadata
         };
         setSelectedVideo(demoStreamData);
-        
+
         // Update progress
         updateProgress('video_watched', 1);
       } else {
@@ -521,8 +530,8 @@ const Videos: React.FC = () => {
             streamData={selectedVideo}
             autoPlay={true}
             className="w-full h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh]"
-            onComplete={() => console.log("Vídeo concluído")}
-            onProgress={(progress) => console.log("Progresso:", progress)}
+            onComplete={() => {}}
+            onProgress={() => {}}
           />
 
           {/* Back Button - Responsive */}
@@ -662,6 +671,8 @@ const Videos: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-900 w-full overflow-x-hidden">
+
+
       {/* Hero Section */}
       {showCarousels && !searchQuery && <HeroSection />}
 
@@ -678,7 +689,7 @@ const Videos: React.FC = () => {
                 <p className="text-sm md:text-base text-slate-400">
                   {isDemoMode && (
                     <span className="inline-flex items-center px-2 py-1 bg-blue-900/20 text-blue-300 rounded-full text-xs sm:text-sm mr-3 mb-1 sm:mb-0">
-                      🔧 Modo Demo - Vídeos simulados
+                      📺 Versão Demo
                     </span>
                   )}
                   <span className="block sm:inline">Acesso completo aos treinos e aulas especializadas</span>

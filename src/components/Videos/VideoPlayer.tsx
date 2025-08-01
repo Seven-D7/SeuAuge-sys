@@ -31,6 +31,26 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Validar dados do stream
+  useEffect(() => {
+    if (!streamData || !streamData.qualities || streamData.qualities.length === 0) {
+      setError("Dados de vídeo inválidos");
+      return;
+    }
+
+    // Verificar se as URLs são válidas
+    const hasValidUrls = streamData.qualities.every(quality =>
+      quality.url && quality.url.startsWith('http')
+    );
+
+    if (!hasValidUrls) {
+      setError("URLs de vídeo inválidas");
+      return;
+    }
+
+
+  }, [streamData]);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -71,21 +91,54 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     const video = videoRef.current;
     if (!video) return;
 
-    const handleLoadStart = () => setIsLoading(true);
-    const handleCanPlay = () => setIsLoading(false);
-    const handleError = () => {
-      setError("Erro ao carregar o vídeo");
+    const handleLoadStart = () => {
+      setIsLoading(true);
+      setError(null);
+    };
+    const handleCanPlay = () => {
+      setIsLoading(false);
+    };
+    const handleError = (e: Event) => {
+      const videoError = (e.target as HTMLVideoElement)?.error;
+      let errorMessage = "Erro ao carregar o vídeo";
+
+      if (videoError) {
+        switch (videoError.code) {
+          case videoError.MEDIA_ERR_ABORTED:
+            errorMessage = "Reprodução foi cancelada";
+            break;
+          case videoError.MEDIA_ERR_NETWORK:
+            errorMessage = "Erro de rede ao carregar o vídeo";
+            break;
+          case videoError.MEDIA_ERR_DECODE:
+            errorMessage = "Erro ao decodificar o vídeo";
+            break;
+          case videoError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+            errorMessage = "Formato de vídeo não suportado";
+            break;
+          default:
+            errorMessage = "Erro desconhecido ao carregar o vídeo";
+        }
+      }
+
+      setError(errorMessage);
       setIsLoading(false);
     };
 
     const handleTimeUpdate = () => {
-      setCurrentTime(video.currentTime);
-      if (onProgress) {
-        onProgress((video.currentTime / video.duration) * 100);
+      if (video.duration && !isNaN(video.duration)) {
+        setCurrentTime(video.currentTime);
+        if (onProgress) {
+          onProgress((video.currentTime / video.duration) * 100);
+        }
       }
     };
 
-    const handleDurationChange = () => setDuration(video.duration);
+    const handleDurationChange = () => {
+      if (video.duration && !isNaN(video.duration)) {
+        setDuration(video.duration);
+      }
+    };
     const handleEnded = () => {
       setIsPlaying(false);
       if (onComplete) onComplete();
@@ -205,18 +258,33 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
+  const retryVideo = () => {
+    setError(null);
+    setIsLoading(true);
+    const video = videoRef.current;
+    if (video) {
+      video.load();
+    }
+  };
+
   if (error) {
     return (
       <div
         className={`relative bg-slate-900 rounded-lg overflow-hidden ${className}`}
       >
         <div className="flex items-center justify-center h-64 text-white">
-          <div className="text-center">
+          <div className="text-center max-w-md px-4">
             <AlertCircle className="w-12 h-12 mx-auto mb-4 text-red-500" />
             <h3 className="text-lg font-semibold mb-2">
               Erro ao carregar vídeo
             </h3>
-            <p className="text-slate-400">{error}</p>
+            <p className="text-slate-400 mb-4">{error}</p>
+            <button
+              onClick={retryVideo}
+              className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              Tentar novamente
+            </button>
           </div>
         </div>
       </div>
@@ -236,8 +304,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         src={selectedQuality.url}
         poster={streamData.thumbnails[0]}
         autoPlay={autoPlay}
+        preload="metadata"
+        playsInline
+        crossOrigin="anonymous"
         className="w-full h-full object-cover"
         onClick={togglePlay}
+
       />
 
       {/* Loading Overlay */}
