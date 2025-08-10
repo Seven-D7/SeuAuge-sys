@@ -75,7 +75,11 @@
     "favorites": "Favorites",
     "store": "Store",
     "admin": "Admin",
-    "logout": "Logout"
+    "logout": "Logout",
+    "search_placeholder": "Search...",
+    "notifications": "Notifications",
+    "cart": "Cart",
+    "user_menu": "User menu"
   },
   "plans": {
     "choose_plan": "Choose Your Plan",
@@ -105,5 +109,36 @@
       "epic": "Epic",
       "legendary": "Legendary"
     }
+  },
+  "sidebar": {
+    "app_name": "My Peak",
+    "app_tagline": "Your fitness journey",
+    "level": "Level",
+    "xp_total": "Total XP",
+    "xp_remaining": "remaining",
+    "sections": {
+      "main": "Main",
+      "progress": "Progress",
+      "content": "Content",
+      "account": "Account"
+    },
+    "menu_items": {
+      "dashboard": "Dashboard",
+      "videos": "Videos",
+      "achievements": "Achievements",
+      "progress": "Progress",
+      "apps": "Apps",
+      "favorites": "Favorites",
+      "store": "Store",
+      "profile": "Profile",
+      "plans": "Plans"
+    },
+    "current_plan": "Current plan",
+    "upgrade": "Upgrade",
+    "quick_stats": "Quick Stats",
+    "consecutive_days": "Consecutive days",
+    "achievements_count": "Achievements",
+    "logout": "Sign out",
+    "coming_soon": "Coming soon"
   }
 }
