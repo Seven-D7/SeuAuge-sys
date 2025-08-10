@@ -6,6 +6,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useCartStore } from "../../stores/cartStore";
 import { useLevelStore } from "../../stores/levelStore";
 import { PLANS } from "../../data/plans";
+import LanguageSelector from "../LanguageSelector";
 
 interface HeaderProps {
   onMenuClick: () => void;
