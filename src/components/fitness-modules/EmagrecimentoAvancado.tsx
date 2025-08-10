@@ -371,6 +371,23 @@ const EmagrecimentoAvancado: React.FC = () => {
         });
 
         setReportData(calculatedResults);
+
+        // Gerar relatório
+        if (user) {
+          const reportSummary = generateReportSummary('emagrecimento', calculatedResults);
+          addReport({
+            userId: user.uid,
+            type: 'emagrecimento',
+            title: `Emagrecimento Avançado - ${userData.nome || 'Relatório'}`,
+            data: {
+              userData: userData as Record<string, any>,
+              results: calculatedResults as Record<string, any>,
+              explanation: explicacao,
+            },
+            summary: reportSummary,
+          });
+        }
+
         setCurrentStep(5);
       } catch (error) {
         console.error("Erro ao calcular resultados:", error);
