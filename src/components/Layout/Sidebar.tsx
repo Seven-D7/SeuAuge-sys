@@ -45,73 +45,73 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   // Organização limpa das seções do menu
   const menuSections = [
     {
-      title: "Principal",
+      title: t('sidebar.sections.main'),
       items: [
-        { 
-          icon: Home, 
-          label: "Dashboard", 
+        {
+          icon: Home,
+          label: t('sidebar.menu_items.dashboard'),
           path: "/dashboard"
         },
-        { 
-          icon: Play, 
-          label: "Vídeos", 
+        {
+          icon: Play,
+          label: t('sidebar.menu_items.videos'),
           path: "/videos"
         }
       ]
     },
     {
-      title: "Progresso",
+      title: t('sidebar.sections.progress'),
       items: [
-        { 
-          icon: Trophy, 
-          label: "Conquistas", 
+        {
+          icon: Trophy,
+          label: t('sidebar.menu_items.achievements'),
           path: "/achievements",
           badge: unlockedAchievements > 0 ? unlockedAchievements.toString() : undefined
         },
-        { 
-          icon: BarChart3, 
-          label: "Progresso", 
+        {
+          icon: BarChart3,
+          label: t('sidebar.menu_items.progress'),
           path: "/progress"
         }
       ]
     },
     {
-      title: "Conteúdo",
+      title: t('sidebar.sections.content'),
       items: [
-        { 
-          icon: AppWindow, 
-          label: "Apps", 
+        {
+          icon: AppWindow,
+          label: t('sidebar.menu_items.apps'),
           path: "/apps"
         },
-        { 
-          icon: Heart, 
-          label: "Favoritos", 
+        {
+          icon: Heart,
+          label: t('sidebar.menu_items.favorites'),
           path: "/favorites"
         },
         {
           icon: ShoppingBag,
-          label: "Loja",
+          label: t('sidebar.menu_items.store'),
           path: "/store",
           disabled: !storeEnabled
         }
       ]
     },
     {
-      title: "Conta",
+      title: t('sidebar.sections.account'),
       items: [
-        { 
-          icon: User, 
-          label: "Perfil", 
+        {
+          icon: User,
+          label: t('sidebar.menu_items.profile'),
           path: "/profile"
         },
-        { 
-          icon: Sparkles, 
-          label: "Planos", 
+        {
+          icon: Sparkles,
+          label: t('sidebar.menu_items.plans'),
           path: "/plans"
         },
-        ...(user?.isAdmin ? [{ 
-          icon: ShieldCheck, 
-          label: "Admin", 
+        ...(user?.isAdmin ? [{
+          icon: ShieldCheck,
+          label: "Admin",
           path: "/admin"
         }] : [])
       ]
