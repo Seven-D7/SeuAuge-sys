@@ -43,6 +43,7 @@ import { useReportsStore, generateReportSummary } from "../../stores/reportsStor
 import { getUserMetrics } from "../../services/user";
 import { useAuth } from "../../contexts/AuthContext";
 import type { UserData, WeightLossResults } from "@/types/fitness";
+import NextStepsSection from "./components/NextStepsSection";
 
 const EmagrecimentoAvancado: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
