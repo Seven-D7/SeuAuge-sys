@@ -299,7 +299,7 @@ const FlexibilidadeMobilidade: React.FC = () => {
   };
 
   const handleNext = () => {
-    if (currentStep < 4) {
+    if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     } else if (currentStep === 3) {
       setLoading(true);
