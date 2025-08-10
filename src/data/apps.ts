@@ -147,6 +147,24 @@ export const apps: AppInfo[] = [
       'Aplicação no dia a dia'
     ],
   },
+  {
+    id: 'fitness-corrida',
+    name: '🏃‍♂️ Corrida Avançada',
+    description: 'Programa científico completo para corredores de todos os níveis com análise de performance, planos personalizados e estratégias de prova.',
+    image: 'https://images.pexels.com/photos/2402777/pexels-photo-2402777.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+    route: '/fitness/corrida',
+    category: 'Corrida',
+    difficulty: 'Intermediário',
+    duration: '45-90 min',
+    features: [
+      'Análise de VO2 máx e performance',
+      'Planos de treino periodizados',
+      'Projeções de tempo científicas',
+      'Estratégias de prova completas',
+      'Programa de força complementar',
+      'Dicas de nutrição e hidratação'
+    ],
+  },
 ];
 
 // Categorizar apps por tipo
