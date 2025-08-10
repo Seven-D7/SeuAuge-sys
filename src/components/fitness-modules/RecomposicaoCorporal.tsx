@@ -486,7 +486,7 @@ const RecomposicaoCorporal: React.FC = () => {
   };
 
   const handleNext = async () => {
-    if (currentStep < 5) {
+    if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     } else if (currentStep === 4) {
       setLoading(true);
@@ -496,7 +496,7 @@ const RecomposicaoCorporal: React.FC = () => {
 
         // Gerar explicação personalizada
         const explicacao = {
-          paragrafo: `Baseado no seu perfil de recomposição corporal, você irá reduzir ${calculatedResults.massa_gorda_atual - calculatedResults.massa_gorda_objetivo}kg de gordura e ganhar ${calculatedResults.massa_magra_objetivo - calculatedResults.massa_magra_atual}kg de músculo. A estratégia ${userData.estrategia} foi aplicada com foco em ${userData.objetivo_prioridade?.replace('_', ' ')}.`,
+          paragrafo: `Baseado no seu perfil de recomposição corporal, você irá reduzir ${Math.abs(calculatedResults.massa_gorda_atual - calculatedResults.massa_gorda_objetivo).toFixed(1)}kg de gordura e ganhar ${Math.abs(calculatedResults.massa_magra_objetivo - calculatedResults.massa_magra_atual).toFixed(1)}kg de músculo. A estratégia ${userData.estrategia} foi aplicada com foco em ${userData.objetivo_prioridade?.replace('_', ' ')}.`,
           bullets: [
             `Mantenha ${calculatedResults.plano_nutricional.proteinas_g}g de proteína diariamente`,
             `Use ciclagem calórica entre ${Math.min(...calculatedResults.plano_nutricional.ciclagem_calorica.map(c => c.calorias))} e ${Math.max(...calculatedResults.plano_nutricional.ciclagem_calorica.map(c => c.calorias))} calorias`,
