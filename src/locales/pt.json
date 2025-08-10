@@ -56,7 +56,14 @@
     "active_challenges": "Desafios Ativos",
     "recent_achievements": "Conquistas Recentes",
     "ai_recommendations": "Recomendações da IA",
-    "your_plan": "Seu Plano"
+    "your_plan": "Seu Plano",
+    "featured_products": "Produtos em Destaque",
+    "smart_apps": "Aplicativos Inteligentes",
+    "view_all": "Ver Todos",
+    "coming_soon": "Em Breve",
+    "no_challenges": "Nenhum desafio ativo no momento",
+    "congratulations": "Parabéns!",
+    "keep_going": "Continue assim!"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -69,5 +76,34 @@
     "store": "Loja",
     "admin": "Admin",
     "logout": "Sair"
+  },
+  "plans": {
+    "choose_plan": "Escolha Seu Plano",
+    "monthly": "MENSAL",
+    "quarterly": "TRIMESTRAL",
+    "yearly": "ANUAL",
+    "most_popular": "Mais Popular",
+    "choose": "Escolher",
+    "current_plan": "Seu plano atual",
+    "upgrade": "Fazer Upgrade",
+    "features": "Recursos",
+    "guarantee": "Garantia de 30 dias",
+    "perfect_plan": "Encontre o plano perfeito para sua jornada de transformação"
+  },
+  "achievements": {
+    "title": "Conquistas",
+    "challenges": "Desafios",
+    "progress": "Progresso",
+    "unlocked": "Desbloqueado",
+    "locked": "Bloqueado",
+    "completed": "Concluído",
+    "active": "Ativo",
+    "expired": "Expirado",
+    "rarity": {
+      "common": "Comum",
+      "rare": "Raro",
+      "epic": "Épico",
+      "legendary": "Lendário"
+    }
   }
 }
