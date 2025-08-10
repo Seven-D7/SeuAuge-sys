@@ -2,13 +2,20 @@ import { useCallback } from 'react';
 import { useAchievementsStore } from '../stores/achievementsStore';
 import { useLevelStore } from '../stores/levelStore';
 import { useGoalsStore } from '../stores/goalsStore';
-import { 
-  logVideoWatched, 
-  logWorkoutCompleted, 
-  logGoalCompleted, 
+import {
+  logVideoWatched,
+  logWorkoutCompleted,
+  logGoalCompleted,
   logChallengeCompleted,
-  getUserActivityStats 
+  getUserActivityStats
 } from '../services/activity';
+import {
+  saveToCloud,
+  loadFromCloud,
+  forceSyncNow,
+  restoreFromBackup,
+  getSyncStatus
+} from '../services/sync';
 
 export const useProgress = () => {
   const achievementsStore = useAchievementsStore();
