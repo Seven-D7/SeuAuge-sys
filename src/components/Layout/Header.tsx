@@ -15,6 +15,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { getTotalItems, toggleCart, showAddedAnimation } = useCartStore();
   const { levelSystem } = useLevelStore();
   const [searchQuery, setSearchQuery] = useState("");
