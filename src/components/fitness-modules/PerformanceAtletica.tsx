@@ -390,7 +390,7 @@ const PerformanceAtletica: React.FC = () => {
       medio_prazo: [
         `Ganho de ${10 + Math.round(Math.random() * 15)}% na performance específica em 3-4 meses`,
         "Melhoria significativa na técnica esportiva",
-        "Redução do risco de lesões"
+        "Redu��ão do risco de lesões"
       ],
       longo_prazo: [
         `Potencial de melhoria de ${20 + Math.round(Math.random() * 25)}% na performance em 1 ano`,
@@ -667,6 +667,22 @@ const PerformanceAtletica: React.FC = () => {
           ],
         };
         setExplanation(explicacao);
+
+        // Gerar relatório
+        if (user) {
+          const reportSummary = generateReportSummary('performance', calculatedResults);
+          addReport({
+            userId: user.uid,
+            type: 'performance',
+            title: `Performance Atlética - ${userData.nome || 'Relatório'}`,
+            data: {
+              userData: userData as Record<string, any>,
+              results: calculatedResults as Record<string, any>,
+              explanation: explicacao,
+            },
+            summary: reportSummary,
+          });
+        }
 
         setCurrentStep(5);
       } catch (error) {
