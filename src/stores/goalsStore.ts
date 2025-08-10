@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useLevelStore, XP_VALUES } from "./levelStore";
+import { logGoalCompleted, logChallengeCompleted } from '../services/activity';
+import { toast } from 'react-hot-toast';
 
 export interface SmartGoal {
   id: string;
@@ -261,6 +263,7 @@ export const useGoalsStore = create<GoalsStore>()(
           const updatedGoals = state.goals.map((goal) => {
             if (goal.id === id) {
               const updated = { ...goal, currentValue: newValue };
+
               if (newValue >= goal.targetValue && !goal.completed) {
                 updated.completed = true;
                 updated.streak = goal.streak + 1;
@@ -278,7 +281,19 @@ export const useGoalsStore = create<GoalsStore>()(
                 else if (goal.timeframe === "weekly") xpAmount += 25;
 
                 addXP(xpAmount, `Meta concluída: ${goal.title}`, "goal");
+
+                // Show completion notification
+                toast.success(`🎯 Meta concluída: ${goal.title}!`, {
+                  duration: 5000,
+                  icon: goal.icon,
+                });
+
+                // Log goal completion
+                logGoalCompleted(goal.id).catch(error => {
+                  console.error('Erro ao registrar meta concluída:', error);
+                });
               }
+
               return updated;
             }
             return goal;
@@ -307,6 +322,12 @@ export const useGoalsStore = create<GoalsStore>()(
               "challenge",
             );
 
+            // Show completion notification
+            toast.success(`✅ Desafio concluído: ${challenge.title}!`, {
+              duration: 4000,
+              icon: challenge.icon,
+            });
+
             // Bonus XP se completou todos os desafios do dia
             if (completedChallenges >= state.dailyChallenges.length) {
               addXP(
@@ -314,7 +335,20 @@ export const useGoalsStore = create<GoalsStore>()(
                 "🎯 Dia perfeito - todos os desafios concluídos!",
                 "bonus",
               );
+
+              toast.success(
+                "🎆 Dia perfeito! Todos os desafios concluídos!",
+                {
+                  duration: 6000,
+                  icon: '🎉',
+                }
+              );
             }
+
+            // Log challenge completion
+            logChallengeCompleted(challenge.id).catch(error => {
+              console.error('Erro ao registrar desafio concluído:', error);
+            });
 
             return {
               dailyChallenges: state.dailyChallenges.map((c) =>
