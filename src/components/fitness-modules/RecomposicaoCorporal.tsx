@@ -42,6 +42,7 @@ import {
 } from "../../lib/fitness/explicacao";
 import { db } from "../../firebase";
 import { useProgressStore } from "../../stores/progressStore";
+import { useReportsStore, generateReportSummary } from "../../stores/reportsStore";
 import { getUserMetrics } from "../../services/user";
 import { useAuth } from "../../contexts/AuthContext";
 import type { UserData } from "@/types/fitness";
@@ -750,7 +751,7 @@ const RecomposicaoCorporal: React.FC = () => {
                   <option value="">Selecione</option>
                   <option value="conservadora">Conservadora (Lenta e sustentável)</option>
                   <option value="moderada">Moderada (Equilibrada)</option>
-                  <option value="agressiva">Agressiva (Rápida, mais intensa)</option>
+                  <option value="agressiva">Agressiva (R��pida, mais intensa)</option>
                 </select>
               </div>
               <div className="space-y-2">
