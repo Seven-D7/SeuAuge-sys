@@ -1312,6 +1312,8 @@ const PerformanceAtletica: React.FC = () => {
                 </CardContent>
               </Card>
             )}
+            {/* Next Steps */}
+            <NextStepsSection />
           </div>
         );
 
