@@ -78,6 +78,63 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
 
+  // Video tracking effects
+  useEffect(() => {
+    if (!enableTracking || !videoId) return;
+
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handlePlay = () => {
+      setWatchStartTime(Date.now());
+    };
+
+    const handlePause = () => {
+      if (watchStartTime) {
+        const sessionTime = (Date.now() - watchStartTime) / 1000; // seconds
+        setTotalWatchTime(prev => prev + sessionTime);
+        setWatchStartTime(null);
+      }
+    };
+
+    const handleTimeUpdate = () => {
+      // Track video view if user has watched at least 10 seconds and hasn't been tracked yet
+      if (!hasTrackedView && video.currentTime >= 10) {
+        trackVideoWatched(videoId, Math.floor(video.currentTime), category);
+        setHasTrackedView(true);
+      }
+    };
+
+    const handleEnded = () => {
+      // Track completion
+      if (watchStartTime) {
+        const sessionTime = (Date.now() - watchStartTime) / 1000;
+        setTotalWatchTime(prev => prev + sessionTime);
+        setWatchStartTime(null);
+      }
+
+      // Track total time spent
+      if (totalWatchTime > 0) {
+        trackTimeSpent(Math.floor(totalWatchTime / 60), 'assistindo vídeos');
+      }
+
+      // Call external completion handler
+      onComplete?.();
+    };
+
+    video.addEventListener('play', handlePlay);
+    video.addEventListener('pause', handlePause);
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener('ended', handleEnded);
+
+    return () => {
+      video.removeEventListener('play', handlePlay);
+      video.removeEventListener('pause', handlePause);
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+      video.removeEventListener('ended', handleEnded);
+    };
+  }, [enableTracking, videoId, category, watchStartTime, totalWatchTime, hasTrackedView, trackVideoWatched, trackTimeSpent, onComplete]);
+
   // Auto-hide controls
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
