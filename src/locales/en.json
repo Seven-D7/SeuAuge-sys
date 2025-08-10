@@ -63,7 +63,20 @@
     "coming_soon": "Coming Soon",
     "no_challenges": "No active challenges at the moment",
     "congratulations": "Congratulations!",
-    "keep_going": "Keep going!"
+    "keep_going": "Keep going!",
+    "today": "Today",
+    "this_week": "This week",
+    "this_month": "This month",
+    "total": "Total",
+    "streak": "Streak",
+    "videos_watched": "Videos watched",
+    "workouts_completed": "Workouts completed",
+    "time_spent": "Time spent",
+    "minutes": "minutes",
+    "hours": "hours",
+    "days": "days",
+    "weeks": "weeks",
+    "months": "months"
   },
   "navigation": {
     "dashboard": "Dashboard",
