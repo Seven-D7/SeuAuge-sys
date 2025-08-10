@@ -54,9 +54,9 @@ const Dashboard: React.FC = () => {
     
     // Set greeting based on time of day
     const hour = new Date().getHours();
-    if (hour < 12) setGreeting('Bom dia');
-    else if (hour < 18) setGreeting('Boa tarde');
-    else setGreeting('Boa noite');
+    if (hour < 12) setGreeting(t('dashboard.good_morning'));
+    else if (hour < 18) setGreeting(t('dashboard.good_afternoon'));
+    else setGreeting(t('dashboard.good_evening'));
   }, [initializeAchievements, checkDailyLogin]);
 
   const featuredProducts = mockProducts.slice(0, 4);
