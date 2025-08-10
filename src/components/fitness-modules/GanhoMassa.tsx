@@ -979,6 +979,9 @@ const GanhoMassa: React.FC = () => {
                 </CardContent>
               </Card>
             )}
+
+            {/* Next Steps */}
+            <NextStepsSection />
           </div>
         );
 
