@@ -152,6 +152,7 @@ const PerformanceAtletica: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loadingProfile, setLoadingProfile] = useState(true);
   const { setWeightLoss, setReportData } = useProgressStore();
+  const { addReport } = useReportsStore();
   const { user } = useAuth();
 
   // Carregar dados do perfil ao inicializar
