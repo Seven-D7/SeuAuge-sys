@@ -46,6 +46,7 @@ import { useReportsStore, generateReportSummary } from "../../stores/reportsStor
 import { getUserMetrics } from "../../services/user";
 import { useAuth } from "../../contexts/AuthContext";
 import type { UserData } from "@/types/fitness";
+import NextStepsSection from "./components/NextStepsSection";
 
 interface AthleteUserData {
   nome: string;
@@ -390,7 +391,7 @@ const PerformanceAtletica: React.FC = () => {
       medio_prazo: [
         `Ganho de ${10 + Math.round(Math.random() * 15)}% na performance específica em 3-4 meses`,
         "Melhoria significativa na técnica esportiva",
-        "Redu��ão do risco de lesões"
+        "Redução do risco de lesões"
       ],
       longo_prazo: [
         `Potencial de melhoria de ${20 + Math.round(Math.random() * 25)}% na performance em 1 ano`,
