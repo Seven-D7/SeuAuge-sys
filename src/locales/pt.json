@@ -75,7 +75,11 @@
     "favorites": "Favoritos",
     "store": "Loja",
     "admin": "Admin",
-    "logout": "Sair"
+    "logout": "Sair",
+    "search_placeholder": "Buscar...",
+    "notifications": "Notificações",
+    "cart": "Carrinho",
+    "user_menu": "Menu do usuário"
   },
   "plans": {
     "choose_plan": "Escolha Seu Plano",
@@ -105,5 +109,36 @@
       "epic": "Épico",
       "legendary": "Lendário"
     }
+  },
+  "sidebar": {
+    "app_name": "Meu Auge",
+    "app_tagline": "Sua jornada fitness",
+    "level": "Nível",
+    "xp_total": "XP total",
+    "xp_remaining": "restantes",
+    "sections": {
+      "main": "Principal",
+      "progress": "Progresso",
+      "content": "Conteúdo",
+      "account": "Conta"
+    },
+    "menu_items": {
+      "dashboard": "Dashboard",
+      "videos": "Vídeos",
+      "achievements": "Conquistas",
+      "progress": "Progresso",
+      "apps": "Apps",
+      "favorites": "Favoritos",
+      "store": "Loja",
+      "profile": "Perfil",
+      "plans": "Planos"
+    },
+    "current_plan": "Plano atual",
+    "upgrade": "Upgrade",
+    "quick_stats": "Estatísticas Rápidas",
+    "consecutive_days": "Dias seguidos",
+    "achievements_count": "Conquistas",
+    "logout": "Sair da conta",
+    "coming_soon": "Em breve"
   }
 }
