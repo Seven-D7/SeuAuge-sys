@@ -7,6 +7,7 @@ const GanhoMassa = lazy(() => import("./GanhoMassa"));
 const RecomposicaoCorporal = lazy(() => import("./RecomposicaoCorporal"));
 const PerformanceAtletica = lazy(() => import("./PerformanceAtletica"));
 const FlexibilidadeMobilidade = lazy(() => import("./FlexibilidadeMobilidade"));
+const CorridaAvancada = lazy(() => import("./CorridaAvancada"));
 
 const ModulosConfig: React.FC = () => {
   return (
