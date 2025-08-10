@@ -601,6 +601,22 @@ const CorridaAvancada: React.FC = () => {
         };
         setExplanation(explicacao);
 
+        // Gerar relatório
+        if (user) {
+          const reportSummary = generateReportSummary('corrida', calculatedResults);
+          addReport({
+            userId: user.uid,
+            type: 'corrida',
+            title: `Corrida Avançada - ${userData.nome || user?.name || 'Relatório'}`,
+            data: {
+              userData: userData as Record<string, any>,
+              results: calculatedResults as Record<string, any>,
+              explanation: explicacao,
+            },
+            summary: reportSummary,
+          });
+        }
+
         setCurrentStep(5);
       } catch (error) {
         console.error("Erro ao calcular resultados:", error);
