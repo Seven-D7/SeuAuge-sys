@@ -308,7 +308,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                     {planName}
                   </p>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
-                    Plano atual
+                    {t('sidebar.current_plan')}
                   </p>
                 </div>
               </div>
@@ -318,7 +318,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   onClick={onClose}
                   className="text-xs bg-yellow-500 text-black px-2 py-1 rounded font-medium hover:bg-yellow-400 transition-colors"
                 >
-                  Upgrade
+                  {t('sidebar.upgrade')}
                 </Link>
               )}
             </div>
@@ -327,7 +327,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           {/* Quick Stats */}
           <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3">
             <h4 className="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2 uppercase tracking-wide">
-              Estatísticas Rápidas
+              {t('sidebar.quick_stats')}
             </h4>
             <div className="grid grid-cols-2 gap-2 text-center">
               <div>
@@ -335,7 +335,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   {userStats.currentStreak}
                 </div>
                 <div className="text-xs text-slate-500 dark:text-slate-400">
-                  Dias seguidos
+                  {t('sidebar.consecutive_days')}
                 </div>
               </div>
               <div>
@@ -343,7 +343,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   {unlockedAchievements}
                 </div>
                 <div className="text-xs text-slate-500 dark:text-slate-400">
-                  Conquistas
+                  {t('sidebar.achievements_count')}
                 </div>
               </div>
             </div>
@@ -360,7 +360,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             className="flex items-center w-full px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200 group"
           >
             <LogOut className="w-5 h-5 mr-3 group-hover:text-red-500" />
-            <span className="font-medium">Sair da conta</span>
+            <span className="font-medium">{t('sidebar.logout')}</span>
           </motion.button>
         </div>
       </motion.div>
