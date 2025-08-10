@@ -645,7 +645,7 @@ const PerformanceAtletica: React.FC = () => {
   };
 
   const handleNext = async () => {
-    if (currentStep < 5) {
+    if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     } else if (currentStep === 4) {
       setLoading(true);
