@@ -839,7 +839,7 @@ const EmagrecimentoAvancado: React.FC = () => {
             <Flame className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
-            Emagrecimento Inteligente
+            Emagrecimento Avançado
           </h1>
         </div>
         <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
