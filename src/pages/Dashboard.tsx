@@ -36,12 +36,12 @@ import { PLANS } from '../data/plans';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
-  const { 
-    userStats, 
-    getActiveChallengess, 
-    achievements, 
+  const {
+    userStats,
+    getActiveChallenges,
+    achievements,
     initializeAchievements,
-    updateProgress 
+    updateProgress
   } = useAchievementsStore();
   const { levelSystem, checkDailyLogin } = useLevelStore();
   const [greeting, setGreeting] = useState('');
