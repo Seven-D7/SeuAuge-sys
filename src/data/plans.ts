@@ -7,6 +7,8 @@ export interface Plan {
   monthlyPrice?: string;
   originalPrice?: string;
   savings?: string;
+  installments?: string;
+  savingsPercent?: string;
   description: string;
   features: string[];
   discount?: string;
@@ -20,8 +22,11 @@ export const PLANS: Plan[] = [
     name: "Plano Base",
     fullName: "Plano Base - Mensal",
     period: "MENSAL",
-    price: "R$ 97",
-    monthlyPrice: "R$ 97 / mês",
+    price: "R$ 67",
+    originalPrice: "R$ 97",
+    monthlyPrice: "R$ 67 / mês",
+    savings: "Economize R$ 30/mês",
+    savingsPercent: "31% OFF",
     description:
       "Quem quer a máxima flexibilidade ou deseja testar o acesso completo antes de um compromisso maior.",
     features: [
@@ -39,10 +44,12 @@ export const PLANS: Plan[] = [
     name: "Plano Escalada",
     fullName: "Plano Escalada - Trimestral",
     period: "TRIMESTRAL",
-    price: "R$ 249",
-    monthlyPrice: "R$ 83 / mês",
-    originalPrice: "R$ 291",
-    savings: "Economize R$ 42",
+    price: "R$ 147",
+    monthlyPrice: "R$ 49 / mês",
+    originalPrice: "R$ 201",
+    installments: "3x de R$ 49 sem juros",
+    savings: "Economize R$ 54",
+    savingsPercent: "27% OFF",
     description:
       "Quem já está comprometido com a jornada e quer um primeiro nível de desconto, pagando de forma mais espaçada.",
     features: [
@@ -60,10 +67,12 @@ export const PLANS: Plan[] = [
     name: "Plano Auge",
     fullName: "Plano Auge - CUME - Anual",
     period: "ANUAL",
-    price: "R$ 780",
-    monthlyPrice: "R$ 59,90 / mês",
-    originalPrice: "R$ 1.164",
-    savings: "Economize R$ 384",
+    price: "R$ 297",
+    monthlyPrice: "R$ 24,75 / mês",
+    originalPrice: "R$ 804",
+    installments: "12x de R$ 24,75 sem juros",
+    savings: "Economize R$ 507",
+    savingsPercent: "63% OFF",
     description:
       "Quem está 100% comprometido com sua performance e longevidade e busca o melhor custo-benefício, economizando no longo prazo.",
     features: [
