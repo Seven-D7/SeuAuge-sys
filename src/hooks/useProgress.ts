@@ -223,7 +223,7 @@ export const useProgress = () => {
     completeChallenge,
     trackTimeSpent,
     addXP,
-    
+
     // Data functions
     getCurrentStats,
     getAchievementsByCategory,
@@ -231,6 +231,13 @@ export const useProgress = () => {
     getLevelProgress,
     getLevelInfo,
     refreshGamificationData,
+
+    // Sync functions
+    saveProgress,
+    loadProgress,
+    forceSync,
+    restoreProgress,
+    getSyncInfo,
     
     // Store data
     achievements: achievementsStore.achievements,
