@@ -333,7 +333,7 @@ const EmagrecimentoAvancado: React.FC = () => {
   };
 
   const handleNext = async () => {
-    if (currentStep < 5) {
+    if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     } else if (currentStep === 4) {
       setLoading(true);
@@ -759,7 +759,7 @@ const EmagrecimentoAvancado: React.FC = () => {
                 </CardTitle>
                 <CardDescription className="text-slate-600 dark:text-slate-400">
                   {results.plano_treino.frequencia_semanal}x por semana •{" "}
-                  {results.plano_treino.duracao_sessao} min por sessão
+                  {results.plano_treino.duracao_sessao} min por sess��o
                 </CardDescription>
               </CardHeader>
               <CardContent>
