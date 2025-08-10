@@ -138,6 +138,7 @@ const CorridaAvancada: React.FC = () => {
     paragrafo: string;
     bullets: string[];
   } | null>(null);
+  const { addReport } = useReportsStore();
   const { user } = useAuth();
 
   const steps = [
