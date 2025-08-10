@@ -35,9 +35,10 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const { achievements, userStats } = useAchievementsStore();
   const { levelSystem } = useLevelStore();
-  
+
   const planName = PLANS.find((p) => p.id === user?.plan)?.name ?? "Iniciante";
   const unlockedAchievements = achievements.filter(a => a.isUnlocked).length;
 
