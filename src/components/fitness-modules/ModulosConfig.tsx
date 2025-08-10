@@ -34,6 +34,7 @@ const ModulosConfig: React.FC = () => {
           <Route path="/recomposicao" element={<RecomposicaoCorporal />} />
           <Route path="/performance" element={<PerformanceAtletica />} />
           <Route path="/flexibilidade" element={<FlexibilidadeMobilidade />} />
+          <Route path="/corrida" element={<CorridaAvancada />} />
           {/* Rota padrão - redireciona para emagrecimento */}
           <Route path="/*" element={<EmagrecimentoAvancado />} />
         </Routes>
