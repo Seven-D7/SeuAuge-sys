@@ -570,15 +570,13 @@ export const useAchievementsStore = create<AchievementsState>()(
         });
 
         // Log achievement unlock
-        try {
-          await logUserActivity('challenge_completed', {
-            challengeId: achievementId,
-            title: achievement.title,
-            xpReward: achievement.reward.xp
-          });
-        } catch (error) {
+        logUserActivity('challenge_completed', {
+          challengeId: achievementId,
+          title: achievement.title,
+          xpReward: achievement.reward.xp
+        }).catch(error => {
           console.error('Erro ao registrar conquista:', error);
-        }
+        });
       },
 
       completeChallenge: (challengeId: string) => {
@@ -605,15 +603,13 @@ export const useAchievementsStore = create<AchievementsState>()(
         });
 
         // Log challenge completion
-        try {
-          await logUserActivity('challenge_completed', {
-            challengeId,
-            title: challenge.title,
-            xpReward: challenge.rewards.xp
-          });
-        } catch (error) {
+        logUserActivity('challenge_completed', {
+          challengeId,
+          title: challenge.title,
+          xpReward: challenge.rewards.xp
+        }).catch(error => {
           console.error('Erro ao registrar desafio:', error);
-        }
+        });
       },
 
       addXP: (amount: number) => {
