@@ -37,6 +37,7 @@ import { PLANS } from '../data/plans';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const {
     userStats,
     getActiveChallenges,
