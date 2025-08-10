@@ -24,6 +24,7 @@ const Apps: React.FC = () => {
       'Hipertrofia': <Dumbbell className="w-4 h-4" />,
       'Transformação': <Star className="w-4 h-4" />,
       'Esporte': <Zap className="w-4 h-4" />,
+      'Corrida': <Activity className="w-4 h-4" />,
       'Mobilidade': <Heart className="w-4 h-4" />,
       'Longevidade': <Users className="w-4 h-4" />,
       'Saúde': <Heart className="w-4 h-4" />,
