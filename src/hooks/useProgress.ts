@@ -172,6 +172,49 @@ export const useProgress = () => {
     }
   }, [achievementsStore, levelStore]);
 
+  // Sync functions
+  const saveProgress = useCallback(async () => {
+    try {
+      await saveToCloud();
+      return true;
+    } catch (error) {
+      console.error('Erro ao salvar progresso:', error);
+      return false;
+    }
+  }, []);
+
+  const loadProgress = useCallback(async () => {
+    try {
+      return await loadFromCloud();
+    } catch (error) {
+      console.error('Erro ao carregar progresso:', error);
+      return false;
+    }
+  }, []);
+
+  const forceSync = useCallback(async () => {
+    try {
+      await forceSyncNow();
+      return true;
+    } catch (error) {
+      console.error('Erro ao forçar sincronização:', error);
+      return false;
+    }
+  }, []);
+
+  const restoreProgress = useCallback(async () => {
+    try {
+      return await restoreFromBackup();
+    } catch (error) {
+      console.error('Erro ao restaurar progresso:', error);
+      return false;
+    }
+  }, []);
+
+  const getSyncInfo = useCallback(() => {
+    return getSyncStatus();
+  }, []);
+
   return {
     // Tracking functions
     trackVideoWatched,
