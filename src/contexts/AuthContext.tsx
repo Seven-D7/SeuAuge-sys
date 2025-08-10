@@ -16,6 +16,10 @@ import {
   createUserDocument,
 } from "../services/user";
 import { getPlanFromToken } from "../services/plan";
+import { initializeActivityTracking } from "../services/activity";
+import { useAchievementsStore } from "../stores/achievementsStore";
+import { useLevelStore } from "../stores/levelStore";
+import { useGoalsStore } from "../stores/goalsStore";
 
 // Production admin check using Firebase custom claims
 // Admin emails should NEVER be hardcoded in frontend for production
