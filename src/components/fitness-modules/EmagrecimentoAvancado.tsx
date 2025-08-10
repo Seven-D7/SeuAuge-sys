@@ -56,6 +56,7 @@ const EmagrecimentoAvancado: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loadingProfile, setLoadingProfile] = useState(true);
   const { setWeightLoss, setReportData } = useProgressStore();
+  const { addReport } = useReportsStore();
   const { user } = useAuth();
 
   // Carregar dados do perfil ao inicializar
@@ -759,7 +760,7 @@ const EmagrecimentoAvancado: React.FC = () => {
                   Plano de Treino Personalizado
                 </CardTitle>
                 <CardDescription className="text-slate-600 dark:text-slate-400">
-                  {results.plano_treino.frequencia_semanal}x por semana •{" "}
+                  {results.plano_treino.frequencia_semanal}x por semana ��{" "}
                   {results.plano_treino.duracao_sessao} min por sess��o
                 </CardDescription>
               </CardHeader>
