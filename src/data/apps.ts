@@ -173,6 +173,7 @@ export const appsByCategory = {
   'Hipertrofia': apps.filter(app => app.category === 'Hipertrofia'),
   'Transformação': apps.filter(app => app.category === 'Transformação'),
   'Esporte': apps.filter(app => app.category === 'Esporte'),
+  'Corrida': apps.filter(app => app.category === 'Corrida'),
   'Mobilidade': apps.filter(app => app.category === 'Mobilidade'),
   'Longevidade': apps.filter(app => app.category === 'Longevidade'),
   'Saúde': apps.filter(app => app.category === 'Saúde'),
