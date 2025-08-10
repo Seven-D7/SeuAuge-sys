@@ -102,8 +102,8 @@ const Plans: React.FC = () => {
             Escolha Seu Plano
           </h1>
           <p className="text-base sm:text-lg lg:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto px-4">
-            💥 <strong>OFERTA LIMITADA!</strong> Transforme sua vida com até 63% OFF.
-            <br />Acesso completo à nossa plataforma com garantia de 30 dias.
+            Transforme sua jornada de bem-estar com acesso completo à nossa
+            plataforma
           </p>
           <div className="mt-4 inline-flex items-center px-3 sm:px-4 py-2 bg-emerald-100 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 rounded-full text-xs sm:text-sm font-medium">
             <span className="mr-1 sm:mr-2">🎯</span>
@@ -156,20 +156,13 @@ const Plans: React.FC = () => {
 
                     {/* Pricing */}
                     <div className="mb-3 sm:mb-4">
-                      {/* Destaque do desconto */}
-                      {p.savingsPercent && (
-                        <div className="inline-block bg-gradient-to-r from-red-500 to-pink-500 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold mb-2">
-                          🔥 {p.savingsPercent}
-                        </div>
-                      )}
-
                       {p.originalPrice && (
-                        <div className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 line-through mb-1">
-                          De: {p.originalPrice}
+                        <div className="text-xs sm:text-sm text-slate-500 line-through mb-1">
+                          {p.originalPrice}
                         </div>
                       )}
                       <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-1">
-                        Por: {p.price}
+                        {p.price}
                       </div>
 
                       {/* Destaque para parcelas */}
@@ -179,7 +172,7 @@ const Plans: React.FC = () => {
                             💳 {p.installments}
                           </div>
                           <div className="text-xs text-emerald-600 dark:text-emerald-400">
-                            ou {p.monthlyPrice}
+                            {p.monthlyPrice}
                           </div>
                         </div>
                       ) : p.monthlyPrice && (
@@ -190,7 +183,7 @@ const Plans: React.FC = () => {
 
                       {p.savings && (
                         <div className="inline-block bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300 px-2 sm:px-3 py-1 rounded-full text-xs font-medium mt-1 sm:mt-2">
-                          💰 {p.savings}
+                          {p.savings}
                         </div>
                       )}
                     </div>
