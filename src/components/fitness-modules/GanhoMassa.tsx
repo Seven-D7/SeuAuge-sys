@@ -465,6 +465,22 @@ const GanhoMassa: React.FC = () => {
         };
         setExplanation(explicacao);
 
+        // Gerar relatório
+        if (user) {
+          const reportSummary = generateReportSummary('ganho_massa', calculatedResults);
+          addReport({
+            userId: user.uid,
+            type: 'ganho_massa',
+            title: `Ganho de Massa - ${userData.nome || 'Relatório'}`,
+            data: {
+              userData: userData as Record<string, any>,
+              results: calculatedResults as Record<string, any>,
+              explanation: explicacao,
+            },
+            summary: reportSummary,
+          });
+        }
+
         setCurrentStep(5);
       } catch (error) {
         console.error("Erro ao calcular resultados:", error);
