@@ -46,6 +46,7 @@ import { useReportsStore, generateReportSummary } from "../../stores/reportsStor
 import { getUserMetrics } from "../../services/user";
 import { useAuth } from "../../contexts/AuthContext";
 import type { UserData } from "@/types/fitness";
+import NextStepsSection from "./components/NextStepsSection";
 
 interface RecompUserData {
   nome: string;
