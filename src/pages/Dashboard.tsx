@@ -58,7 +58,7 @@ const Dashboard: React.FC = () => {
   }, [initializeAchievements, checkDailyLogin]);
 
   const featuredProducts = mockProducts.slice(0, 4);
-  const activeChallenges = getActiveChallengess();
+  const activeChallenges = getActiveChallenges();
   const recentAchievements = achievements.filter(a => a.isUnlocked).slice(0, 3);
   const currentPlan = PLANS.find(p => p.id === user?.plan);
 
