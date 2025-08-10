@@ -23,6 +23,7 @@ import {
   Apple
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { useAchievementsStore } from '../stores/achievementsStore';
 import { useLevelStore } from '../stores/levelStore';
 import { useProgressStore } from '../stores/progressStore';
