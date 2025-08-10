@@ -171,10 +171,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             </div>
             <div>
               <h1 className="text-xl font-bold text-slate-900 dark:text-white">
-                Meu Auge
+                {t('sidebar.app_name')}
               </h1>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Sua jornada fitness
+                {t('sidebar.app_tagline')}
               </p>
             </div>
           </motion.div>
@@ -189,10 +189,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               </div>
               <div>
                 <p className="text-sm font-bold text-slate-900 dark:text-white">
-                  Nível {levelSystem.currentLevel}
+                  {t('sidebar.level')} {levelSystem.currentLevel}
                 </p>
                 <p className="text-xs text-slate-600 dark:text-slate-400">
-                  {levelSystem.totalXP} XP total
+                  {levelSystem.totalXP} {t('sidebar.xp_total')}
                 </p>
               </div>
             </div>
@@ -201,7 +201,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 {levelSystem.xpToNextLevel} XP
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-500">
-                restantes
+                {t('sidebar.xp_remaining')}
               </p>
             </div>
           </div>
