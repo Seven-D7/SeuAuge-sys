@@ -12,6 +12,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { VideoStreamData, VideoQuality } from "../../services/googleCloud";
+import useProgress from "../../hooks/useProgress";
 
 interface VideoPlayerProps {
   streamData: VideoStreamData;
