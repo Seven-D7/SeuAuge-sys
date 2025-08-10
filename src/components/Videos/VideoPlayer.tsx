@@ -31,9 +31,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   onProgress,
   onComplete,
   className = "",
+  videoId,
+  category = "general",
+  enableTracking = true,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { trackVideoWatched, trackTimeSpent } = useProgress();
+
+  // Tracking state
+  const [watchStartTime, setWatchStartTime] = useState<number | null>(null);
+  const [totalWatchTime, setTotalWatchTime] = useState(0);
+  const [hasTrackedView, setHasTrackedView] = useState(false);
 
   // Validar dados do stream
   useEffect(() => {
