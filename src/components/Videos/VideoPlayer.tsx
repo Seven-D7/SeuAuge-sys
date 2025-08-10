@@ -20,6 +20,9 @@ interface VideoPlayerProps {
   onProgress?: (progress: number) => void;
   onComplete?: () => void;
   className?: string;
+  videoId?: string;
+  category?: string;
+  enableTracking?: boolean;
 }
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({
