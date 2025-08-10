@@ -37,8 +37,8 @@ export default function PlansSection() {
             </span>
           </h2>
           <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto px-2">
-            Encontre o plano perfeito para sua jornada de transformação. Todos
-            os planos incluem garantia de 30 dias.
+            💥 <strong>OFERTA LIMITADA!</strong> Transforme sua vida com até 63% OFF.
+            <br />Todos os planos incluem garantia de 30 dias.
           </p>
         </div>
 
@@ -86,24 +86,43 @@ export default function PlansSection() {
                       </p>
 
                       <div className="mb-3 sm:mb-4 md:mb-6">
+                        {/* Destaque do desconto */}
+                        {plan.savingsPercent && (
+                          <div className="inline-block bg-gradient-to-r from-red-500 to-pink-500 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold mb-2">
+                            🔥 {plan.savingsPercent}
+                          </div>
+                        )}
+
                         <div className="mb-1 sm:mb-2">
                           {plan.originalPrice && (
-                            <span className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-400 line-through mr-1 sm:mr-2">
-                              {plan.originalPrice}
-                            </span>
+                            <div className="text-xs sm:text-sm md:text-base text-gray-400 line-through mb-1">
+                              De: {plan.originalPrice}
+                            </div>
                           )}
-                          <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800">
-                            {plan.price}
-                          </span>
+                          <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800">
+                            Por: {plan.price}
+                          </div>
                         </div>
-                        {plan.monthlyPrice && (
-                          <span className="text-xs sm:text-sm md:text-base text-gray-600 font-medium">
+
+                        {/* Destaque para parcelas */}
+                        {plan.installments ? (
+                          <div className="bg-emerald-100 border border-emerald-300 rounded-lg p-2 mb-2">
+                            <div className="text-sm sm:text-base font-bold text-emerald-700">
+                              💳 {plan.installments}
+                            </div>
+                            <div className="text-xs text-emerald-600">
+                              ou {plan.monthlyPrice}
+                            </div>
+                          </div>
+                        ) : plan.monthlyPrice && (
+                          <div className="text-xs sm:text-sm md:text-base text-gray-600 font-medium">
                             {plan.monthlyPrice}
-                          </span>
+                          </div>
                         )}
+
                         {plan.savings && (
-                          <div className="inline-block bg-green-400/20 text-green-200 px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium mt-1 sm:mt-2 backdrop-blur-sm border border-green-400/30">
-                            {plan.savings}
+                          <div className="inline-block bg-green-400/20 text-green-700 px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium mt-1 backdrop-blur-sm border border-green-400/30">
+                            💰 {plan.savings}
                           </div>
                         )}
                       </div>
