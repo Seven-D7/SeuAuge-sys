@@ -308,6 +308,22 @@ const FlexibilidadeMobilidade: React.FC = () => {
       setTimeout(() => {
         const calculatedResults = calculateResults();
         setResults(calculatedResults);
+
+        // Gerar relatório
+        if (user) {
+          const reportSummary = generateReportSummary('flexibilidade', calculatedResults);
+          addReport({
+            userId: user.uid,
+            type: 'flexibilidade',
+            title: `Flexibilidade & Mobilidade - ${userData.nome || user?.name || 'Relatório'}`,
+            data: {
+              userData: userData as Record<string, any>,
+              results: calculatedResults as Record<string, any>,
+            },
+            summary: reportSummary,
+          });
+        }
+
         setLoading(false);
         setCurrentStep(4);
       }, 1500);
