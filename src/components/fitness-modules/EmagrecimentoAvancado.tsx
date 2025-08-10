@@ -843,7 +843,6 @@ const EmagrecimentoAvancado: React.FC = () => {
           </h1>
         </div>
         <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-          Sistema avançado de emagrecimento com algoritmos de IA que se adaptam
           Programa científico personalizado para perda de peso sustentável e saudável
         </p>
 
