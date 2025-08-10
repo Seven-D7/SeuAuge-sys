@@ -80,6 +80,7 @@ const FlexibilidadeMobilidade: React.FC = () => {
   const [userData, setUserData] = useState<Partial<FlexibilityUserData>>({});
   const [results, setResults] = useState<FlexibilityResults | null>(null);
   const [loading, setLoading] = useState(false);
+  const { addReport } = useReportsStore();
   const { user } = useAuth();
 
   const steps = [
