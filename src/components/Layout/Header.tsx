@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Search, ShoppingCart, Bell, Menu, User, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { useLanguage } from "../../contexts/LanguageContext";
 import { useCartStore } from "../../stores/cartStore";
 import { useLevelStore } from "../../stores/levelStore";
 import { PLANS } from "../../data/plans";
