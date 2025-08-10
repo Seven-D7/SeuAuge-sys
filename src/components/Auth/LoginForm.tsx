@@ -4,7 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { auth, isDemoMode } from '../../firebase';
+import LanguageSelector from '../LanguageSelector';
 
 interface LoginFormProps {
   onToggleMode: () => void;
@@ -20,6 +22,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
   const [resetEmailSent, setResetEmailSent] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { t } = useLanguage();
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -35,17 +38,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
 
     // Input validation
     if (!email.trim() || !password.trim()) {
-      setError('Email e senha são obrigatórios');
+      setError(t('auth.email_password_required'));
       return;
     }
 
     if (!validateEmail(email.trim())) {
-      setError('Por favor, digite um email válido');
+      setError(t('auth.valid_email_required'));
       return;
     }
 
     if (password.length < 6) {
-      setError('A senha deve ter pelo menos 6 caracteres');
+      setError(t('auth.password_min_length'));
       return;
     }
 
@@ -60,17 +63,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
       
       // Handle specific error codes
       if (error.code === 'auth/user-not-found') {
-        setError('Email não encontrado. Verifique o endereço digitado.');
+        setError(t('auth.email_not_found'));
       } else if (error.code === 'auth/wrong-password') {
-        setError('Senha incorreta. Tente novamente.');
+        setError(t('auth.wrong_password'));
       } else if (error.code === 'auth/invalid-email') {
-        setError('Email inválido. Verifique o formato do endereço.');
+        setError(t('auth.invalid_email'));
       } else if (error.code === 'auth/user-disabled') {
-        setError('Esta conta foi desativada. Entre em contato com o suporte.');
+        setError(t('auth.account_disabled'));
       } else if (error.code === 'auth/too-many-requests') {
-        setError('Muitas tentativas de login. Tente novamente mais tarde.');
+        setError(t('auth.too_many_requests'));
       } else {
-        setError('Erro ao fazer login. Verifique suas credenciais e tente novamente.');
+        setError(t('auth.login_error'));
       }
     } finally {
       setLoading(false);
@@ -81,12 +84,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     const trimmedEmail = email.trim();
     
     if (!trimmedEmail) {
-      setError('Digite seu email para recuperar a senha');
+      setError(t('auth.enter_email_to_recover'));
       return;
     }
 
     if (!validateEmail(trimmedEmail)) {
-      setError('Por favor, digite um email válido');
+      setError(t('auth.valid_email_required'));
       return;
     }
 
@@ -106,13 +109,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     } catch (error: any) {
       console.error('Password reset error:', error);
       if (error.code === 'auth/user-not-found') {
-        setError('Email não encontrado. Verifique o endereço digitado.');
+        setError(t('auth.email_not_found'));
       } else if (error.code === 'auth/invalid-email') {
-        setError('Email inválido. Verifique o formato do endereço.');
+        setError(t('auth.invalid_email'));
       } else if (error.code === 'auth/too-many-requests') {
-        setError('Muitas tentativas. Tente novamente mais tarde.');
+        setError(t('auth.too_many_requests'));
       } else {
-        setError('Erro ao enviar email de recuperação. Tente novamente.');
+        setError(t('auth.recovery_error'));
       }
     } finally {
       setLoading(false);
@@ -143,12 +146,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
           >
             <CheckCircle className="w-8 h-8 text-emerald-600" />
           </motion.div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">Email enviado!</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">{t('auth.email_sent')}</h2>
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            Enviamos um link de recuperação para <br />
+            {t('auth.recovery_sent')} <br />
             <span className="text-slate-900 font-semibold">{email}</span>
             <br /><br />
-            Verifique sua caixa de entrada e pasta de spam.
+            {t('auth.check_inbox')}
           </p>
         </div>
 
@@ -156,26 +159,31 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
           onClick={resetForm}
           className="w-full bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
         >
-          Voltar ao login
+          {t('auth.back_to_login')}
         </button>
       </motion.div>
     );
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="w-full max-w-md space-y-6"
     >
+      {/* Seletor de idioma discreto */}
+      <div className="flex justify-end">
+        <LanguageSelector variant="discrete" />
+      </div>
+
       <div className="text-center">
         <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
-          {forgotPasswordMode ? 'Recuperar senha' : 'Bem-vindo de volta'}
+          {forgotPasswordMode ? t('auth.recover_password') : t('auth.welcome_back')}
         </h2>
         <p className="text-slate-600 text-sm sm:text-base">
           {forgotPasswordMode
-            ? 'Digite seu email para receber o link de recuperação'
-            : 'Entre para continuar sua jornada de bem-estar'
+            ? t('auth.enter_email_recovery')
+            : t('auth.enter_to_continue')
           }
         </p>
       </div>
@@ -187,7 +195,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
           transition={{ delay: 0.1 }}
         >
           <label className="block text-sm font-medium text-slate-700 mb-2">
-            Endereço de Email
+            {t('auth.email_address')}
           </label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
@@ -199,7 +207,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
                 setError(null);
               }}
               className="w-full pl-12 pr-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-base transition-all duration-300"
-              placeholder="Digite seu email"
+              placeholder={t('auth.enter_email')}
               required
               autoComplete="email"
             />
@@ -213,7 +221,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             transition={{ delay: 0.2 }}
           >
             <label className="block text-sm font-medium text-slate-700 mb-2">
-              Senha
+              {t('auth.password')}
             </label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
@@ -225,7 +233,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
                   setError(null);
                 }}
                 className="w-full pl-12 pr-12 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-base transition-all duration-300"
-                placeholder="Digite sua senha"
+                placeholder={t('auth.enter_password')}
                 required
                 autoComplete="current-password"
               />
@@ -244,7 +252,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
                 onClick={() => setForgotPasswordMode(true)}
                 className="text-primary hover:text-primary-dark text-sm font-medium transition-colors"
               >
-                Esqueci minha senha
+                {t('auth.forgot_password')}
               </button>
             </div>
           </motion.div>
@@ -277,10 +285,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             {loading ? (
               <div className="flex items-center justify-center gap-2">
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                {forgotPasswordMode ? 'Enviando...' : 'Entrando...'}
+                {forgotPasswordMode ? t('auth.sending') : t('auth.signing_in')}
               </div>
             ) : (
-              forgotPasswordMode ? 'Enviar link de recuperação' : 'Entrar'
+              forgotPasswordMode ? t('auth.send_recovery_link') : t('auth.sign_in')
             )}
           </button>
 
@@ -290,7 +298,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
               onClick={onToggleMode}
               className="w-full bg-white hover:bg-slate-50 text-slate-700 font-medium py-3 px-4 rounded-lg transition-all duration-300 text-base border border-slate-300 hover:border-primary"
             >
-              Ainda não tem conta? <span className="text-primary font-semibold">Criar conta</span>
+              {t('auth.no_account')} <span className="text-primary font-semibold">{t('auth.create_account')}</span>
             </button>
           )}
         </motion.div>
@@ -303,7 +311,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             onClick={resetForm}
             className="w-full text-slate-600 hover:text-primary font-medium py-2 text-sm transition-colors"
           >
-            Voltar ao login
+            {t('auth.back_to_login')}
           </motion.button>
         )}
       </form>
