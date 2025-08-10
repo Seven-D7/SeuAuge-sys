@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useReportsStore, generateReportSummary } from "../../stores/reportsStore";
+import NextStepsSection from "./components/NextStepsSection";
 
 interface FlexibilityUserData {
   nome: string;
