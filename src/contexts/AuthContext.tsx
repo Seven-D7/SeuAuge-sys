@@ -348,7 +348,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       
       const mapped = await mapFirebaseUser(cred.user);
       setUser(mapped);
-      
+
+      // Initialize gamification for new user with welcome bonus
+      try {
+        const levelStore = useLevelStore.getState();
+        levelStore.addXP(50, '🎉 Bem-vindo ao Meu Auge!', 'bonus');
+      } catch (error) {
+        console.error('Erro ao dar bônus de boas-vindas:', error);
+      }
+
       // Audit log
       if (import.meta.env.DEV) {
         console.log("Usuario registrado:", mapped.email);
