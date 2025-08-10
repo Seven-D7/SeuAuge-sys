@@ -3,7 +3,7 @@ import AppCard from '../components/Apps/AppCard';
 import { apps, appsByCategory } from '../data/apps';
 import { Badge } from '../components/ui/badge';
 import { Card, CardContent } from '../components/ui/card';
-import { Dumbbell, Heart, Zap, Users, Clock, Star, Filter } from 'lucide-react';
+import { Dumbbell, Heart, Zap, Users, Clock, Star, Filter, Activity } from 'lucide-react';
 
 const Apps: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('Todos');
