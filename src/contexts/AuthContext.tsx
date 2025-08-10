@@ -391,7 +391,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       await signOut(auth);
       setUser(null);
-      
+
+      // Stop real-time sync
+      stopRealtimeSync();
+
       if (import.meta.env.DEV) {
         console.log("Usuario desconectado");
       }
@@ -399,6 +402,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("Logout error:", error);
       // Force logout even if signOut fails
       setUser(null);
+      stopRealtimeSync();
     }
   };
 
