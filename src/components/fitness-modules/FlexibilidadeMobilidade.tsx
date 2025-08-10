@@ -24,6 +24,7 @@ import {
   Gauge,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
+import { useReportsStore, generateReportSummary } from "../../stores/reportsStore";
 
 interface FlexibilityUserData {
   nome: string;
