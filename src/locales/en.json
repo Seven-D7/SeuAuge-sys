@@ -56,7 +56,14 @@
     "active_challenges": "Active Challenges",
     "recent_achievements": "Recent Achievements",
     "ai_recommendations": "AI Recommendations",
-    "your_plan": "Your Plan"
+    "your_plan": "Your Plan",
+    "featured_products": "Featured Products",
+    "smart_apps": "Smart Apps",
+    "view_all": "View All",
+    "coming_soon": "Coming Soon",
+    "no_challenges": "No active challenges at the moment",
+    "congratulations": "Congratulations!",
+    "keep_going": "Keep going!"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -69,5 +76,34 @@
     "store": "Store",
     "admin": "Admin",
     "logout": "Logout"
+  },
+  "plans": {
+    "choose_plan": "Choose Your Plan",
+    "monthly": "MONTHLY",
+    "quarterly": "QUARTERLY",
+    "yearly": "YEARLY",
+    "most_popular": "Most Popular",
+    "choose": "Choose",
+    "current_plan": "Your current plan",
+    "upgrade": "Upgrade",
+    "features": "Features",
+    "guarantee": "30-day guarantee",
+    "perfect_plan": "Find the perfect plan for your transformation journey"
+  },
+  "achievements": {
+    "title": "Achievements",
+    "challenges": "Challenges",
+    "progress": "Progress",
+    "unlocked": "Unlocked",
+    "locked": "Locked",
+    "completed": "Completed",
+    "active": "Active",
+    "expired": "Expired",
+    "rarity": {
+      "common": "Common",
+      "rare": "Rare",
+      "epic": "Epic",
+      "legendary": "Legendary"
+    }
   }
 }
