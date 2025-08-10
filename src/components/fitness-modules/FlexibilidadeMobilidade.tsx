@@ -716,6 +716,9 @@ const FlexibilidadeMobilidade: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Next Steps */}
+            <NextStepsSection />
           </div>
         );
 
