@@ -133,6 +133,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         localStorage.setItem('lastChallengeReset', today);
       }
 
+      // Initialize sync system
+      await initializeSyncSystem();
+
     } catch (error) {
       console.error('Erro ao inicializar sistemas de gamificação:', error);
     }
