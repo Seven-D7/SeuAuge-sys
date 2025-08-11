@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { getUserActivityStats, logUserActivity } from '../services/activity';
+import { toast } from 'react-hot-toast';
 
 export interface Achievement {
   id: string;
@@ -326,7 +328,7 @@ export const useAchievementsStore = create<AchievementsState>()(
       unlockedTitles: [],
       currentTitle: null,
 
-      initializeAchievements: () => {
+      initializeAchievements: async () => {
         const state = get();
         if (state.achievements.length === 0) {
           set({
@@ -334,97 +336,184 @@ export const useAchievementsStore = create<AchievementsState>()(
             challenges: DEFAULT_CHALLENGES,
           });
         }
+
+        // Sincronizar com estatísticas reais do usuário
+        try {
+          const stats = await getUserActivityStats();
+          const updatedAchievements = state.achievements.map(achievement => {
+            let newProgress = achievement.currentProgress;
+
+            switch (achievement.id) {
+              case 'first_video':
+              case 'videos_watched_100':
+                newProgress = stats.totalVideosWatched;
+                break;
+              case 'first_workout':
+              case 'total_workouts_50':
+                newProgress = stats.totalWorkouts;
+                break;
+              case 'workout_streak_7':
+              case 'login_streak_30':
+                newProgress = stats.currentStreak;
+                break;
+            }
+
+            // Verificar se deve desbloquear
+            if (newProgress >= achievement.requirement && !achievement.isUnlocked) {
+              return {
+                ...achievement,
+                currentProgress: newProgress,
+                isUnlocked: true,
+                unlockedAt: new Date()
+              };
+            }
+
+            return { ...achievement, currentProgress: newProgress };
+          });
+
+          set({ achievements: updatedAchievements });
+        } catch (error) {
+          console.error('Erro ao sincronizar conquistas:', error);
+        }
       },
 
-      updateProgress: (type: string, amount: number = 1) => {
+      updateProgress: async (type: string, amount: number = 1, metadata?: any) => {
         const state = get();
         const now = new Date();
-        
+
         // Update user stats
         const updatedStats = { ...state.userStats, lastActivity: now };
-        
+
         switch (type) {
           case 'video_watched':
             updatedStats.totalVideosWatched += amount;
+            if (metadata?.duration) {
+              updatedStats.totalTimeSpent += metadata.duration;
+            }
+            // Registrar atividade
+            try {
+              await logUserActivity('video_watched', {
+                videoId: metadata?.videoId,
+                duration: metadata?.duration
+              });
+            } catch (error) {
+              console.error('Erro ao registrar atividade de vídeo:', error);
+            }
             break;
           case 'workout_completed':
             updatedStats.totalWorkoutsCompleted += amount;
+            // Registrar atividade
+            try {
+              await logUserActivity('workout_completed', {
+                workoutId: metadata?.workoutId,
+                duration: metadata?.duration
+              });
+            } catch (error) {
+              console.error('Erro ao registrar atividade de treino:', error);
+            }
             break;
           case 'time_spent':
             updatedStats.totalTimeSpent += amount;
             break;
         }
 
-        // Update achievements progress
+        // Update achievements progress with real data
+        const realStats = await getUserActivityStats();
+
         const updatedAchievements = state.achievements.map(achievement => {
           if (achievement.isUnlocked) return achievement;
 
-          let shouldUpdate = false;
           let newProgress = achievement.currentProgress;
 
-          // Check if this achievement should be updated based on the type
+          // Use real stats from activity service
           switch (achievement.id) {
             case 'first_video':
             case 'videos_watched_100':
-              if (type === 'video_watched') {
-                newProgress = updatedStats.totalVideosWatched;
-                shouldUpdate = true;
-              }
+              newProgress = realStats.totalVideosWatched;
               break;
             case 'first_workout':
             case 'total_workouts_50':
-              if (type === 'workout_completed') {
-                newProgress = updatedStats.totalWorkoutsCompleted;
-                shouldUpdate = true;
-              }
+              newProgress = realStats.totalWorkouts;
               break;
             case 'workout_streak_7':
             case 'login_streak_30':
-              if (type === 'streak_updated') {
-                newProgress = updatedStats.currentStreak;
-                shouldUpdate = true;
+              newProgress = realStats.currentStreak;
+              break;
+            case 'nutrition_videos_10':
+              // Contar apenas vídeos de nutrição
+              if (type === 'video_watched' && metadata?.category === 'nutrition') {
+                newProgress = achievement.currentProgress + amount;
+              }
+              break;
+            case 'mindfulness_sessions_20':
+              // Contar sessões de mindfulness
+              if (type === 'workout_completed' && metadata?.category === 'mindfulness') {
+                newProgress = achievement.currentProgress + amount;
+              }
+              break;
+            case 'early_bird':
+              // Verificar se treino foi antes das 7h
+              if (type === 'workout_completed') {
+                const hour = now.getHours();
+                if (hour < 7 && achievement.currentProgress === 0) {
+                  newProgress = 1;
+                }
+              }
+              break;
+            case 'night_owl':
+              // Verificar se treino foi depois das 22h
+              if (type === 'workout_completed') {
+                const hour = now.getHours();
+                if (hour >= 22 && achievement.currentProgress === 0) {
+                  newProgress = 1;
+                }
               }
               break;
           }
 
-          if (shouldUpdate) {
-            const updated = { ...achievement, currentProgress: newProgress };
-            
-            // Check if achievement should be unlocked
-            if (newProgress >= achievement.requirement && !achievement.isUnlocked) {
-              get().unlockAchievement(achievement.id);
-            }
-            
-            return updated;
+          const updated = { ...achievement, currentProgress: newProgress };
+
+          // Check if achievement should be unlocked
+          if (newProgress >= achievement.requirement && !achievement.isUnlocked) {
+            // Delay to avoid state conflicts
+            setTimeout(() => get().unlockAchievement(achievement.id), 100);
           }
 
-          return achievement;
+          return updated;
         });
 
         // Update challenges progress
         const updatedChallenges = state.challenges.map(challenge => {
           if (challenge.isCompleted || !challenge.isActive) return challenge;
 
+          // Check if challenge is still within time frame
+          if (now > challenge.endDate) {
+            return { ...challenge, isActive: false };
+          }
+
           const updatedRequirements = challenge.requirements.map(req => {
-            let shouldUpdate = false;
             let newCurrent = req.current;
 
             switch (req.type) {
               case 'watch_videos':
                 if (type === 'video_watched') {
                   newCurrent += amount;
-                  shouldUpdate = true;
                 }
                 break;
               case 'complete_workouts':
                 if (type === 'workout_completed') {
                   newCurrent += amount;
-                  shouldUpdate = true;
                 }
+                break;
+              case 'streak_days':
+                newCurrent = realStats.currentStreak;
+                break;
+              case 'points_earned':
+                // Implementar quando tivermos sistema de pontos
                 break;
             }
 
-            return shouldUpdate ? { ...req, current: newCurrent } : req;
+            return { ...req, current: Math.min(newCurrent, req.target) };
           });
 
           const updated = { ...challenge, requirements: updatedRequirements };
@@ -432,14 +521,20 @@ export const useAchievementsStore = create<AchievementsState>()(
           // Check if challenge is completed
           const isCompleted = updatedRequirements.every(req => req.current >= req.target);
           if (isCompleted && !challenge.isCompleted) {
-            get().completeChallenge(challenge.id);
+            setTimeout(() => get().completeChallenge(challenge.id), 200);
           }
 
           return updated;
         });
 
         set({
-          userStats: updatedStats,
+          userStats: {
+            ...updatedStats,
+            currentStreak: realStats.currentStreak,
+            longestStreak: realStats.longestStreak,
+            totalVideosWatched: realStats.totalVideosWatched,
+            totalWorkoutsCompleted: realStats.totalWorkouts
+          },
           achievements: updatedAchievements,
           challenges: updatedChallenges,
         });
@@ -468,8 +563,20 @@ export const useAchievementsStore = create<AchievementsState>()(
 
         set({ achievements: updatedAchievements });
 
-        // Show notification (you can integrate with toast notifications)
-        console.log(`🏆 Achievement Unlocked: ${achievement.title}`);
+        // Show notification with toast
+        toast.success(`🏆 Conquista Desbloqueada: ${achievement.title}!`, {
+          duration: 5000,
+          icon: achievement.icon,
+        });
+
+        // Log achievement unlock
+        logUserActivity('challenge_completed', {
+          challengeId: achievementId,
+          title: achievement.title,
+          xpReward: achievement.reward.xp
+        }).catch(error => {
+          console.error('Erro ao registrar conquista:', error);
+        });
       },
 
       completeChallenge: (challengeId: string) => {
@@ -489,8 +596,20 @@ export const useAchievementsStore = create<AchievementsState>()(
 
         set({ challenges: updatedChallenges });
 
-        // Show notification
-        console.log(`✅ Challenge Completed: ${challenge.title}`);
+        // Show notification with toast
+        toast.success(`✅ Desafio Concluído: ${challenge.title}!`, {
+          duration: 4000,
+          icon: '🎯',
+        });
+
+        // Log challenge completion
+        logUserActivity('challenge_completed', {
+          challengeId,
+          title: challenge.title,
+          xpReward: challenge.rewards.xp
+        }).catch(error => {
+          console.error('Erro ao registrar desafio:', error);
+        });
       },
 
       addXP: (amount: number) => {
@@ -511,40 +630,41 @@ export const useAchievementsStore = create<AchievementsState>()(
 
         // Check for level up
         if (newLevel > state.userStats.currentLevel) {
-          console.log(`🎉 Level Up! You are now level ${newLevel}`);
+          toast.success(`🎉 Level Up! Você agora é nível ${newLevel}!`, {
+            duration: 6000,
+            icon: '⬆️',
+          });
         }
       },
 
-      updateStreak: () => {
+      updateStreak: async () => {
         const state = get();
-        const now = new Date();
-        const lastActivity = new Date(state.userStats.lastActivity);
-        const daysDiff = Math.floor((now.getTime() - lastActivity.getTime()) / (1000 * 60 * 60 * 24));
 
-        let newStreak = state.userStats.currentStreak;
+        try {
+          // Get real streak data from activity service
+          const stats = await getUserActivityStats();
 
-        if (daysDiff === 1) {
-          // Continue streak
-          newStreak += 1;
-        } else if (daysDiff > 1) {
-          // Streak broken
-          newStreak = 1;
+          set({
+            userStats: {
+              ...state.userStats,
+              currentStreak: stats.currentStreak,
+              longestStreak: stats.longestStreak,
+              lastActivity: stats.lastActiveDate || new Date(),
+            },
+          });
+
+          // Update streak-based achievements
+          await get().updateProgress('streak_updated');
+
+          // Show streak milestone notifications
+          if (stats.currentStreak > 0 && stats.currentStreak % 7 === 0) {
+            toast.success(`🔥 ${stats.currentStreak} dias consecutivos! Continue assim!`, {
+              duration: 4000,
+            });
+          }
+        } catch (error) {
+          console.error('Erro ao atualizar streak:', error);
         }
-        // If daysDiff === 0, same day, don't change streak
-
-        const newLongestStreak = Math.max(state.userStats.longestStreak, newStreak);
-
-        set({
-          userStats: {
-            ...state.userStats,
-            currentStreak: newStreak,
-            longestStreak: newLongestStreak,
-            lastActivity: now,
-          },
-        });
-
-        // Update streak-based achievements
-        get().updateProgress('streak_updated');
       },
 
       setCurrentTitle: (title: string) => {
@@ -558,11 +678,11 @@ export const useAchievementsStore = create<AchievementsState>()(
         return get().achievements.filter(a => a.category === category);
       },
 
-      getActiveChallengess: () => {
+      getActiveChallenges: () => {
         const now = new Date();
-        return get().challenges.filter(c => 
-          c.isActive && 
-          !c.isCompleted && 
+        return get().challenges.filter(c =>
+          c.isActive &&
+          !c.isCompleted &&
           c.endDate > now
         );
       },

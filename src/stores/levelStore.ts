@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { getUserActivityStats, initializeActivityTracking } from '../services/activity';
+import { toast } from 'react-hot-toast';
 
 export interface LevelSystem {
   currentLevel: number;
@@ -132,6 +134,7 @@ export const useLevelStore = create<LevelStore>()(
           const newTotalXP = state.levelSystem.totalXP + amount;
           let newCurrentXP = state.levelSystem.currentXP + amount;
           let newLevel = state.levelSystem.currentLevel;
+          const previousLevel = newLevel;
 
           // Verificar se subiu de nível
           while (
@@ -156,6 +159,28 @@ export const useLevelStore = create<LevelStore>()(
             type,
           };
 
+          // Show XP gain notification
+          if (amount > 0) {
+            toast.success(`+${amount} XP - ${reason}`, {
+              duration: 3000,
+              icon: '✨',
+            });
+          }
+
+          // Check for level up and show special notification
+          if (newLevel > previousLevel) {
+            const { title } = getLevelData(newLevel);
+            setTimeout(() => {
+              toast.success(
+                `🎉 Nível ${newLevel}! ${title}`,
+                {
+                  duration: 8000,
+                  icon: '⬆️',
+                }
+              );
+            }, 1000);
+          }
+
           return {
             levelSystem: {
               ...state.levelSystem,
@@ -169,68 +194,86 @@ export const useLevelStore = create<LevelStore>()(
         });
       },
 
-      checkDailyLogin: () => {
-        set((state) => {
-          const today = new Date().toDateString();
-          const lastLogin = state.levelSystem.lastLoginDate;
+      checkDailyLogin: async () => {
+        try {
+          // Initialize activity tracking which handles daily login
+          await initializeActivityTracking();
 
-          if (lastLogin === today) {
-            return state; // Já fez login hoje
-          }
+          // Get real activity stats
+          const stats = await getUserActivityStats();
 
-          const yesterday = new Date();
-          yesterday.setDate(yesterday.getDate() - 1);
-          const isConsecutive = lastLogin === yesterday.toDateString();
+          set((state) => {
+            const today = new Date().toDateString();
+            const lastLogin = state.levelSystem.lastLoginDate;
 
-          const newConsecutiveDays = isConsecutive
-            ? state.levelSystem.consecutiveDays + 1
-            : 1;
-
-          const updatedState = {
-            ...state,
-            levelSystem: {
-              ...state.levelSystem,
-              lastLoginDate: today,
-              consecutiveDays: newConsecutiveDays,
-            },
-          };
-
-          // Adicionar XP de login diário
-          const { addXP } = get();
-          setTimeout(() => {
-            addXP(
-              XP_REWARDS.LOGIN_BONUS,
-              `Login diário (+${newConsecutiveDays} dias seguidos)`,
-              "bonus",
-            );
-
-            // Verificar boost a cada 5 dias
-            if (newConsecutiveDays > 0 && newConsecutiveDays % 5 === 0) {
-              const lastBoost = state.levelSystem.lastBoostDate;
-              const todayStr = today;
-
-              if (lastBoost !== todayStr) {
-                addXP(
-                  XP_REWARDS.FIVE_DAY_BOOST,
-                  `🚀 Boost de 5 dias consecutivos!`,
-                  "boost",
-                );
-
-                set((currentState) => ({
-                  ...currentState,
-                  levelSystem: {
-                    ...currentState.levelSystem,
-                    lastBoostDate: todayStr,
-                    totalBoostsReceived:
-                      currentState.levelSystem.totalBoostsReceived + 1,
-                  },
-                }));
-              }
+            if (lastLogin === today) {
+              return state; // Já fez login hoje
             }
-          }, 100);
 
-          return updatedState;
-        });
+            const newConsecutiveDays = stats.currentStreak;
+
+            const updatedState = {
+              ...state,
+              levelSystem: {
+                ...state.levelSystem,
+                lastLoginDate: today,
+                consecutiveDays: newConsecutiveDays,
+              },
+            };
+
+            // Adicionar XP de login diário
+            const { addXP } = get();
+            setTimeout(() => {
+              addXP(
+                XP_REWARDS.LOGIN_BONUS,
+                `🔑 Login diário (+${newConsecutiveDays} dias seguidos)`,
+                "bonus",
+              );
+
+              // Verificar boost a cada 5 dias
+              if (newConsecutiveDays > 0 && newConsecutiveDays % 5 === 0) {
+                const lastBoost = state.levelSystem.lastBoostDate;
+                const todayStr = today;
+
+                if (lastBoost !== todayStr) {
+                  addXP(
+                    XP_REWARDS.FIVE_DAY_BOOST,
+                    `🚀 Boost de 5 dias consecutivos! (${newConsecutiveDays} dias)`,
+                    "boost",
+                  );
+
+                  toast.success(`🚀 Boost especial! ${newConsecutiveDays} dias consecutivos!`, {
+                    duration: 5000,
+                    icon: '🎉',
+                  });
+
+                  set((currentState) => ({
+                    ...currentState,
+                    levelSystem: {
+                      ...currentState.levelSystem,
+                      lastBoostDate: todayStr,
+                      totalBoostsReceived:
+                        currentState.levelSystem.totalBoostsReceived + 1,
+                    },
+                  }));
+                }
+              }
+
+              // Special milestone notifications
+              if (newConsecutiveDays === 1) {
+                toast.success('🎆 Bem-vindo de volta!', { duration: 3000 });
+              } else if (newConsecutiveDays === 30) {
+                toast.success('🏆 30 dias consecutivos! Você é incrível!', { duration: 6000 });
+              } else if (newConsecutiveDays === 100) {
+                toast.success('🔥 100 dias! Você é uma lenda!', { duration: 8000 });
+              }
+            }, 100);
+
+            return updatedState;
+          });
+        } catch (error) {
+          console.error('Erro ao verificar login diário:', error);
+        }
       },
 
       getLevelInfo: (level) => {

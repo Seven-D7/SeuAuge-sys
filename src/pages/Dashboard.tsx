@@ -23,6 +23,7 @@ import {
   Apple
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { useAchievementsStore } from '../stores/achievementsStore';
 import { useLevelStore } from '../stores/levelStore';
 import { useProgressStore } from '../stores/progressStore';
@@ -36,12 +37,13 @@ import { PLANS } from '../data/plans';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
-  const { 
-    userStats, 
-    getActiveChallengess, 
-    achievements, 
+  const { t } = useLanguage();
+  const {
+    userStats,
+    getActiveChallenges,
+    achievements,
     initializeAchievements,
-    updateProgress 
+    updateProgress
   } = useAchievementsStore();
   const { levelSystem, checkDailyLogin } = useLevelStore();
   const [greeting, setGreeting] = useState('');
@@ -52,13 +54,13 @@ const Dashboard: React.FC = () => {
     
     // Set greeting based on time of day
     const hour = new Date().getHours();
-    if (hour < 12) setGreeting('Bom dia');
-    else if (hour < 18) setGreeting('Boa tarde');
-    else setGreeting('Boa noite');
+    if (hour < 12) setGreeting(t('dashboard.good_morning'));
+    else if (hour < 18) setGreeting(t('dashboard.good_afternoon'));
+    else setGreeting(t('dashboard.good_evening'));
   }, [initializeAchievements, checkDailyLogin]);
 
   const featuredProducts = mockProducts.slice(0, 4);
-  const activeChallenges = getActiveChallengess();
+  const activeChallenges = getActiveChallenges();
   const recentAchievements = achievements.filter(a => a.isUnlocked).slice(0, 3);
   const currentPlan = PLANS.find(p => p.id === user?.plan);
 

@@ -3,9 +3,11 @@ import { motion } from "framer-motion";
 import { Search, ShoppingCart, Bell, Menu, User, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { useLanguage } from "../../contexts/LanguageContext";
 import { useCartStore } from "../../stores/cartStore";
 import { useLevelStore } from "../../stores/levelStore";
 import { PLANS } from "../../data/plans";
+import LanguageSelector from "../LanguageSelector";
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -13,6 +15,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { getTotalItems, toggleCart, showAddedAnimation } = useCartStore();
   const { levelSystem } = useLevelStore();
   const [searchQuery, setSearchQuery] = useState("");
@@ -42,7 +45,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
             <input
               type="text"
-              placeholder="Buscar vídeos, apps, produtos..."
+              placeholder={t('navigation.search_placeholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value.slice(0, 100))}
               maxLength={100}
@@ -67,6 +70,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
             <Bell className="w-5 h-5" />
             <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
           </motion.button>
+
+          {/* Language Selector */}
+          <LanguageSelector variant="discrete" />
 
           {/* Cart */}
           <motion.button

@@ -1,6 +1,7 @@
 import React, { lazy, Suspense, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@contexts/AuthContext";
+import { LanguageProvider } from "./contexts/LanguageContext";
 import ProtectedRoute from "@components/ProtectedRoute";
 import AdminRoute from "@components/AdminRoute";
 import Layout from "@components/Layout/Layout";
@@ -152,7 +153,8 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
       <div className="min-h-screen bg-slate-900">
         <Routes>
           <Route
@@ -342,7 +344,8 @@ function App() {
           },
         }}
       />
-      </AuthProvider>
+        </AuthProvider>
+      </LanguageProvider>
     </ErrorBoundary>
   );
 }

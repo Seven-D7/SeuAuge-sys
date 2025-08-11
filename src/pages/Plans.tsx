@@ -164,11 +164,23 @@ const Plans: React.FC = () => {
                       <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-1">
                         {p.price}
                       </div>
-                      {p.monthlyPrice && (
+
+                      {/* Destaque para parcelas */}
+                      {p.installments ? (
+                        <div className="bg-emerald-100 dark:bg-emerald-900/20 border border-emerald-300 dark:border-emerald-700 rounded-lg p-2 mb-2">
+                          <div className="text-sm sm:text-base font-bold text-emerald-700 dark:text-emerald-300">
+                            💳 {p.installments}
+                          </div>
+                          <div className="text-xs text-emerald-600 dark:text-emerald-400">
+                            {p.monthlyPrice}
+                          </div>
+                        </div>
+                      ) : p.monthlyPrice && (
                         <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                           {p.monthlyPrice}
                         </div>
                       )}
+
                       {p.savings && (
                         <div className="inline-block bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300 px-2 sm:px-3 py-1 rounded-full text-xs font-medium mt-1 sm:mt-2">
                           {p.savings}

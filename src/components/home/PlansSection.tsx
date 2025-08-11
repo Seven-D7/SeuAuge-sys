@@ -96,11 +96,23 @@ export default function PlansSection() {
                             {plan.price}
                           </span>
                         </div>
-                        {plan.monthlyPrice && (
+
+                        {/* Destaque para parcelas */}
+                        {plan.installments ? (
+                          <div className="bg-emerald-100 border border-emerald-300 rounded-lg p-2 mb-2">
+                            <div className="text-sm sm:text-base font-bold text-emerald-700">
+                              💳 {plan.installments}
+                            </div>
+                            <div className="text-xs text-emerald-600">
+                              {plan.monthlyPrice}
+                            </div>
+                          </div>
+                        ) : plan.monthlyPrice && (
                           <span className="text-xs sm:text-sm md:text-base text-gray-600 font-medium">
                             {plan.monthlyPrice}
                           </span>
                         )}
+
                         {plan.savings && (
                           <div className="inline-block bg-green-400/20 text-green-200 px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium mt-1 sm:mt-2 backdrop-blur-sm border border-green-400/30">
                             {plan.savings}
@@ -145,11 +157,11 @@ export default function PlansSection() {
                       className={`w-full h-9 sm:h-10 md:h-12 text-xs sm:text-sm md:text-base lg:text-lg font-medium transition-all duration-200 mt-auto ${
                         plan.isPopular
                           ? "bg-primary hover:bg-primary-dark text-white shadow-lg hover:shadow-xl transform hover:scale-[1.01] sm:hover:scale-[1.02] lg:hover:scale-105 border border-emerald-600"
-                          : "bg-emerald-100 hover:bg-emerald-200 text-primary hover:scale-[1.01] sm:hover:scale-[1.02] lg:hover:scale-105 backdrop-blur-sm border border-emerald-200"
+                          : "bg-emerald-100 hover:bg-emerald-200 text-white hover:scale-[1.01] sm:hover:scale-[1.02] lg:hover:scale-105 backdrop-blur-sm border border-emerald-200"
                       }`}
                     >
-                      <span className="hidden sm:inline">Escolher {plan.name}</span>
-                      <span className="sm:hidden">Escolher</span>
+                      <span className="hidden sm:inline text-white">Escolher {plan.name}</span>
+                      <span className="sm:hidden text-white">Escolher</span>
                     </Button>
                   </CardContent>
                 </Card>

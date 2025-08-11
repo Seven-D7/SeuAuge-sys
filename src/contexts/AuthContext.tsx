@@ -16,6 +16,11 @@ import {
   createUserDocument,
 } from "../services/user";
 import { getPlanFromToken } from "../services/plan";
+import { initializeActivityTracking } from "../services/activity";
+import { useAchievementsStore } from "../stores/achievementsStore";
+import { useLevelStore } from "../stores/levelStore";
+import { useGoalsStore } from "../stores/goalsStore";
+import { initializeSyncSystem, stopRealtimeSync } from "../services/sync";
 
 // Production admin check using Firebase custom claims
 // Admin emails should NEVER be hardcoded in frontend for production
@@ -100,10 +105,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Function to initialize all gamification systems
+  const initializeGamificationSystems = async (userPlan?: string) => {
+    try {
+      // Initialize activity tracking (handles daily login)
+      await initializeActivityTracking();
+
+      // Initialize achievements
+      const achievementsStore = useAchievementsStore.getState();
+      await achievementsStore.initializeAchievements();
+
+      // Check daily login for level system
+      const levelStore = useLevelStore.getState();
+      await levelStore.checkDailyLogin();
+
+      // Generate smart goals if none exist
+      const goalsStore = useGoalsStore.getState();
+      if (goalsStore.goals.length === 0) {
+        goalsStore.generateSmartGoals({ plan: userPlan });
+      }
+
+      // Reset daily challenges if needed (new day)
+      const today = new Date().toDateString();
+      const lastResetDate = localStorage.getItem('lastChallengeReset');
+      if (lastResetDate !== today) {
+        goalsStore.resetDailyChallenges();
+        localStorage.setItem('lastChallengeReset', today);
+      }
+
+      // Initialize sync system
+      await initializeSyncSystem();
+
+    } catch (error) {
+      console.error('Erro ao inicializar sistemas de gamificação:', error);
+    }
+  };
+
   const mapFirebaseUser = async (firebaseUser: FirebaseUser): Promise<User> => {
     const planFromToken = await getPlanFromToken();
     const plan = planFromToken;
-    
+
     // Production admin check using custom claims and Firestore
     let isAdmin = false;
     let role: 'user' | 'admin' | 'moderator' = 'user';
@@ -128,7 +169,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       }
     }
-    
+
+    // Initialize gamification systems for authenticated user
+    try {
+      await initializeGamificationSystems(plan);
+    } catch (error) {
+      console.error('Erro ao inicializar sistemas de gamificação:', error);
+    }
+
     return {
       id: firebaseUser.uid,
       email: firebaseUser.email || "",
@@ -304,7 +352,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       
       const mapped = await mapFirebaseUser(cred.user);
       setUser(mapped);
-      
+
+      // Initialize gamification for new user with welcome bonus
+      try {
+        const levelStore = useLevelStore.getState();
+        levelStore.addXP(50, '🎉 Bem-vindo ao Meu Auge!', 'bonus');
+      } catch (error) {
+        console.error('Erro ao dar bônus de boas-vindas:', error);
+      }
+
       // Audit log
       if (import.meta.env.DEV) {
         console.log("Usuario registrado:", mapped.email);
@@ -335,7 +391,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       await signOut(auth);
       setUser(null);
-      
+
+      // Stop real-time sync
+      stopRealtimeSync();
+
       if (import.meta.env.DEV) {
         console.log("Usuario desconectado");
       }
@@ -343,6 +402,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("Logout error:", error);
       // Force logout even if signOut fails
       setUser(null);
+      stopRealtimeSync();
     }
   };
 

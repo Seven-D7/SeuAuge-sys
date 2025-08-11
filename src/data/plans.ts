@@ -7,6 +7,8 @@ export interface Plan {
   monthlyPrice?: string;
   originalPrice?: string;
   savings?: string;
+  installments?: string;
+  savingsPercent?: string;
   description: string;
   features: string[];
   discount?: string;
@@ -42,6 +44,7 @@ export const PLANS: Plan[] = [
     price: "R$ 249",
     monthlyPrice: "R$ 83 / mês",
     originalPrice: "R$ 291",
+    installments: "3x de R$ 83 sem juros",
     savings: "Economize R$ 42",
     description:
       "Quem já está comprometido com a jornada e quer um primeiro nível de desconto, pagando de forma mais espaçada.",
@@ -61,8 +64,9 @@ export const PLANS: Plan[] = [
     fullName: "Plano Auge - CUME - Anual",
     period: "ANUAL",
     price: "R$ 780",
-    monthlyPrice: "R$ 59,90 / mês",
+    monthlyPrice: "R$ 65 / mês",
     originalPrice: "R$ 1.164",
+    installments: "12x de R$ 65 sem juros",
     savings: "Economize R$ 384",
     description:
       "Quem está 100% comprometido com sua performance e longevidade e busca o melhor custo-benefício, economizando no longo prazo.",

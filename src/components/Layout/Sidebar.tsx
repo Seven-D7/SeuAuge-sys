@@ -21,6 +21,7 @@ import {
   BarChart3
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
+import { useLanguage } from "../../contexts/LanguageContext";
 import { useAchievementsStore } from "../../stores/achievementsStore";
 import { useLevelStore } from "../../stores/levelStore";
 import { PLANS } from "../../data/plans";
@@ -34,82 +35,83 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const { achievements, userStats } = useAchievementsStore();
   const { levelSystem } = useLevelStore();
-  
+
   const planName = PLANS.find((p) => p.id === user?.plan)?.name ?? "Iniciante";
   const unlockedAchievements = achievements.filter(a => a.isUnlocked).length;
 
   // Organização limpa das seções do menu
   const menuSections = [
     {
-      title: "Principal",
+      title: t('sidebar.sections.main'),
       items: [
-        { 
-          icon: Home, 
-          label: "Dashboard", 
+        {
+          icon: Home,
+          label: t('sidebar.menu_items.dashboard'),
           path: "/dashboard"
         },
-        { 
-          icon: Play, 
-          label: "Vídeos", 
+        {
+          icon: Play,
+          label: t('sidebar.menu_items.videos'),
           path: "/videos"
         }
       ]
     },
     {
-      title: "Progresso",
+      title: t('sidebar.sections.progress'),
       items: [
-        { 
-          icon: Trophy, 
-          label: "Conquistas", 
+        {
+          icon: Trophy,
+          label: t('sidebar.menu_items.achievements'),
           path: "/achievements",
           badge: unlockedAchievements > 0 ? unlockedAchievements.toString() : undefined
         },
-        { 
-          icon: BarChart3, 
-          label: "Progresso", 
+        {
+          icon: BarChart3,
+          label: t('sidebar.menu_items.progress'),
           path: "/progress"
         }
       ]
     },
     {
-      title: "Conteúdo",
+      title: t('sidebar.sections.content'),
       items: [
-        { 
-          icon: AppWindow, 
-          label: "Apps", 
+        {
+          icon: AppWindow,
+          label: t('sidebar.menu_items.apps'),
           path: "/apps"
         },
-        { 
-          icon: Heart, 
-          label: "Favoritos", 
+        {
+          icon: Heart,
+          label: t('sidebar.menu_items.favorites'),
           path: "/favorites"
         },
         {
           icon: ShoppingBag,
-          label: "Loja",
+          label: t('sidebar.menu_items.store'),
           path: "/store",
           disabled: !storeEnabled
         }
       ]
     },
     {
-      title: "Conta",
+      title: t('sidebar.sections.account'),
       items: [
-        { 
-          icon: User, 
-          label: "Perfil", 
+        {
+          icon: User,
+          label: t('sidebar.menu_items.profile'),
           path: "/profile"
         },
-        { 
-          icon: Sparkles, 
-          label: "Planos", 
+        {
+          icon: Sparkles,
+          label: t('sidebar.menu_items.plans'),
           path: "/plans"
         },
-        ...(user?.isAdmin ? [{ 
-          icon: ShieldCheck, 
-          label: "Admin", 
+        ...(user?.isAdmin ? [{
+          icon: ShieldCheck,
+          label: "Admin",
           path: "/admin"
         }] : [])
       ]
@@ -169,10 +171,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             </div>
             <div>
               <h1 className="text-xl font-bold text-slate-900 dark:text-white">
-                Meu Auge
+                {t('sidebar.app_name')}
               </h1>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Sua jornada fitness
+                {t('sidebar.app_tagline')}
               </p>
             </div>
           </motion.div>
@@ -187,10 +189,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               </div>
               <div>
                 <p className="text-sm font-bold text-slate-900 dark:text-white">
-                  Nível {levelSystem.currentLevel}
+                  {t('sidebar.level')} {levelSystem.currentLevel}
                 </p>
                 <p className="text-xs text-slate-600 dark:text-slate-400">
-                  {levelSystem.totalXP} XP total
+                  {levelSystem.totalXP} {t('sidebar.xp_total')}
                 </p>
               </div>
             </div>
@@ -199,7 +201,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 {levelSystem.xpToNextLevel} XP
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-500">
-                restantes
+                {t('sidebar.xp_remaining')}
               </p>
             </div>
           </div>
@@ -306,7 +308,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                     {planName}
                   </p>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
-                    Plano atual
+                    {t('sidebar.current_plan')}
                   </p>
                 </div>
               </div>
@@ -316,7 +318,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   onClick={onClose}
                   className="text-xs bg-yellow-500 text-black px-2 py-1 rounded font-medium hover:bg-yellow-400 transition-colors"
                 >
-                  Upgrade
+                  {t('sidebar.upgrade')}
                 </Link>
               )}
             </div>
@@ -325,7 +327,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           {/* Quick Stats */}
           <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3">
             <h4 className="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2 uppercase tracking-wide">
-              Estatísticas Rápidas
+              {t('sidebar.quick_stats')}
             </h4>
             <div className="grid grid-cols-2 gap-2 text-center">
               <div>
@@ -333,7 +335,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   {userStats.currentStreak}
                 </div>
                 <div className="text-xs text-slate-500 dark:text-slate-400">
-                  Dias seguidos
+                  {t('sidebar.consecutive_days')}
                 </div>
               </div>
               <div>
@@ -341,7 +343,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   {unlockedAchievements}
                 </div>
                 <div className="text-xs text-slate-500 dark:text-slate-400">
-                  Conquistas
+                  {t('sidebar.achievements_count')}
                 </div>
               </div>
             </div>
@@ -358,7 +360,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             className="flex items-center w-full px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200 group"
           >
             <LogOut className="w-5 h-5 mr-3 group-hover:text-red-500" />
-            <span className="font-medium">Sair da conta</span>
+            <span className="font-medium">{t('sidebar.logout')}</span>
           </motion.button>
         </div>
       </motion.div>

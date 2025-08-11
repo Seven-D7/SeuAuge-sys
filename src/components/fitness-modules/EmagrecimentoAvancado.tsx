@@ -39,9 +39,11 @@ import {
 } from "../../lib/fitness/explicacao";
 import { db } from "../../firebase";
 import { useProgressStore } from "../../stores/progressStore";
+import { useReportsStore, generateReportSummary } from "../../stores/reportsStore";
 import { getUserMetrics } from "../../services/user";
 import { useAuth } from "../../contexts/AuthContext";
 import type { UserData, WeightLossResults } from "@/types/fitness";
+import NextStepsSection from "./components/NextStepsSection";
 
 const EmagrecimentoAvancado: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -55,6 +57,7 @@ const EmagrecimentoAvancado: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loadingProfile, setLoadingProfile] = useState(true);
   const { setWeightLoss, setReportData } = useProgressStore();
+  const { addReport } = useReportsStore();
   const { user } = useAuth();
 
   // Carregar dados do perfil ao inicializar
@@ -333,7 +336,7 @@ const EmagrecimentoAvancado: React.FC = () => {
   };
 
   const handleNext = async () => {
-    if (currentStep < 5) {
+    if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     } else if (currentStep === 4) {
       setLoading(true);
@@ -369,6 +372,23 @@ const EmagrecimentoAvancado: React.FC = () => {
         });
 
         setReportData(calculatedResults);
+
+        // Gerar relatório
+        if (user) {
+          const reportSummary = generateReportSummary('emagrecimento', calculatedResults);
+          addReport({
+            userId: user.uid,
+            type: 'emagrecimento',
+            title: `Emagrecimento Avançado - ${userData.nome || 'Relatório'}`,
+            data: {
+              userData: userData as Record<string, any>,
+              results: calculatedResults as Record<string, any>,
+              explanation: explicacao,
+            },
+            summary: reportSummary,
+          });
+        }
+
         setCurrentStep(5);
       } catch (error) {
         console.error("Erro ao calcular resultados:", error);
@@ -758,8 +778,8 @@ const EmagrecimentoAvancado: React.FC = () => {
                   Plano de Treino Personalizado
                 </CardTitle>
                 <CardDescription className="text-slate-600 dark:text-slate-400">
-                  {results.plano_treino.frequencia_semanal}x por semana •{" "}
-                  {results.plano_treino.duracao_sessao} min por sessão
+                  {results.plano_treino.frequencia_semanal}x por semana ��{" "}
+                  {results.plano_treino.duracao_sessao} min por sess��o
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -808,6 +828,9 @@ const EmagrecimentoAvancado: React.FC = () => {
                 </CardContent>
               </Card>
             )}
+
+            {/* Next Steps */}
+            <NextStepsSection />
           </div>
         );
 
@@ -839,12 +862,11 @@ const EmagrecimentoAvancado: React.FC = () => {
             <Flame className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
-            Emagrecimento Inteligente
+            Emagrecimento Avançado
           </h1>
         </div>
         <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-          Sistema avançado de emagrecimento com algoritmos de IA que se adaptam
-          ao seu perfil ��nico
+          Programa científico personalizado para perda de peso sustentável e saudável
         </p>
 
         {/* Indicador de dados pré-preenchidos */}

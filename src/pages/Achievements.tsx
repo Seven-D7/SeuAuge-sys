@@ -26,13 +26,13 @@ import { useAuth } from '../contexts/AuthContext';
 
 const Achievements: React.FC = () => {
   const { user } = useAuth();
-  const { 
-    achievements, 
-    challenges, 
-    userStats, 
-    getActiveChallengess, 
+  const {
+    achievements,
+    challenges,
+    userStats,
+    getActiveChallenges,
     getCompletedChallenges,
-    initializeAchievements 
+    initializeAchievements
   } = useAchievementsStore();
   const { levelSystem } = useLevelStore();
 
@@ -77,7 +77,7 @@ const Achievements: React.FC = () => {
     return categoryMatch && rarityMatch && completedMatch && searchMatch;
   });
 
-  const activeChallenges = getActiveChallengess();
+  const activeChallenges = getActiveChallenges();
   const completedChallenges = getCompletedChallenges();
   const unlockedAchievements = achievements.filter(a => a.isUnlocked);
 
