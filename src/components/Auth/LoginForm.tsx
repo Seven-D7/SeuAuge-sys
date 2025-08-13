@@ -61,20 +61,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     } catch (error: any) {
       console.error('Login error:', error);
       
-      // Handle specific error codes
-      if (error.code === 'auth/user-not-found') {
-        setError(t('auth.email_not_found'));
-      } else if (error.code === 'auth/wrong-password') {
-        setError(t('auth.wrong_password'));
-      } else if (error.code === 'auth/invalid-email') {
-        setError(t('auth.invalid_email'));
-      } else if (error.code === 'auth/user-disabled') {
-        setError(t('auth.account_disabled'));
-      } else if (error.code === 'auth/too-many-requests') {
-        setError(t('auth.too_many_requests'));
-      } else {
-        setError(t('auth.login_error'));
-      }
+      // Error messages are already handled in SupabaseAuthContext
+      setError(error.message || t('auth.login_error'));
     } finally {
       setLoading(false);
     }
