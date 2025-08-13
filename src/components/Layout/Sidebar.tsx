@@ -296,7 +296,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         </nav>
 
         {/* Plan Status */}
-        <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-4">
+        <div className="p-4 border-t border-slate-800 space-y-4">
           <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-lg p-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
