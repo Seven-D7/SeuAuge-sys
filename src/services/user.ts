@@ -290,40 +290,8 @@ export async function saveUserMetrics(metrics: Partial<BodyMetrics>) {
 }
 
 export async function getUserMetrics(): Promise<Partial<BodyMetrics> | null> {
-  try {
-    if (!auth.currentUser) {
-      return null;
-    }
-
-    // Modo desenvolvimento - buscar dados locais
-    if (import.meta.env.VITE_DEV_MODE === "true") {
-      const localMetrics = localStorage.getItem("userMetrics");
-      return localMetrics ? JSON.parse(localMetrics) : null;
-    }
-
-    const metricsDoc = await getDoc(
-      doc(db, "users", auth.currentUser.uid, "metrics", "current"),
-    );
-
-    if (metricsDoc.exists()) {
-      const data = metricsDoc.data() as Partial<BodyMetrics>;
-      
-      // Validate data integrity
-      if (data.weight && (data.weight < 20 || data.weight > 500)) {
-        console.warn("Invalid weight data detected");
-        delete data.weight;
-      }
-      
-      return data;
-    }
-
-    return null;
-  } catch (error) {
-    console.error("Erro ao buscar métricas:", error);
-    // Tentar buscar dados locais como fallback
-    const localMetrics = localStorage.getItem("userMetrics");
-    return localMetrics ? JSON.parse(localMetrics) : null;
-  }
+  // Temporarily disabled during migration to Supabase
+  return null;
 }
 
 // Security function to check if user has permission
