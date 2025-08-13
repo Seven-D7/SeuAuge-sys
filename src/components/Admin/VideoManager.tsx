@@ -12,7 +12,7 @@ import {
   Plus,
 } from "lucide-react";
 import { VideoMetadata } from "../../services/googleCloud";
-import { isDemoMode } from "../../firebase";
+import { isSupabaseDemoMode } from "../../lib/supabase";
 
 interface VideoUploadData {
   title: string;
