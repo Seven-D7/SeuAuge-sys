@@ -96,13 +96,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
         if (error) throw error;
         setResetEmailSent(true);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Password reset error:', error);
-      if (error.message?.includes('User not found')) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      if (errorMessage?.includes('User not found')) {
         setError(t('auth.email_not_found'));
-      } else if (error.message?.includes('Invalid email')) {
+      } else if (errorMessage?.includes('Invalid email')) {
         setError(t('auth.invalid_email'));
-      } else if (error.message?.includes('too many requests')) {
+      } else if (errorMessage?.includes('too many requests')) {
         setError(t('auth.too_many_requests'));
       } else {
         setError(t('auth.recovery_error'));
