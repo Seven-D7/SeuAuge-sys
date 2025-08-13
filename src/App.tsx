@@ -2,6 +2,7 @@ import React, { lazy, Suspense, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { SupabaseAuthProvider } from "./contexts/SupabaseAuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import ProtectedRoute from "@components/ProtectedRoute";
 import AdminRoute from "@components/AdminRoute";
 import Layout from "@components/Layout/Layout";
@@ -153,8 +154,9 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <LanguageProvider>
-        <SupabaseAuthProvider>
+      <ThemeProvider>
+        <LanguageProvider>
+          <SupabaseAuthProvider>
       <div className="min-h-screen bg-slate-900">
         <Routes>
           <Route
@@ -344,8 +346,9 @@ function App() {
           },
         }}
       />
-        </SupabaseAuthProvider>
-      </LanguageProvider>
+          </SupabaseAuthProvider>
+        </LanguageProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }
