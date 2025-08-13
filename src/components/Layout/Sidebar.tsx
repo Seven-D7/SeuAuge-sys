@@ -157,10 +157,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         variants={sidebarVariants}
         initial="closed"
         animate={isOpen ? "open" : "closed"}
-        className="fixed top-0 left-0 h-full w-72 max-w-[85vw] overflow-y-auto bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 z-50 lg:translate-x-0 lg:static lg:z-auto lg:w-72 flex flex-col lg:block"
+        className="fixed top-0 left-0 h-full w-72 max-w-[85vw] overflow-y-auto bg-slate-900 border-r border-slate-800 z-50 lg:translate-x-0 lg:static lg:z-auto lg:w-72 flex flex-col lg:block"
       >
         {/* Logo Header */}
-        <div className="p-6 border-b border-slate-200 dark:border-slate-800">
+        <div className="p-6 border-b border-slate-800">
           <motion.div 
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -170,10 +170,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               <TrendingUp className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-slate-900 dark:text-white">
+              <h1 className="text-xl font-bold text-white">
                 {t('sidebar.app_name')}
               </h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-400">
                 {t('sidebar.app_tagline')}
               </p>
             </div>
