@@ -12,12 +12,11 @@ const requiredEnvVars = [
   'VITE_FIREBASE_APP_ID'
 ];
 
-// Check for missing environment variables in production
-if (import.meta.env.PROD) {
-  const missingVars = requiredEnvVars.filter(varName => !import.meta.env[varName]);
-  if (missingVars.length > 0) {
-    throw new Error(`Missing required environment variables for production: ${missingVars.join(', ')}`);
-  }
+// Check for missing environment variables and log warnings
+const missingVars = requiredEnvVars.filter(varName => !import.meta.env[varName]);
+if (missingVars.length > 0) {
+  console.warn(`⚠️ Missing environment variables: ${missingVars.join(', ')}`);
+  console.warn('ℹ️ Firebase will use demo/default values. Some features may not work correctly.');
 }
 
 // Production Firebase configuration

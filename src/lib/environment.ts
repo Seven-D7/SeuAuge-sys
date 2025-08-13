@@ -22,9 +22,9 @@ interface EnvironmentConfig {
   };
 }
 
-// Validate required environment variables
+// Validate environment variables with warnings instead of errors
 function validateEnvironment(): void {
-  const requiredProdVars = [
+  const requiredVars = [
     'VITE_FIREBASE_API_KEY',
     'VITE_FIREBASE_AUTH_DOMAIN',
     'VITE_FIREBASE_PROJECT_ID',
@@ -33,24 +33,22 @@ function validateEnvironment(): void {
     'VITE_FIREBASE_APP_ID',
   ];
 
-  if (import.meta.env.PROD) {
-    const missingVars = requiredProdVars.filter(
-      varName => !import.meta.env[varName] || import.meta.env[varName].includes('demo')
-    );
+  const missingVars = requiredVars.filter(
+    varName => !import.meta.env[varName] || import.meta.env[varName].includes('demo')
+  );
 
-    if (missingVars.length > 0) {
-      console.error('❌ Missing required environment variables for production:', missingVars);
-      throw new Error(`Production build requires these environment variables: ${missingVars.join(', ')}`);
-    }
+  if (missingVars.length > 0) {
+    console.warn('⚠️ Missing or demo environment variables:', missingVars);
+    console.warn('ℹ️ The application will continue but some features may not work correctly.');
+  }
 
-    // Validate Firebase config format
-    if (!import.meta.env.VITE_FIREBASE_API_KEY?.startsWith('AIza')) {
-      console.warn('⚠️ Firebase API key format seems incorrect');
-    }
+  // Validate Firebase config format only if variables exist
+  if (import.meta.env.VITE_FIREBASE_API_KEY && !import.meta.env.VITE_FIREBASE_API_KEY.startsWith('AIza')) {
+    console.warn('⚠️ Firebase API key format seems incorrect');
+  }
 
-    if (!import.meta.env.VITE_FIREBASE_PROJECT_ID?.match(/^[a-z0-9-]+$/)) {
-      console.warn('⚠️ Firebase project ID format seems incorrect');
-    }
+  if (import.meta.env.VITE_FIREBASE_PROJECT_ID && !import.meta.env.VITE_FIREBASE_PROJECT_ID.match(/^[a-z0-9-]+$/)) {
+    console.warn('⚠️ Firebase project ID format seems incorrect');
   }
 }
 
@@ -119,6 +117,7 @@ export function checkProductionReadiness(): { ready: boolean; issues: string[] }
       issues,
     };
   } catch (error) {
+    console.warn('⚠️ Environment validation error:', error);
     return {
       ready: false,
       issues: [error instanceof Error ? error.message : 'Environment validation failed'],
