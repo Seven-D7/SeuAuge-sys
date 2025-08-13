@@ -58,11 +58,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     try {
       await login(email.trim(), password);
       navigate('/dashboard');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login error:', error);
-      
+
       // Error messages are already handled in SupabaseAuthContext
-      setError(error.message || t('auth.login_error'));
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      setError(errorMessage || t('auth.login_error'));
     } finally {
       setLoading(false);
     }
