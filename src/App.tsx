@@ -154,8 +154,9 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <LanguageProvider>
-        <SupabaseAuthProvider>
+      <ThemeProvider>
+        <LanguageProvider>
+          <SupabaseAuthProvider>
       <div className="min-h-screen bg-slate-900">
         <Routes>
           <Route
@@ -345,8 +346,9 @@ function App() {
           },
         }}
       />
-        </SupabaseAuthProvider>
-      </LanguageProvider>
+          </SupabaseAuthProvider>
+        </LanguageProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }
