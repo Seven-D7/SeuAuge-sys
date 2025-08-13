@@ -139,7 +139,7 @@ async function updateUserStats(
 
     // Salvar estatísticas atualizadas
     await setDoc(
-      doc(db, "users", auth.currentUser.uid, "stats", "current"),
+      doc(db, "users", userId, "stats", "current"),
       {
         ...updatedStats,
         updatedAt: new Date()
