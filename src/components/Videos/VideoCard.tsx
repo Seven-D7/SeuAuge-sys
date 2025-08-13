@@ -2,7 +2,7 @@ import React from 'react';
 import { Play, Clock, Heart, Lock, Crown } from 'lucide-react';
 import { Video } from '../../stores/favoritesStore';
 import { useFavoritesStore } from '../../stores/favoritesStore';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/SupabaseAuthContext';
 import { designUtils, COMMON_CLASSES } from '../../lib/design-system';
 import LazyImage from '../ui/LazyImage';
 
