@@ -304,7 +304,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   <Crown className="w-3 h-3 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-900 dark:text-white">
+                  <p className="text-sm font-medium text-white">
                     {planName}
                   </p>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
