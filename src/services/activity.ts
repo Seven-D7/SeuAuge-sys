@@ -317,9 +317,11 @@ export async function logChallengeCompleted(challengeId: string): Promise<void> 
 }
 
 // Função para inicializar tracking de atividades (chamar no login)
-export async function initializeActivityTracking(): Promise<void> {
+export async function initializeActivityTracking(userId?: string): Promise<void> {
   try {
-    await checkDailyLogin();
+    if (userId) {
+      await checkDailyLogin(userId);
+    }
   } catch (error) {
     console.error("Erro ao inicializar tracking de atividades:", error);
   }
