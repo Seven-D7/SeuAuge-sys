@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react';
-import { sendPasswordResetEmail } from 'firebase/auth';
 import { useAuth } from '../../contexts/SupabaseAuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { auth, isDemoMode } from '../../firebase';
+import { supabase } from '../../lib/supabase';
+import { isDemoMode } from '../../firebase';
 import LanguageSelector from '../LanguageSelector';
 
 interface LoginFormProps {
