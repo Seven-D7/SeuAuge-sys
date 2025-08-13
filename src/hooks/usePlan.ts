@@ -1,8 +1,8 @@
 // Hook para recuperar o plano do usuário e exibir conteúdo condicionalmente
 import { useEffect, useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/SupabaseAuthContext";
 import { getPlanFromToken } from "../services/plan";
-import { isDemoMode } from "../firebase";
+import { isSupabaseDemoMode } from "../lib/supabase";
 
 interface UsePlan {
   plan: string | null;
@@ -32,7 +32,7 @@ export default function usePlan(): UsePlan {
       }
 
       // Em modo demo, usar plano padrão
-      if (isDemoMode) {
+      if (isSupabaseDemoMode) {
         setPlan("B"); // Plano premium em modo demo
         setLoading(false);
         return;
