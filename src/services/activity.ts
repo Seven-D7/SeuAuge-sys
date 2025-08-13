@@ -50,7 +50,7 @@ export async function logUserActivity(
 
     // Modo desenvolvimento - apenas log
     if (import.meta.env.VITE_DEV_MODE === "true") {
-      console.log("🏃‍♂️ Atividade registrada (dev):", activity);
+      console.log("🏃��♂️ Atividade registrada (dev):", activity);
       
       // Salvar localmente para desenvolvimento
       const localActivities = JSON.parse(localStorage.getItem("userActivities") || "[]");
@@ -239,11 +239,11 @@ export async function getRecentActivities(userId?: string, limitCount: number = 
 }
 
 // Função para verificar login diário
-export async function checkDailyLogin(): Promise<void> {
-  if (!auth.currentUser) return;
+export async function checkDailyLogin(userId?: string): Promise<void> {
+  if (!userId) return;
 
   try {
-    const stats = await getUserActivityStats();
+    const stats = await getUserActivityStats(userId);
     const today = new Date().toDateString();
     const lastLogin = stats.lastActiveDate ? stats.lastActiveDate.toDateString() : null;
 
@@ -253,7 +253,7 @@ export async function checkDailyLogin(): Promise<void> {
     }
 
     // Registrar login diário
-    await logUserActivity('login');
+    await logUserActivity(userId, 'login');
 
   } catch (error) {
     console.error("Erro ao verificar login diário:", error);
