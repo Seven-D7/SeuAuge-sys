@@ -1,5 +1,5 @@
 import { doc, setDoc, getDoc, collection, query, orderBy, limit, getDocs, where } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import { db } from "../firebase";
 
 export interface UserActivity {
   id: string;
@@ -30,10 +30,11 @@ export interface ActivityStats {
 
 // Função para registrar atividade do usuário
 export async function logUserActivity(
-  type: UserActivity['type'], 
+  userId: string,
+  type: UserActivity['type'],
   metadata?: UserActivity['metadata']
 ): Promise<void> {
-  if (!auth.currentUser) {
+  if (!userId) {
     throw new Error("Usuário não autenticado");
   }
 
@@ -41,7 +42,7 @@ export async function logUserActivity(
     const activityId = `${type}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const activity: UserActivity = {
       id: activityId,
-      userId: auth.currentUser.uid,
+      userId,
       type,
       timestamp: new Date(),
       metadata: metadata || {}
@@ -60,12 +61,12 @@ export async function logUserActivity(
 
     // Salvar atividade no Firestore
     await setDoc(
-      doc(db, "users", auth.currentUser.uid, "activities", activityId),
+      doc(db, "users", userId, "activities", activityId),
       activity
     );
 
     // Atualizar estatísticas do usuário
-    await updateUserStats(type, metadata);
+    await updateUserStats(userId, type, metadata);
 
   } catch (error) {
     console.error("Erro ao registrar atividade:", error);
