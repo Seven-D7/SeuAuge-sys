@@ -259,7 +259,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                         className={`flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 group relative ${
                           isActive(item.path)
                             ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-md"
-                            : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50"
+                            : "text-slate-400 hover:text-white hover:bg-slate-800/50"
                         }`}
                       >
                         <Icon
