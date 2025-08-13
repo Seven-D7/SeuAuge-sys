@@ -1,4 +1,4 @@
-import { auth, db, isDemoMode } from "../firebase";
+import { db, isDemoMode } from "../firebase";
 import api from "./api";
 import { collection, getDocs, doc, setDoc } from "firebase/firestore";
 
