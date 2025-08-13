@@ -9,7 +9,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/SupabaseAuthContext";
 import { updateUserPlan } from "../services/plan";
 import { checkStripePaymentStatus } from "../services/stripe";
 import { PLANS } from "../data/plans";

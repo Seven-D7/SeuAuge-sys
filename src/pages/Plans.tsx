@@ -4,7 +4,7 @@ import { Check, Crown, Zap, Star, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { PLANS, Plan } from "../data/plans";
 import usePlan from "../hooks/usePlan";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/SupabaseAuthContext";
 import { redirectToStripeCheckout } from "../services/stripe";
 
 const Plans: React.FC = () => {

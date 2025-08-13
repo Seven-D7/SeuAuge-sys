@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { updateUserPlan } from "../services/plan";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/SupabaseAuthContext";
 import { motion } from "framer-motion";
 
 const PAYMENT_URL =
