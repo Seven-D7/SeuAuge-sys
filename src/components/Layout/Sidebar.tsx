@@ -331,18 +331,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             </h4>
             <div className="grid grid-cols-2 gap-2 text-center">
               <div>
-                <div className="text-sm font-bold text-slate-900 dark:text-white">
+                <div className="text-sm font-bold text-white">
                   {userStats.currentStreak}
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">
+                <div className="text-xs text-slate-400">
                   {t('sidebar.consecutive_days')}
                 </div>
               </div>
               <div>
-                <div className="text-sm font-bold text-slate-900 dark:text-white">
+                <div className="text-sm font-bold text-white">
                   {unlockedAchievements}
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">
+                <div className="text-xs text-slate-400">
                   {t('sidebar.achievements_count')}
                 </div>
               </div>
@@ -357,7 +357,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               logout();
               onClose();
             }}
-            className="flex items-center w-full px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200 group"
+            className="flex items-center w-full px-3 py-2.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-900/20 transition-all duration-200 group"
           >
             <LogOut className="w-5 h-5 mr-3 group-hover:text-red-500" />
             <span className="font-medium">{t('sidebar.logout')}</span>
