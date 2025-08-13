@@ -239,7 +239,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                       >
                         <Icon className="w-5 h-5 mr-3" />
                         <span className="font-medium">{item.label}</span>
-                        <span className="ml-auto text-xs bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded">
+                        <span className="ml-auto text-xs bg-slate-700 px-2 py-1 rounded">
                           Em breve
                         </span>
                       </motion.div>
