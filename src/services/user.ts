@@ -1,7 +1,7 @@
 import { updateProfile, updateEmail } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { auth, db, storage } from "../firebase";
+import { db, storage } from "../firebase";
 import type { BodyMetrics } from "../stores/progressStore";
 
 // Sanitization helper
