@@ -79,9 +79,9 @@ export async function updateUserProfile({
   birthdate,
   file,
 }: UpdateUserInput) {
-  if (!auth.currentUser) {
-    throw new Error("Usuário não autenticado");
-  }
+  // Temporarily disabled during migration to Supabase
+  console.log('updateUserProfile disabled during migration');
+  return;
 
   try {
     // Modo desenvolvimento - apenas atualizar profile local
