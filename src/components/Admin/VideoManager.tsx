@@ -12,7 +12,7 @@ import {
   Plus,
 } from "lucide-react";
 import { VideoMetadata } from "../../services/googleCloud";
-import { isDemoMode } from "../../firebase";
+import { isSupabaseDemoMode } from "../../lib/supabase";
 
 interface VideoUploadData {
   title: string;
@@ -164,7 +164,7 @@ const VideoManager: React.FC = () => {
         <div>
           <h2 className="text-2xl font-bold text-white">Gerenciar Vídeos</h2>
           <p className="text-slate-400 mt-1">
-            {isDemoMode && (
+            {isSupabaseDemoMode && (
               <span className="inline-flex items-center px-2 py-1 bg-blue-900/20 text-blue-300 rounded-full text-sm mr-3">
                 🔧 Modo Demo - Upload simulado
               </span>

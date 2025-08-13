@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { useAchievementsStore, Achievement, Challenge } from '../stores/achievementsStore';
 import { useLevelStore } from '../stores/levelStore';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/SupabaseAuthContext';
 
 const Achievements: React.FC = () => {
   const { user } = useAuth();

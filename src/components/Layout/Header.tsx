@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, ShoppingCart, Bell, Menu, User, Star } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../contexts/SupabaseAuthContext";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { useCartStore } from "../../stores/cartStore";
 import { useLevelStore } from "../../stores/levelStore";

@@ -22,7 +22,7 @@ import {
   Heart,
   Apple
 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/SupabaseAuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAchievementsStore } from '../stores/achievementsStore';
 import { useLevelStore } from '../stores/levelStore';

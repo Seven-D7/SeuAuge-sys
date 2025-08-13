@@ -1,4 +1,4 @@
-import { auth, db, isDemoMode } from "../firebase";
+import { db, isDemoMode } from "../firebase";
 import api from "./api";
 import { collection, getDocs, doc, setDoc } from "firebase/firestore";
 
@@ -36,17 +36,9 @@ export async function getPlanFromToken(
     return "B";
   }
 
-  const currentUser = auth.currentUser;
-  if (!currentUser) return null;
-
-  try {
-    const token = await currentUser.getIdTokenResult(forceRefresh);
-    const plan = token.claims.plan as string | undefined;
-    return plan ?? null;
-  } catch (error) {
-    console.warn("Erro ao obter token do plano:", error);
-    return null;
-  }
+  // Plans are now managed through Supabase
+  // This function is kept for backward compatibility
+  return null;
 }
 
 export async function updateUserPlan(plan: string): Promise<void> {
@@ -59,11 +51,6 @@ export async function updateUserPlan(plan: string): Promise<void> {
     method: "POST",
     body: JSON.stringify({ plan }),
   });
-  if (auth.currentUser) {
-    await setDoc(
-      doc(db, "users", auth.currentUser.uid),
-      { plan },
-      { merge: true },
-    );
-  }
+  // Plan updates are now handled through Supabase
+  console.log("Plan update delegated to Supabase:", plan);
 }

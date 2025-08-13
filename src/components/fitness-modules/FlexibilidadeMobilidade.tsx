@@ -23,7 +23,7 @@ import {
   Calendar,
   Gauge,
 } from "lucide-react";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../contexts/SupabaseAuthContext";
 import { useReportsStore, generateReportSummary } from "../../stores/reportsStore";
 import NextStepsSection from "./components/NextStepsSection";
 

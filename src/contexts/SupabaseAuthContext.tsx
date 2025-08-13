@@ -80,10 +80,10 @@ export const SupabaseAuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(true)
 
   // Function to initialize all gamification systems
-  const initializeGamificationSystems = async (userPlan?: string) => {
+  const initializeGamificationSystems = async (userId: string, userPlan?: string) => {
     try {
       // Initialize activity tracking (handles daily login)
-      await initializeActivityTracking()
+      await initializeActivityTracking(userId)
 
       // Initialize achievements
       const achievementsStore = useAchievementsStore.getState()
@@ -108,7 +108,7 @@ export const SupabaseAuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       // Initialize sync system
-      await initializeSyncSystem()
+      await initializeSyncSystem(userId)
 
     } catch (error) {
       console.error('Erro ao inicializar sistemas de gamificação:', error)
@@ -129,7 +129,7 @@ export const SupabaseAuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     // Initialize gamification systems for authenticated user
     try {
-      await initializeGamificationSystems(plan)
+      await initializeGamificationSystems(supabaseUser.id, plan)
     } catch (error) {
       console.error('Erro ao inicializar sistemas de gamificação:', error)
     }

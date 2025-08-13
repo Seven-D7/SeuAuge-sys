@@ -1,5 +1,5 @@
 import { doc, setDoc, getDoc, onSnapshot, serverTimestamp } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import { db } from "../firebase";
 import { useAchievementsStore } from "../stores/achievementsStore";
 import { useLevelStore } from "../stores/levelStore";
 import { useGoalsStore } from "../stores/goalsStore";
@@ -21,8 +21,8 @@ let syncInterval: NodeJS.Timeout | null = null;
 let unsubscribeSnapshot: (() => void) | null = null;
 
 // Function to save data to cloud
-export async function saveToCloud(): Promise<void> {
-  if (!auth.currentUser) {
+export async function saveToCloud(userId?: string): Promise<void> {
+  if (!userId) {
     throw new Error("Usuário não autenticado");
   }
 
@@ -52,7 +52,7 @@ export async function saveToCloud(): Promise<void> {
 
     // Save to Firestore
     await setDoc(
-      doc(db, "users", auth.currentUser.uid, "gamification", "current"),
+      doc(db, "users", userId, "gamification", "current"),
       {
         ...syncData,
         lastSyncAt: serverTimestamp(),
@@ -69,10 +69,9 @@ export async function saveToCloud(): Promise<void> {
 }
 
 // Function to load data from cloud
-export async function loadFromCloud(): Promise<boolean> {
-  if (!auth.currentUser) {
-    return false;
-  }
+export async function loadFromCloud(userId?: string): Promise<boolean> {
+  // Temporarily disabled during migration
+  return false;
 
   try {
     // Modo desenvolvimento - carregar do localStorage
@@ -193,10 +192,9 @@ async function loadFromLocalStorage(): Promise<boolean> {
 }
 
 // Function to start real-time sync
-export function startRealtimeSync(): void {
-  if (!auth.currentUser || unsubscribeSnapshot) {
-    return;
-  }
+export function startRealtimeSync(userId?: string): void {
+  // Temporarily disabled during migration
+  return;
 
   // Modo desenvolvimento - usar interval simples
   if (import.meta.env.VITE_DEV_MODE === "true") {
@@ -333,7 +331,11 @@ export async function restoreFromBackup(): Promise<boolean> {
 }
 
 // Function to initialize sync system
-export async function initializeSyncSystem(): Promise<void> {
+export async function initializeSyncSystem(userId?: string): Promise<void> {
+  // Temporarily disabled during migration
+  return;
+
+  // Original function below:
   try {
     // Try to load existing data first
     await loadFromCloud();
