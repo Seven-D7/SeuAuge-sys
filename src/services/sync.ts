@@ -21,8 +21,8 @@ let syncInterval: NodeJS.Timeout | null = null;
 let unsubscribeSnapshot: (() => void) | null = null;
 
 // Function to save data to cloud
-export async function saveToCloud(): Promise<void> {
-  if (!auth.currentUser) {
+export async function saveToCloud(userId?: string): Promise<void> {
+  if (!userId) {
     throw new Error("Usuário não autenticado");
   }
 
