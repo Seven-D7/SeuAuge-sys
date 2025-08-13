@@ -44,7 +44,7 @@ import { db } from "../../firebase";
 import { useProgressStore } from "../../stores/progressStore";
 import { useReportsStore, generateReportSummary } from "../../stores/reportsStore";
 import { getUserMetrics } from "../../services/user";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../contexts/SupabaseAuthContext";
 import type { UserData } from "@/types/fitness";
 import NextStepsSection from "./components/NextStepsSection";
 
@@ -785,7 +785,7 @@ const RecomposicaoCorporal: React.FC = () => {
                 >
                   <option value="">Selecione</option>
                   <option value="perda_gordura">Perda de Gordura (Primeiro)</option>
-                  <option value="ganho_musculo">Ganho de Músculo (Primeiro)</option>
+                  <option value="ganho_musculo">Ganho de M��sculo (Primeiro)</option>
                   <option value="equilibrado">Equilibrado (Simultâneo)</option>
                 </select>
               </div>
