@@ -33,7 +33,7 @@ import {
 } from "../services/googleCloud";
 import { useAuth } from "../contexts/SupabaseAuthContext";
 import { useAchievementsStore } from "../stores/achievementsStore";
-import { isDemoMode } from "../firebase";
+import { isSupabaseDemoMode } from "../lib/supabase";
 
 // Enhanced mock data for demo
 const DEMO_FEATURED_VIDEO = {
