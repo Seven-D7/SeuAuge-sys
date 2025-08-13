@@ -326,7 +326,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
           {/* Quick Stats */}
           <div className="bg-slate-800/50 rounded-lg p-3">
-            <h4 className="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2 uppercase tracking-wide">
+            <h4 className="text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wide">
               {t('sidebar.quick_stats')}
             </h4>
             <div className="grid grid-cols-2 gap-2 text-center">
