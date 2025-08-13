@@ -165,7 +165,7 @@ CREATE POLICY "Admins can manage videos" ON videos
 CREATE POLICY "Users can view own progress" ON user_progress
   FOR SELECT USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can update own progress" ON user_progress
+CREATE POLICY "Users can insert own progress" ON user_progress
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
 CREATE POLICY "Users can update own progress" ON user_progress
