@@ -95,7 +95,7 @@ const Videos: React.FC = () => {
     try {
       setLoading(true);
       
-      if (isDemoMode) {
+      if (isSupabaseDemoMode) {
         // Enhanced demo data
         const demoVideos: VideoMetadata[] = [
           {
@@ -244,7 +244,7 @@ const Videos: React.FC = () => {
       setSearchLoading(true);
       setShowCarousels(false);
       
-      if (isDemoMode) {
+      if (isSupabaseDemoMode) {
         // Demo search
         const filtered = videos.filter(video =>
           video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -269,7 +269,7 @@ const Videos: React.FC = () => {
   const handleVideoSelect = async (videoId: string) => {
     try {
       setPlayerLoading(true);
-      if (isDemoMode) {
+      if (isSupabaseDemoMode) {
         // Demo video player
         const video = videos.find(v => v.id === videoId) || featuredVideo;
 
@@ -355,7 +355,7 @@ const Videos: React.FC = () => {
   };
 
   const hasAccess = (video: any) => {
-    return video.isFree || user?.isPremium || isDemoMode;
+    return video.isFree || user?.isPremium || isSupabaseDemoMode;
   };
 
   const filteredVideos = videos.filter((video) => {
@@ -687,7 +687,7 @@ const Videos: React.FC = () => {
                   Biblioteca de Vídeos
                 </h1>
                 <p className="text-sm md:text-base text-slate-400">
-                  {isDemoMode && (
+                  {isSupabaseDemoMode && (
                     <span className="inline-flex items-center px-2 py-1 bg-blue-900/20 text-blue-300 rounded-full text-xs sm:text-sm mr-3 mb-1 sm:mb-0">
                       📺 Versão Demo
                     </span>
