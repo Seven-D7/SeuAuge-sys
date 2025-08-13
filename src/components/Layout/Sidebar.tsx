@@ -188,24 +188,24 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 <Star className="w-4 h-4 text-white" />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-900 dark:text-white">
+                <p className="text-sm font-bold text-white">
                   {t('sidebar.level')} {levelSystem.currentLevel}
                 </p>
-                <p className="text-xs text-slate-600 dark:text-slate-400">
+                <p className="text-xs text-slate-400">
                   {levelSystem.totalXP} {t('sidebar.xp_total')}
                 </p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-xs text-slate-600 dark:text-slate-400">
+              <p className="text-xs text-slate-400">
                 {levelSystem.xpToNextLevel} XP
               </p>
-              <p className="text-xs text-slate-500 dark:text-slate-500">
+              <p className="text-xs text-slate-500">
                 {t('sidebar.xp_remaining')}
               </p>
             </div>
           </div>
-          <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+          <div className="w-full bg-slate-700 rounded-full h-2">
             <motion.div 
               initial={{ width: 0 }}
               animate={{ 
