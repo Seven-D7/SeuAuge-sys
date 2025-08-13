@@ -205,8 +205,8 @@ export async function getUserActivityStats(userId?: string): Promise<ActivitySta
 }
 
 // Função para obter atividades recentes
-export async function getRecentActivities(limitCount: number = 10): Promise<UserActivity[]> {
-  if (!auth.currentUser) {
+export async function getRecentActivities(userId?: string, limitCount: number = 10): Promise<UserActivity[]> {
+  if (!userId) {
     return [];
   }
 
@@ -220,7 +220,7 @@ export async function getRecentActivities(limitCount: number = 10): Promise<User
       }));
     }
 
-    const activitiesRef = collection(db, "users", auth.currentUser.uid, "activities");
+    const activitiesRef = collection(db, "users", userId, "activities");
     const q = query(activitiesRef, orderBy("timestamp", "desc"), limit(limitCount));
     const snapshot = await getDocs(q);
 
