@@ -235,7 +235,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: (sectionIndex * 0.1) + (itemIndex * 0.05) }}
-                        className="flex items-center px-3 py-2.5 rounded-lg text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-50"
+                        className="flex items-center px-3 py-2.5 rounded-lg text-slate-500 cursor-not-allowed opacity-50"
                       >
                         <Icon className="w-5 h-5 mr-3" />
                         <span className="font-medium">{item.label}</span>
