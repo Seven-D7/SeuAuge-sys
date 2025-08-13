@@ -75,13 +75,14 @@ export async function logUserActivity(
 
 // Função para atualizar estatísticas do usuário
 async function updateUserStats(
-  type: UserActivity['type'], 
+  userId: string,
+  type: UserActivity['type'],
   metadata?: UserActivity['metadata']
 ): Promise<void> {
-  if (!auth.currentUser) return;
+  if (!userId) return;
 
   try {
-    const statsDoc = await getDoc(doc(db, "users", auth.currentUser.uid, "stats", "current"));
+    const statsDoc = await getDoc(doc(db, "users", userId, "stats", "current"));
     const currentStats: Partial<ActivityStats> = statsDoc.exists() ? statsDoc.data() : {};
 
     const today = new Date();
