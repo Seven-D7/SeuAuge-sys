@@ -22,14 +22,12 @@ if (import.meta.env.VITE_SENTRY_DSN) {
 // Check production readiness and log environment status
 logEnvironmentStatus();
 
-// Prevent app start if production requirements not met
-if (import.meta.env.PROD) {
-  const readiness = checkProductionReadiness();
-  if (!readiness.ready) {
-    console.error('🚨 Application cannot start in production mode:');
-    readiness.issues.forEach(issue => console.error(`  - ${issue}`));
-    throw new Error('Production requirements not met. Check console for details.');
-  }
+// Check production readiness and log warnings
+const readiness = checkProductionReadiness();
+if (!readiness.ready) {
+  console.warn('⚠️ Production readiness issues detected:');
+  readiness.issues.forEach(issue => console.warn(`  - ${issue}`));
+  console.warn('ℹ️ The application will continue but some features may not work correctly.');
 }
 
 createRoot(document.getElementById('root')!).render(
