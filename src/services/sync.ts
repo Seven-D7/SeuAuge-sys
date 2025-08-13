@@ -1,5 +1,5 @@
 import { doc, setDoc, getDoc, onSnapshot, serverTimestamp } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import { db } from "../firebase";
 import { useAchievementsStore } from "../stores/achievementsStore";
 import { useLevelStore } from "../stores/levelStore";
 import { useGoalsStore } from "../stores/goalsStore";
