@@ -266,7 +266,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                           className={`w-5 h-5 mr-3 ${
                             isActive(item.path) 
                               ? "text-white" 
-                              : "text-slate-500 dark:text-slate-400 group-hover:text-primary"
+                              : "text-slate-400 group-hover:text-primary"
                           }`}
                         />
                         <span className="font-medium flex-1">{item.label}</span>
