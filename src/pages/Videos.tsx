@@ -31,7 +31,7 @@ import {
   VideoMetadata,
   VideoStreamData,
 } from "../services/googleCloud";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/SupabaseAuthContext";
 import { useAchievementsStore } from "../stores/achievementsStore";
 import { isDemoMode } from "../firebase";
 

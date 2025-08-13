@@ -37,7 +37,7 @@ import {
   Lock,
   Badge
 } from "lucide-react";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/SupabaseAuthContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { useAchievementsStore } from "../stores/achievementsStore";
 import { PLANS } from "../data/plans";
