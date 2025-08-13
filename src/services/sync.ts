@@ -52,7 +52,7 @@ export async function saveToCloud(userId?: string): Promise<void> {
 
     // Save to Firestore
     await setDoc(
-      doc(db, "users", auth.currentUser.uid, "gamification", "current"),
+      doc(db, "users", userId, "gamification", "current"),
       {
         ...syncData,
         lastSyncAt: serverTimestamp(),
