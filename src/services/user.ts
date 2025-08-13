@@ -284,50 +284,9 @@ export async function updateUserRole(targetUid: string, newRole: 'user' | 'admin
 }
 
 export async function saveUserMetrics(metrics: Partial<BodyMetrics>) {
-  try {
-    if (!auth.currentUser) {
-      throw new Error("Usuário não autenticado");
-    }
-
-    // Validate metrics data
-    if (metrics.weight && (metrics.weight < 20 || metrics.weight > 500)) {
-      throw new Error("Peso deve estar entre 20kg e 500kg");
-    }
-    
-    if (metrics.height && (metrics.height < 50 || metrics.height > 250)) {
-      throw new Error("Altura deve estar entre 50cm e 250cm");
-    }
-
-    // Modo desenvolvimento - apenas salvar localmente
-    if (import.meta.env.VITE_DEV_MODE === "true") {
-      const sanitizedMetrics = JSON.stringify(metrics);
-      localStorage.setItem("userMetrics", sanitizedMetrics);
-      console.log("Modo desenvolvimento: métricas salvas localmente");
-      return;
-    }
-
-    const metricsData = {
-      ...metrics,
-      updatedAt: new Date(),
-      userId: auth.currentUser.uid,
-    };
-
-    await setDoc(
-      doc(db, "users", auth.currentUser.uid, "metrics", "current"),
-      metricsData,
-      { merge: true },
-    );
-    
-    // Also save historical data
-    await setDoc(
-      doc(db, "users", auth.currentUser.uid, "metrics", `history_${Date.now()}`),
-      metricsData,
-    );
-    
-  } catch (error) {
-    console.error("Erro ao salvar métricas:", error);
-    throw error;
-  }
+  // Temporarily disabled during migration to Supabase
+  console.log('saveUserMetrics disabled during migration');
+  return;
 }
 
 export async function getUserMetrics(): Promise<Partial<BodyMetrics> | null> {
