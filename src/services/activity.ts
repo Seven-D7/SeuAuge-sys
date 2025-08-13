@@ -153,7 +153,7 @@ async function updateUserStats(
 }
 
 // Função para obter estatísticas do usuário
-export async function getUserActivityStats(): Promise<ActivityStats> {
+export async function getUserActivityStats(userId?: string): Promise<ActivityStats> {
   const defaultStats: ActivityStats = {
     totalActiveDays: 0,
     currentStreak: 0,
@@ -166,7 +166,7 @@ export async function getUserActivityStats(): Promise<ActivityStats> {
     monthlyActivity: new Array(30).fill(0)
   };
 
-  if (!auth.currentUser) {
+  if (!userId) {
     return defaultStats;
   }
 
@@ -185,7 +185,7 @@ export async function getUserActivityStats(): Promise<ActivityStats> {
       return defaultStats;
     }
 
-    const statsDoc = await getDoc(doc(db, "users", auth.currentUser.uid, "stats", "current"));
+    const statsDoc = await getDoc(doc(db, "users", userId, "stats", "current"));
     
     if (statsDoc.exists()) {
       const data = statsDoc.data();
