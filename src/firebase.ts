@@ -1,4 +1,5 @@
 import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 // Validate required environment variables for production
@@ -54,8 +55,9 @@ if (isDemoMode) {
 }
 
 const app = initializeApp(finalConfig);
+const db = getFirestore(app);
 const storage = getStorage(app);
 
-export { storage, isDemoMode };
+export { db, storage, isDemoMode };
 
 export default app;
