@@ -5,7 +5,7 @@ import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react'
 import { useAuth } from '../../contexts/SupabaseAuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { supabase } from '../../lib/supabase';
-import { isDemoMode } from '../../firebase';
+import { isSupabaseDemoMode } from '../../lib/supabase';
 import LanguageSelector from '../LanguageSelector';
 
 interface LoginFormProps {
@@ -85,7 +85,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     setError(null);
 
     try {
-      if (isDemoMode) {
+      if (isSupabaseDemoMode) {
         // Simulate password reset email in demo mode
         await new Promise(resolve => setTimeout(resolve, 1500));
         setResetEmailSent(true);
