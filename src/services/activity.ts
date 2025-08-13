@@ -295,16 +295,16 @@ export async function logWorkoutCompleted(workoutId: string, duration?: number):
 }
 
 // Função para registrar vídeo assistido
-export async function logVideoWatched(videoId: string, duration?: number): Promise<void> {
-  await logUserActivity('video_watched', {
+export async function logVideoWatched(userId: string, videoId: string, duration?: number): Promise<void> {
+  await logUserActivity(userId, 'video_watched', {
     videoId,
     duration
   });
 }
 
 // Função para registrar meta concluída
-export async function logGoalCompleted(goalId: string): Promise<void> {
-  await logUserActivity('goal_completed', {
+export async function logGoalCompleted(userId: string, goalId: string): Promise<void> {
+  await logUserActivity(userId, 'goal_completed', {
     goalId
   });
 }
