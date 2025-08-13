@@ -103,16 +103,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
         setResetEmailSent(true);
         console.log('🔧 Demo: Password reset email simulated for', trimmedEmail);
       } else {
-        await sendPasswordResetEmail(auth, trimmedEmail);
+        const { error } = await supabase.auth.resetPasswordForEmail(trimmedEmail);
+        if (error) throw error;
         setResetEmailSent(true);
       }
     } catch (error: any) {
       console.error('Password reset error:', error);
-      if (error.code === 'auth/user-not-found') {
+      if (error.message?.includes('User not found')) {
         setError(t('auth.email_not_found'));
-      } else if (error.code === 'auth/invalid-email') {
+      } else if (error.message?.includes('Invalid email')) {
         setError(t('auth.invalid_email'));
-      } else if (error.code === 'auth/too-many-requests') {
+      } else if (error.message?.includes('too many requests')) {
         setError(t('auth.too_many_requests'));
       } else {
         setError(t('auth.recovery_error'));
