@@ -221,7 +221,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         <nav className="flex-1 p-4 space-y-6">
           {menuSections.map((section, sectionIndex) => (
             <div key={section.title}>
-              <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 px-2">
+              <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-2">
                 {section.title}
               </h3>
               <div className="space-y-1">
