@@ -51,11 +51,6 @@ export async function updateUserPlan(plan: string): Promise<void> {
     method: "POST",
     body: JSON.stringify({ plan }),
   });
-  if (auth.currentUser) {
-    await setDoc(
-      doc(db, "users", auth.currentUser.uid),
-      { plan },
-      { merge: true },
-    );
-  }
+  // Plan updates are now handled through Supabase
+  console.log("Plan update delegated to Supabase:", plan);
 }
