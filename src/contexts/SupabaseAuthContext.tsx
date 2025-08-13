@@ -129,7 +129,7 @@ export const SupabaseAuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     // Initialize gamification systems for authenticated user
     try {
-      await initializeGamificationSystems(plan)
+      await initializeGamificationSystems(supabaseUser.id, plan)
     } catch (error) {
       console.error('Erro ao inicializar sistemas de gamificação:', error)
     }
