@@ -21,6 +21,8 @@ import { useAchievementsStore } from "../stores/achievementsStore";
 import { useLevelStore } from "../stores/levelStore";
 import { useGoalsStore } from "../stores/goalsStore";
 import { initializeSyncSystem, stopRealtimeSync } from "../services/sync";
+import { dataSyncService } from "../services/dataSync";
+import { useUserProfileStore } from "../stores/userProfileStore";
 
 // Production admin check using Firebase custom claims
 // Admin emails should NEVER be hardcoded in frontend for production
@@ -105,9 +107,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Function to initialize all gamification systems
-  const initializeGamificationSystems = async (userPlan?: string) => {
+  // Function to initialize all user systems
+  const initializeUserSystems = async (firebaseUser: FirebaseUser, userPlan?: string) => {
     try {
+      // Initialize user profile
+      const profileStore = useUserProfileStore.getState();
+      await profileStore.loadProfile(firebaseUser.uid);
+
       // Initialize activity tracking (handles daily login)
       await initializeActivityTracking();
 
@@ -136,8 +142,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       // Initialize sync system
       await initializeSyncSystem();
 
+      // Start auto sync for user data
+      dataSyncService.startAutoSync(15); // Sync every 15 minutes
+
     } catch (error) {
-      console.error('Erro ao inicializar sistemas de gamificação:', error);
+      console.error('Erro ao inicializar sistemas do usuário:', error);
     }
   };
 
@@ -170,11 +179,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     }
 
-    // Initialize gamification systems for authenticated user
+    // Initialize user systems for authenticated user
     try {
-      await initializeGamificationSystems(plan);
+      await initializeUserSystems(firebaseUser, plan);
     } catch (error) {
-      console.error('Erro ao inicializar sistemas de gamificação:', error);
+      console.error('Erro ao inicializar sistemas do usuário:', error);
     }
 
     return {
@@ -353,12 +362,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const mapped = await mapFirebaseUser(cred.user);
       setUser(mapped);
 
-      // Initialize gamification for new user with welcome bonus
+      // Initialize systems for new user with welcome bonus
       try {
+        await initializeUserSystems(cred.user, null);
+
         const levelStore = useLevelStore.getState();
         levelStore.addXP(50, '🎉 Bem-vindo ao Meu Auge!', 'bonus');
       } catch (error) {
-        console.error('Erro ao dar bônus de boas-vindas:', error);
+        console.error('Erro ao inicializar sistemas para novo usuário:', error);
       }
 
       // Audit log
@@ -395,6 +406,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       // Stop real-time sync
       stopRealtimeSync();
 
+      // Stop auto sync
+      dataSyncService.stopAutoSync();
+
+      // Clear user profile
+      const profileStore = useUserProfileStore.getState();
+      profileStore.clearProfile();
+
       if (import.meta.env.DEV) {
         console.log("Usuario desconectado");
       }
@@ -403,13 +421,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       // Force logout even if signOut fails
       setUser(null);
       stopRealtimeSync();
+      dataSyncService.stopAutoSync();
+
+      const profileStore = useUserProfileStore.getState();
+      profileStore.clearProfile();
     }
   };
 
   const updateUser = async (data: UpdateUserInput) => {
     if (isDemoMode) {
-      setUser((prev) => (prev ? { 
-        ...prev, 
+      setUser((prev) => (prev ? {
+        ...prev,
         name: sanitizeInput(data.name || prev.name)
       } : prev));
       console.log("🔧 Update user demo realizado");
@@ -422,8 +444,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         ...data,
         name: data.name ? sanitizeInput(data.name) : undefined,
       };
-      
+
       await updateUserProfile(sanitizedData);
+
+      // Update user profile store
+      const profileStore = useUserProfileStore.getState();
+      await profileStore.updateProfile(sanitizedData);
+
       if (auth.currentUser) {
         const mapped = await mapFirebaseUser(auth.currentUser);
         setUser(mapped);

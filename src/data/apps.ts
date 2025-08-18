@@ -1,3 +1,5 @@
+import { PlanTier } from '../types/content';
+
 export interface AppInfo {
   id: string;
   name: string;
@@ -8,6 +10,10 @@ export interface AppInfo {
   difficulty: 'Iniciante' | 'Intermediário' | 'Avançado';
   duration: string;
   features: string[];
+  planTier: PlanTier;
+  isPremium: boolean;
+  planTags: string[];
+  previewFeatures?: string[]; // Features disponíveis no preview para usuários sem acesso
 }
 
 export const apps: AppInfo[] = [
@@ -20,6 +26,10 @@ export const apps: AppInfo[] = [
     category: 'Perda de Peso',
     difficulty: 'Iniciante',
     duration: '30-45 min',
+    planTier: 'B',
+    isPremium: true,
+    planTags: ['Plano Base ou superior', 'IA avançada'],
+    previewFeatures: ['Calculadora básica de calorias', 'Dicas gerais de emagrecimento'],
     features: [
       'Análise genética simulada',
       'Algoritmos de predição de sucesso',
@@ -37,6 +47,10 @@ export const apps: AppInfo[] = [
     category: 'Hipertrofia',
     difficulty: 'Intermediário',
     duration: '60-75 min',
+    planTier: 'B',
+    isPremium: true,
+    planTags: ['Plano Base ou superior'],
+    previewFeatures: ['Calculadora básica de TMB', 'Lista de exercícios básicos'],
     features: [
       'Análise de tipo físico (ectomorfo/mesomorfo/endomorfo)',
       'Cálculo preciso de superávit calórico',
@@ -54,6 +68,10 @@ export const apps: AppInfo[] = [
     category: 'Transformação',
     difficulty: 'Avançado',
     duration: '45-60 min',
+    planTier: 'C',
+    isPremium: true,
+    planTags: ['Plano Escalada ou superior', 'Estratégia avançada'],
+    previewFeatures: ['Conceitos básicos de recomposição', 'Exemplo de treino híbrido'],
     features: [
       'Análise de composição corporal detalhada',
       'Ciclagem calórica automatizada (alto/baixo/moderado)',
@@ -71,6 +89,10 @@ export const apps: AppInfo[] = [
     category: 'Esporte',
     difficulty: 'Avançado',
     duration: '60-90 min',
+    planTier: 'D',
+    isPremium: true,
+    planTags: ['Plano Auge exclusivo', 'Performance científica'],
+    previewFeatures: ['Teste básico de aptidão', 'Dicas gerais de performance'],
     features: [
       'Periodização esporte-específica em 3 fases',
       'Análise de perfil atlético personalizado',
@@ -88,6 +110,9 @@ export const apps: AppInfo[] = [
     category: 'Mobilidade',
     difficulty: 'Iniciante',
     duration: '20-30 min',
+    planTier: 'FREE',
+    isPremium: false,
+    planTags: ['Conteúdo gratuito'],
     features: [
       'Análise postural digital',
       'Rotinas matinais e noturnas',
@@ -105,6 +130,10 @@ export const apps: AppInfo[] = [
     category: 'Longevidade',
     difficulty: 'Iniciante',
     duration: '30-40 min',
+    planTier: 'B',
+    isPremium: true,
+    planTags: ['Plano Base ou superior', 'Especializado 60+'],
+    previewFeatures: ['Exercícios básicos de equilíbrio', 'Dicas de saúde pós-60'],
     features: [
       'Avaliação de capacidade funcional',
       'Exercícios de prevenção de quedas',
@@ -122,6 +151,10 @@ export const apps: AppInfo[] = [
     category: 'Saúde',
     difficulty: 'Iniciante',
     duration: '25-35 min',
+    planTier: 'C',
+    isPremium: true,
+    planTags: ['Plano Escalada ou superior', 'Protocolo médico'],
+    previewFeatures: ['Exercícios básicos de reabilitação', 'Dicas pós-lesão'],
     features: [
       'Protocolos de retorno pós-lesão',
       'Monitoramento de dor e inflamação',
@@ -139,6 +172,9 @@ export const apps: AppInfo[] = [
     category: 'Funcional',
     difficulty: 'Intermediário',
     duration: '40-50 min',
+    planTier: 'FREE',
+    isPremium: false,
+    planTags: ['Conteúdo gratuito'],
     features: [
       'Padrões fundamentais de movimento',
       'Exercícios multiarticulares',
@@ -156,6 +192,10 @@ export const apps: AppInfo[] = [
     category: 'Corrida',
     difficulty: 'Intermediário',
     duration: '45-90 min',
+    planTier: 'C',
+    isPremium: true,
+    planTags: ['Plano Escalada ou superior', 'Programa avançado'],
+    previewFeatures: ['Calculadora de pace', 'Dicas básicas de corrida'],
     features: [
       'Análise de VO2 máx e performance',
       'Planos de treino periodizados',
@@ -187,49 +227,100 @@ export const appsByDifficulty = {
   'Avançado': apps.filter(app => app.difficulty === 'Avançado'),
 };
 
-// Apps recomendados baseados em perfil
+// Funções para filtrar apps por plano
+export const getAppsByPlan = (userPlan: PlanTier | null) => {
+  if (!userPlan) {
+    return apps.filter(app => app.planTier === 'FREE');
+  }
+
+  const planHierarchy: Record<PlanTier, number> = {
+    'FREE': 0,
+    'B': 1,
+    'C': 2,
+    'D': 3
+  };
+
+  return apps.filter(app => {
+    return planHierarchy[userPlan] >= planHierarchy[app.planTier];
+  });
+};
+
+export const getBlockedApps = (userPlan: PlanTier | null) => {
+  if (!userPlan) {
+    return apps.filter(app => app.planTier !== 'FREE');
+  }
+
+  const planHierarchy: Record<PlanTier, number> = {
+    'FREE': 0,
+    'B': 1,
+    'C': 2,
+    'D': 3
+  };
+
+  return apps.filter(app => {
+    return planHierarchy[userPlan] < planHierarchy[app.planTier];
+  });
+};
+
+export const getFreeApps = () => {
+  return apps.filter(app => app.planTier === 'FREE');
+};
+
+export const getPremiumApps = () => {
+  return apps.filter(app => app.planTier !== 'FREE');
+};
+
+// Apps recomendados baseados em perfil e plano
 export const getRecommendedApps = (userProfile: {
   goal?: string;
   experience?: string;
   age?: number;
   hasInjuries?: boolean;
+  userPlan?: PlanTier | null;
 }) => {
-  let recommended = [...apps];
+  // Primeiro filtrar por plano de acesso
+  let availableApps = getAppsByPlan(userProfile.userPlan || null);
+  let recommended = [...availableApps];
 
   // Filtrar por objetivo
   if (userProfile.goal === 'perda_peso') {
-    recommended = recommended.filter(app => 
+    recommended = recommended.filter(app =>
       ['Perda de Peso', 'Transformação', 'Funcional'].includes(app.category)
     );
   } else if (userProfile.goal === 'ganho_massa') {
-    recommended = recommended.filter(app => 
+    recommended = recommended.filter(app =>
       ['Hipertrofia', 'Transformação', 'Esporte'].includes(app.category)
     );
   } else if (userProfile.goal === 'performance') {
-    recommended = recommended.filter(app => 
+    recommended = recommended.filter(app =>
       ['Esporte', 'Funcional', 'Transformação'].includes(app.category)
     );
   }
 
   // Filtrar por experiência
   if (userProfile.experience === 'iniciante') {
-    recommended = recommended.filter(app => 
+    recommended = recommended.filter(app =>
       ['Iniciante', 'Intermediário'].includes(app.difficulty)
     );
   }
 
   // Filtrar por idade
   if (userProfile.age && userProfile.age >= 60) {
-    recommended = recommended.filter(app => 
+    recommended = recommended.filter(app =>
       ['Longevidade', 'Mobilidade', 'Saúde'].includes(app.category)
     );
   }
 
   // Filtrar por lesões
   if (userProfile.hasInjuries) {
-    recommended = recommended.filter(app => 
+    recommended = recommended.filter(app =>
       ['Saúde', 'Mobilidade', 'Longevidade'].includes(app.category)
     );
+  }
+
+  // Se não encontrou apps disponíveis, mostrar alguns gratuitos
+  if (recommended.length === 0) {
+    recommended = getFreeApps().slice(0, 2);
   }
 
   return recommended.slice(0, 4); // Retornar top 4 recomendações
