@@ -1,4 +1,4 @@
-import { supabase, isSupabaseDemoMode } from "../lib/supabase";
+import { supabase } from "../lib/supabase";
 
 export interface UserActivity {
   id: string;
@@ -46,17 +46,6 @@ export async function logUserActivity(
       metadata: metadata || {}
     };
 
-    // Demo mode - only log
-    if (isSupabaseDemoMode) {
-      console.log("🏃‍♂️ Atividade registrada (demo):", activity);
-      
-      // Save locally for development
-      const localActivities = JSON.parse(localStorage.getItem("userActivities") || "[]");
-      localActivities.unshift(activity);
-      localStorage.setItem("userActivities", JSON.stringify(localActivities.slice(0, 100)));
-      return;
-    }
-
     // Save activity to Supabase
     const { error } = await supabase
       .from('user_activities')
@@ -76,16 +65,7 @@ export async function logUserActivity(
 
   } catch (error) {
     console.error("Erro ao registrar atividade:", error);
-    // Em caso de erro, pelo menos salvar localmente
-    const localActivities = JSON.parse(localStorage.getItem("userActivities") || "[]");
-    localActivities.unshift({
-      id: `local_${Date.now()}`,
-      userId,
-      type,
-      timestamp: new Date(),
-      metadata: metadata || {}
-    });
-    localStorage.setItem("userActivities", JSON.stringify(localActivities.slice(0, 100)));
+    throw error;
   }
 }
 
@@ -96,21 +76,6 @@ export async function getUserActivityStats(userId: string): Promise<ActivityStat
   }
 
   try {
-    // Demo mode - return mock stats
-    if (isSupabaseDemoMode) {
-      const localActivities = JSON.parse(localStorage.getItem("userActivities") || "[]");
-      return {
-        totalActiveDays: Math.min(localActivities.length, 30),
-        longestStreak: 7,
-        lastActiveDate: localActivities.length > 0 ? new Date(localActivities[0].timestamp) : null,
-        totalWorkouts: localActivities.filter((a: any) => a.type === 'workout_completed').length,
-        totalVideosWatched: localActivities.filter((a: any) => a.type === 'video_watched').length,
-        totalTimeSpent: localActivities.reduce((sum: number, a: any) => sum + (a.metadata?.duration || 0), 0),
-        weeklyActivity: [3, 5, 2, 4, 6, 1, 3],
-        monthlyActivity: Array.from({ length: 30 }, (_, i) => Math.floor(Math.random() * 5))
-      };
-    }
-
     // Get activities from last 90 days
     const ninetyDaysAgo = new Date();
     ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
@@ -130,17 +95,16 @@ export async function getUserActivityStats(userId: string): Promise<ActivityStat
 
   } catch (error) {
     console.error("Erro ao obter estatísticas de atividade:", error);
-    // Fallback to local storage
-    const localActivities = JSON.parse(localStorage.getItem("userActivities") || "[]");
+    // Return empty stats on error
     return {
-      totalActiveDays: Math.min(localActivities.length, 30),
-      longestStreak: 3,
-      lastActiveDate: localActivities.length > 0 ? new Date(localActivities[0].timestamp) : null,
-      totalWorkouts: localActivities.filter((a: any) => a.type === 'workout_completed').length,
-      totalVideosWatched: localActivities.filter((a: any) => a.type === 'video_watched').length,
-      totalTimeSpent: localActivities.reduce((sum: number, a: any) => sum + (a.metadata?.duration || 0), 0),
-      weeklyActivity: [1, 2, 1, 3, 2, 1, 2],
-      monthlyActivity: Array.from({ length: 30 }, () => Math.floor(Math.random() * 3))
+      totalActiveDays: 0,
+      longestStreak: 0,
+      lastActiveDate: null,
+      totalWorkouts: 0,
+      totalVideosWatched: 0,
+      totalTimeSpent: 0,
+      weeklyActivity: [0, 0, 0, 0, 0, 0, 0],
+      monthlyActivity: Array.from({ length: 30 }, () => 0)
     };
   }
 }
@@ -245,11 +209,6 @@ async function updateUserStats(
   metadata?: UserActivity['metadata']
 ): Promise<void> {
   try {
-    if (isSupabaseDemoMode) {
-      console.log("Demo mode: atualizando stats localmente");
-      return;
-    }
-
     // Get current stats
     const { data: currentStats, error: fetchError } = await supabase
       .from('user_stats')
@@ -314,11 +273,6 @@ export async function initializeActivityTracking(): Promise<void> {
 // Função para obter atividades recentes
 export async function getRecentActivities(userId: string, limit: number = 10): Promise<UserActivity[]> {
   try {
-    if (isSupabaseDemoMode) {
-      const localActivities = JSON.parse(localStorage.getItem("userActivities") || "[]");
-      return localActivities.slice(0, limit);
-    }
-
     const { data, error } = await supabase
       .from('user_activities')
       .select('*')

@@ -5,7 +5,6 @@ import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react'
 import { useAuth } from '../../contexts/SupabaseAuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { supabase } from '../../lib/supabase';
-import { isSupabaseDemoMode } from '../../lib/supabase';
 import LanguageSelector from '../LanguageSelector';
 
 interface LoginFormProps {
@@ -86,16 +85,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     setError(null);
 
     try {
-      if (isSupabaseDemoMode) {
-        // Simulate password reset email in demo mode
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setResetEmailSent(true);
-        console.log('🔧 Demo: Password reset email simulated for', trimmedEmail);
-      } else {
-        const { error } = await supabase.auth.resetPasswordForEmail(trimmedEmail);
-        if (error) throw error;
-        setResetEmailSent(true);
-      }
+      const { error } = await supabase.auth.resetPasswordForEmail(trimmedEmail);
+      if (error) throw error;
+      setResetEmailSent(true);
     } catch (error: unknown) {
       console.error('Password reset error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';

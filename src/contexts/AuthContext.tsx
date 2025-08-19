@@ -1,7 +1,7 @@
 // Contexto responsável por gerenciar a autenticação com o Supabase
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { User as SupabaseUser, AuthError } from "@supabase/supabase-js";
-import { supabase, isSupabaseDemoMode, UserProfile } from "../lib/supabase";
+import { supabase, UserProfile } from "../lib/supabase";
 import {
   updateUserProfile,
   UpdateUserInput,
@@ -162,23 +162,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     let isAdmin = false;
     let role: 'user' | 'admin' | 'moderator' = 'user';
 
-    if (!isSupabaseDemoMode) {
-      // Check user metadata for admin role
-      if (supabaseUser.user_metadata?.role === 'admin') {
-        isAdmin = true;
-        role = 'admin';
-      } else if (supabaseUser.user_metadata?.role === 'moderator') {
-        role = 'moderator';
-      } else if (profile?.role) {
-        // Fallback to profile role
-        role = profile.role;
-        isAdmin = role === 'admin';
-      } else {
-        // Development fallback only
-        if (isDevelopment && !isAdmin) {
-          isAdmin = FALLBACK_ADMIN_EMAILS.includes(supabaseUser.email || '');
-          if (isAdmin) role = 'admin';
-        }
+    // Check user metadata for admin role
+    if (supabaseUser.user_metadata?.role === 'admin') {
+      isAdmin = true;
+      role = 'admin';
+    } else if (supabaseUser.user_metadata?.role === 'moderator') {
+      role = 'moderator';
+    } else if (profile?.role) {
+      // Fallback to profile role
+      role = profile.role;
+      isAdmin = role === 'admin';
+    } else {
+      // Development fallback only
+      if (isDevelopment && !isAdmin) {
+        isAdmin = FALLBACK_ADMIN_EMAILS.includes(supabaseUser.email || '');
+        if (isAdmin) role = 'admin';
       }
     }
 
@@ -205,13 +203,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     // Get initial session
     const getInitialSession = async () => {
       try {
-        // Demo mode only in development
-        if (isSupabaseDemoMode && isDevelopment) {
-          console.log("🔧 Modo demo ativo - autenticação simulada");
-          setLoading(false);
-          return;
-        }
-
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user) {
@@ -259,22 +250,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(sanitizedEmail)) {
       throw new Error('Formato de email inválido');
-    }
-
-    // Demo mode only in development
-    if (isSupabaseDemoMode && isDevelopment) {
-      const mockUser: User = {
-        id: "demo-user-123",
-        email: sanitizedEmail,
-        name: "Usuário Demo",
-        plan: "B",
-        isPremium: true,
-        isAdmin: FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail),
-        role: FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail) ? 'admin' : 'user',
-      };
-      setUser(mockUser);
-      console.log("🔧 Login demo realizado:", sanitizedEmail);
-      return;
     }
 
     try {
@@ -349,22 +324,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       throw new Error('Data de nascimento inválida');
     }
 
-    // Demo mode only in development
-    if (isSupabaseDemoMode && isDevelopment) {
-      const mockUser: User = {
-        id: `demo-user-${Date.now()}`,
-        email: sanitizedEmail,
-        name: sanitizedName,
-        plan: null,
-        isPremium: false,
-        isAdmin: FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail),
-        role: FALLBACK_ADMIN_EMAILS.includes(sanitizedEmail) ? 'admin' : 'user',
-      };
-      setUser(mockUser);
-      console.log("🔧 Registro demo realizado:", sanitizedEmail);
-      return;
-    }
-
     try {
       const { data, error } = await supabase.auth.signUp({
         email: sanitizedEmail,
@@ -430,13 +389,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const logout = async () => {
-    // Demo mode only in development
-    if (isSupabaseDemoMode && isDevelopment) {
-      setUser(null);
-      console.log("🔧 Logout demo realizado");
-      return;
-    }
-
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
@@ -469,15 +421,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const updateUser = async (data: UpdateUserInput) => {
-    if (isSupabaseDemoMode) {
-      setUser((prev) => (prev ? { 
-        ...prev, 
-        name: sanitizeInput(data.name || prev.name)
-      } : prev));
-      console.log("🔧 Update user demo realizado");
-      return;
-    }
-
     try {
       // Sanitize input data
       const sanitizedData = {
@@ -516,11 +459,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const refreshPlan = async () => {
-    if (isSupabaseDemoMode) {
-      console.log("🔧 Refresh plan demo - mantendo plano atual");
-      return;
-    }
-
     const { data: { user: currentUser } } = await supabase.auth.getUser();
     if (!currentUser) return;
     

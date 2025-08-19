@@ -1,4 +1,4 @@
-import { supabase, isSupabaseDemoMode } from "../lib/supabase";
+import { supabase } from "../lib/supabase";
 import api from "./api";
 
 export interface PlanData {
@@ -9,20 +9,6 @@ export interface PlanData {
 }
 
 export async function getPlans(): Promise<PlanData[]> {
-  if (isSupabaseDemoMode) {
-    // Return mock plans in demo mode
-    return [
-      { id: "B", name: "Base", price: "R$ 97", features: ["Acesso completo"] },
-      {
-        id: "C",
-        name: "Escalada",
-        price: "R$ 249",
-        features: ["Acesso premium"],
-      },
-      { id: "D", name: "Auge", price: "R$ 780", features: ["Acesso total"] },
-    ];
-  }
-
   try {
     const { data, error } = await supabase
       .from('plans')
@@ -39,7 +25,7 @@ export async function getPlans(): Promise<PlanData[]> {
     }));
   } catch (error) {
     console.error("Erro ao buscar planos:", error);
-    // Fallback to demo plans
+    // Fallback to hardcoded plans
     return [
       { id: "B", name: "Base", price: "R$ 97", features: ["Acesso completo"] },
       {
@@ -56,11 +42,6 @@ export async function getPlans(): Promise<PlanData[]> {
 export async function getPlanFromToken(
   forceRefresh = false,
 ): Promise<string | null> {
-  if (isSupabaseDemoMode) {
-    console.log("🔧 Demo mode - retornando plano B");
-    return "B";
-  }
-
   try {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) return null;
@@ -85,11 +66,6 @@ export async function getPlanFromToken(
 }
 
 export async function updateUserPlan(plan: string): Promise<void> {
-  if (isSupabaseDemoMode) {
-    console.log("🔧 Demo mode - simulando update do plano:", plan);
-    return;
-  }
-
   try {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) throw new Error("Usuário não autenticado");
@@ -119,10 +95,6 @@ export async function updateUserPlan(plan: string): Promise<void> {
 }
 
 export async function getUserPlan(userId: string): Promise<string | null> {
-  if (isSupabaseDemoMode) {
-    return "B";
-  }
-
   try {
     const { data, error } = await supabase
       .from('user_profiles')
@@ -166,10 +138,6 @@ export async function validatePlanAccess(userId: string, requiredPlan: string): 
 }
 
 export async function createPlanSubscription(planId: string, userId: string): Promise<{ subscriptionId: string }> {
-  if (isSupabaseDemoMode) {
-    return { subscriptionId: `demo-sub-${Date.now()}` };
-  }
-
   try {
     // Create subscription record
     const { data, error } = await supabase
@@ -197,11 +165,6 @@ export async function createPlanSubscription(planId: string, userId: string): Pr
 }
 
 export async function cancelPlanSubscription(userId: string): Promise<void> {
-  if (isSupabaseDemoMode) {
-    console.log("🔧 Demo mode - simulando cancelamento de assinatura");
-    return;
-  }
-
   try {
     // Update subscription status
     const { error: subscriptionError } = await supabase

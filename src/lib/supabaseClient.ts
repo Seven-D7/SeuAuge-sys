@@ -19,9 +19,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   },
 });
 
-// Demo mode detection
-export const isSupabaseDemoMode = !supabaseUrl || !supabaseAnonKey;
-
 // Database types for better type safety
 export interface UserProfile {
   id: string;

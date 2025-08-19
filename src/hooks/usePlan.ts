@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/SupabaseAuthContext";
 import { getPlanFromToken } from "../services/plan";
-import { isSupabaseDemoMode } from "../lib/supabase";
 
 interface UsePlan {
   plan: string | null;
@@ -31,14 +30,7 @@ export default function usePlan(): UsePlan {
         return;
       }
 
-      // Em modo demo, usar plano padrão
-      if (isSupabaseDemoMode) {
-        setPlan("B"); // Plano premium em modo demo
-        setLoading(false);
-        return;
-      }
-
-      // Tentar obter do token Firebase
+      // Tentar obter do Supabase
       try {
         setLoading(true);
         const currentPlan = await getPlanFromToken();

@@ -1,4 +1,4 @@
-// Serviço de vídeos - migrado para Supabase
+// Serviço de vídeos - usando Supabase
 import { supabase } from "../lib/supabase";
 
 export interface Video {
@@ -18,48 +18,8 @@ export interface Video {
   plan?: string;
 }
 
-// Mock data for development/demo
-const mockVideos: Video[] = [
-  {
-    id: "1",
-    title: "Treino de Força Básico",
-    description: "Introdu��ão aos exercícios de força fundamentais",
-    category: "Força",
-    duration: "30:00",
-    difficulty: "Iniciante",
-    instructor: "João Silva",
-    thumbnailUrl: "/api/placeholder/400/225",
-    tags: ["força", "iniciante", "básico"],
-    isPremium: false,
-    views: 1250,
-    createdAt: new Date(),
-    plan: "B"
-  },
-  {
-    id: "2", 
-    title: "HIIT Avançado",
-    description: "Treino intervalado de alta intensidade",
-    category: "Cardio",
-    duration: "25:00",
-    difficulty: "Avançado",
-    instructor: "Maria Santos",
-    thumbnailUrl: "/api/placeholder/400/225",
-    tags: ["hiit", "cardio", "avançado"],
-    isPremium: true,
-    views: 890,
-    createdAt: new Date(),
-    plan: "C"
-  }
-];
-
 export async function getVideos(): Promise<Video[]> {
   try {
-    // Demo mode - return mock data
-    if (!import.meta.env.VITE_SUPABASE_URL) {
-      console.log("🔧 Demo mode: retornando vídeos mock");
-      return mockVideos;
-    }
-
     const { data, error } = await supabase
       .from('videos')
       .select('*')
@@ -75,18 +35,12 @@ export async function getVideos(): Promise<Video[]> {
 
   } catch (error) {
     console.error("Erro ao buscar vídeos:", error);
-    // Fallback to mock data
-    return mockVideos;
+    return [];
   }
 }
 
 export async function getVideoById(id: string): Promise<Video | null> {
   try {
-    // Demo mode
-    if (!import.meta.env.VITE_SUPABASE_URL) {
-      return mockVideos.find(v => v.id === id) || null;
-    }
-
     const { data, error } = await supabase
       .from('videos')
       .select('*')
@@ -109,11 +63,6 @@ export async function getVideoById(id: string): Promise<Video | null> {
 
 export async function getVideosByCategory(category: string): Promise<Video[]> {
   try {
-    // Demo mode
-    if (!import.meta.env.VITE_SUPABASE_URL) {
-      return mockVideos.filter(v => v.category === category);
-    }
-
     const { data, error } = await supabase
       .from('videos')
       .select('*')
@@ -136,15 +85,6 @@ export async function getVideosByCategory(category: string): Promise<Video[]> {
 
 export async function searchVideos(searchTerm: string): Promise<Video[]> {
   try {
-    // Demo mode
-    if (!import.meta.env.VITE_SUPABASE_URL) {
-      return mockVideos.filter(v => 
-        v.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        v.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        v.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-    }
-
     const { data, error } = await supabase
       .from('videos')
       .select('*')
@@ -167,12 +107,6 @@ export async function searchVideos(searchTerm: string): Promise<Video[]> {
 
 export async function incrementVideoViews(videoId: string): Promise<void> {
   try {
-    // Demo mode - only log
-    if (!import.meta.env.VITE_SUPABASE_URL) {
-      console.log("🔧 Demo mode: incrementando views para", videoId);
-      return;
-    }
-
     const { error } = await supabase
       .rpc('increment_video_views', { video_id: videoId });
 
@@ -185,13 +119,6 @@ export async function incrementVideoViews(videoId: string): Promise<void> {
 
 export async function getPopularVideos(limit: number = 10): Promise<Video[]> {
   try {
-    // Demo mode
-    if (!import.meta.env.VITE_SUPABASE_URL) {
-      return mockVideos
-        .sort((a, b) => b.views - a.views)
-        .slice(0, limit);
-    }
-
     const { data, error } = await supabase
       .from('videos')
       .select('*')

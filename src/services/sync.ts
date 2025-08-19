@@ -26,13 +26,6 @@ export async function saveToCloud(userId?: string): Promise<void> {
   }
 
   try {
-    // Demo mode - only save locally
-    if (import.meta.env.VITE_DEV_MODE === "true") {
-      console.log("🔄 Demo mode: dados salvos localmente");
-      await saveToLocalStorage();
-      return;
-    }
-
     const achievementsStore = useAchievementsStore.getState();
     const levelStore = useLevelStore.getState();
     const goalsStore = useGoalsStore.getState();
@@ -77,11 +70,6 @@ export async function loadFromCloud(userId?: string): Promise<boolean> {
   }
 
   try {
-    // Demo mode - load from localStorage
-    if (import.meta.env.VITE_DEV_MODE === "true") {
-      return await loadFromLocalStorage();
-    }
-
     const { data, error } = await supabase
       .from('user_gamification_data')
       .select('*')
@@ -292,7 +280,7 @@ export async function forceSyncNow(): Promise<void> {
 
     await saveToCloud(user.id);
     await loadFromCloud(user.id);
-
+    
     localStorage.setItem("lastSyncAt", new Date().toISOString());
     console.log("🔄 Sincronização forçada concluída");
 
@@ -310,13 +298,13 @@ export async function restoreFromBackup(): Promise<void> {
 
     // Get the latest backup from cloud
     const loaded = await loadFromCloud(user.id);
-
+    
     if (!loaded) {
       // Fallback to local backup
       const backup = localStorage.getItem("gamificationBackup");
       if (backup) {
         const data = JSON.parse(backup);
-
+        
         // Load into stores
         const achievementsStore = useAchievementsStore.getState();
         const levelStore = useLevelStore.getState();
@@ -325,7 +313,7 @@ export async function restoreFromBackup(): Promise<void> {
         if (data.achievements) achievementsStore.achievements = data.achievements;
         if (data.levelSystem) levelStore.levelSystem = data.levelSystem;
         if (data.goals) goalsStore.goals = data.goals;
-
+        
         console.log("✅ Backup local restaurado");
       } else {
         throw new Error("Nenhum backup encontrado");

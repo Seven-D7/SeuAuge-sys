@@ -1,4 +1,4 @@
-import { supabase, isSupabaseDemoMode } from "../lib/supabase";
+import { supabase } from "../lib/supabase";
 import type { BodyMetrics } from "../stores/progressStore";
 
 // Sanitization helper
@@ -24,11 +24,6 @@ export async function uploadAvatar(file: File, uid: string): Promise<string> {
   try {
     // Validate file
     validateImageFile(file);
-
-    // Demo mode - return temporary URL
-    if (isSupabaseDemoMode) {
-      return URL.createObjectURL(file);
-    }
 
     // Generate secure filename
     const fileExtension = file.name.split('.').pop() || 'jpg';
@@ -84,15 +79,6 @@ export async function updateUserProfile({
   avatar_url,
 }: UpdateUserInput) {
   try {
-    // Demo mode - only log updates
-    if (isSupabaseDemoMode) {
-      if (file) {
-        console.log("Demo mode: simulando upload de avatar");
-      }
-      console.log("Demo mode: perfil atualizado localmente");
-      return;
-    }
-
     // Input validation and sanitization
     if (name !== undefined) {
       const sanitizedName = sanitizeInput(name);
@@ -197,12 +183,6 @@ export async function createUserDocument({
       throw new Error("Email inválido");
     }
 
-    // Demo mode - only log
-    if (isSupabaseDemoMode) {
-      console.log("Demo mode: documento de usuário criado localmente");
-      return;
-    }
-
     const userData = {
       id: uid,
       name: sanitizedName,
@@ -230,17 +210,6 @@ export async function getUserData(uid: string) {
   try {
     if (!uid) {
       throw new Error("UID é obrigatório");
-    }
-
-    // Demo mode - return mock data
-    if (isSupabaseDemoMode) {
-      return {
-        name: "Usuário Desenvolvimento",
-        email: "dev@example.com",
-        birthdate: "1990-01-01",
-        plan: "A",
-        role: "user",
-      };
     }
 
     const { data, error } = await supabase
@@ -318,11 +287,6 @@ export async function updateUserRole(targetUid: string, newRole: 'user' | 'admin
 
 export async function saveUserMetrics(metrics: Partial<BodyMetrics>) {
   try {
-    if (isSupabaseDemoMode) {
-      console.log("Demo mode: métricas salvas localmente");
-      return;
-    }
-
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) throw new Error("Usuário não autenticado");
 
@@ -343,15 +307,6 @@ export async function saveUserMetrics(metrics: Partial<BodyMetrics>) {
 
 export async function getUserMetrics(): Promise<Partial<BodyMetrics> | null> {
   try {
-    if (isSupabaseDemoMode) {
-      return {
-        weight: 70,
-        height: 175,
-        bodyFat: 15,
-        muscleMass: 60,
-      };
-    }
-
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) return null;
 
