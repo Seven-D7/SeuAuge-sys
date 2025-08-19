@@ -3,7 +3,7 @@ import { create } from 'zustand';
 export interface Video {
   id: string;
   title: string;
-  duration: string;
+  duration: string | number;
   category: string;
   isFree: boolean;
   videoUrl: string;

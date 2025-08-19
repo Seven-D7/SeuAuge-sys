@@ -9,7 +9,7 @@ export interface ContentWithPlan {
 }
 
 export interface VideoWithPlan extends ContentWithPlan {
-  duration: string;
+  duration: string | number;
   thumbnail: string;
   category: string;
   instructor: string;

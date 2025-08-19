@@ -20,3 +20,20 @@ export function isValidUrl(url: string): boolean {
     return false;
   }
 }
+
+// Duration formatting utility
+export function formatDuration(duration: string | number, format: 'full' | 'short' = 'full'): string {
+  if (typeof duration === 'string') {
+    return duration;
+  }
+
+  // Convert seconds to mm:ss format
+  const minutes = Math.floor(duration / 60);
+  const seconds = duration % 60;
+
+  if (format === 'short') {
+    return `${minutes}m`;
+  }
+
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+}

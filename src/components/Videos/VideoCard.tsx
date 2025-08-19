@@ -4,6 +4,7 @@ import { Video } from '../../stores/favoritesStore';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { useAuth } from '../../contexts/SupabaseAuthContext';
 import { designUtils, COMMON_CLASSES } from '../../lib/design-system';
+import { formatDuration } from '../../lib/utils';
 import LazyImage from '../ui/LazyImage';
 
 interface VideoCardProps {
@@ -82,8 +83,8 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
             text-white
           `}>
             <Clock className="w-3 h-3" />
-            <span className="hidden sm:inline">{video.duration}</span>
-            <span className="sm:hidden">{video.duration.split(':')[0]}m</span>
+            <span className="hidden sm:inline">{formatDuration(video.duration, 'full')}</span>
+            <span className="sm:hidden">{formatDuration(video.duration, 'short')}</span>
           </div>
         </div>
 

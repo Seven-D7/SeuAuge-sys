@@ -5,6 +5,7 @@ import { usePlanAccess } from '../../hooks/usePlanAccess';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import PlanBadge from '../Common/PlanBadge';
 import ContentAccessIndicator from '../Common/ContentAccessIndicator';
+import { formatDuration } from '../../lib/utils';
 import { Card } from '../ui/card';
 import { Button } from '../ui/button';
 
@@ -98,7 +99,7 @@ const VideoCardWithPlan: React.FC<VideoCardWithPlanProps> = ({
         <div className="absolute bottom-3 right-3">
           <div className="flex items-center gap-1 px-2 py-1 bg-black/70 text-white text-xs rounded-md backdrop-blur-sm">
             <Clock className="w-3 h-3" />
-            {video.duration}
+            {formatDuration(video.duration)}
           </div>
         </div>
 
