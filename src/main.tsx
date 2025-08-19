@@ -9,9 +9,9 @@ import App from './App';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { logEnvironmentStatus, checkProductionReadiness } from './lib/environment';
 
-// Debug das variáveis importantes
-console.log("DEBUG - Supabase URL:", import.meta.env.VITE_SUPABASE_URL || "(não definida)");
-console.log("DEBUG - Supabase Key:", import.meta.env.VITE_SUPABASE_ANON_KEY ? "(definida)" : "(não definida)");
+// Debug das variáveis importantes (Firebase principal)
+console.log("DEBUG - Firebase Project:", import.meta.env.VITE_FIREBASE_PROJECT_ID || "(não definida)");
+console.log("DEBUG - Firebase Auth:", import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ? "(definida)" : "(não definida)");
 
 // Initialize Sentry only if DSN is provided
 if (import.meta.env.VITE_SENTRY_DSN) {

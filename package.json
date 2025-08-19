@@ -32,7 +32,6 @@
     "@radix-ui/react-tooltip": "^1.2.7",
     "@sentry/react": "^7.120.3",
     "@sentry/tracing": "^7.120.3",
-    "@supabase/supabase-js": "^2.55.0",
     "class-variance-authority": "^0.7.1",
     "date-fns": "^4.1.0",
     "firebase": "^11.10.0",

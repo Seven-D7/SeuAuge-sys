@@ -1,38 +1,28 @@
-import { createClient } from '@supabase/supabase-js'
+// Supabase stub - projeto usa Firebase como principal
+// Este arquivo é mantido para compatibilidade com código existente
 
-// Validate required environment variables for production
-const requiredEnvVars = [
-  'VITE_SUPABASE_URL',
-  'VITE_SUPABASE_ANON_KEY'
-];
+console.warn('⚠️ Modo Firebase ativo - Supabase desabilitado temporariamente');
 
-// Check for missing environment variables in production
-if (import.meta.env.PROD) {
-  const missingVars = requiredEnvVars.filter(varName => !import.meta.env[varName]);
-  if (missingVars.length > 0) {
-    throw new Error(`Missing required environment variables for production: ${missingVars.join(', ')}`);
-  }
-}
-
-// Supabase configuration
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your-project-ref.supabase.co'
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key'
-
-// Demo mode detection
-const isDemoMode = !import.meta.env.PROD && supabaseUrl === 'https://your-project-ref.supabase.co'
-
-if (isDemoMode) {
-  console.warn(
-    "🔧 Supabase em modo DEMO - Para produção, configure as variáveis de ambiente reais"
-  );
-}
-
-export const supabase = createClient(supabaseUrl, supabaseKey, {
+// Mock do cliente Supabase para evitar erros
+export const supabase = {
   auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true
-  }
-})
+    getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+    signInWithPassword: () => Promise.resolve({ data: null, error: new Error('Supabase não configurado') }),
+    signUp: () => Promise.resolve({ data: null, error: new Error('Supabase não configurado') }),
+    signOut: () => Promise.resolve({ error: null }),
+    resetPasswordForEmail: () => Promise.resolve({ error: null })
+  },
+  from: () => ({
+    select: () => ({
+      eq: () => ({
+        single: () => Promise.resolve({ data: null, error: null })
+      })
+    }),
+    insert: () => Promise.resolve({ data: null, error: null }),
+    update: () => Promise.resolve({ data: null, error: null })
+  })
+};
 
-export { isDemoMode as isSupabaseDemoMode }
+// Demo mode sempre ativo quando Supabase não está configurado
+export const isSupabaseDemoMode = true;

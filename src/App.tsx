@@ -1,126 +1,133 @@
 import React, { lazy, Suspense, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { SupabaseAuthProvider } from "./contexts/SupabaseAuthContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import ProtectedRoute from "@components/ProtectedRoute";
-import AdminRoute from "@components/AdminRoute";
-import Layout from "@components/Layout/Layout";
-import PlanGuard from "@components/PlanGuard";
-import ErrorBoundary from "@components/ErrorBoundary";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
+import Layout from "./components/Layout/Layout";
+import PlanGuard from "./components/PlanGuard";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { Toaster } from "react-hot-toast";
 
 import { performanceMonitor, registerServiceWorker, addResourceHint } from "./lib/performance";
 
 // Lazy load components with better chunking
-const Auth = lazy(() => 
-  import("@pages/Auth").then(module => {
+const Auth = lazy(() =>
+  import("./pages/Auth").then(module => {
     performanceMonitor.mark('auth-loaded');
     return module;
   })
 );
 
-const Home = lazy(() => 
-  import("@pages/Home").then(module => {
+const Home = lazy(() =>
+  import("./pages/Home").then(module => {
     performanceMonitor.mark('home-loaded');
     return module;
   })
 );
 
-const Dashboard = lazy(() => 
-  import("@pages/Dashboard").then(module => {
+const Dashboard = lazy(() =>
+  import("./pages/Dashboard").then(module => {
     performanceMonitor.mark('dashboard-loaded');
     return module;
   })
 );
 
-const Videos = lazy(() => 
-  import("@pages/Videos").then(module => {
+const Videos = lazy(() =>
+  import("./pages/Videos").then(module => {
     performanceMonitor.mark('videos-loaded');
     return module;
   })
 );
 
-const Store = lazy(() => 
-  import("@pages/Store").then(module => {
+const Store = lazy(() =>
+  import("./pages/Store").then(module => {
     performanceMonitor.mark('store-loaded');
     return module;
   })
 );
 
-const Favorites = lazy(() => 
-  import("@pages/Favorites").then(module => {
+const Favorites = lazy(() =>
+  import("./pages/Favorites").then(module => {
     performanceMonitor.mark('favorites-loaded');
     return module;
   })
 );
 
-const Profile = lazy(() => 
-  import("@pages/Profile").then(module => {
+const Profile = lazy(() =>
+  import("./pages/Profile").then(module => {
     performanceMonitor.mark('profile-loaded');
     return module;
   })
 );
 
-const Payment = lazy(() => 
-  import("@pages/Payment").then(module => {
+const Payment = lazy(() =>
+  import("./pages/Payment").then(module => {
     performanceMonitor.mark('payment-loaded');
     return module;
   })
 );
 
-const PaymentSuccess = lazy(() => 
-  import("@pages/PaymentSuccess").then(module => {
+const PaymentSuccess = lazy(() =>
+  import("./pages/PaymentSuccess").then(module => {
     performanceMonitor.mark('payment-success-loaded');
     return module;
   })
 );
 
-const Plans = lazy(() => 
-  import("@pages/Plans").then(module => {
+const Plans = lazy(() =>
+  import("./pages/Plans").then(module => {
     performanceMonitor.mark('plans-loaded');
     return module;
   })
 );
 
-const AdminDashboard = lazy(() => 
-  import("@pages/AdminDashboard").then(module => {
+const AdminDashboard = lazy(() =>
+  import("./pages/AdminDashboard").then(module => {
     performanceMonitor.mark('admin-loaded');
     return module;
   })
 );
 
-const Progress = lazy(() => 
-  import("@pages/Progress").then(module => {
+const Progress = lazy(() =>
+  import("./pages/Progress").then(module => {
     performanceMonitor.mark('progress-loaded');
     return module;
   })
 );
 
-const AppsPage = lazy(() => 
-  import("@pages/Apps").then(module => {
+const AppsPage = lazy(() =>
+  import("./pages/Apps").then(module => {
     performanceMonitor.mark('apps-loaded');
     return module;
   })
 );
 
 const About = lazy(() =>
-  import("@pages/About").then(module => {
+  import("./pages/About").then(module => {
     performanceMonitor.mark('about-loaded');
     return module;
   })
 );
 
 const Achievements = lazy(() =>
-  import("@pages/Achievements").then(module => {
+  import("./pages/Achievements").then(module => {
     performanceMonitor.mark('achievements-loaded');
     return module;
   })
 );
 
 const FitnessModulesApp = lazy(() =>
-  import("@components/fitness-modules/ModulosConfig").then(module => {
+  import("./components/fitness-modules/ModulosConfig").then(module => {
     performanceMonitor.mark('fitness-modules-loaded');
+    return module;
+  })
+);
+
+const TestDashboard = lazy(() =>
+  import("./pages/TestDashboard").then(module => {
+    performanceMonitor.mark('test-dashboard-loaded');
     return module;
   })
 );
@@ -156,7 +163,7 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider>
         <LanguageProvider>
-          <SupabaseAuthProvider>
+          <AuthProvider>
       <div className="min-h-screen bg-slate-900">
         <Routes>
           <Route
@@ -253,7 +260,7 @@ function App() {
             <Route
               path="progress"
               element={
-                <PlanGuard allowedPlans={["B", "C"]}>
+                <PlanGuard requiredPlan="B">
                   <Suspense fallback={<LoadingFallback />}>
                     <Progress />
                   </Suspense>
@@ -288,7 +295,7 @@ function App() {
             <Route
               path="apps"
               element={
-                <PlanGuard allowedPlans={["B", "C"]}>
+                <PlanGuard requiredPlan="B">
                   <Suspense fallback={<LoadingFallback />}>
                     <AppsPage />
                   </Suspense>
@@ -298,7 +305,7 @@ function App() {
             <Route
               path="fitness/*"
               element={
-                <PlanGuard allowedPlans={["B", "C", "D"]}>
+                <PlanGuard requiredPlan="B">
                   <Suspense fallback={<LoadingFallback />}>
                     <FitnessModulesApp />
                   </Suspense>
@@ -315,13 +322,23 @@ function App() {
                 </AdminRoute>
               }
             />
+            <Route
+              path="test"
+              element={
+                <AdminRoute>
+                  <Suspense fallback={<LoadingFallback />}>
+                    <TestDashboard />
+                  </Suspense>
+                </AdminRoute>
+              }
+            />
             <Route path="" element={<Navigate to="/dashboard" replace />} />
           </Route>
         </Routes>
       </div>
-      
+
       {/* Toast notifications with better positioning */}
-      <Toaster 
+      <Toaster
         position="top-right"
         toastOptions={{
           className: 'bg-slate-800 text-white border border-slate-700',
@@ -346,7 +363,7 @@ function App() {
           },
         }}
       />
-          </SupabaseAuthProvider>
+          </AuthProvider>
         </LanguageProvider>
       </ThemeProvider>
     </ErrorBoundary>
