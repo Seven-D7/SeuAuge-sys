@@ -7,7 +7,7 @@ import {
   saveUserMetrics,
   UpdateUserInput 
 } from '../services/user';
-import { auth } from '../firebase';
+import { supabase } from '../lib/supabase';
 import type { BodyMetrics } from './progressStore';
 
 export interface UserProfile {

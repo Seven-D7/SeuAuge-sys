@@ -1,15 +1,7 @@
-// Contexto responsável por gerenciar a autenticação com o Firebase
+// Contexto responsável por gerenciar a autenticação com o Supabase
 import React, { createContext, useContext, useEffect, useState } from "react";
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  updateProfile,
-  User as FirebaseUser,
-} from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import { auth, db, isDemoMode } from "../firebase";
+import { User as SupabaseUser, AuthError } from "@supabase/supabase-js";
+import { supabase, isSupabaseDemoMode, UserProfile } from "../lib/supabase";
 import {
   updateUserProfile,
   UpdateUserInput,
@@ -24,7 +16,7 @@ import { initializeSyncSystem, stopRealtimeSync } from "../services/sync";
 import { dataSyncService } from "../services/dataSync";
 import { useUserProfileStore } from "../stores/userProfileStore";
 
-// Production admin check using Firebase custom claims
+// Production admin check using Supabase user metadata
 // Admin emails should NEVER be hardcoded in frontend for production
 const isDevelopment = import.meta.env.DEV;
 const FALLBACK_ADMIN_EMAILS = isDevelopment ? [
@@ -89,15 +81,24 @@ const validatePassword = (password: string): { isValid: boolean; message?: strin
   return { isValid: true };
 };
 
-// Check user role from Firestore
-const getUserRole = async (uid: string): Promise<'user' | 'admin' | 'moderator'> => {
+// Get user profile from Supabase
+const getUserProfile = async (userId: string): Promise<UserProfile | null> => {
   try {
-    const userDoc = await getDoc(doc(db, 'users', uid));
-    const userData = userDoc.data();
-    return userData?.role || 'user';
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching user profile:', error);
+      return null;
+    }
+
+    return data;
   } catch (error) {
-    console.error('Error fetching user role:', error);
-    return 'user';
+    console.error('Error fetching user profile:', error);
+    return null;
   }
 };
 
@@ -108,11 +109,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(true);
 
   // Function to initialize all user systems
-  const initializeUserSystems = async (firebaseUser: FirebaseUser, userPlan?: string) => {
+  const initializeUserSystems = async (supabaseUser: SupabaseUser, userPlan?: string) => {
     try {
       // Initialize user profile
       const profileStore = useUserProfileStore.getState();
-      await profileStore.loadProfile(firebaseUser.uid);
+      await profileStore.loadProfile(supabaseUser.id);
 
       // Initialize activity tracking (handles daily login)
       await initializeActivityTracking();
@@ -150,30 +151,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const mapFirebaseUser = async (firebaseUser: FirebaseUser): Promise<User> => {
+  const mapSupabaseUser = async (supabaseUser: SupabaseUser): Promise<User> => {
     const planFromToken = await getPlanFromToken();
     const plan = planFromToken;
 
-    // Production admin check using custom claims and Firestore
+    // Get user profile data
+    const profile = await getUserProfile(supabaseUser.id);
+
+    // Production admin check using user metadata and profile role
     let isAdmin = false;
     let role: 'user' | 'admin' | 'moderator' = 'user';
 
-    if (!isDemoMode) {
-      // First check custom claims (production approach)
-      const idTokenResult = await firebaseUser.getIdTokenResult();
-      if (idTokenResult.claims.admin) {
+    if (!isSupabaseDemoMode) {
+      // Check user metadata for admin role
+      if (supabaseUser.user_metadata?.role === 'admin') {
         isAdmin = true;
         role = 'admin';
-      } else if (idTokenResult.claims.moderator) {
+      } else if (supabaseUser.user_metadata?.role === 'moderator') {
         role = 'moderator';
-      } else {
-        // Fallback to Firestore role check
-        role = await getUserRole(firebaseUser.uid);
+      } else if (profile?.role) {
+        // Fallback to profile role
+        role = profile.role;
         isAdmin = role === 'admin';
-
+      } else {
         // Development fallback only
         if (isDevelopment && !isAdmin) {
-          isAdmin = FALLBACK_ADMIN_EMAILS.includes(firebaseUser.email || '');
+          isAdmin = FALLBACK_ADMIN_EMAILS.includes(supabaseUser.email || '');
           if (isAdmin) role = 'admin';
         }
       }
@@ -181,16 +184,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     // Initialize user systems for authenticated user
     try {
-      await initializeUserSystems(firebaseUser, plan);
+      await initializeUserSystems(supabaseUser, plan);
     } catch (error) {
       console.error('Erro ao inicializar sistemas do usuário:', error);
     }
 
     return {
-      id: firebaseUser.uid,
-      email: firebaseUser.email || "",
-      name: sanitizeInput(firebaseUser.displayName || ""),
-      avatar: firebaseUser.photoURL || undefined,
+      id: supabaseUser.id,
+      email: supabaseUser.email || "",
+      name: sanitizeInput(profile?.name || supabaseUser.user_metadata?.name || ""),
+      avatar: profile?.avatar_url || supabaseUser.user_metadata?.avatar_url || undefined,
       plan,
       isPremium: !!plan, // Tem plano = é premium
       isAdmin,
@@ -199,31 +202,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    // Production authentication flow
-    if (isDemoMode && isDevelopment) {
-      // Demo mode only in development
-      console.log("🔧 Modo demo ativo - autenticação simulada");
-      setLoading(false);
-      return;
-    }
-
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    // Get initial session
+    const getInitialSession = async () => {
       try {
-        if (firebaseUser) {
-          const mapped = await mapFirebaseUser(firebaseUser);
+        // Demo mode only in development
+        if (isSupabaseDemoMode && isDevelopment) {
+          console.log("🔧 Modo demo ativo - autenticação simulada");
+          setLoading(false);
+          return;
+        }
+
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          const mapped = await mapSupabaseUser(session.user);
           setUser(mapped);
-        } else {
-          setUser(null);
         }
       } catch (error) {
-        console.error('Error mapping Firebase user:', error);
-        setUser(null);
+        console.error('Error getting initial session:', error);
       } finally {
         setLoading(false);
       }
-    });
+    };
 
-    return () => unsubscribe();
+    getInitialSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        try {
+          if (session?.user) {
+            const mapped = await mapSupabaseUser(session.user);
+            setUser(mapped);
+          } else {
+            setUser(null);
+          }
+        } catch (error) {
+          console.error('Error mapping Supabase user:', error);
+          setUser(null);
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = async (email: string, password: string) => {
@@ -241,7 +262,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     // Demo mode only in development
-    if (isDemoMode && isDevelopment) {
+    if (isSupabaseDemoMode && isDevelopment) {
       const mockUser: User = {
         id: "demo-user-123",
         email: sanitizedEmail,
@@ -257,28 +278,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-      const cred = await signInWithEmailAndPassword(
-        auth,
-        sanitizedEmail,
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: sanitizedEmail,
         password,
-      );
-      const mapped = await mapFirebaseUser(cred.user);
-      setUser(mapped);
-      
-      // Audit log (in production, send to secure logging service)
-      if (import.meta.env.DEV) {
-        console.log("Usuario autenticado:", mapped.email, "Role:", mapped.role);
+      });
+
+      if (error) throw error;
+
+      if (data.user) {
+        const mapped = await mapSupabaseUser(data.user);
+        setUser(mapped);
+        
+        // Audit log (in production, send to secure logging service)
+        if (import.meta.env.DEV) {
+          console.log("Usuario autenticado:", mapped.email, "Role:", mapped.role);
+        }
       }
-    } catch (err: any) {
+    } catch (err: AuthError | any) {
       // Enhanced error handling without exposing sensitive information
-      console.error("Login error:", err.code);
+      console.error("Login error:", err.message);
       
-      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+      if (err.message?.includes('Invalid login credentials')) {
         throw new Error("Credenciais inválidas");
-      } else if (err.code === 'auth/too-many-requests') {
+      } else if (err.message?.includes('Too many requests')) {
         throw new Error("Muitas tentativas de login. Tente novamente mais tarde");
-      } else if (err.code === 'auth/user-disabled') {
-        throw new Error("Conta desabilitada. Entre em contato com o suporte");
+      } else if (err.message?.includes('Email not confirmed')) {
+        throw new Error("Email não confirmado. Verifique sua caixa de entrada");
       } else {
         throw new Error("Falha na autenticação");
       }
@@ -325,7 +350,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     // Demo mode only in development
-    if (isDemoMode && isDevelopment) {
+    if (isSupabaseDemoMode && isDevelopment) {
       const mockUser: User = {
         id: `demo-user-${Date.now()}`,
         email: sanitizedEmail,
@@ -341,49 +366,62 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-      const cred = await createUserWithEmailAndPassword(
-        auth,
-        sanitizedEmail,
-        password,
-      );
-      
-      if (auth.currentUser) {
-        await updateProfile(auth.currentUser, { displayName: sanitizedName });
-      }
-      
-      await createUserDocument({
-        uid: cred.user.uid,
-        name: sanitizedName,
+      const { data, error } = await supabase.auth.signUp({
         email: sanitizedEmail,
-        birthdate,
-        role: 'user', // Default role
+        password,
+        options: {
+          data: {
+            name: sanitizedName,
+            birthdate,
+            role: 'user', // Default role
+          },
+        },
       });
-      
-      const mapped = await mapFirebaseUser(cred.user);
-      setUser(mapped);
 
-      // Initialize systems for new user with welcome bonus
-      try {
-        await initializeUserSystems(cred.user, null);
-        
-        const levelStore = useLevelStore.getState();
-        levelStore.addXP(50, '🎉 Bem-vindo ao Meu Auge!', 'bonus');
-      } catch (error) {
-        console.error('Erro ao inicializar sistemas para novo usuário:', error);
-      }
+      if (error) throw error;
 
-      // Audit log
-      if (import.meta.env.DEV) {
-        console.log("Usuario registrado:", mapped.email);
+      if (data.user) {
+        // Create user profile in database
+        const { error: profileError } = await supabase
+          .from('user_profiles')
+          .insert({
+            id: data.user.id,
+            email: sanitizedEmail,
+            name: sanitizedName,
+            birthdate,
+            role: 'user',
+          });
+
+        if (profileError) {
+          console.error('Error creating user profile:', profileError);
+        }
+
+        const mapped = await mapSupabaseUser(data.user);
+        setUser(mapped);
+
+        // Initialize systems for new user with welcome bonus
+        try {
+          await initializeUserSystems(data.user, null);
+          
+          const levelStore = useLevelStore.getState();
+          levelStore.addXP(50, '🎉 Bem-vindo ao Meu Auge!', 'bonus');
+        } catch (error) {
+          console.error('Erro ao inicializar sistemas para novo usuário:', error);
+        }
+
+        // Audit log
+        if (import.meta.env.DEV) {
+          console.log("Usuario registrado:", mapped.email);
+        }
       }
-    } catch (err: any) {
-      console.error("Registration error:", err.code);
+    } catch (err: AuthError | any) {
+      console.error("Registration error:", err.message);
       
-      if (err.code === 'auth/email-already-in-use') {
+      if (err.message?.includes('User already registered')) {
         throw new Error("Este email já está em uso");
-      } else if (err.code === 'auth/weak-password') {
+      } else if (err.message?.includes('Password should be at least')) {
         throw new Error("Senha muito fraca. Use uma senha mais forte");
-      } else if (err.code === 'auth/operation-not-allowed') {
+      } else if (err.message?.includes('Signups not allowed')) {
         throw new Error("Registro não permitido. Entre em contato com o suporte");
       } else {
         throw new Error("Falha no registro");
@@ -393,14 +431,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = async () => {
     // Demo mode only in development
-    if (isDemoMode && isDevelopment) {
+    if (isSupabaseDemoMode && isDevelopment) {
       setUser(null);
       console.log("🔧 Logout demo realizado");
       return;
     }
 
     try {
-      await signOut(auth);
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
       setUser(null);
 
       // Stop real-time sync
@@ -429,7 +469,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const updateUser = async (data: UpdateUserInput) => {
-    if (isDemoMode) {
+    if (isSupabaseDemoMode) {
       setUser((prev) => (prev ? { 
         ...prev, 
         name: sanitizeInput(data.name || prev.name)
@@ -451,8 +491,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const profileStore = useUserProfileStore.getState();
       await profileStore.updateProfile(sanitizedData);
       
-      if (auth.currentUser) {
-        const mapped = await mapFirebaseUser(auth.currentUser);
+      // Update profile in database
+      if (user?.id) {
+        const { error } = await supabase
+          .from('user_profiles')
+          .update(sanitizedData)
+          .eq('id', user.id);
+
+        if (error) {
+          console.error('Error updating user profile:', error);
+        }
+      }
+
+      // Get current user and re-map
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (currentUser) {
+        const mapped = await mapSupabaseUser(currentUser);
         setUser(mapped);
       }
     } catch (err) {
@@ -462,12 +516,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const refreshPlan = async () => {
-    if (isDemoMode) {
+    if (isSupabaseDemoMode) {
       console.log("🔧 Refresh plan demo - mantendo plano atual");
       return;
     }
 
-    if (!auth.currentUser) return;
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    if (!currentUser) return;
     
     try {
       const newPlan = await getPlanFromToken(true);

@@ -1,5 +1,4 @@
-import { doc, setDoc, getDoc, collection, query, orderBy, limit, getDocs, where } from "firebase/firestore";
-import { db } from "../firebase";
+import { supabase, isSupabaseDemoMode } from "../lib/supabase";
 
 export interface UserActivity {
   id: string;
@@ -18,7 +17,6 @@ export interface UserActivity {
 
 export interface ActivityStats {
   totalActiveDays: number;
-  currentStreak: number;
   longestStreak: number;
   lastActiveDate: Date | null;
   totalWorkouts: number;
@@ -48,281 +46,327 @@ export async function logUserActivity(
       metadata: metadata || {}
     };
 
-    // Modo desenvolvimento - apenas log
-    if (import.meta.env.VITE_DEV_MODE === "true") {
-      console.log("🏃��♂️ Atividade registrada (dev):", activity);
+    // Demo mode - only log
+    if (isSupabaseDemoMode) {
+      console.log("🏃‍♂️ Atividade registrada (demo):", activity);
       
-      // Salvar localmente para desenvolvimento
+      // Save locally for development
       const localActivities = JSON.parse(localStorage.getItem("userActivities") || "[]");
       localActivities.unshift(activity);
       localStorage.setItem("userActivities", JSON.stringify(localActivities.slice(0, 100)));
       return;
     }
 
-    // Salvar atividade no Firestore
-    await setDoc(
-      doc(db, "users", userId, "activities", activityId),
-      activity
-    );
+    // Save activity to Supabase
+    const { error } = await supabase
+      .from('user_activities')
+      .insert({
+        id: activityId,
+        user_id: userId,
+        activity_type: type,
+        timestamp: activity.timestamp.toISOString(),
+        metadata: metadata || {},
+        created_at: new Date().toISOString(),
+      });
 
-    // Atualizar estatísticas do usuário
+    if (error) throw error;
+
+    // Update user stats
     await updateUserStats(userId, type, metadata);
 
   } catch (error) {
     console.error("Erro ao registrar atividade:", error);
+    // Em caso de erro, pelo menos salvar localmente
+    const localActivities = JSON.parse(localStorage.getItem("userActivities") || "[]");
+    localActivities.unshift({
+      id: `local_${Date.now()}`,
+      userId,
+      type,
+      timestamp: new Date(),
+      metadata: metadata || {}
+    });
+    localStorage.setItem("userActivities", JSON.stringify(localActivities.slice(0, 100)));
   }
 }
 
-// Função para atualizar estatísticas do usuário
-async function updateUserStats(
-  userId: string,
-  type: UserActivity['type'],
-  metadata?: UserActivity['metadata']
-): Promise<void> {
-  if (!userId) return;
-
-  try {
-    const statsDoc = await getDoc(doc(db, "users", userId, "stats", "current"));
-    const currentStats: Partial<ActivityStats> = statsDoc.exists() ? statsDoc.data() : {};
-
-    const today = new Date();
-    const todayStr = today.toDateString();
-    const lastActiveStr = currentStats.lastActiveDate ? new Date(currentStats.lastActiveDate).toDateString() : null;
-
-    let updatedStats = { ...currentStats };
-
-    // Atualizar contadores específicos por tipo
-    switch (type) {
-      case 'workout_completed':
-        updatedStats.totalWorkouts = (updatedStats.totalWorkouts || 0) + 1;
-        break;
-      case 'video_watched':
-        updatedStats.totalVideosWatched = (updatedStats.totalVideosWatched || 0) + 1;
-        if (metadata?.duration) {
-          updatedStats.totalTimeSpent = (updatedStats.totalTimeSpent || 0) + metadata.duration;
-        }
-        break;
-    }
-
-    // Atualizar streak e dias ativos apenas uma vez por dia
-    if (lastActiveStr !== todayStr) {
-      updatedStats.lastActiveDate = today;
-      updatedStats.totalActiveDays = (updatedStats.totalActiveDays || 0) + 1;
-
-      // Calcular streak
-      if (!lastActiveStr) {
-        // Primeira atividade
-        updatedStats.currentStreak = 1;
-        updatedStats.longestStreak = 1;
-      } else {
-        const lastActive = new Date(currentStats.lastActiveDate!);
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
-
-        if (lastActive.toDateString() === yesterday.toDateString()) {
-          // Continuação do streak
-          updatedStats.currentStreak = (updatedStats.currentStreak || 0) + 1;
-          updatedStats.longestStreak = Math.max(
-            updatedStats.longestStreak || 0, 
-            updatedStats.currentStreak
-          );
-        } else {
-          // Streak quebrado
-          updatedStats.currentStreak = 1;
-        }
-      }
-
-      // Atualizar atividade semanal e mensal
-      updatedStats.weeklyActivity = updateWeeklyActivity(updatedStats.weeklyActivity || []);
-      updatedStats.monthlyActivity = updateMonthlyActivity(updatedStats.monthlyActivity || []);
-    }
-
-    // Salvar estatísticas atualizadas
-    await setDoc(
-      doc(db, "users", userId, "stats", "current"),
-      {
-        ...updatedStats,
-        updatedAt: new Date()
-      },
-      { merge: true }
-    );
-
-  } catch (error) {
-    console.error("Erro ao atualizar estatísticas:", error);
-  }
-}
-
-// Função para obter estatísticas do usuário
-export async function getUserActivityStats(userId?: string): Promise<ActivityStats> {
-  const defaultStats: ActivityStats = {
-    totalActiveDays: 0,
-    currentStreak: 0,
-    longestStreak: 0,
-    lastActiveDate: null,
-    totalWorkouts: 0,
-    totalVideosWatched: 0,
-    totalTimeSpent: 0,
-    weeklyActivity: new Array(7).fill(0),
-    monthlyActivity: new Array(30).fill(0)
-  };
-
+// Função para obter estatísticas de atividade do usuário
+export async function getUserActivityStats(userId: string): Promise<ActivityStats> {
   if (!userId) {
-    return defaultStats;
+    throw new Error("Usuário não autenticado");
   }
 
   try {
-    // Modo desenvolvimento - dados locais
-    if (import.meta.env.VITE_DEV_MODE === "true") {
-      const localStats = localStorage.getItem("userActivityStats");
-      if (localStats) {
-        const parsed = JSON.parse(localStats);
-        return {
-          ...defaultStats,
-          ...parsed,
-          lastActiveDate: parsed.lastActiveDate ? new Date(parsed.lastActiveDate) : null
-        };
-      }
-      return defaultStats;
-    }
-
-    const statsDoc = await getDoc(doc(db, "users", userId, "stats", "current"));
-    
-    if (statsDoc.exists()) {
-      const data = statsDoc.data();
+    // Demo mode - return mock stats
+    if (isSupabaseDemoMode) {
+      const localActivities = JSON.parse(localStorage.getItem("userActivities") || "[]");
       return {
-        ...defaultStats,
-        ...data,
-        lastActiveDate: data.lastActiveDate ? data.lastActiveDate.toDate() : null
+        totalActiveDays: Math.min(localActivities.length, 30),
+        longestStreak: 7,
+        lastActiveDate: localActivities.length > 0 ? new Date(localActivities[0].timestamp) : null,
+        totalWorkouts: localActivities.filter((a: any) => a.type === 'workout_completed').length,
+        totalVideosWatched: localActivities.filter((a: any) => a.type === 'video_watched').length,
+        totalTimeSpent: localActivities.reduce((sum: number, a: any) => sum + (a.metadata?.duration || 0), 0),
+        weeklyActivity: [3, 5, 2, 4, 6, 1, 3],
+        monthlyActivity: Array.from({ length: 30 }, (_, i) => Math.floor(Math.random() * 5))
       };
     }
 
-    return defaultStats;
+    // Get activities from last 90 days
+    const ninetyDaysAgo = new Date();
+    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+
+    const { data: activities, error } = await supabase
+      .from('user_activities')
+      .select('*')
+      .eq('user_id', userId)
+      .gte('timestamp', ninetyDaysAgo.toISOString())
+      .order('timestamp', { ascending: false });
+
+    if (error) throw error;
+
+    // Calculate stats
+    const stats = calculateActivityStats(activities || []);
+    return stats;
 
   } catch (error) {
-    console.error("Erro ao buscar estatísticas:", error);
-    return defaultStats;
+    console.error("Erro ao obter estatísticas de atividade:", error);
+    // Fallback to local storage
+    const localActivities = JSON.parse(localStorage.getItem("userActivities") || "[]");
+    return {
+      totalActiveDays: Math.min(localActivities.length, 30),
+      longestStreak: 3,
+      lastActiveDate: localActivities.length > 0 ? new Date(localActivities[0].timestamp) : null,
+      totalWorkouts: localActivities.filter((a: any) => a.type === 'workout_completed').length,
+      totalVideosWatched: localActivities.filter((a: any) => a.type === 'video_watched').length,
+      totalTimeSpent: localActivities.reduce((sum: number, a: any) => sum + (a.metadata?.duration || 0), 0),
+      weeklyActivity: [1, 2, 1, 3, 2, 1, 2],
+      monthlyActivity: Array.from({ length: 30 }, () => Math.floor(Math.random() * 3))
+    };
+  }
+}
+
+// Função auxiliar para calcular estatísticas
+function calculateActivityStats(activities: any[]): ActivityStats {
+  if (!activities.length) {
+    return {
+      totalActiveDays: 0,
+      longestStreak: 0,
+      lastActiveDate: null,
+      totalWorkouts: 0,
+      totalVideosWatched: 0,
+      totalTimeSpent: 0,
+      weeklyActivity: [0, 0, 0, 0, 0, 0, 0],
+      monthlyActivity: Array.from({ length: 30 }, () => 0)
+    };
+  }
+
+  // Group activities by day
+  const dayGroups = new Map<string, any[]>();
+  activities.forEach(activity => {
+    const day = new Date(activity.timestamp).toDateString();
+    if (!dayGroups.has(day)) {
+      dayGroups.set(day, []);
+    }
+    dayGroups.get(day)!.push(activity);
+  });
+
+  // Calculate streaks
+  const sortedDays = Array.from(dayGroups.keys()).sort((a, b) => 
+    new Date(b).getTime() - new Date(a).getTime()
+  );
+
+  let currentStreak = 0;
+  let longestStreak = 0;
+  let lastDate: Date | null = null;
+
+  const today = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toDateString();
+
+  for (let i = 0; i < sortedDays.length; i++) {
+    const currentDay = sortedDays[i];
+    
+    if (i === 0) {
+      lastDate = new Date(currentDay);
+      if (currentDay === today || currentDay === yesterday) {
+        currentStreak = 1;
+      }
+    } else {
+      const prevDay = new Date(sortedDays[i - 1]);
+      const curDay = new Date(currentDay);
+      const diffDays = Math.floor((prevDay.getTime() - curDay.getTime()) / (24 * 60 * 60 * 1000));
+      
+      if (diffDays === 1) {
+        currentStreak++;
+      } else {
+        break;
+      }
+    }
+    
+    longestStreak = Math.max(longestStreak, currentStreak);
+  }
+
+  // Calculate totals
+  const totalWorkouts = activities.filter(a => a.activity_type === 'workout_completed').length;
+  const totalVideosWatched = activities.filter(a => a.activity_type === 'video_watched').length;
+  const totalTimeSpent = activities.reduce((sum, a) => sum + (a.metadata?.duration || 0), 0);
+
+  // Weekly activity (last 7 days)
+  const weeklyActivity = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const dayKey = date.toDateString();
+    return dayGroups.get(dayKey)?.length || 0;
+  }).reverse();
+
+  // Monthly activity (last 30 days)
+  const monthlyActivity = Array.from({ length: 30 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const dayKey = date.toDateString();
+    return dayGroups.get(dayKey)?.length || 0;
+  }).reverse();
+
+  return {
+    totalActiveDays: dayGroups.size,
+    longestStreak,
+    lastActiveDate: lastDate,
+    totalWorkouts,
+    totalVideosWatched,
+    totalTimeSpent,
+    weeklyActivity,
+    monthlyActivity
+  };
+}
+
+// Função para atualizar estatísticas do usuário (chamada internamente)
+async function updateUserStats(
+  userId: string, 
+  activityType: UserActivity['type'], 
+  metadata?: UserActivity['metadata']
+): Promise<void> {
+  try {
+    if (isSupabaseDemoMode) {
+      console.log("Demo mode: atualizando stats localmente");
+      return;
+    }
+
+    // Get current stats
+    const { data: currentStats, error: fetchError } = await supabase
+      .from('user_stats')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    if (fetchError && fetchError.code !== 'PGRST116') {
+      throw fetchError;
+    }
+
+    // Calculate new stats
+    const now = new Date();
+    const updates: any = {
+      user_id: userId,
+      last_activity_at: now.toISOString(),
+      updated_at: now.toISOString(),
+    };
+
+    if (!currentStats) {
+      // First time stats
+      updates.total_activities = 1;
+      updates.total_workouts = activityType === 'workout_completed' ? 1 : 0;
+      updates.total_videos_watched = activityType === 'video_watched' ? 1 : 0;
+      updates.total_time_spent = metadata?.duration || 0;
+      updates.created_at = now.toISOString();
+    } else {
+      // Update existing stats
+      updates.total_activities = (currentStats.total_activities || 0) + 1;
+      updates.total_workouts = (currentStats.total_workouts || 0) + (activityType === 'workout_completed' ? 1 : 0);
+      updates.total_videos_watched = (currentStats.total_videos_watched || 0) + (activityType === 'video_watched' ? 1 : 0);
+      updates.total_time_spent = (currentStats.total_time_spent || 0) + (metadata?.duration || 0);
+    }
+
+    // Upsert stats
+    const { error: upsertError } = await supabase
+      .from('user_stats')
+      .upsert(updates);
+
+    if (upsertError) throw upsertError;
+
+  } catch (error) {
+    console.error("Erro ao atualizar estatísticas:", error);
+    // Don't throw error to avoid breaking activity logging
+  }
+}
+
+// Função para inicializar tracking de atividade (chamada no login)
+export async function initializeActivityTracking(): Promise<void> {
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user) return;
+
+    // Register daily login
+    await logUserActivity(user.id, 'login');
+
+  } catch (error) {
+    console.error("Erro ao inicializar tracking de atividade:", error);
   }
 }
 
 // Função para obter atividades recentes
-export async function getRecentActivities(userId?: string, limitCount: number = 10): Promise<UserActivity[]> {
-  if (!userId) {
-    return [];
-  }
-
+export async function getRecentActivities(userId: string, limit: number = 10): Promise<UserActivity[]> {
   try {
-    // Modo desenvolvimento - dados locais
-    if (import.meta.env.VITE_DEV_MODE === "true") {
+    if (isSupabaseDemoMode) {
       const localActivities = JSON.parse(localStorage.getItem("userActivities") || "[]");
-      return localActivities.slice(0, limitCount).map((activity: any) => ({
-        ...activity,
-        timestamp: new Date(activity.timestamp)
-      }));
+      return localActivities.slice(0, limit);
     }
 
-    const activitiesRef = collection(db, "users", userId, "activities");
-    const q = query(activitiesRef, orderBy("timestamp", "desc"), limit(limitCount));
-    const snapshot = await getDocs(q);
+    const { data, error } = await supabase
+      .from('user_activities')
+      .select('*')
+      .eq('user_id', userId)
+      .order('timestamp', { ascending: false })
+      .limit(limit);
 
-    return snapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        ...data,
-        timestamp: data.timestamp.toDate()
-      } as UserActivity;
-    });
+    if (error) throw error;
+
+    return (data || []).map(activity => ({
+      id: activity.id,
+      userId: activity.user_id,
+      type: activity.activity_type,
+      timestamp: new Date(activity.timestamp),
+      metadata: activity.metadata || {}
+    }));
 
   } catch (error) {
-    console.error("Erro ao buscar atividades recentes:", error);
+    console.error("Erro ao obter atividades recentes:", error);
     return [];
   }
 }
 
-// Função para verificar login diário
-export async function checkDailyLogin(userId?: string): Promise<void> {
-  if (!userId) return;
-
-  try {
-    const stats = await getUserActivityStats(userId);
-    const today = new Date().toDateString();
-    const lastLogin = stats.lastActiveDate ? stats.lastActiveDate.toDateString() : null;
-
-    // Se já fez login hoje, não registrar novamente
-    if (lastLogin === today) {
-      return;
-    }
-
-    // Registrar login diário
-    await logUserActivity(userId, 'login');
-
-  } catch (error) {
-    console.error("Erro ao verificar login diário:", error);
-  }
+// Helper functions for specific activity types
+export async function logGoalCompleted(userId: string, goalId: string, goalTitle: string): Promise<void> {
+  return logUserActivity(userId, 'goal_completed', {
+    goalId,
+    extra: { title: goalTitle }
+  });
 }
 
-// Função auxiliar para atualizar atividade semanal
-function updateWeeklyActivity(weeklyActivity: number[]): number[] {
-  const today = new Date();
-  const dayOfWeek = today.getDay(); // 0 = domingo, 6 = sábado
-  
-  const updated = [...weeklyActivity];
-  while (updated.length < 7) updated.push(0);
-  
-  updated[dayOfWeek] = (updated[dayOfWeek] || 0) + 1;
-  
-  return updated.slice(0, 7);
+export async function logChallengeCompleted(userId: string, challengeId: string, challengeTitle: string): Promise<void> {
+  return logUserActivity(userId, 'challenge_completed', {
+    challengeId,
+    extra: { title: challengeTitle }
+  });
 }
 
-// Função auxiliar para atualizar atividade mensal
-function updateMonthlyActivity(monthlyActivity: number[]): number[] {
-  const today = new Date();
-  const dayOfMonth = today.getDate() - 1; // 0-based index
-  
-  const updated = [...monthlyActivity];
-  while (updated.length < 30) updated.push(0);
-  
-  updated[dayOfMonth] = (updated[dayOfMonth] || 0) + 1;
-  
-  return updated.slice(0, 30);
-}
-
-// Função para registrar conclusão de treino
-export async function logWorkoutCompleted(workoutId: string, duration?: number): Promise<void> {
-  await logUserActivity('workout_completed', {
+export async function logWorkoutCompleted(userId: string, workoutId: string, duration?: number): Promise<void> {
+  return logUserActivity(userId, 'workout_completed', {
     workoutId,
     duration
   });
 }
 
-// Função para registrar vídeo assistido
 export async function logVideoWatched(userId: string, videoId: string, duration?: number): Promise<void> {
-  await logUserActivity(userId, 'video_watched', {
+  return logUserActivity(userId, 'video_watched', {
     videoId,
     duration
   });
-}
-
-// Função para registrar meta concluída
-export async function logGoalCompleted(userId: string, goalId: string): Promise<void> {
-  await logUserActivity(userId, 'goal_completed', {
-    goalId
-  });
-}
-
-// Função para registrar desafio concluído
-export async function logChallengeCompleted(challengeId: string): Promise<void> {
-  await logUserActivity('challenge_completed', {
-    challengeId
-  });
-}
-
-// Função para inicializar tracking de atividades (chamar no login)
-export async function initializeActivityTracking(userId?: string): Promise<void> {
-  try {
-    if (userId) {
-      await checkDailyLogin(userId);
-    }
-  } catch (error) {
-    console.error("Erro ao inicializar tracking de atividades:", error);
-  }
 }

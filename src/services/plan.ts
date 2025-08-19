@@ -1,6 +1,5 @@
-import { db, isDemoMode } from "../firebase";
+import { supabase, isSupabaseDemoMode } from "../lib/supabase";
 import api from "./api";
-import { collection, getDocs, doc, setDoc } from "firebase/firestore";
 
 export interface PlanData {
   id: string;
@@ -10,8 +9,8 @@ export interface PlanData {
 }
 
 export async function getPlans(): Promise<PlanData[]> {
-  if (isDemoMode) {
-    // Retornar planos mock em modo demo
+  if (isSupabaseDemoMode) {
+    // Return mock plans in demo mode
     return [
       { id: "B", name: "Base", price: "R$ 97", features: ["Acesso completo"] },
       {
@@ -24,33 +23,212 @@ export async function getPlans(): Promise<PlanData[]> {
     ];
   }
 
-  const snapshot = await getDocs(collection(db, "plans"));
-  return snapshot.docs.map((d) => d.data() as PlanData);
+  try {
+    const { data, error } = await supabase
+      .from('plans')
+      .select('*')
+      .order('price_cents', { ascending: true });
+
+    if (error) throw error;
+
+    return data.map(plan => ({
+      id: plan.id,
+      name: plan.name,
+      price: plan.price_display || `R$ ${plan.price_cents / 100}`,
+      features: plan.features || [],
+    }));
+  } catch (error) {
+    console.error("Erro ao buscar planos:", error);
+    // Fallback to demo plans
+    return [
+      { id: "B", name: "Base", price: "R$ 97", features: ["Acesso completo"] },
+      {
+        id: "C",
+        name: "Escalada",
+        price: "R$ 249",
+        features: ["Acesso premium"],
+      },
+      { id: "D", name: "Auge", price: "R$ 780", features: ["Acesso total"] },
+    ];
+  }
 }
 
 export async function getPlanFromToken(
   forceRefresh = false,
 ): Promise<string | null> {
-  if (isDemoMode) {
-    console.log("🔧 Mode demo - retornando plano B");
+  if (isSupabaseDemoMode) {
+    console.log("🔧 Demo mode - retornando plano B");
     return "B";
   }
 
-  // Plans are now managed through Supabase
-  // This function is kept for backward compatibility
-  return null;
+  try {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) return null;
+
+    // Get user profile with plan information
+    const { data: profile, error: profileError } = await supabase
+      .from('user_profiles')
+      .select('plan')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError) {
+      console.error("Erro ao buscar plano do usuário:", profileError);
+      return null;
+    }
+
+    return profile?.plan || null;
+  } catch (error) {
+    console.error("Erro ao buscar plano:", error);
+    return null;
+  }
 }
 
 export async function updateUserPlan(plan: string): Promise<void> {
-  if (isDemoMode) {
-    console.log("🔧 Mode demo - simulando update do plano:", plan);
+  if (isSupabaseDemoMode) {
+    console.log("🔧 Demo mode - simulando update do plano:", plan);
     return;
   }
 
-  await api("/plan", {
-    method: "POST",
-    body: JSON.stringify({ plan }),
-  });
-  // Plan updates are now handled through Supabase
-  console.log("Plan update delegated to Supabase:", plan);
+  try {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) throw new Error("Usuário não autenticado");
+
+    // Update user plan in profile
+    const { error } = await supabase
+      .from('user_profiles')
+      .update({ 
+        plan,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', user.id);
+
+    if (error) throw error;
+
+    // Also call external API if needed for payment processing
+    await api("/plan", {
+      method: "POST",
+      body: JSON.stringify({ plan }),
+    });
+
+    console.log("Plano atualizado com sucesso:", plan);
+  } catch (error) {
+    console.error("Erro ao atualizar plano:", error);
+    throw error;
+  }
+}
+
+export async function getUserPlan(userId: string): Promise<string | null> {
+  if (isSupabaseDemoMode) {
+    return "B";
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('plan')
+      .eq('id', userId)
+      .single();
+
+    if (error) {
+      console.error("Erro ao buscar plano do usuário:", error);
+      return null;
+    }
+
+    return data?.plan || null;
+  } catch (error) {
+    console.error("Erro ao buscar plano:", error);
+    return null;
+  }
+}
+
+export async function validatePlanAccess(userId: string, requiredPlan: string): Promise<boolean> {
+  try {
+    const userPlan = await getUserPlan(userId);
+    if (!userPlan) return false;
+
+    // Plan hierarchy: D > C > B > A
+    const planHierarchy: Record<string, number> = {
+      'A': 1,
+      'B': 2, 
+      'C': 3,
+      'D': 4,
+    };
+
+    const userPlanLevel = planHierarchy[userPlan] || 0;
+    const requiredPlanLevel = planHierarchy[requiredPlan] || 0;
+
+    return userPlanLevel >= requiredPlanLevel;
+  } catch (error) {
+    console.error("Erro ao validar acesso ao plano:", error);
+    return false;
+  }
+}
+
+export async function createPlanSubscription(planId: string, userId: string): Promise<{ subscriptionId: string }> {
+  if (isSupabaseDemoMode) {
+    return { subscriptionId: `demo-sub-${Date.now()}` };
+  }
+
+  try {
+    // Create subscription record
+    const { data, error } = await supabase
+      .from('user_subscriptions')
+      .insert({
+        user_id: userId,
+        plan_id: planId,
+        status: 'active',
+        started_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+      })
+      .select('id')
+      .single();
+
+    if (error) throw error;
+
+    // Update user profile with new plan
+    await updateUserPlan(planId);
+
+    return { subscriptionId: data.id };
+  } catch (error) {
+    console.error("Erro ao criar assinatura:", error);
+    throw error;
+  }
+}
+
+export async function cancelPlanSubscription(userId: string): Promise<void> {
+  if (isSupabaseDemoMode) {
+    console.log("🔧 Demo mode - simulando cancelamento de assinatura");
+    return;
+  }
+
+  try {
+    // Update subscription status
+    const { error: subscriptionError } = await supabase
+      .from('user_subscriptions')
+      .update({
+        status: 'cancelled',
+        cancelled_at: new Date().toISOString(),
+      })
+      .eq('user_id', userId)
+      .eq('status', 'active');
+
+    if (subscriptionError) throw subscriptionError;
+
+    // Remove plan from user profile
+    const { error: profileError } = await supabase
+      .from('user_profiles')
+      .update({
+        plan: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', userId);
+
+    if (profileError) throw profileError;
+
+    console.log("Assinatura cancelada com sucesso");
+  } catch (error) {
+    console.error("Erro ao cancelar assinatura:", error);
+    throw error;
+  }
 }

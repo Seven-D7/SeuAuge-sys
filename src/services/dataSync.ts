@@ -4,7 +4,7 @@ import { useLevelStore } from '../stores/levelStore';
 import { useProgressStore } from '../stores/progressStore';
 import { useFavoritesStore } from '../stores/favoritesStore';
 import { useEnhancedPreferencesStore } from '../stores/enhancedPreferencesStore';
-import { auth } from '../firebase';
+import { supabase } from '../lib/supabase';
 
 interface SyncStatus {
   lastSync: Date | null;
@@ -47,7 +47,8 @@ class DataSyncService {
 
   // Sincronizar todos os dados do usuário
   async syncAllData(): Promise<void> {
-    if (!auth.currentUser || this.syncStatus.syncing) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || this.syncStatus.syncing) return;
 
     this.syncStatus.syncing = true;
     this.syncStatus.errors = [];

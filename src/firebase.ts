@@ -1,65 +1,45 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
 
-// Validate required environment variables for production
+// Firebase será usado apenas para hospedagem
+// A autenticação e banco de dados serão através do Supabase
+
+// Validate required environment variables for production hosting
 const requiredEnvVars = [
-  'VITE_FIREBASE_API_KEY',
-  'VITE_FIREBASE_AUTH_DOMAIN',
   'VITE_FIREBASE_PROJECT_ID',
-  'VITE_FIREBASE_STORAGE_BUCKET',
-  'VITE_FIREBASE_MESSAGING_SENDER_ID',
-  'VITE_FIREBASE_APP_ID'
 ];
 
 // Check for missing environment variables in production
 if (import.meta.env.PROD) {
   const missingVars = requiredEnvVars.filter(varName => !import.meta.env[varName]);
   if (missingVars.length > 0) {
-    throw new Error(`Missing required environment variables for production: ${missingVars.join(', ')}`);
+    console.warn(`Firebase hosting: Missing environment variables: ${missingVars.join(', ')}`);
   }
 }
 
-// Production Firebase configuration
+// Minimal Firebase configuration for hosting only
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "demo-api-key",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "demo-project.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "demo-project",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "demo-project.appspot.com",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:123456789:web:abcdef123456",
 };
 
-// Development fallback configuration
-const developmentConfig = {
-  apiKey: "demo-api-key",
-  authDomain: "demo-project.firebaseapp.com",
-  projectId: "demo-project",
-  storageBucket: "demo-project.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef123456",
-};
-
-// Use production config if available, otherwise development config
-const finalConfig = import.meta.env.PROD || firebaseConfig.apiKey
-  ? firebaseConfig
-  : developmentConfig;
-
-// Demo mode detection
-const isDemoMode = !import.meta.env.PROD && finalConfig.apiKey === "demo-api-key";
+// Demo mode detection - Firebase em modo demo quando não tem configuração real
+const isDemoMode = !import.meta.env.PROD && firebaseConfig.apiKey === "demo-api-key";
 
 if (isDemoMode) {
   console.warn(
-    "🔧 Firebase em modo DEMO - Para produção, configure as variáveis de ambiente reais",
+    "🔧 Firebase em modo DEMO - Usando Supabase como backend principal",
   );
 }
 
-const app = initializeApp(finalConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
+// Initialize Firebase app for hosting
+const app = initializeApp(firebaseConfig);
 
-export { auth, db, storage, isDemoMode };
+// Nota: Não inicializamos auth, firestore ou storage porque usaremos Supabase
+// export { auth, db, storage } - Removidos intencionalmente
 
+export { isDemoMode };
 export default app;

@@ -1,174 +1,186 @@
-# Configuração do Supabase
+# 🚀 Configuração do Supabase
 
-Este projeto foi configurado para usar Supabase como backend principal, substituindo o Firebase.
+Este projeto agora usa **Supabase** como backend principal para autenticação, banco de dados e storage. O Firebase é mantido apenas para hospedagem.
 
-## Configuração Inicial
+## 📋 Pré-requisitos
+
+1. Conta no [Supabase](https://supabase.com)
+2. Node.js e npm instalados
+3. Projeto criado no Supabase Dashboard
+
+## 🛠️ Configuração Inicial
 
 ### 1. Criar Projeto no Supabase
 
 1. Acesse [supabase.com](https://supabase.com)
-2. Crie uma nova conta ou faça login
-3. Clique em "New Project"
-4. Escolha sua organização
-5. Configure o nome do projeto, senha do banco de dados e região
-6. Aguarde a criação do projeto (pode levar alguns minutos)
+2. Faça login/cadastro
+3. Clique em "New project"
+4. Escolha uma organização
+5. Configure:
+   - **Name**: Meu Auge (ou nome do seu projeto)
+   - **Database Password**: Senha segura (salve em local seguro!)
+   - **Region**: South America (São Paulo) para melhor performance no Brasil
+   - **Pricing Plan**: Pode começar com o Free tier
 
-### 2. Obter Credenciais
+### 2. Configurar Schema do Banco
 
-No dashboard do seu projeto Supabase:
-
-1. Vá para Settings > API
-2. Copie a "Project URL" 
-3. Copie a "anon public" key
-4. Cole essas informações no arquivo `.env`
+1. No Dashboard do Supabase, vá para **SQL Editor**
+2. Clique em "New query"
+3. Copie todo o conteúdo do arquivo `supabase-schema.sql`
+4. Cole no editor e clique em "Run"
+5. Aguarde a execução (pode levar alguns segundos)
 
 ### 3. Configurar Variáveis de Ambiente
 
-Crie um arquivo `.env` na raiz do projeto baseado no `.env.example`:
+1. No Dashboard do Supabase, vá para **Settings > API**
+2. Copie os valores de:
+   - **Project URL** 
+   - **anon public** key
 
+3. Crie/edite o arquivo `.env` na raiz do projeto:
+
+```env
+# ===================================
+# SUPABASE CONFIGURATION (Principal)
+# ===================================
+VITE_SUPABASE_URL=https://seu-projeto-id.supabase.co
+VITE_SUPABASE_ANON_KEY=sua-chave-anon-aqui
+
+# ===================================
+# FIREBASE CONFIGURATION (Hospedagem)
+# ===================================
+VITE_FIREBASE_PROJECT_ID=seu-projeto-firebase
+
+# ===================================
+# APPLICATION CONFIGURATION
+# ===================================
+VITE_ADMIN_EMAIL=seu-email@dominio.com
+```
+
+### 4. Configurar Storage
+
+1. No Dashboard do Supabase, vá para **Storage**
+2. Verifique se o bucket `avatars` foi criado
+3. Se não existir, crie um novo bucket:
+   - **Name**: `avatars`
+   - **Public bucket**: ✅ Sim
+   - **File size limit**: 5MB
+   - **Allowed MIME types**: `image/*`
+
+### 5. Configurar Authentication
+
+1. No Dashboard do Supabase, vá para **Authentication > Settings**
+2. Configure **Site URL**: `http://localhost:5173` (desenvolvimento)
+3. Configure **Email Templates** conforme necessário
+4. Em **Auth Providers**, certifique-se que **Email** está habilitado
+
+## 🔧 Testando a Configuração
+
+1. Instale as dependências:
 ```bash
-# Supabase Configuration
-VITE_SUPABASE_URL=https://seu-projeto.supabase.co
-VITE_SUPABASE_ANON_KEY=sua-chave-anonima
-
-# Admin Configuration
-VITE_ADMIN_EMAIL=admin@seuauge.com
+npm install
 ```
 
-### 4. Executar Migrações do Banco de Dados
-
-#### Opção 1: Via Dashboard (Recomendado)
-1. No dashboard do Supabase, vá para "SQL Editor"
-2. Copie e cole o conteúdo do arquivo `supabase/schema.sql`
-3. Execute o script
-
-#### Opção 2: Via CLI do Supabase
+2. Inicie o servidor de desenvolvimento:
 ```bash
-# Instalar CLI do Supabase
-npm install -g supabase
-
-# Fazer login
-supabase login
-
-# Conectar ao projeto
-supabase link --project-ref SEU_PROJECT_REF
-
-# Executar migrações
-supabase db push
+npm run dev
 ```
 
-### 5. Configurar Autenticação
+3. Teste o sistema:
+   - Acesse `http://localhost:5173`
+   - Tente criar uma conta
+   - Faça login
+   - Verifique se o perfil é criado no Supabase
 
-No dashboard do Supabase:
+## 📊 Verificando no Dashboard
 
-1. Vá para Authentication > Settings
-2. Configure os provedores de autenticação desejados
-3. Para email/senha, certifique-se de que está habilitado
-4. Configure URLs de redirecionamento se necessário
+### Dados dos Usuários
+- **Authentication > Users**: Lista de usuários registrados
+- **Table Editor > user_profiles**: Perfis dos usuários
 
-### 6. Configurar RLS (Row Level Security)
+### Logs e Monitoramento
+- **Logs**: Visualizar logs da API
+- **Database > Logs**: Logs do PostgreSQL
 
-O esquema já inclui políticas RLS para segurança. Certifique-se de que:
+## 🔒 Segurança e RLS
 
-1. RLS está habilitado em todas as tabelas
-2. As políticas estão funcionando corretamente
-3. Usuários só podem acessar seus próprios dados
+O projeto está configurado com **Row Level Security (RLS)** ativado:
 
-## Estrutura do Banco de Dados
+- ✅ Usuários só podem ver/editar seus próprios dados
+- ✅ Admins têm acesso completo
+- ✅ Policies configuradas para cada tabela
+- ✅ Storage com acesso controlado
 
-### Tabelas Principais
+## 🚀 Deploy para Produção
 
-- **profiles**: Perfis dos usuários
-- **videos**: Catálogo de vídeos
-- **user_progress**: Progresso dos usuários nos v��deos
-- **user_favorites**: Vídeos favoritos dos usuários
-- **user_achievements**: Conquistas dos usuários
-- **user_goals**: Metas dos usuários
-- **user_activity**: Registro de atividades
-- **user_level**: Sistema de níveis e XP
-- **products**: Produtos da loja de apps
-- **user_purchases**: Compras dos usuários
+### 1. Configurar Domínio de Produção
 
-### Políticas de Segurança (RLS)
+No Supabase Dashboard:
+1. **Authentication > Settings**
+2. **Site URL**: `https://seu-dominio.com`
+3. **Redirect URLs**: Adicionar URLs de produção
 
-Todas as tabelas possuem políticas RLS que garantem:
+### 2. Variáveis de Ambiente de Produção
 
-- Usuários só acessam seus próprios dados
-- Admins têm acesso completo quando necessário
-- Dados públicos (como vídeos) são acessíveis a todos
+Configure as mesmas variáveis no seu serviço de hosting (Vercel, Netlify, etc.)
 
-## Integração com o Frontend
+### 3. Configurar CORS
 
-### Contexto de Autenticação
+Se necessário, configure CORS no Supabase para seu domínio de produção.
 
-O projeto usa `SupabaseAuthContext` que fornece:
+## 🎯 Recursos Disponíveis
 
-```typescript
-{
-  user: User | null,
-  session: Session | null,
-  login: (email, password) => Promise<void>,
-  register: (email, password, name, birthdate) => Promise<void>,
-  logout: () => Promise<void>,
-  updateUser: (data) => Promise<void>,
-  refreshPlan: () => Promise<void>,
-  loading: boolean
-}
-```
+### Autenticação
+- ✅ Login/Registro com email/senha
+- ✅ Recuperação de senha
+- ✅ Perfis de usuário
+- ✅ Sistema de roles (user/admin/moderator)
 
-### Serviços Disponíveis
+### Banco de Dados
+- ✅ Perfis de usuário
+- ✅ Sistema de planos
+- ✅ Métricas corporais
+- ✅ Logs de auditoria
+- ✅ Assinaturas
 
-- `src/services/supabase/user.ts`: Operações de usuário
-- `src/services/supabase/video.ts`: Operações de vídeo
+### Storage
+- ✅ Upload de avatars
+- ✅ Imagens públicas
+- ✅ Validação de arquivos
 
-### Modo Demo
+## 🆘 Troubleshooting
 
-Para desenvolvimento, o sistema funciona em modo demo quando as variáveis de ambiente não estão configuradas.
+### Erro "Invalid API key"
+- Verifique se as variáveis `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` estão corretas
+- Certifique-se que o arquivo `.env` está na raiz do projeto
 
-## Migração do Firebase
+### Erro "relation does not exist" 
+- Execute o script `supabase-schema.sql` no SQL Editor
+- Verifique se todas as tabelas foram criadas
 
-Se você est�� migrando do Firebase:
-
-1. Exporte seus dados do Firebase
-2. Adapte o formato para o esquema Supabase
-3. Importe os dados via dashboard ou API
-4. Teste todas as funcionalidades
-5. Atualize as variáveis de ambiente para usar Supabase
-
-## Monitoramento e Logs
-
-- Use o dashboard do Supabase para monitorar queries
-- Ative logs de autenticação se necessário
-- Configure alertas para erros
-
-## Backup e Recovery
-
-- Supabase faz backup automático
-- Para backups manuais, use o CLI ou dashboard
-- Teste procedures de recovery regularmente
-
-## Troubleshooting
-
-### Problema: "Invalid JWT"
-- Verifique se as chaves no .env estão corretas
-- Confirme se o projeto está ativo no Supabase
-
-### Problema: "RLS violation"
-- Verifique as políticas RLS
+### Erro de permissão (RLS)
+- Verifique se as policies estão ativas
 - Confirme se o usuário está autenticado
-- Teste as políticas no SQL Editor
 
-### Problema: "Connection failed"
-- Verifique a URL do projeto
-- Confirme a conectividade de rede
-- Verifique se o projeto não foi pausado
+### Upload de imagens falha
+- Verifique se o bucket `avatars` existe
+- Confirme as políticas de storage
+- Verifique tamanho/tipo do arquivo
 
-## Próximos Passos
+## 📞 Suporte
 
-1. Configure as variáveis de ambiente
-2. Execute as migrações do banco
-3. Teste a autenticação
-4. Importe dados se necessário
-5. Configure monitoramento
+Se encontrar problemas:
 
-Para conectar facilmente ao Supabase, você também pode usar o MCP (Model Context Protocol) através do botão "Open MCP popover" na interface.
+1. **Logs do Supabase**: Verifique os logs no Dashboard
+2. **Console do Browser**: Verifique erros no DevTools
+3. **Documentação**: [docs.supabase.com](https://docs.supabase.com)
+
+## 🔄 Migração de Dados
+
+Se você tinha dados no Firebase, será necessário migrar:
+
+1. Exporte dados do Firestore
+2. Transforme para formato PostgreSQL
+3. Importe no Supabase via SQL ou API
+
+> **Nota**: Este projeto foi migrado para usar Supabase como backend principal. O Firebase permanece configurado apenas para hospedagem.

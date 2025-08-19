@@ -1,7 +1,4 @@
-import { updateProfile, updateEmail } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage } from "../firebase";
+import { supabase, isSupabaseDemoMode } from "../lib/supabase";
 import type { BodyMetrics } from "../stores/progressStore";
 
 // Sanitization helper
@@ -28,8 +25,8 @@ export async function uploadAvatar(file: File, uid: string): Promise<string> {
     // Validate file
     validateImageFile(file);
 
-    // Modo desenvolvimento - retornar URL temporária
-    if (import.meta.env.VITE_DEV_MODE === "true") {
+    // Demo mode - return temporary URL
+    if (isSupabaseDemoMode) {
       return URL.createObjectURL(file);
     }
 
@@ -37,19 +34,24 @@ export async function uploadAvatar(file: File, uid: string): Promise<string> {
     const fileExtension = file.name.split('.').pop() || 'jpg';
     const secureFilename = `${uid}_${Date.now()}.${fileExtension}`;
     
-    const avatarRef = ref(storage, `avatars/${secureFilename}`);
-    
-    // Upload with metadata
-    const metadata = {
-      contentType: file.type,
-      customMetadata: {
-        uploadedBy: uid,
-        uploadedAt: new Date().toISOString(),
-      }
-    };
-    
-    await uploadBytes(avatarRef, file, metadata);
-    return await getDownloadURL(avatarRef);
+    const { data, error } = await supabase.storage
+      .from('avatars')
+      .upload(secureFilename, file, {
+        contentType: file.type,
+        metadata: {
+          uploadedBy: uid,
+          uploadedAt: new Date().toISOString(),
+        }
+      });
+
+    if (error) throw error;
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(secureFilename);
+
+    return publicUrl;
   } catch (error) {
     console.warn("Erro ao fazer upload do avatar:", error);
     throw error;
@@ -61,6 +63,7 @@ export interface UpdateUserInput {
   email?: string;
   birthdate?: string;
   file?: File | null;
+  avatar_url?: string;
 }
 
 export interface CreateUserInput {
@@ -78,18 +81,15 @@ export async function updateUserProfile({
   email,
   birthdate,
   file,
+  avatar_url,
 }: UpdateUserInput) {
-  // Temporarily disabled during migration to Supabase
-  console.log('updateUserProfile disabled during migration');
-  return;
-
   try {
-    // Modo desenvolvimento - apenas atualizar profile local
-    if (import.meta.env.VITE_DEV_MODE === "true") {
+    // Demo mode - only log updates
+    if (isSupabaseDemoMode) {
       if (file) {
-        console.log("Modo desenvolvimento: simulando upload de avatar");
+        console.log("Demo mode: simulando upload de avatar");
       }
-      console.log("Modo desenvolvimento: perfil atualizado localmente");
+      console.log("Demo mode: perfil atualizado localmente");
       return;
     }
 
@@ -118,42 +118,54 @@ export async function updateUserProfile({
       }
     }
 
-    let photoURL = auth.currentUser.photoURL || undefined;
+    // Get current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) throw new Error("Usuário não autenticado");
 
+    let photoURL = avatar_url;
+
+    // Upload new avatar if file provided
     if (file) {
-      photoURL = await uploadAvatar(file, auth.currentUser.uid);
+      photoURL = await uploadAvatar(file, user.id);
     }
 
-    // Update Firebase Auth profile
-    const updateData: { displayName?: string; photoURL?: string | null } = {};
+    // Update user metadata in Supabase Auth
+    const updateData: { data: Record<string, any> } = { data: {} };
     if (name !== undefined) {
-      updateData.displayName = sanitizeInput(name);
+      updateData.data.name = sanitizeInput(name);
     }
     if (photoURL !== undefined) {
-      updateData.photoURL = photoURL;
+      updateData.data.avatar_url = photoURL;
     }
 
-    if (Object.keys(updateData).length > 0) {
-      await updateProfile(auth.currentUser, updateData);
+    if (Object.keys(updateData.data).length > 0) {
+      const { error } = await supabase.auth.updateUser(updateData);
+      if (error) throw error;
     }
 
     // Update email separately if needed
-    if (email && auth.currentUser.email !== email) {
+    if (email && user.email !== email) {
       const sanitizedEmail = sanitizeInput(email.toLowerCase());
-      await updateEmail(auth.currentUser, sanitizedEmail);
+      const { error } = await supabase.auth.updateUser({ email: sanitizedEmail });
+      if (error) throw error;
     }
 
-    // Update Firestore document
-    const firestoreData: Record<string, unknown> = {
-      updatedAt: new Date(),
+    // Update user profile in database
+    const profileData: Record<string, unknown> = {
+      updated_at: new Date().toISOString(),
     };
     
-    if (name !== undefined) firestoreData.name = sanitizeInput(name);
-    if (email !== undefined) firestoreData.email = sanitizeInput(email.toLowerCase());
-    if (birthdate !== undefined) firestoreData.birthdate = birthdate;
-    if (photoURL !== undefined) firestoreData.avatar = photoURL;
+    if (name !== undefined) profileData.name = sanitizeInput(name);
+    if (email !== undefined) profileData.email = sanitizeInput(email.toLowerCase());
+    if (birthdate !== undefined) profileData.birthdate = birthdate;
+    if (photoURL !== undefined) profileData.avatar_url = photoURL;
 
-    await setDoc(doc(db, "users", auth.currentUser.uid), firestoreData, { merge: true });
+    const { error: profileError } = await supabase
+      .from('user_profiles')
+      .update(profileData)
+      .eq('id', user.id);
+
+    if (profileError) throw profileError;
 
     return photoURL;
   } catch (error) {
@@ -185,28 +197,29 @@ export async function createUserDocument({
       throw new Error("Email inválido");
     }
 
-    // Modo desenvolvimento - apenas log
-    if (import.meta.env.VITE_DEV_MODE === "true") {
-      console.log("Modo desenvolvimento: documento de usuário criado localmente");
+    // Demo mode - only log
+    if (isSupabaseDemoMode) {
+      console.log("Demo mode: documento de usuário criado localmente");
       return;
     }
 
     const userData = {
+      id: uid,
       name: sanitizedName,
       email: sanitizedEmail,
-      avatar,
+      avatar_url: avatar,
       plan,
       birthdate,
       role,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      // Security fields
-      isActive: true,
-      lastLogin: new Date(),
-      loginCount: 1,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     };
 
-    await setDoc(doc(db, "users", uid), userData);
+    const { error } = await supabase
+      .from('user_profiles')
+      .insert(userData);
+
+    if (error) throw error;
   } catch (error) {
     console.error("Erro ao criar documento do usuário:", error);
     throw error;
@@ -219,8 +232,8 @@ export async function getUserData(uid: string) {
       throw new Error("UID é obrigatório");
     }
 
-    // Modo desenvolvimento - retornar dados mock
-    if (import.meta.env.VITE_DEV_MODE === "true") {
+    // Demo mode - return mock data
+    if (isSupabaseDemoMode) {
       return {
         name: "Usuário Desenvolvimento",
         email: "dev@example.com",
@@ -230,18 +243,23 @@ export async function getUserData(uid: string) {
       };
     }
 
-    const userDoc = await getDoc(doc(db, "users", uid));
-    if (userDoc.exists()) {
-      const data = userDoc.data();
-      
-      // Sanitize data before returning
-      return {
-        ...data,
-        name: data.name ? sanitizeInput(data.name) : '',
-        email: data.email ? sanitizeInput(data.email) : '',
-      };
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('id', uid)
+      .single();
+
+    if (error) {
+      console.error("Erro ao buscar dados do usuário:", error);
+      return null;
     }
-    return null;
+    
+    // Sanitize data before returning
+    return {
+      ...data,
+      name: data.name ? sanitizeInput(data.name) : '',
+      email: data.email ? sanitizeInput(data.email) : '',
+    };
   } catch (error) {
     console.error("Erro ao buscar dados do usuário:", error);
     return null;
@@ -251,31 +269,46 @@ export async function getUserData(uid: string) {
 // Enhanced function to update user role (admin only)
 export async function updateUserRole(targetUid: string, newRole: 'user' | 'admin' | 'moderator') {
   try {
-    if (!auth.currentUser) {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
       throw new Error("Usuário não autenticado");
     }
 
     // Check if current user is admin
-    const currentUserDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
-    if (!currentUserDoc.exists() || currentUserDoc.data()?.role !== 'admin') {
+    const { data: currentUserData, error: currentUserError } = await supabase
+      .from('user_profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (currentUserError || !currentUserData || currentUserData.role !== 'admin') {
       throw new Error("Acesso negado. Apenas administradores podem alterar roles");
     }
 
-    await setDoc(doc(db, "users", targetUid), {
-      role: newRole,
-      updatedAt: new Date(),
-      updatedBy: auth.currentUser.uid,
-    }, { merge: true });
+    const { error } = await supabase
+      .from('user_profiles')
+      .update({
+        role: newRole,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', targetUid);
+
+    if (error) throw error;
 
     // Log role change for audit
-    await setDoc(doc(db, "audit_logs", `${Date.now()}_${targetUid}`), {
-      action: 'role_change',
-      targetUser: targetUid,
-      oldRole: 'unknown', // Would need to fetch previous role in production
-      newRole,
-      performedBy: auth.currentUser.uid,
-      timestamp: new Date(),
-    });
+    const { error: auditError } = await supabase
+      .from('audit_logs')
+      .insert({
+        action: 'role_change',
+        target_user: targetUid,
+        new_role: newRole,
+        performed_by: user.id,
+        created_at: new Date().toISOString(),
+      });
+
+    if (auditError) {
+      console.warn("Erro ao criar log de auditoria:", auditError);
+    }
 
   } catch (error) {
     console.error("Erro ao atualizar role do usuário:", error);
@@ -284,26 +317,78 @@ export async function updateUserRole(targetUid: string, newRole: 'user' | 'admin
 }
 
 export async function saveUserMetrics(metrics: Partial<BodyMetrics>) {
-  // Temporarily disabled during migration to Supabase
-  console.log('saveUserMetrics disabled during migration');
-  return;
+  try {
+    if (isSupabaseDemoMode) {
+      console.log("Demo mode: métricas salvas localmente");
+      return;
+    }
+
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) throw new Error("Usuário não autenticado");
+
+    const { error } = await supabase
+      .from('user_metrics')
+      .upsert({
+        user_id: user.id,
+        ...metrics,
+        updated_at: new Date().toISOString(),
+      });
+
+    if (error) throw error;
+  } catch (error) {
+    console.error("Erro ao salvar métricas:", error);
+    throw error;
+  }
 }
 
 export async function getUserMetrics(): Promise<Partial<BodyMetrics> | null> {
-  // Temporarily disabled during migration to Supabase
-  return null;
+  try {
+    if (isSupabaseDemoMode) {
+      return {
+        weight: 70,
+        height: 175,
+        bodyFat: 15,
+        muscleMass: 60,
+      };
+    }
+
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) return null;
+
+    const { data, error } = await supabase
+      .from('user_metrics')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('updated_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.error("Erro ao buscar métricas:", error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Erro ao buscar métricas:", error);
+    return null;
+  }
 }
 
 // Security function to check if user has permission
 export async function checkUserPermission(uid: string, requiredRole: 'user' | 'admin' | 'moderator' = 'user'): Promise<boolean> {
   try {
-    const userDoc = await getDoc(doc(db, "users", uid));
-    if (!userDoc.exists()) {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('role')
+      .eq('id', uid)
+      .single();
+
+    if (error || !data) {
       return false;
     }
 
-    const userData = userDoc.data();
-    const userRole = userData.role || 'user';
+    const userRole = data.role || 'user';
     
     // Admin has access to everything
     if (userRole === 'admin') return true;
