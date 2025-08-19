@@ -40,7 +40,7 @@ import {
   gerarContextoExplicacao,
   gerarExplicacaoFinal,
 } from "../../lib/fitness/explicacao";
-import { db } from "../../firebase";
+// Firebase removido - usando Supabase
 import { useProgressStore } from "../../stores/progressStore";
 import { useReportsStore, generateReportSummary } from "../../stores/reportsStore";
 import { getUserMetrics } from "../../services/user";
@@ -453,7 +453,7 @@ const PerformanceAtletica: React.FC = () => {
       },
       "Natação": {
         categoria: "Esporte Individual - Resistência/Técnica",
-        pontos_fortes: ["Capacidade pulmonar", "Força do core", "Flexibilidade"],
+        pontos_fortes: ["Capacidade pulmonar", "For��a do core", "Flexibilidade"],
         areas_melhoria: ["Potência de membros", "Força de pegada", "Resistência anaeróbia"]
       },
       "default": {

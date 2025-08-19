@@ -37,7 +37,7 @@ import {
   gerarContextoExplicacao,
   gerarExplicacaoFinal,
 } from "../../lib/fitness/explicacao";
-import { db } from "../../firebase";
+// Firebase removido - usando Supabase
 import { useProgressStore } from "../../stores/progressStore";
 import { useReportsStore, generateReportSummary } from "../../stores/reportsStore";
 import { getUserMetrics } from "../../services/user";

@@ -7,11 +7,10 @@ import './index.css';
 import './styles/animations.css';
 import App from './App';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { logEnvironmentStatus, checkProductionReadiness } from './lib/environment';
 
-// Debug das variáveis importantes (Firebase principal)
-console.log("DEBUG - Firebase Project:", import.meta.env.VITE_FIREBASE_PROJECT_ID || "(não definida)");
-console.log("DEBUG - Firebase Auth:", import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ? "(definida)" : "(não definida)");
+// Debug das variáveis importantes (Supabase)
+console.log("DEBUG - Supabase URL:", import.meta.env.VITE_SUPABASE_URL ? "(definida)" : "(não definida)");
+console.log("DEBUG - Supabase Key:", import.meta.env.VITE_SUPABASE_ANON_KEY ? "(definida)" : "(não definida)");
 
 // Initialize Sentry only if DSN is provided
 if (import.meta.env.VITE_SENTRY_DSN) {
@@ -23,27 +22,17 @@ if (import.meta.env.VITE_SENTRY_DSN) {
   });
 }
 
-// Check production readiness and log environment status
-logEnvironmentStatus();
-
-// Prevent app start if production requirements not met
+// Check Supabase configuration in production
 if (import.meta.env.PROD) {
-  const readiness = checkProductionReadiness();
-  
-  if (!readiness.ready) {
-    console.error('🚨 Application cannot start in production mode:');
-    readiness.issues.forEach(issue => console.error(`  - ${issue}`));
-
-    // Evita crash total no local build: apenas avisa
-    if (import.meta.env.MODE === 'production' && process.env.FIREBASE_DEPLOY) {
-      throw new Error('Production requirements not met. Check console for details.');
-    } else {
-      console.warn("⚠️ Ignorando bloqueio de produção (modo debug/local).");
-    }
+  if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+    console.error('🚨 Supabase configuration missing in production:');
+    if (!import.meta.env.VITE_SUPABASE_URL) console.error('  - VITE_SUPABASE_URL not set');
+    if (!import.meta.env.VITE_SUPABASE_ANON_KEY) console.error('  - VITE_SUPABASE_ANON_KEY not set');
+    throw new Error('Supabase configuration required for production');
   }
 }
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <ThemeProvider>
@@ -52,5 +41,6 @@ createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </StrictMode>,
 );
+
 // Log de inicialização
-console.log('🚀 Aplicação iniciada com sucesso!');
+console.log('🚀 Aplicação iniciada com Supabase!');

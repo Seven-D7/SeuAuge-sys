@@ -3,13 +3,9 @@
 interface EnvironmentConfig {
   isProduction: boolean;
   isDevelopment: boolean;
-  firebase: {
-    apiKey: string;
-    authDomain: string;
-    projectId: string;
-    storageBucket: string;
-    messagingSenderId: string;
-    appId: string;
+  supabase: {
+    url: string;
+    anonKey: string;
   };
   features: {
     analytics: boolean;
@@ -25,17 +21,13 @@ interface EnvironmentConfig {
 // Validate required environment variables
 function validateEnvironment(): void {
   const requiredProdVars = [
-    'VITE_FIREBASE_API_KEY',
-    'VITE_FIREBASE_AUTH_DOMAIN',
-    'VITE_FIREBASE_PROJECT_ID',
-    'VITE_FIREBASE_STORAGE_BUCKET',
-    'VITE_FIREBASE_MESSAGING_SENDER_ID',
-    'VITE_FIREBASE_APP_ID',
+    'VITE_SUPABASE_URL',
+    'VITE_SUPABASE_ANON_KEY',
   ];
 
   if (import.meta.env.PROD) {
     const missingVars = requiredProdVars.filter(
-      varName => !import.meta.env[varName] || import.meta.env[varName].includes('demo')
+      varName => !import.meta.env[varName]
     );
 
     if (missingVars.length > 0) {
@@ -43,32 +35,30 @@ function validateEnvironment(): void {
       throw new Error(`Production build requires these environment variables: ${missingVars.join(', ')}`);
     }
 
-    // Validate Firebase config format
-    if (!import.meta.env.VITE_FIREBASE_API_KEY?.startsWith('AIza')) {
-      console.warn('⚠️ Firebase API key format seems incorrect');
+    // Validate Supabase URL format
+    if (!import.meta.env.VITE_SUPABASE_URL?.startsWith('https://')) {
+      console.warn('⚠️ Supabase URL should start with https://');
     }
 
-    if (!import.meta.env.VITE_FIREBASE_PROJECT_ID?.match(/^[a-z0-9-]+$/)) {
-      console.warn('⚠️ Firebase project ID format seems incorrect');
+    if (!import.meta.env.VITE_SUPABASE_URL?.includes('.supabase.co')) {
+      console.warn('⚠️ Supabase URL format seems incorrect');
     }
   }
 }
 
 // Create environment configuration
 function createEnvironmentConfig(): EnvironmentConfig {
-  validateEnvironment();
+  if (import.meta.env.PROD) {
+    validateEnvironment();
+  }
 
   return {
     isProduction: import.meta.env.PROD,
     isDevelopment: import.meta.env.DEV,
     
-    firebase: {
-      apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
-      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
-      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
-      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
-      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
-      appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
+    supabase: {
+      url: import.meta.env.VITE_SUPABASE_URL || '',
+      anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || '',
     },
 
     features: {
@@ -91,13 +81,13 @@ export function checkProductionReadiness(): { ready: boolean; issues: string[] }
   try {
     const config = createEnvironmentConfig();
 
-    // Check Firebase configuration
-    if (!config.firebase.apiKey) {
-      issues.push('Missing Firebase API key');
+    // Check Supabase configuration
+    if (!config.supabase.url) {
+      issues.push('Missing Supabase URL');
     }
 
-    if (!config.firebase.projectId) {
-      issues.push('Missing Firebase project ID');
+    if (!config.supabase.anonKey) {
+      issues.push('Missing Supabase anon key');
     }
 
     // Check security configuration
@@ -105,13 +95,11 @@ export function checkProductionReadiness(): { ready: boolean; issues: string[] }
       issues.push('Admin email not configured for production');
     }
 
-    // Check for demo/development values in production
+    // Check for local/demo values in production
     if (config.isProduction) {
-      Object.values(config.firebase).forEach(value => {
-        if (value.includes('demo') || value.includes('localhost')) {
-          issues.push('Demo/development values found in production configuration');
-        }
-      });
+      if (config.supabase.url.includes('localhost') || config.supabase.url.includes('demo')) {
+        issues.push('Demo/development values found in production Supabase configuration');
+      }
     }
 
     return {
@@ -126,22 +114,26 @@ export function checkProductionReadiness(): { ready: boolean; issues: string[] }
   }
 }
 
-// Log environment status
+// Log environment status  
 export function logEnvironmentStatus(): void {
-  const config = createEnvironmentConfig();
-  const readiness = checkProductionReadiness();
+  try {
+    const config = createEnvironmentConfig();
+    const readiness = checkProductionReadiness();
 
-  console.log(`🚀 Environment: ${config.isProduction ? 'PRODUCTION' : 'DEVELOPMENT'}`);
-  console.log(`🔧 Firebase Project: ${config.firebase.projectId || 'Not configured'}`);
-  console.log(`📊 Analytics: ${config.features.analytics ? 'Enabled' : 'Disabled'}`);
-  console.log(`⚡ Performance Monitoring: ${config.features.performanceMonitoring ? 'Enabled' : 'Disabled'}`);
-  console.log(`🐛 Error Tracking: ${config.features.errorTracking ? 'Enabled' : 'Disabled'}`);
+    console.log(`🚀 Environment: ${config.isProduction ? 'PRODUCTION' : 'DEVELOPMENT'}`);
+    console.log(`🗃️ Supabase: ${config.supabase.url ? 'Configured' : 'Not configured'}`);
+    console.log(`📊 Analytics: ${config.features.analytics ? 'Enabled' : 'Disabled'}`);
+    console.log(`⚡ Performance Monitoring: ${config.features.performanceMonitoring ? 'Enabled' : 'Disabled'}`);
+    console.log(`🐛 Error Tracking: ${config.features.errorTracking ? 'Enabled' : 'Disabled'}`);
 
-  if (!readiness.ready) {
-    console.warn('⚠️ Production readiness issues:');
-    readiness.issues.forEach(issue => console.warn(`  - ${issue}`));
-  } else {
-    console.log('✅ Production ready');
+    if (!readiness.ready) {
+      console.warn('⚠️ Production readiness issues:');
+      readiness.issues.forEach(issue => console.warn(`  - ${issue}`));
+    } else {
+      console.log('✅ Production ready');
+    }
+  } catch (error) {
+    console.error('❌ Environment configuration error:', error);
   }
 }
 

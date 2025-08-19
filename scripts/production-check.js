@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// Production Readiness Check Script
+// Production Readiness Check Script - Supabase Version
 const fs = require('fs');
 const path = require('path');
 
@@ -45,7 +45,7 @@ function checkDependencies() {
   
   const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
   const requiredDeps = [
-    'react', 'react-dom', 'firebase', 'react-router-dom',
+    'react', 'react-dom', '@supabase/supabase-js', 'react-router-dom',
     'zustand', '@sentry/react', 'lucide-react'
   ];
   
@@ -58,6 +58,14 @@ function checkDependencies() {
       allFound = false;
     }
   });
+
+  // Check that Firebase is NOT in dependencies (since we removed it)
+  if (packageJson.dependencies.firebase) {
+    log(`❌ firebase - Should be removed from dependencies`, 'red');
+    allFound = false;
+  } else {
+    log(`✅ firebase - Correctly removed from dependencies`, 'green');
+  }
   
   return allFound;
 }
@@ -66,15 +74,28 @@ function checkBuildFiles() {
   log('\n🏗️  Checking Build Files...', 'blue');
   
   const checks = [
-    ['src/firebase.ts', 'Firebase configuration'],
+    ['src/lib/supabaseClient.ts', 'Supabase client configuration'],
     ['src/contexts/AuthContext.tsx', 'Authentication context'],
     ['src/components/ErrorBoundary.tsx', 'Error boundary component'],
     ['src/lib/security.ts', 'Security utilities'],
     ['src/lib/environment.ts', 'Environment validation'],
     ['vite.config.ts', 'Vite configuration'],
-    ['PRODUCTION.md', 'Production documentation'],
-    ['firebase-functions-template.js', 'Firebase Functions template']
+    ['firebase.json', 'Firebase hosting configuration'],
+    ['SUPABASE_SETUP.md', 'Supabase setup documentation']
   ];
+
+  // Check that firebase.ts is empty or doesn't exist
+  if (fs.existsSync('src/firebase.ts')) {
+    const firebaseContent = fs.readFileSync('src/firebase.ts', 'utf8').trim();
+    if (firebaseContent.length === 0) {
+      log(`✅ Firebase client - Correctly removed`, 'green');
+    } else {
+      log(`❌ Firebase client - Should be empty or removed`, 'red');
+      return false;
+    }
+  } else {
+    log(`✅ Firebase client - Correctly removed`, 'green');
+  }
   
   return checks.every(([file, desc]) => checkFile(file, desc));
 }
@@ -95,12 +116,8 @@ function checkEnvironmentVariables() {
   }
   
   const requiredVars = [
-    ['VITE_FIREBASE_API_KEY', 'Firebase API Key'],
-    ['VITE_FIREBASE_AUTH_DOMAIN', 'Firebase Auth Domain'],
-    ['VITE_FIREBASE_PROJECT_ID', 'Firebase Project ID'],
-    ['VITE_FIREBASE_STORAGE_BUCKET', 'Firebase Storage Bucket'],
-    ['VITE_FIREBASE_MESSAGING_SENDER_ID', 'Firebase Messaging Sender ID'],
-    ['VITE_FIREBASE_APP_ID', 'Firebase App ID']
+    ['VITE_SUPABASE_URL', 'Supabase URL'],
+    ['VITE_SUPABASE_ANON_KEY', 'Supabase Anon Key']
   ];
   
   const optionalVars = [
@@ -109,6 +126,18 @@ function checkEnvironmentVariables() {
     ['VITE_ENABLE_ANALYTICS', 'Analytics Flag'],
     ['VITE_ENABLE_PERFORMANCE_MONITORING', 'Performance Monitoring Flag']
   ];
+
+  // Check that Firebase env vars are NOT set (since we removed Firebase)
+  const firebaseVars = [
+    'VITE_FIREBASE_API_KEY', 'VITE_FIREBASE_AUTH_DOMAIN', 'VITE_FIREBASE_PROJECT_ID',
+    'VITE_FIREBASE_STORAGE_BUCKET', 'VITE_FIREBASE_MESSAGING_SENDER_ID', 'VITE_FIREBASE_APP_ID'
+  ];
+
+  firebaseVars.forEach(varName => {
+    if (process.env[varName]) {
+      log(`⚠️  ${varName} - Firebase var should be removed`, 'yellow');
+    }
+  });
   
   let allRequired = true;
   
@@ -142,12 +171,12 @@ function checkSecurityConfiguration() {
       check: () => fs.existsSync('src/lib/environment.ts')
     },
     {
-      name: 'Production documentation exists',
-      check: () => fs.existsSync('PRODUCTION.md')
+      name: 'Supabase setup documentation exists',
+      check: () => fs.existsSync('SUPABASE_SETUP.md')
     },
     {
-      name: 'Firebase Functions template available',
-      check: () => fs.existsSync('firebase-functions-template.js')
+      name: 'Firebase hosting configuration exists',
+      check: () => fs.existsSync('firebase.json')
     }
   ];
   
@@ -209,12 +238,13 @@ function generateReport(results) {
   log(`Passed: ${passedChecks}/${totalChecks}`, 'blue');
   
   if (score >= 90) {
-    log('\n�� Application is ready for production!', 'green');
+    log('\n🎉 Application is ready for production!', 'green');
     log('Next steps:', 'blue');
-    log('1. Run: npm run prepare-deploy', 'blue');
-    log('2. Configure Firebase Functions using firebase-functions-template.js', 'blue');
-    log('3. Set up monitoring and alerting', 'blue');
-    log('4. Configure CDN and security headers', 'blue');
+    log('1. Configure Supabase project (follow SUPABASE_SETUP.md)', 'blue');
+    log('2. Set up environment variables in production', 'blue');
+    log('3. Run: npm run prepare-deploy', 'blue');
+    log('4. Deploy to Firebase Hosting: npx firebase deploy', 'blue');
+    log('5. Set up monitoring and alerting', 'blue');
   } else if (score >= 70) {
     log('\n⚠️  Application needs some improvements before production', 'yellow');
     log('Please address the failed checks above', 'yellow');
@@ -227,8 +257,8 @@ function generateReport(results) {
 }
 
 function main() {
-  log('🚀 HealthFlix Production Readiness Check', 'blue');
-  log('========================================', 'blue');
+  log('🚀 HealthFlix Production Readiness Check (Supabase)', 'blue');
+  log('==================================================', 'blue');
   
   const results = {
     dependencies: checkDependencies(),

@@ -32,7 +32,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
+          supabase: ['@supabase/supabase-js'],
           ui: ['@radix-ui/react-slot', '@radix-ui/react-checkbox', '@radix-ui/react-label'],
           router: ['react-router-dom'],
           charts: ['recharts'],
