@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/SupabaseAuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { supabase } from '../../lib/supabase';
+import { authOperations } from '../../lib/supabase';
 import LanguageSelector from '../LanguageSelector';
+import toast from 'react-hot-toast';
 
 interface LoginFormProps {
   onToggleMode: () => void;
@@ -17,6 +18,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loginProgress, setLoginProgress] = useState<string>('');
   const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
   const [resetEmailSent, setResetEmailSent] = useState(false);
   const navigate = useNavigate();
@@ -53,18 +55,42 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
 
     setLoading(true);
     setError(null);
+    setLoginProgress(t('auth.authenticating'));
 
     try {
+      // Step 1: Authenticate
+      setLoginProgress(t('auth.verifying_credentials'));
       await login(email.trim(), password);
+
+      // Step 2: Loading user data
+      setLoginProgress(t('auth.loading_profile'));
+
+      // Small delay to show progress feedback
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Step 3: Redirect
+      setLoginProgress(t('auth.redirecting'));
       navigate('/dashboard');
     } catch (error: unknown) {
       console.error('Login error:', error);
 
-      // Error messages are already handled in SupabaseAuthContext
+      // Enhanced error handling
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-      setError(errorMessage || t('auth.login_error'));
+
+      if (errorMessage.includes('timeout')) {
+        const timeoutMsg = t('auth.connection_timeout');
+        setError(timeoutMsg);
+        toast.error(timeoutMsg, { duration: 6000 });
+      } else if (errorMessage.includes('network')) {
+        const networkMsg = t('auth.network_error');
+        setError(networkMsg);
+        toast.error(networkMsg, { duration: 6000 });
+      } else {
+        setError(errorMessage || t('auth.login_error'));
+      }
     } finally {
       setLoading(false);
+      setLoginProgress('');
     }
   };
 
@@ -83,15 +109,21 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
 
     setLoading(true);
     setError(null);
+    setLoginProgress(t('auth.sending_recovery'));
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(trimmedEmail);
+      const { error } = await authOperations.resetPasswordForEmail(trimmedEmail);
       if (error) throw error;
       setResetEmailSent(true);
     } catch (error: unknown) {
       console.error('Password reset error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-      if (errorMessage?.includes('User not found')) {
+
+      if (errorMessage?.includes('timeout')) {
+        const timeoutMsg = t('auth.connection_timeout');
+        setError(timeoutMsg);
+        toast.error(timeoutMsg, { duration: 6000 });
+      } else if (errorMessage?.includes('User not found')) {
         setError(t('auth.email_not_found'));
       } else if (errorMessage?.includes('Invalid email')) {
         setError(t('auth.invalid_email'));
@@ -102,6 +134,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
       }
     } finally {
       setLoading(false);
+      setLoginProgress('');
     }
   };
 
@@ -111,6 +144,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     setError(null);
     setEmail('');
     setPassword('');
+    setLoginProgress('');
   };
 
   if (resetEmailSent) {
@@ -268,7 +302,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             {loading ? (
               <div className="flex items-center justify-center gap-2">
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                {forgotPasswordMode ? t('auth.sending') : t('auth.signing_in')}
+                <span className="text-sm">
+                  {loginProgress || (forgotPasswordMode ? t('auth.sending') : t('auth.signing_in'))}
+                </span>
               </div>
             ) : (
               forgotPasswordMode ? t('auth.send_recovery_link') : t('auth.sign_in')

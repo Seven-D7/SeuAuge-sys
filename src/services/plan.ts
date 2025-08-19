@@ -1,4 +1,4 @@
-import { supabase } from "../lib/supabase";
+import { supabase, authOperations, withTimeout } from "../lib/supabase";
 import api from "./api";
 
 export interface PlanData {
@@ -39,29 +39,61 @@ export async function getPlans(): Promise<PlanData[]> {
   }
 }
 
+// Cache para evitar múltiplas consultas desnecessárias
+let planCache: { userId: string; plan: string | null; timestamp: number } | null = null;
+const PLAN_CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+
 export async function getPlanFromToken(
   forceRefresh = false,
 ): Promise<string | null> {
   try {
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const { data: { user }, error: userError } = await withTimeout(
+      authOperations.getUser(),
+      5000,
+      'Get User for Plan'
+    );
+
     if (userError || !user) return null;
 
+    // Check cache first
+    const now = Date.now();
+    if (!forceRefresh && planCache &&
+        planCache.userId === user.id &&
+        (now - planCache.timestamp) < PLAN_CACHE_DURATION) {
+      return planCache.plan;
+    }
+
     // Get user profile with plan information
-    const { data: profile, error: profileError } = await supabase
-      .from('user_profiles')
-      .select('plan')
-      .eq('id', user.id)
-      .single();
+    const { data: profile, error: profileError } = await withTimeout(
+      supabase
+        .from('user_profiles')
+        .select('plan')
+        .eq('id', user.id)
+        .single(),
+      3000,
+      'Get User Plan'
+    );
 
     if (profileError) {
       console.error("Erro ao buscar plano do usuário:", profileError);
-      return null;
+      // Return cached value if available, otherwise null
+      return planCache?.userId === user.id ? planCache.plan : null;
     }
 
-    return profile?.plan || null;
+    const plan = profile?.plan || null;
+
+    // Update cache
+    planCache = {
+      userId: user.id,
+      plan,
+      timestamp: now,
+    };
+
+    return plan;
   } catch (error) {
     console.error("Erro ao buscar plano:", error);
-    return null;
+    // Return cached value if available
+    return planCache?.plan || null;
   }
 }
 

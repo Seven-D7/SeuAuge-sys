@@ -1,7 +1,7 @@
 // Contexto responsável por gerenciar a autenticação com o Supabase
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { User as SupabaseUser, AuthError } from "@supabase/supabase-js";
-import { supabase, UserProfile } from "../lib/supabase";
+import { supabase, UserProfile, authOperations, withTimeout } from "../lib/supabase";
 import {
   updateUserProfile,
   UpdateUserInput,
@@ -107,48 +107,112 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isInitializing, setIsInitializing] = useState(false);
 
-  // Function to initialize all user systems
+  // Function to initialize all user systems with debounce to prevent multiple simultaneous calls
+  let initializationPromise: Promise<void> | null = null;
   const initializeUserSystems = async (supabaseUser: SupabaseUser, userPlan?: string) => {
-    try {
-      // Initialize user profile
-      const profileStore = useUserProfileStore.getState();
-      await profileStore.loadProfile(supabaseUser.id);
-
-      // Initialize activity tracking (handles daily login)
-      await initializeActivityTracking();
-
-      // Initialize achievements
-      const achievementsStore = useAchievementsStore.getState();
-      await achievementsStore.initializeAchievements();
-
-      // Check daily login for level system
-      const levelStore = useLevelStore.getState();
-      await levelStore.checkDailyLogin();
-
-      // Generate smart goals if none exist
-      const goalsStore = useGoalsStore.getState();
-      if (goalsStore.goals.length === 0) {
-        goalsStore.generateSmartGoals({ plan: userPlan });
-      }
-
-      // Reset daily challenges if needed (new day)
-      const today = new Date().toDateString();
-      const lastResetDate = localStorage.getItem('lastChallengeReset');
-      if (lastResetDate !== today) {
-        goalsStore.resetDailyChallenges();
-        localStorage.setItem('lastChallengeReset', today);
-      }
-
-      // Initialize sync system
-      await initializeSyncSystem();
-
-      // Start auto sync for user data
-      dataSyncService.startAutoSync(15); // Sync every 15 minutes
-
-    } catch (error) {
-      console.error('Erro ao inicializar sistemas do usuário:', error);
+    // Prevent multiple simultaneous initializations
+    if (initializationPromise) {
+      return initializationPromise;
     }
+
+    initializationPromise = (async () => {
+      try {
+        setIsInitializing(true);
+
+        // Initialize systems with timeout protection
+        const initPromises = [];
+
+        // Initialize user profile
+        const profileStore = useUserProfileStore.getState();
+        initPromises.push(
+          withTimeout(
+            profileStore.loadProfile(supabaseUser.id),
+            5000,
+            'Load Profile'
+          )
+        );
+
+        // Initialize activity tracking (handles daily login)
+        initPromises.push(
+          withTimeout(
+            initializeActivityTracking(),
+            3000,
+            'Activity Tracking'
+          )
+        );
+
+        // Initialize achievements
+        const achievementsStore = useAchievementsStore.getState();
+        initPromises.push(
+          withTimeout(
+            achievementsStore.initializeAchievements(),
+            3000,
+            'Achievements'
+          )
+        );
+
+        // Check daily login for level system
+        const levelStore = useLevelStore.getState();
+        initPromises.push(
+          withTimeout(
+            levelStore.checkDailyLogin(),
+            2000,
+            'Daily Login Check'
+          )
+        );
+
+        // Wait for all critical initializations with individual error handling
+        const results = await Promise.allSettled(initPromises);
+        results.forEach((result, index) => {
+          if (result.status === 'rejected') {
+            const operations = ['Load Profile', 'Activity Tracking', 'Achievements', 'Daily Login Check'];
+            console.warn(`Failed to initialize ${operations[index]}:`, result.reason);
+          }
+        });
+
+        // Non-critical initializations (can fail without blocking login)
+        try {
+          // Generate smart goals if none exist
+          const goalsStore = useGoalsStore.getState();
+          if (goalsStore.goals.length === 0) {
+            setTimeout(() => {
+              goalsStore.generateSmartGoals({ plan: userPlan });
+            }, 1000);
+          }
+
+          // Reset daily challenges if needed (new day)
+          const today = new Date().toDateString();
+          const lastResetDate = localStorage.getItem('lastChallengeReset');
+          if (lastResetDate !== today) {
+            goalsStore.resetDailyChallenges();
+            localStorage.setItem('lastChallengeReset', today);
+          }
+
+          // Initialize sync system asynchronously
+          setTimeout(async () => {
+            try {
+              await withTimeout(initializeSyncSystem(), 5000, 'Sync System');
+              dataSyncService.startAutoSync(15); // Sync every 15 minutes
+            } catch (error) {
+              console.warn('Failed to initialize sync system:', error);
+            }
+          }, 2000);
+        } catch (error) {
+          console.warn('Failed to initialize non-critical systems:', error);
+        }
+
+      } catch (error) {
+        console.error('Erro ao inicializar sistemas do usuário:', error);
+        // Don't throw the error to prevent login from failing
+      } finally {
+        setIsInitializing(false);
+        initializationPromise = null;
+      }
+    })();
+
+    return initializationPromise;
   };
 
   const mapSupabaseUser = async (supabaseUser: SupabaseUser): Promise<User> => {
@@ -200,17 +264,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    // Get initial session
+    // Get initial session with timeout
     const getInitialSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
+        const { data: { session } } = await authOperations.getSession();
+
         if (session?.user) {
           const mapped = await mapSupabaseUser(session.user);
           setUser(mapped);
         }
       } catch (error) {
         console.error('Error getting initial session:', error);
+        // Continue loading even if session check fails
       } finally {
         setLoading(false);
       }
@@ -253,17 +318,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: sanitizedEmail,
-        password,
-      });
+      const { data, error } = await authOperations.signInWithPassword(
+        sanitizedEmail,
+        password
+      );
 
       if (error) throw error;
 
       if (data.user) {
         const mapped = await mapSupabaseUser(data.user);
         setUser(mapped);
-        
+
         // Audit log (in production, send to secure logging service)
         if (import.meta.env.DEV) {
           console.log("Usuario autenticado:", mapped.email, "Role:", mapped.role);
@@ -325,17 +390,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: sanitizedEmail,
+      const { data, error } = await authOperations.signUp(
+        sanitizedEmail,
         password,
-        options: {
+        {
           data: {
             name: sanitizedName,
             birthdate,
             role: 'user', // Default role
           },
-        },
-      });
+        }
+      );
 
       if (error) throw error;
 
@@ -390,17 +455,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
+      const { error } = await authOperations.signOut();
       if (error) throw error;
 
       setUser(null);
 
       // Stop real-time sync
       stopRealtimeSync();
-      
+
       // Stop auto sync
       dataSyncService.stopAutoSync();
-      
+
       // Clear user profile
       const profileStore = useUserProfileStore.getState();
       profileStore.clearProfile();
@@ -414,7 +479,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setUser(null);
       stopRealtimeSync();
       dataSyncService.stopAutoSync();
-      
+
       const profileStore = useUserProfileStore.getState();
       profileStore.clearProfile();
     }
@@ -447,7 +512,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       // Get current user and re-map
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      const { data: { user: currentUser } } = await authOperations.getUser();
       if (currentUser) {
         const mapped = await mapSupabaseUser(currentUser);
         setUser(mapped);
@@ -459,11 +524,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const refreshPlan = async () => {
-    const { data: { user: currentUser } } = await supabase.auth.getUser();
-    if (!currentUser) return;
-    
     try {
-      const newPlan = await getPlanFromToken(true);
+      const { data: { user: currentUser } } = await authOperations.getUser();
+      if (!currentUser) return;
+
+      const newPlan = await withTimeout(getPlanFromToken(true), 5000, 'Refresh Plan');
       setUser((prev) =>
         prev ? { ...prev, plan: newPlan, isPremium: !!newPlan } : prev,
       );

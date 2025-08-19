@@ -10,14 +10,96 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
-// Cliente único do Supabase
+// Cliente único do Supabase com configurações otimizadas
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
+    flowType: 'pkce',
+  },
+  global: {
+    headers: {
+      'x-application-name': 'healthflix',
+    },
+  },
+  realtime: {
+    params: {
+      eventsPerSecond: 10,
+    },
+    heartbeatIntervalMs: 30000,
+    reconnectAfterMs: (tries: number) => Math.min(tries * 1000, 10000),
+  },
+  db: {
+    schema: 'public',
   },
 });
+
+// Helper function to add timeout to Supabase operations
+export const withTimeout = <T>(
+  promise: Promise<T>, 
+  timeoutMs: number = 30000, 
+  operation: string = 'Operation'
+): Promise<T> => {
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    setTimeout(() => {
+      reject(new Error(`${operation} timeout after ${timeoutMs}ms`));
+    }, timeoutMs);
+  });
+
+  return Promise.race([promise, timeoutPromise]);
+};
+
+// Enhanced auth operations with timeout
+export const authOperations = {
+  async signInWithPassword(email: string, password: string) {
+    return withTimeout(
+      supabase.auth.signInWithPassword({ email, password }),
+      15000,
+      'Login'
+    );
+  },
+
+  async signUp(email: string, password: string, options?: any) {
+    return withTimeout(
+      supabase.auth.signUp({ email, password, options }),
+      20000,
+      'Registration'
+    );
+  },
+
+  async signOut() {
+    return withTimeout(
+      supabase.auth.signOut(),
+      10000,
+      'Logout'
+    );
+  },
+
+  async getSession() {
+    return withTimeout(
+      supabase.auth.getSession(),
+      10000,
+      'Get Session'
+    );
+  },
+
+  async getUser() {
+    return withTimeout(
+      supabase.auth.getUser(),
+      10000,
+      'Get User'
+    );
+  },
+
+  async resetPasswordForEmail(email: string) {
+    return withTimeout(
+      supabase.auth.resetPasswordForEmail(email),
+      15000,
+      'Password Reset'
+    );
+  },
+};
 
 // Database types for better type safety
 export interface UserProfile {

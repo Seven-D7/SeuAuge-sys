@@ -29,7 +29,14 @@
     "too_many_requests": "Muitas tentativas de login. Tente novamente mais tarde.",
     "login_error": "Erro ao fazer login. Verifique suas credenciais e tente novamente.",
     "enter_email_to_recover": "Digite seu email para recuperar a senha",
-    "recovery_error": "Erro ao enviar email de recuperação. Tente novamente."
+    "recovery_error": "Erro ao enviar email de recuperação. Tente novamente.",
+    "authenticating": "Autenticando...",
+    "verifying_credentials": "Verificando credenciais...",
+    "loading_profile": "Carregando perfil...",
+    "redirecting": "Redirecionando...",
+    "sending_recovery": "Enviando email de recuperação...",
+    "connection_timeout": "Tempo limite de conexão excedido. Verifique sua internet e tente novamente.",
+    "network_error": "Erro de conexão. Verifique sua internet e tente novamente."
   },
   "common": {
     "language": "Idioma",

@@ -29,7 +29,14 @@
     "too_many_requests": "Too many login attempts. Try again later.",
     "login_error": "Login error. Check your credentials and try again.",
     "enter_email_to_recover": "Enter your email to recover password",
-    "recovery_error": "Error sending recovery email. Try again."
+    "recovery_error": "Error sending recovery email. Try again.",
+    "authenticating": "Authenticating...",
+    "verifying_credentials": "Verifying credentials...",
+    "loading_profile": "Loading profile...",
+    "redirecting": "Redirecting...",
+    "sending_recovery": "Sending recovery email...",
+    "connection_timeout": "Connection timeout. Check your internet and try again.",
+    "network_error": "Connection error. Check your internet and try again."
   },
   "common": {
     "language": "Language",
