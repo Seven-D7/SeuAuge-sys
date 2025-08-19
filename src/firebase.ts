@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
@@ -56,10 +55,9 @@ if (isDemoMode) {
 }
 
 const app = initializeApp(finalConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-export { auth, db, storage, isDemoMode };
+export { db, storage, isDemoMode };
 
 export default app;

@@ -37,7 +37,7 @@ import {
   Lock,
   Badge
 } from "lucide-react";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/SupabaseAuthContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { useAchievementsStore } from "../stores/achievementsStore";
 import { PLANS } from "../data/plans";
@@ -50,6 +50,10 @@ import { getUserMetrics } from "../services/user";
 import LevelProgressBar from "../components/Common/LevelProgressBar";
 import XPHistory from "../components/Common/XPHistory";
 import PreferencesSetup from "../components/Preferences/PreferencesSetup";
+import WeeklyProgressChart from "../components/Profile/WeeklyProgressChart";
+import ReportExporter from "../components/Profile/ReportExporter";
+import DailyChallenges from "../components/Profile/DailyChallenges";
+import { TechnicalTerm } from "../components/ui/technical-tooltip";
 
 const Profile: React.FC = () => {
   const { user, refreshPlan } = useAuth();
@@ -197,7 +201,8 @@ const Profile: React.FC = () => {
     { id: "overview", label: "Visão Geral", icon: Activity },
     { id: "achievements", label: "Conquistas", icon: Trophy },
     { id: "goals", label: "Metas", icon: Target },
-    { id: "metrics", label: "Progresso", icon: TrendingUp },
+    { id: "progress", label: "Progresso", icon: TrendingUp },
+    { id: "reports", label: "Relatórios", icon: BarChart3 },
     { id: "settings", label: "Configurações", icon: Settings },
   ];
 
@@ -483,13 +488,14 @@ const Profile: React.FC = () => {
                 {!isEditing ? (
                   <div className="space-y-4">
                     <div>
-                      <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+                      <h2 className="text-4xl font-bold text-slate-900 dark:text-white mb-2 leading-tight">
                         {formData.name || user?.name || "Usuário"}
                         {currentTitle && (
-                          <span 
-                            className="ml-3 text-lg text-primary cursor-pointer hover:text-emerald-400 transition-colors"
+                          <span
+                            className="ml-3 text-xl text-primary cursor-pointer hover:text-emerald-400 transition-colors inline-flex items-center"
                             onClick={() => setShowTitleSelector(true)}
                           >
+                            <Crown className="w-5 h-5 mr-1" />
                             "{currentTitle}"
                           </span>
                         )}
@@ -555,43 +561,26 @@ const Profile: React.FC = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-6 max-w-2xl">
-                    {/* Informações básicas */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                          Nome Completo
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.name}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            const value = e.target.value;
-                            if (value.length <= 50)
-                              setFormData({ ...formData, name: value });
-                          }}
-                          className="w-full bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                          Data de Nascimento
-                        </label>
-                        <input
-                          type="date"
-                          value={formData.birthdate}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            const age = new Date().getFullYear() - new Date(e.target.value).getFullYear();
-                            if (age >= 16 && age <= 100) {
-                              setFormData({
-                                ...formData,
-                                birthdate: e.target.value,
-                              });
-                            }
-                          }}
-                          className="w-full bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                        />
-                      </div>
+                  <div className="space-y-6 max-w-xl">
+                    {/* Informações básicas - apenas nome */}
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                        Nome Completo
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          const value = e.target.value;
+                          if (value.length <= 50)
+                            setFormData({ ...formData, name: value });
+                        }}
+                        className="w-full bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                        placeholder="Digite seu nome completo"
+                      />
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Este nome será exibido em seu perfil e relatórios
+                      </p>
                     </div>
                   </div>
                 )}
@@ -709,66 +698,22 @@ const Profile: React.FC = () => {
               )}
 
               {/* Daily Challenges */}
-              <section className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
-                  <Zap className="w-6 h-6 mr-3 text-yellow-500" />
-                  Desafios Diários
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {dailyChallenges.map((challenge, index) => (
-                    <motion.div
-                      key={challenge.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className={`p-4 rounded-xl border-2 transition-all duration-200 ${
-                        challenge.completed
-                          ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-                          : "bg-slate-50 dark:bg-slate-700/30 border-slate-200 dark:border-slate-600/50 hover:border-slate-300 dark:hover:border-slate-500"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center space-x-3">
-                          <span className="text-2xl">{challenge.icon}</span>
-                          <div>
-                            <h4 className="font-semibold text-slate-900 dark:text-white">
-                              {challenge.title}
-                            </h4>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">
-                              {challenge.description}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <span className="text-sm font-medium text-slate-900 dark:text-white">
-                            +{challenge.points}pts
-                          </span>
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={() =>
-                              !challenge.completed &&
-                              handleCompleteChallenge(challenge.id)
-                            }
-                            disabled={challenge.completed}
-                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                              challenge.completed
-                                ? "bg-green-500 text-white"
-                                : "bg-slate-200 dark:bg-slate-600 hover:bg-primary hover:text-white"
-                            }`}
-                          >
-                            {challenge.completed ? (
-                              <CheckCircle className="w-5 h-5" />
-                            ) : (
-                              <Plus className="w-5 h-5" />
-                            )}
-                          </motion.button>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </section>
+              <DailyChallenges
+                challenges={dailyChallenges}
+                onCompleteChallenge={handleCompleteChallenge}
+                onProgressUpdate={(challengeId, increment) => {
+                  // Implementar lógica de progresso incremental
+                  const challenge = dailyChallenges.find(c => c.id === challengeId);
+                  if (challenge) {
+                    const newProgress = Math.min(challenge.progress + increment, challenge.target);
+                    // Atualizar progresso no store de metas
+                    if (newProgress >= challenge.target) {
+                      handleCompleteChallenge(challengeId);
+                    }
+                  }
+                }}
+                currentStreak={currentStreak}
+              />
 
               {/* Level Progress */}
               <LevelProgressBar size="lg" />
@@ -805,41 +750,86 @@ const Profile: React.FC = () => {
                 
                 {/* Achievement Categories */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {achievements.map((achievement, index) => (
-                    <motion.div
-                      key={achievement.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: index * 0.05 }}
-                      whileHover={{ scale: 1.02 }}
-                      onClick={() => setShowAchievementDetails(true)}
-                      className={`p-4 rounded-xl cursor-pointer transition-all duration-200 border-2 ${
-                        achievement.isUnlocked 
-                          ? `bg-gradient-to-br ${getRarityColor(achievement.rarity)} border-transparent` 
-                          : 'bg-slate-50 dark:bg-slate-700/30 border-slate-200 dark:border-slate-600/50 opacity-60'
-                      }`}
-                    >
-                      <div className="text-center">
-                        <div className="text-3xl mb-2">
-                          {achievement.isUnlocked ? achievement.icon : <Lock className="w-8 h-8 mx-auto text-slate-400" />}
-                        </div>
-                        <h4 className={`font-semibold mb-1 ${achievement.isUnlocked ? 'text-white' : 'text-slate-600 dark:text-slate-400'}`}>
-                          {achievement.title}
+                  {/* Achievement Categories */}
+                  {['fitness', 'learning', 'consistency', 'nutrition', 'mindfulness', 'special'].map((category, catIndex) => {
+                    const categoryAchievements = achievements.filter(a => a.category === category);
+                    if (categoryAchievements.length === 0) return null;
+
+                    const categoryNames = {
+                      fitness: '🏃‍♀️ Fitness',
+                      learning: '📚 Aprendizado',
+                      consistency: '📅 Consistência',
+                      nutrition: '🥗 Nutrição',
+                      mindfulness: '🧘‍♀️ Mindfulness',
+                      special: '⭐ Especiais'
+                    };
+
+                    return (
+                      <div key={category} className="mb-8">
+                        <h4 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center">
+                          {categoryNames[category as keyof typeof categoryNames]}
+                          <span className="ml-2 text-sm text-slate-500 dark:text-slate-400">
+                            ({categoryAchievements.filter(a => a.isUnlocked).length}/{categoryAchievements.length})
+                          </span>
                         </h4>
-                        <p className={`text-xs mb-2 ${achievement.isUnlocked ? 'text-white/80' : 'text-slate-500 dark:text-slate-500'}`}>
-                          {achievement.description}
-                        </p>
-                        {!achievement.isUnlocked && (
-                          <div className="text-xs text-slate-500 dark:text-slate-400">
-                            {achievement.currentProgress}/{achievement.requirement}
-                          </div>
-                        )}
-                        <div className={`text-xs mt-2 ${achievement.isUnlocked ? 'text-white/70' : 'text-yellow-600 dark:text-yellow-400'}`}>
-                          +{achievement.reward.xp} XP
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                          {categoryAchievements.map((achievement, index) => (
+                            <motion.div
+                              key={achievement.id}
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: (catIndex * 0.1) + (index * 0.05) }}
+                              whileHover={{ scale: 1.02 }}
+                              onClick={() => setShowAchievementDetails(true)}
+                              className={`p-4 rounded-xl cursor-pointer transition-all duration-200 border-2 ${
+                                achievement.isUnlocked
+                                  ? `bg-gradient-to-br ${getRarityColor(achievement.rarity)} border-transparent`
+                                  : 'bg-slate-50 dark:bg-slate-700/30 border-slate-200 dark:border-slate-600/50 opacity-60'
+                              }`}
+                            >
+                              <div className="text-center">
+                                <div className="text-3xl mb-2">
+                                  {achievement.isUnlocked ? achievement.icon : <Lock className="w-8 h-8 mx-auto text-slate-400" />}
+                                </div>
+                                <h4 className={`font-semibold mb-1 ${achievement.isUnlocked ? 'text-white' : 'text-slate-600 dark:text-slate-400'}`}>
+                                  {achievement.title}
+                                </h4>
+                                <p className={`text-xs mb-2 ${achievement.isUnlocked ? 'text-white/80' : 'text-slate-500 dark:text-slate-500'}`}>
+                                  {achievement.description}
+                                </p>
+                                {!achievement.isUnlocked && (
+                                  <div className="mb-2">
+                                    <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">
+                                      Progresso: {achievement.currentProgress}/{achievement.requirement}
+                                    </div>
+                                    <div className="w-full bg-slate-200 dark:bg-slate-600 rounded-full h-2">
+                                      <div
+                                        className="bg-primary h-2 rounded-full transition-all duration-300"
+                                        style={{ width: `${Math.min((achievement.currentProgress / achievement.requirement) * 100, 100)}%` }}
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                                {achievement.isUnlocked && achievement.unlockedAt && (
+                                  <div className="text-xs text-white/60 mb-2">
+                                    Desbloqueado em {format(new Date(achievement.unlockedAt), 'dd/MM/yyyy')}
+                                  </div>
+                                )}
+                                <div className={`text-xs ${achievement.isUnlocked ? 'text-white/70' : 'text-yellow-600 dark:text-yellow-400'}`}>
+                                  +{achievement.reward.xp} XP
+                                  {achievement.reward.title && (
+                                    <span className="block text-purple-300 dark:text-purple-400">
+                                      Título: "{achievement.reward.title}"
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </motion.div>
+                          ))}
                         </div>
                       </div>
-                    </motion.div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </motion.div>
@@ -980,14 +970,18 @@ const Profile: React.FC = () => {
             </motion.div>
           )}
 
-          {activeTab === "metrics" && (
+          {activeTab === "progress" && (
             <motion.div
-              key="metrics"
+              key="progress"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
               className="space-y-6"
             >
+              {/* Weekly Progress Chart */}
+              <WeeklyProgressChart />
+
+              {/* Body Metrics */}
               <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
                   <TrendingUp className="w-6 h-6 mr-3 text-emerald-500" />
@@ -996,6 +990,9 @@ const Profile: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {bodyMetrics.map((metric, index) => {
                     const Icon = metric.icon;
+                    const isIMC = metric.label === 'IMC';
+                    const isBMR = metric.label === 'TMB';
+
                     return (
                       <motion.div
                         key={index}
@@ -1008,9 +1005,25 @@ const Profile: React.FC = () => {
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center space-x-2">
                             <Icon className="w-5 h-5 text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors" />
-                            <span className="text-slate-600 dark:text-slate-400 text-sm">
-                              {metric.label}
-                            </span>
+                            {isIMC ? (
+                              <TechnicalTerm
+                                term={metric.label}
+                                definition="Índice de Massa Corporal - indica se o peso está adequado para a altura"
+                                detailsLink="https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight"
+                                className="text-slate-600 dark:text-slate-400 text-sm"
+                              />
+                            ) : isBMR ? (
+                              <TechnicalTerm
+                                term={metric.label}
+                                definition="Taxa Metabólica Basal - quantidade de energia que o corpo gasta em repouso"
+                                detailsLink="https://www.mayoclinic.org/healthy-lifestyle/weight-loss/in-depth/metabolism/art-20046508"
+                                className="text-slate-600 dark:text-slate-400 text-sm"
+                              />
+                            ) : (
+                              <span className="text-slate-600 dark:text-slate-400 text-sm">
+                                {metric.label}
+                              </span>
+                            )}
                           </div>
                           {getTrendIcon(metric.trend)}
                         </div>
@@ -1025,6 +1038,23 @@ const Profile: React.FC = () => {
                   })}
                 </div>
               </div>
+            </motion.div>
+          )}
+
+          {activeTab === "reports" && (
+            <motion.div
+              key="reports"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="space-y-6"
+            >
+              <ReportExporter
+                userStats={userStats}
+                achievements={achievements}
+                goals={goals}
+                levelSystem={levelSystem}
+              />
             </motion.div>
           )}
 

@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react';
-import { sendPasswordResetEmail } from 'firebase/auth';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/SupabaseAuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { auth, isDemoMode } from '../../firebase';
+import { supabase } from '../../lib/supabase';
+import { isSupabaseDemoMode } from '../../lib/supabase';
 import LanguageSelector from '../LanguageSelector';
 
 interface LoginFormProps {
@@ -58,23 +58,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     try {
       await login(email.trim(), password);
       navigate('/dashboard');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login error:', error);
-      
-      // Handle specific error codes
-      if (error.code === 'auth/user-not-found') {
-        setError(t('auth.email_not_found'));
-      } else if (error.code === 'auth/wrong-password') {
-        setError(t('auth.wrong_password'));
-      } else if (error.code === 'auth/invalid-email') {
-        setError(t('auth.invalid_email'));
-      } else if (error.code === 'auth/user-disabled') {
-        setError(t('auth.account_disabled'));
-      } else if (error.code === 'auth/too-many-requests') {
-        setError(t('auth.too_many_requests'));
-      } else {
-        setError(t('auth.login_error'));
-      }
+
+      // Error messages are already handled in SupabaseAuthContext
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      setError(errorMessage || t('auth.login_error'));
     } finally {
       setLoading(false);
     }
@@ -97,22 +86,24 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     setError(null);
 
     try {
-      if (isDemoMode) {
+      if (isSupabaseDemoMode) {
         // Simulate password reset email in demo mode
         await new Promise(resolve => setTimeout(resolve, 1500));
         setResetEmailSent(true);
         console.log('🔧 Demo: Password reset email simulated for', trimmedEmail);
       } else {
-        await sendPasswordResetEmail(auth, trimmedEmail);
+        const { error } = await supabase.auth.resetPasswordForEmail(trimmedEmail);
+        if (error) throw error;
         setResetEmailSent(true);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Password reset error:', error);
-      if (error.code === 'auth/user-not-found') {
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      if (errorMessage?.includes('User not found')) {
         setError(t('auth.email_not_found'));
-      } else if (error.code === 'auth/invalid-email') {
+      } else if (errorMessage?.includes('Invalid email')) {
         setError(t('auth.invalid_email'));
-      } else if (error.code === 'auth/too-many-requests') {
+      } else if (errorMessage?.includes('too many requests')) {
         setError(t('auth.too_many_requests'));
       } else {
         setError(t('auth.recovery_error'));

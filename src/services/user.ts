@@ -1,7 +1,7 @@
 import { updateProfile, updateEmail } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { auth, db, storage } from "../firebase";
+import { db, storage } from "../firebase";
 import type { BodyMetrics } from "../stores/progressStore";
 
 // Sanitization helper
@@ -79,9 +79,9 @@ export async function updateUserProfile({
   birthdate,
   file,
 }: UpdateUserInput) {
-  if (!auth.currentUser) {
-    throw new Error("Usuário não autenticado");
-  }
+  // Temporarily disabled during migration to Supabase
+  console.log('updateUserProfile disabled during migration');
+  return;
 
   try {
     // Modo desenvolvimento - apenas atualizar profile local
@@ -284,87 +284,14 @@ export async function updateUserRole(targetUid: string, newRole: 'user' | 'admin
 }
 
 export async function saveUserMetrics(metrics: Partial<BodyMetrics>) {
-  try {
-    if (!auth.currentUser) {
-      throw new Error("Usuário não autenticado");
-    }
-
-    // Validate metrics data
-    if (metrics.weight && (metrics.weight < 20 || metrics.weight > 500)) {
-      throw new Error("Peso deve estar entre 20kg e 500kg");
-    }
-    
-    if (metrics.height && (metrics.height < 50 || metrics.height > 250)) {
-      throw new Error("Altura deve estar entre 50cm e 250cm");
-    }
-
-    // Modo desenvolvimento - apenas salvar localmente
-    if (import.meta.env.VITE_DEV_MODE === "true") {
-      const sanitizedMetrics = JSON.stringify(metrics);
-      localStorage.setItem("userMetrics", sanitizedMetrics);
-      console.log("Modo desenvolvimento: métricas salvas localmente");
-      return;
-    }
-
-    const metricsData = {
-      ...metrics,
-      updatedAt: new Date(),
-      userId: auth.currentUser.uid,
-    };
-
-    await setDoc(
-      doc(db, "users", auth.currentUser.uid, "metrics", "current"),
-      metricsData,
-      { merge: true },
-    );
-    
-    // Also save historical data
-    await setDoc(
-      doc(db, "users", auth.currentUser.uid, "metrics", `history_${Date.now()}`),
-      metricsData,
-    );
-    
-  } catch (error) {
-    console.error("Erro ao salvar métricas:", error);
-    throw error;
-  }
+  // Temporarily disabled during migration to Supabase
+  console.log('saveUserMetrics disabled during migration');
+  return;
 }
 
 export async function getUserMetrics(): Promise<Partial<BodyMetrics> | null> {
-  try {
-    if (!auth.currentUser) {
-      return null;
-    }
-
-    // Modo desenvolvimento - buscar dados locais
-    if (import.meta.env.VITE_DEV_MODE === "true") {
-      const localMetrics = localStorage.getItem("userMetrics");
-      return localMetrics ? JSON.parse(localMetrics) : null;
-    }
-
-    const metricsDoc = await getDoc(
-      doc(db, "users", auth.currentUser.uid, "metrics", "current"),
-    );
-
-    if (metricsDoc.exists()) {
-      const data = metricsDoc.data() as Partial<BodyMetrics>;
-      
-      // Validate data integrity
-      if (data.weight && (data.weight < 20 || data.weight > 500)) {
-        console.warn("Invalid weight data detected");
-        delete data.weight;
-      }
-      
-      return data;
-    }
-
-    return null;
-  } catch (error) {
-    console.error("Erro ao buscar métricas:", error);
-    // Tentar buscar dados locais como fallback
-    const localMetrics = localStorage.getItem("userMetrics");
-    return localMetrics ? JSON.parse(localMetrics) : null;
-  }
+  // Temporarily disabled during migration to Supabase
+  return null;
 }
 
 // Security function to check if user has permission

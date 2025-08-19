@@ -1,5 +1,5 @@
 import { doc, setDoc, getDoc, collection, query, orderBy, limit, getDocs, where } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import { db } from "../firebase";
 
 export interface UserActivity {
   id: string;
@@ -30,10 +30,11 @@ export interface ActivityStats {
 
 // Função para registrar atividade do usuário
 export async function logUserActivity(
-  type: UserActivity['type'], 
+  userId: string,
+  type: UserActivity['type'],
   metadata?: UserActivity['metadata']
 ): Promise<void> {
-  if (!auth.currentUser) {
+  if (!userId) {
     throw new Error("Usuário não autenticado");
   }
 
@@ -41,7 +42,7 @@ export async function logUserActivity(
     const activityId = `${type}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const activity: UserActivity = {
       id: activityId,
-      userId: auth.currentUser.uid,
+      userId,
       type,
       timestamp: new Date(),
       metadata: metadata || {}
@@ -49,7 +50,7 @@ export async function logUserActivity(
 
     // Modo desenvolvimento - apenas log
     if (import.meta.env.VITE_DEV_MODE === "true") {
-      console.log("🏃‍♂️ Atividade registrada (dev):", activity);
+      console.log("🏃��♂️ Atividade registrada (dev):", activity);
       
       // Salvar localmente para desenvolvimento
       const localActivities = JSON.parse(localStorage.getItem("userActivities") || "[]");
@@ -60,12 +61,12 @@ export async function logUserActivity(
 
     // Salvar atividade no Firestore
     await setDoc(
-      doc(db, "users", auth.currentUser.uid, "activities", activityId),
+      doc(db, "users", userId, "activities", activityId),
       activity
     );
 
     // Atualizar estatísticas do usuário
-    await updateUserStats(type, metadata);
+    await updateUserStats(userId, type, metadata);
 
   } catch (error) {
     console.error("Erro ao registrar atividade:", error);
@@ -74,13 +75,14 @@ export async function logUserActivity(
 
 // Função para atualizar estatísticas do usuário
 async function updateUserStats(
-  type: UserActivity['type'], 
+  userId: string,
+  type: UserActivity['type'],
   metadata?: UserActivity['metadata']
 ): Promise<void> {
-  if (!auth.currentUser) return;
+  if (!userId) return;
 
   try {
-    const statsDoc = await getDoc(doc(db, "users", auth.currentUser.uid, "stats", "current"));
+    const statsDoc = await getDoc(doc(db, "users", userId, "stats", "current"));
     const currentStats: Partial<ActivityStats> = statsDoc.exists() ? statsDoc.data() : {};
 
     const today = new Date();
@@ -137,7 +139,7 @@ async function updateUserStats(
 
     // Salvar estatísticas atualizadas
     await setDoc(
-      doc(db, "users", auth.currentUser.uid, "stats", "current"),
+      doc(db, "users", userId, "stats", "current"),
       {
         ...updatedStats,
         updatedAt: new Date()
@@ -151,7 +153,7 @@ async function updateUserStats(
 }
 
 // Função para obter estatísticas do usuário
-export async function getUserActivityStats(): Promise<ActivityStats> {
+export async function getUserActivityStats(userId?: string): Promise<ActivityStats> {
   const defaultStats: ActivityStats = {
     totalActiveDays: 0,
     currentStreak: 0,
@@ -164,7 +166,7 @@ export async function getUserActivityStats(): Promise<ActivityStats> {
     monthlyActivity: new Array(30).fill(0)
   };
 
-  if (!auth.currentUser) {
+  if (!userId) {
     return defaultStats;
   }
 
@@ -183,7 +185,7 @@ export async function getUserActivityStats(): Promise<ActivityStats> {
       return defaultStats;
     }
 
-    const statsDoc = await getDoc(doc(db, "users", auth.currentUser.uid, "stats", "current"));
+    const statsDoc = await getDoc(doc(db, "users", userId, "stats", "current"));
     
     if (statsDoc.exists()) {
       const data = statsDoc.data();
@@ -203,8 +205,8 @@ export async function getUserActivityStats(): Promise<ActivityStats> {
 }
 
 // Função para obter atividades recentes
-export async function getRecentActivities(limitCount: number = 10): Promise<UserActivity[]> {
-  if (!auth.currentUser) {
+export async function getRecentActivities(userId?: string, limitCount: number = 10): Promise<UserActivity[]> {
+  if (!userId) {
     return [];
   }
 
@@ -218,7 +220,7 @@ export async function getRecentActivities(limitCount: number = 10): Promise<User
       }));
     }
 
-    const activitiesRef = collection(db, "users", auth.currentUser.uid, "activities");
+    const activitiesRef = collection(db, "users", userId, "activities");
     const q = query(activitiesRef, orderBy("timestamp", "desc"), limit(limitCount));
     const snapshot = await getDocs(q);
 
@@ -237,11 +239,11 @@ export async function getRecentActivities(limitCount: number = 10): Promise<User
 }
 
 // Função para verificar login diário
-export async function checkDailyLogin(): Promise<void> {
-  if (!auth.currentUser) return;
+export async function checkDailyLogin(userId?: string): Promise<void> {
+  if (!userId) return;
 
   try {
-    const stats = await getUserActivityStats();
+    const stats = await getUserActivityStats(userId);
     const today = new Date().toDateString();
     const lastLogin = stats.lastActiveDate ? stats.lastActiveDate.toDateString() : null;
 
@@ -251,7 +253,7 @@ export async function checkDailyLogin(): Promise<void> {
     }
 
     // Registrar login diário
-    await logUserActivity('login');
+    await logUserActivity(userId, 'login');
 
   } catch (error) {
     console.error("Erro ao verificar login diário:", error);
@@ -293,16 +295,16 @@ export async function logWorkoutCompleted(workoutId: string, duration?: number):
 }
 
 // Função para registrar vídeo assistido
-export async function logVideoWatched(videoId: string, duration?: number): Promise<void> {
-  await logUserActivity('video_watched', {
+export async function logVideoWatched(userId: string, videoId: string, duration?: number): Promise<void> {
+  await logUserActivity(userId, 'video_watched', {
     videoId,
     duration
   });
 }
 
 // Função para registrar meta concluída
-export async function logGoalCompleted(goalId: string): Promise<void> {
-  await logUserActivity('goal_completed', {
+export async function logGoalCompleted(userId: string, goalId: string): Promise<void> {
+  await logUserActivity(userId, 'goal_completed', {
     goalId
   });
 }
@@ -315,9 +317,11 @@ export async function logChallengeCompleted(challengeId: string): Promise<void> 
 }
 
 // Função para inicializar tracking de atividades (chamar no login)
-export async function initializeActivityTracking(): Promise<void> {
+export async function initializeActivityTracking(userId?: string): Promise<void> {
   try {
-    await checkDailyLogin();
+    if (userId) {
+      await checkDailyLogin(userId);
+    }
   } catch (error) {
     console.error("Erro ao inicializar tracking de atividades:", error);
   }

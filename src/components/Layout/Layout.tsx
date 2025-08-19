@@ -9,7 +9,7 @@ const Layout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
+    <div className="min-h-screen bg-slate-900 transition-colors duration-200">
       <div className="flex">
         {/* Sidebar - Fixed positioning for desktop, overlay for mobile */}
         <div className="hidden lg:block lg:w-72 lg:flex-shrink-0">

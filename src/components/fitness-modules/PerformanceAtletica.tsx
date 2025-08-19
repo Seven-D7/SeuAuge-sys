@@ -44,7 +44,7 @@ import { db } from "../../firebase";
 import { useProgressStore } from "../../stores/progressStore";
 import { useReportsStore, generateReportSummary } from "../../stores/reportsStore";
 import { getUserMetrics } from "../../services/user";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../contexts/SupabaseAuthContext";
 import type { UserData } from "@/types/fitness";
 import NextStepsSection from "./components/NextStepsSection";
 
