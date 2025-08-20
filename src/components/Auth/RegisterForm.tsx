@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, AlertCircle, Calendar, Ruler, Weight } from 'lucide-react';
 import { useAuth } from '../../contexts/SupabaseAuthContext';
-import { validatePassword, validateEmail, validateUserInput, sanitizeInput } from '../../lib/security';
+import { validatePassword, validateEmail, validateName, validateBirthdate, validateNumeric, sanitizeInput } from '../../lib/validation';
 
 interface RegisterFormProps {
   onToggleMode: () => void;
@@ -46,14 +46,15 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
     const newErrors: Record<string, string> = {};
 
     // Name validation
-    const nameValidation = validateUserInput.name(formData.name);
+    const nameValidation = validateName(formData.name);
     if (!nameValidation.isValid) {
       newErrors.name = nameValidation.error || 'Nome inválido';
     }
 
     // Email validation
-    if (!validateEmail(formData.email)) {
-      newErrors.email = 'Formato de email inválido';
+    const emailValidation = validateEmail(formData.email);
+    if (!emailValidation.isValid) {
+      newErrors.email = emailValidation.error || 'Formato de email inválido';
     }
 
     // Password validation
@@ -68,34 +69,21 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
     }
 
     // Birthdate validation
-    if (!formData.birthdate) {
-      newErrors.birthdate = 'Data de nascimento é obrigatória';
-    } else {
-      const birthDate = new Date(formData.birthdate);
-      const today = new Date();
-      const age = today.getFullYear() - birthDate.getFullYear();
-      
-      if (age < 16) {
-        newErrors.birthdate = 'Você deve ter pelo menos 16 anos';
-      } else if (age > 100) {
-        newErrors.birthdate = 'Data de nascimento inválida';
-      }
+    const birthdateValidation = validateBirthdate(formData.birthdate);
+    if (!birthdateValidation.isValid) {
+      newErrors.birthdate = birthdateValidation.error || 'Data de nascimento inválida';
     }
 
     // Weight validation (optional)
-    if (formData.weight) {
-      const weight = parseFloat(formData.weight);
-      if (isNaN(weight) || weight < 30 || weight > 300) {
-        newErrors.weight = 'Peso deve estar entre 30kg e 300kg';
-      }
+    const weightValidation = validateNumeric(formData.weight, 30, 300, 'Peso');
+    if (!weightValidation.isValid) {
+      newErrors.weight = weightValidation.error || 'Peso inválido';
     }
 
     // Height validation (optional)
-    if (formData.height) {
-      const height = parseFloat(formData.height);
-      if (isNaN(height) || height < 100 || height > 250) {
-        newErrors.height = 'Altura deve estar entre 100cm e 250cm';
-      }
+    const heightValidation = validateNumeric(formData.height, 100, 250, 'Altura');
+    if (!heightValidation.isValid) {
+      newErrors.height = heightValidation.error || 'Altura inválida';
     }
 
     setErrors(newErrors);
