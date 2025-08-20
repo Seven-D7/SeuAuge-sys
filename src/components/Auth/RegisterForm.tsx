@@ -118,15 +118,16 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
       );
 
       navigate('/preferences');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Registration error:', error);
       
       // Handle specific error codes
-      if (error.code === 'auth/email-already-in-use') {
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      if (errorMessage.includes('email-already-in-use')) {
         setErrors({ email: 'Este email já está em uso. Tente fazer login.' });
-      } else if (error.code === 'auth/weak-password') {
+      } else if (errorMessage.includes('weak-password')) {
         setErrors({ password: 'Senha muito fraca. Use pelo menos 6 caracteres.' });
-      } else if (error.code === 'auth/invalid-email') {
+      } else if (errorMessage.includes('invalid-email')) {
         setErrors({ email: 'Email inválido. Verifique o formato.' });
       } else {
         setErrors({ general: 'Erro ao criar conta. Tente novamente.' });
