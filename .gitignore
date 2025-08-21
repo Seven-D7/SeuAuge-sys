@@ -39,7 +39,11 @@ firestore-debug.log
 *.key
 *.crt
 *.p12
-*.env
+
+# Environment variables - NEVER commit these files
+.env
+.env.*
+!.env.example
 
 # Temporary files
 .tmp
