@@ -49,7 +49,7 @@ export const containsSQLInjection = (input: string): boolean => {
   
   const sqlPatterns = [
     /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION)\b)/gi,
-    /('|(\\')|(;)|(--)|(\|\|)/gi,
+    /('|(\\')|(;)|(--)|(\|\|))/gi,
     /(\b(OR|AND)\b\s*\d+\s*=\s*\d+)/gi,
     /(\b(OR|AND)\b\s*['"][\w\s]*['"]?\s*=\s*['"][\w\s]*['"]?)/gi,
   ];
