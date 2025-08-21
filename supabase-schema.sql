@@ -1,322 +1,542 @@
--- ==================================================
--- SUPABASE DATABASE SCHEMA
--- ==================================================
--- Este arquivo contém o schema necessário para o projeto
--- Execute no SQL Editor do Supabase Dashboard
+-- =====================================
+-- SUPABASE SCHEMA COMPLETO - HEALTHFLIX
+-- =====================================
 
--- ==================================================
--- 1. USER PROFILES TABLE
--- ==================================================
+-- Enable necessary extensions
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- =====================================
+-- USERS & AUTHENTICATION
+-- =====================================
+
+-- User profiles (extends auth.users)
 CREATE TABLE IF NOT EXISTS user_profiles (
-  id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  name VARCHAR(100) NOT NULL,
-  avatar_url TEXT,
-  plan VARCHAR(10),
-  role VARCHAR(20) DEFAULT 'user' CHECK (role IN ('user', 'admin', 'moderator')),
-  birthdate DATE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    avatar_url TEXT,
+    birthdate DATE,
+    role VARCHAR(20) DEFAULT 'user' CHECK (role IN ('user', 'admin', 'moderator')),
+    plan VARCHAR(50),
+    subscription_status VARCHAR(20) DEFAULT 'free' CHECK (subscription_status IN ('free', 'active', 'canceled', 'past_due')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Enable RLS
-ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
-
--- Users can read and update their own profile
-CREATE POLICY "Users can view own profile" ON user_profiles FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Users can update own profile" ON user_profiles FOR UPDATE USING (auth.uid() = id);
-
--- Admins can view all profiles
-CREATE POLICY "Admins can view all profiles" ON user_profiles FOR SELECT USING (
-  EXISTS (
-    SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'admin'
-  )
-);
-
--- ==================================================
--- 2. PLANS TABLE
--- ==================================================
-CREATE TABLE IF NOT EXISTS plans (
-  id VARCHAR(10) PRIMARY KEY,
-  name VARCHAR(50) NOT NULL,
-  price_cents INTEGER NOT NULL,
-  price_display VARCHAR(20) NOT NULL,
-  features JSONB DEFAULT '[]',
-  is_active BOOLEAN DEFAULT true,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Enable RLS
-ALTER TABLE plans ENABLE ROW LEVEL SECURITY;
-
--- All users can view active plans
-CREATE POLICY "Users can view active plans" ON plans FOR SELECT USING (is_active = true);
-
--- Insert default plans
-INSERT INTO plans (id, name, price_cents, price_display, features) VALUES
-  ('B', 'Base', 9700, 'R$ 97', '["Acesso completo a vídeos", "Suporte básico"]'),
-  ('C', 'Escalada', 24900, 'R$ 249', '["Acesso premium", "Apps exclusivos", "Suporte prioritário"]'),
-  ('D', 'Auge', 78000, 'R$ 780', '["Acesso total", "Conteúdo exclusivo", "Consultoria personalizada", "Suporte VIP"]')
-ON CONFLICT (id) DO NOTHING;
-
--- ==================================================
--- 3. USER SUBSCRIPTIONS TABLE
--- ==================================================
-CREATE TABLE IF NOT EXISTS user_subscriptions (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
-  plan_id VARCHAR(10) REFERENCES plans(id) NOT NULL,
-  status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'cancelled', 'expired', 'pending')),
-  started_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  cancelled_at TIMESTAMP WITH TIME ZONE,
-  expires_at TIMESTAMP WITH TIME ZONE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Enable RLS
-ALTER TABLE user_subscriptions ENABLE ROW LEVEL SECURITY;
-
--- Users can view their own subscriptions
-CREATE POLICY "Users can view own subscriptions" ON user_subscriptions FOR SELECT USING (auth.uid() = user_id);
-
--- ==================================================
--- 4. USER METRICS TABLE
--- ==================================================
+-- User metrics (body measurements, health data)
 CREATE TABLE IF NOT EXISTS user_metrics (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
-  weight DECIMAL(5,2),
-  height DECIMAL(5,2),
-  body_fat DECIMAL(5,2),
-  muscle_mass DECIMAL(5,2),
-  water_percentage DECIMAL(5,2),
-  bone_mass DECIMAL(5,2),
-  metabolic_age INTEGER,
-  visceral_fat INTEGER,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    weight DECIMAL(5,2),
+    height DECIMAL(5,2),
+    body_fat_percentage DECIMAL(4,2),
+    muscle_mass DECIMAL(5,2),
+    bmi DECIMAL(4,2),
+    waist_circumference DECIMAL(5,2),
+    hip_circumference DECIMAL(5,2),
+    neck_circumference DECIMAL(5,2),
+    chest_circumference DECIMAL(5,2),
+    arm_circumference DECIMAL(5,2),
+    thigh_circumference DECIMAL(5,2),
+    measured_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Enable RLS
-ALTER TABLE user_metrics ENABLE ROW LEVEL SECURITY;
-
--- Users can manage their own metrics
-CREATE POLICY "Users can manage own metrics" ON user_metrics FOR ALL USING (auth.uid() = user_id);
-
--- ==================================================
--- 5. USER ACTIVITIES TABLE
--- ==================================================
+-- User activities (workout logs, nutrition logs)
 CREATE TABLE IF NOT EXISTS user_activities (
-  id VARCHAR(100) PRIMARY KEY,
-  user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
-  activity_type VARCHAR(50) NOT NULL CHECK (activity_type IN ('login', 'workout_completed', 'video_watched', 'goal_completed', 'challenge_completed')),
-  timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  metadata JSONB DEFAULT '{}',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    activity_type VARCHAR(50) NOT NULL CHECK (activity_type IN ('workout', 'nutrition', 'meditation', 'sleep', 'water', 'steps', 'reading', 'challenge')),
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    duration_minutes INTEGER,
+    calories_burned INTEGER,
+    intensity VARCHAR(20) CHECK (intensity IN ('low', 'moderate', 'high', 'very_high')),
+    metadata JSONB DEFAULT '{}',
+    completed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Enable RLS
-ALTER TABLE user_activities ENABLE ROW LEVEL SECURITY;
-
--- Users can manage their own activities
-CREATE POLICY "Users can manage own activities" ON user_activities FOR ALL USING (auth.uid() = user_id);
-
--- ==================================================
--- 6. USER STATS TABLE
--- ==================================================
+-- User stats (aggregated statistics)
 CREATE TABLE IF NOT EXISTS user_stats (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users ON DELETE CASCADE UNIQUE NOT NULL,
-  total_activities INTEGER DEFAULT 0,
-  total_workouts INTEGER DEFAULT 0,
-  total_videos_watched INTEGER DEFAULT 0,
-  total_time_spent INTEGER DEFAULT 0,
-  last_activity_at TIMESTAMP WITH TIME ZONE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    total_workouts INTEGER DEFAULT 0,
+    total_minutes_exercised INTEGER DEFAULT 0,
+    total_calories_burned INTEGER DEFAULT 0,
+    current_streak INTEGER DEFAULT 0,
+    longest_streak INTEGER DEFAULT 0,
+    last_activity_date DATE,
+    total_xp INTEGER DEFAULT 0,
+    level INTEGER DEFAULT 1,
+    achievements_count INTEGER DEFAULT 0,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Enable RLS
-ALTER TABLE user_stats ENABLE ROW LEVEL SECURITY;
+-- =====================================
+-- GAMIFICATION SYSTEM
+-- =====================================
 
--- Users can view and update their own stats
-CREATE POLICY "Users can manage own stats" ON user_stats FOR ALL USING (auth.uid() = user_id);
-
--- ==================================================
--- 7. USER GAMIFICATION DATA TABLE
--- ==================================================
-CREATE TABLE IF NOT EXISTS user_gamification_data (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
-  data JSONB NOT NULL,
-  version INTEGER DEFAULT 1,
-  last_sync_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+-- Achievements definitions
+CREATE TABLE IF NOT EXISTS achievements (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL,
+    icon VARCHAR(50) DEFAULT '🏆',
+    category VARCHAR(50) NOT NULL CHECK (category IN ('workout', 'nutrition', 'streak', 'social', 'challenge', 'milestone')),
+    condition_type VARCHAR(50) NOT NULL CHECK (condition_type IN ('count', 'streak', 'total', 'percentage', 'specific')),
+    condition_value INTEGER NOT NULL,
+    xp_reward INTEGER DEFAULT 0,
+    rarity VARCHAR(20) DEFAULT 'common' CHECK (rarity IN ('common', 'rare', 'epic', 'legendary')),
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Enable RLS
-ALTER TABLE user_gamification_data ENABLE ROW LEVEL SECURITY;
+-- User achievements (unlocked achievements)
+CREATE TABLE IF NOT EXISTS user_achievements (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    achievement_id UUID REFERENCES achievements(id) ON DELETE CASCADE,
+    unlocked_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(user_id, achievement_id)
+);
 
--- Users can manage their own gamification data
-CREATE POLICY "Users can manage own gamification data" ON user_gamification_data FOR ALL USING (auth.uid() = user_id);
+-- Daily challenges
+CREATE TABLE IF NOT EXISTS daily_challenges (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL,
+    category VARCHAR(50) NOT NULL,
+    target_value INTEGER NOT NULL,
+    xp_reward INTEGER DEFAULT 10,
+    difficulty VARCHAR(20) DEFAULT 'easy' CHECK (difficulty IN ('easy', 'medium', 'hard')),
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 
--- ==================================================
--- 8. AUDIT LOGS TABLE
--- ==================================================
+-- User challenge progress
+CREATE TABLE IF NOT EXISTS user_challenge_progress (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    challenge_id UUID REFERENCES daily_challenges(id) ON DELETE CASCADE,
+    current_value INTEGER DEFAULT 0,
+    target_value INTEGER NOT NULL,
+    completed BOOLEAN DEFAULT false,
+    date DATE DEFAULT CURRENT_DATE,
+    completed_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(user_id, challenge_id, date)
+);
+
+-- =====================================
+-- CONTENT & MEDIA
+-- =====================================
+
+-- Video categories
+CREATE TABLE IF NOT EXISTS video_categories (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT,
+    icon VARCHAR(50),
+    color VARCHAR(20),
+    sort_order INTEGER DEFAULT 0,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Videos
+CREATE TABLE IF NOT EXISTS videos (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    thumbnail_url TEXT,
+    video_url TEXT NOT NULL,
+    duration_seconds INTEGER,
+    category_id UUID REFERENCES video_categories(id),
+    instructor_name VARCHAR(100),
+    difficulty_level VARCHAR(20) CHECK (difficulty_level IN ('beginner', 'intermediate', 'advanced')),
+    required_plan VARCHAR(50) DEFAULT 'free',
+    tags TEXT[] DEFAULT '{}',
+    view_count INTEGER DEFAULT 0,
+    rating DECIMAL(3,2) DEFAULT 0,
+    is_published BOOLEAN DEFAULT false,
+    published_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- User video progress
+CREATE TABLE IF NOT EXISTS user_video_progress (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    video_id UUID REFERENCES videos(id) ON DELETE CASCADE,
+    progress_seconds INTEGER DEFAULT 0,
+    completed BOOLEAN DEFAULT false,
+    last_watched_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(user_id, video_id)
+);
+
+-- User favorites (videos, workouts, etc.)
+CREATE TABLE IF NOT EXISTS user_favorites (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    item_type VARCHAR(50) NOT NULL CHECK (item_type IN ('video', 'workout', 'recipe', 'article')),
+    item_id UUID NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(user_id, item_type, item_id)
+);
+
+-- =====================================
+-- PLANS & SUBSCRIPTIONS
+-- =====================================
+
+-- Plans
+CREATE TABLE IF NOT EXISTS plans (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT,
+    price_monthly DECIMAL(10,2),
+    price_yearly DECIMAL(10,2),
+    features JSONB DEFAULT '[]',
+    is_active BOOLEAN DEFAULT true,
+    sort_order INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- User subscriptions
+CREATE TABLE IF NOT EXISTS user_subscriptions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    plan_id UUID REFERENCES plans(id),
+    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'canceled', 'past_due', 'unpaid')),
+    current_period_start TIMESTAMP WITH TIME ZONE NOT NULL,
+    current_period_end TIMESTAMP WITH TIME ZONE NOT NULL,
+    cancel_at_period_end BOOLEAN DEFAULT false,
+    stripe_subscription_id VARCHAR(100) UNIQUE,
+    stripe_customer_id VARCHAR(100),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =====================================
+-- SYSTEM TABLES
+-- =====================================
+
+-- Audit logs
 CREATE TABLE IF NOT EXISTS audit_logs (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  action VARCHAR(50) NOT NULL,
-  target_user UUID REFERENCES auth.users ON DELETE SET NULL,
-  old_role VARCHAR(20),
-  new_role VARCHAR(20),
-  performed_by UUID REFERENCES auth.users ON DELETE SET NULL NOT NULL,
-  metadata JSONB DEFAULT '{}',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    action VARCHAR(100) NOT NULL,
+    table_name VARCHAR(50),
+    record_id UUID,
+    old_values JSONB,
+    new_values JSONB,
+    ip_address INET,
+    user_agent TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Enable RLS
+-- System notifications
+CREATE TABLE IF NOT EXISTS notifications (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    title VARCHAR(200) NOT NULL,
+    message TEXT NOT NULL,
+    type VARCHAR(50) DEFAULT 'info' CHECK (type IN ('info', 'success', 'warning', 'error', 'achievement')),
+    read BOOLEAN DEFAULT false,
+    action_url TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =====================================
+-- INDEXES FOR PERFORMANCE
+-- =====================================
+
+-- User profiles
+CREATE INDEX IF NOT EXISTS idx_user_profiles_email ON user_profiles(email);
+CREATE INDEX IF NOT EXISTS idx_user_profiles_role ON user_profiles(role);
+
+-- User metrics
+CREATE INDEX IF NOT EXISTS idx_user_metrics_user_id ON user_metrics(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_metrics_measured_at ON user_metrics(measured_at);
+
+-- User activities
+CREATE INDEX IF NOT EXISTS idx_user_activities_user_id ON user_activities(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_activities_type ON user_activities(activity_type);
+CREATE INDEX IF NOT EXISTS idx_user_activities_date ON user_activities(completed_at);
+
+-- User achievements
+CREATE INDEX IF NOT EXISTS idx_user_achievements_user_id ON user_achievements(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_achievements_unlocked_at ON user_achievements(unlocked_at);
+
+-- Videos
+CREATE INDEX IF NOT EXISTS idx_videos_category ON videos(category_id);
+CREATE INDEX IF NOT EXISTS idx_videos_published ON videos(is_published, published_at);
+CREATE INDEX IF NOT EXISTS idx_videos_plan ON videos(required_plan);
+
+-- User video progress
+CREATE INDEX IF NOT EXISTS idx_user_video_progress_user_id ON user_video_progress(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_video_progress_completed ON user_video_progress(completed);
+
+-- Notifications
+CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications(read);
+
+-- =====================================
+-- ROW LEVEL SECURITY (RLS) POLICIES
+-- =====================================
+
+-- Enable RLS on all tables
+ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_metrics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_activities ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_stats ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_achievements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_challenge_progress ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_video_progress ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_favorites ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
 
--- Only admins can view audit logs
-CREATE POLICY "Admins can view audit logs" ON audit_logs FOR SELECT USING (
-  EXISTS (
-    SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'admin'
-  )
-);
+-- User profiles policies
+DROP POLICY IF EXISTS "Users can view their own profile" ON user_profiles;
+CREATE POLICY "Users can view their own profile" ON user_profiles
+    FOR SELECT USING (auth.uid() = id);
 
--- ==================================================
--- 6. STORAGE BUCKETS
--- ==================================================
+DROP POLICY IF EXISTS "Users can update their own profile" ON user_profiles;
+CREATE POLICY "Users can update their own profile" ON user_profiles
+    FOR UPDATE USING (auth.uid() = id);
 
--- Create avatars bucket
-INSERT INTO storage.buckets (id, name, public) VALUES ('avatars', 'avatars', true)
-ON CONFLICT (id) DO NOTHING;
+DROP POLICY IF EXISTS "Admins can view all profiles" ON user_profiles;
+CREATE POLICY "Admins can view all profiles" ON user_profiles
+    FOR ALL USING (
+        EXISTS (
+            SELECT 1 FROM user_profiles 
+            WHERE id = auth.uid() AND role = 'admin'
+        )
+    );
 
--- RLS for avatars bucket
-CREATE POLICY "Users can upload their own avatar" ON storage.objects FOR INSERT WITH CHECK (
-  bucket_id = 'avatars' AND 
-  auth.uid()::text = (storage.foldername(name))[1]
-);
+-- User metrics policies
+DROP POLICY IF EXISTS "Users can manage their own metrics" ON user_metrics;
+CREATE POLICY "Users can manage their own metrics" ON user_metrics
+    FOR ALL USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can update their own avatar" ON storage.objects FOR UPDATE USING (
-  bucket_id = 'avatars' AND 
-  auth.uid()::text = (storage.foldername(name))[1]
-);
+-- User activities policies
+DROP POLICY IF EXISTS "Users can manage their own activities" ON user_activities;
+CREATE POLICY "Users can manage their own activities" ON user_activities
+    FOR ALL USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can delete their own avatar" ON storage.objects FOR DELETE USING (
-  bucket_id = 'avatars' AND 
-  auth.uid()::text = (storage.foldername(name))[1]
-);
+-- User stats policies
+DROP POLICY IF EXISTS "Users can view their own stats" ON user_stats;
+CREATE POLICY "Users can view their own stats" ON user_stats
+    FOR SELECT USING (auth.uid() = user_id);
 
-CREATE POLICY "Anyone can view avatars" ON storage.objects FOR SELECT USING (
-  bucket_id = 'avatars'
-);
+DROP POLICY IF EXISTS "System can update user stats" ON user_stats;
+CREATE POLICY "System can update user stats" ON user_stats
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
 
--- ==================================================
--- 7. FUNCTIONS AND TRIGGERS
--- ==================================================
+DROP POLICY IF EXISTS "System can modify user stats" ON user_stats;
+CREATE POLICY "System can modify user stats" ON user_stats
+    FOR UPDATE USING (auth.uid() = user_id);
 
--- Function to automatically create user profile on signup
-CREATE OR REPLACE FUNCTION public.handle_new_user() 
-RETURNS TRIGGER AS $$
-BEGIN
-  INSERT INTO public.user_profiles (id, email, name, role)
-  VALUES (
-    new.id,
-    new.email,
-    COALESCE(new.raw_user_meta_data->>'name', 'Usuário'),
-    COALESCE(new.raw_user_meta_data->>'role', 'user')
-  );
-  RETURN new;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+-- User achievements policies
+DROP POLICY IF EXISTS "Users can view their own achievements" ON user_achievements;
+CREATE POLICY "Users can view their own achievements" ON user_achievements
+    FOR SELECT USING (auth.uid() = user_id);
 
--- Trigger to create profile on user signup
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
+DROP POLICY IF EXISTS "System can insert user achievements" ON user_achievements;
+CREATE POLICY "System can insert user achievements" ON user_achievements
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Challenge progress policies
+DROP POLICY IF EXISTS "Users can manage their own challenge progress" ON user_challenge_progress;
+CREATE POLICY "Users can manage their own challenge progress" ON user_challenge_progress
+    FOR ALL USING (auth.uid() = user_id);
+
+-- Video progress policies
+DROP POLICY IF EXISTS "Users can manage their own video progress" ON user_video_progress;
+CREATE POLICY "Users can manage their own video progress" ON user_video_progress
+    FOR ALL USING (auth.uid() = user_id);
+
+-- Favorites policies
+DROP POLICY IF EXISTS "Users can manage their own favorites" ON user_favorites;
+CREATE POLICY "Users can manage their own favorites" ON user_favorites
+    FOR ALL USING (auth.uid() = user_id);
+
+-- Subscriptions policies
+DROP POLICY IF EXISTS "Users can view their own subscriptions" ON user_subscriptions;
+CREATE POLICY "Users can view their own subscriptions" ON user_subscriptions
+    FOR SELECT USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Admins can manage subscriptions" ON user_subscriptions;
+CREATE POLICY "Admins can manage subscriptions" ON user_subscriptions
+    FOR ALL USING (
+        EXISTS (
+            SELECT 1 FROM user_profiles 
+            WHERE id = auth.uid() AND role = 'admin'
+        )
+    );
+
+-- Notifications policies
+DROP POLICY IF EXISTS "Users can view their own notifications" ON notifications;
+CREATE POLICY "Users can view their own notifications" ON notifications
+    FOR SELECT USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can update their own notifications" ON notifications;
+CREATE POLICY "Users can update their own notifications" ON notifications
+    FOR UPDATE USING (auth.uid() = user_id);
+
+-- Audit logs policies (admin only)
+DROP POLICY IF EXISTS "Admins can view audit logs" ON audit_logs;
+CREATE POLICY "Admins can view audit logs" ON audit_logs
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM user_profiles 
+            WHERE id = auth.uid() AND role = 'admin'
+        )
+    );
+
+-- Public tables (no RLS needed for read-only content)
+-- These tables are readable by authenticated users
+-- achievements, daily_challenges, video_categories, videos, plans
+
+-- Grant permissions for public tables
+GRANT SELECT ON achievements TO authenticated;
+GRANT SELECT ON daily_challenges TO authenticated;
+GRANT SELECT ON video_categories TO authenticated;
+GRANT SELECT ON videos TO authenticated;
+GRANT SELECT ON plans TO authenticated;
+
+-- =====================================
+-- FUNCTIONS AND TRIGGERS
+-- =====================================
 
 -- Function to update updated_at timestamp
-CREATE OR REPLACE FUNCTION public.update_updated_at_column()
+CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
-  NEW.updated_at = NOW();
-  RETURN NEW;
+    NEW.updated_at = NOW();
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- Add updated_at triggers
-DROP TRIGGER IF EXISTS update_user_profiles_updated_at ON user_profiles;
+-- Triggers for updated_at
 CREATE TRIGGER update_user_profiles_updated_at
-  BEFORE UPDATE ON user_profiles
-  FOR EACH ROW EXECUTE PROCEDURE public.update_updated_at_column();
+    BEFORE UPDATE ON user_profiles
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
-DROP TRIGGER IF EXISTS update_plans_updated_at ON plans;
-CREATE TRIGGER update_plans_updated_at
-  BEFORE UPDATE ON plans
-  FOR EACH ROW EXECUTE PROCEDURE public.update_updated_at_column();
+CREATE TRIGGER update_videos_updated_at
+    BEFORE UPDATE ON videos
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
-DROP TRIGGER IF EXISTS update_user_subscriptions_updated_at ON user_subscriptions;
 CREATE TRIGGER update_user_subscriptions_updated_at
-  BEFORE UPDATE ON user_subscriptions
-  FOR EACH ROW EXECUTE PROCEDURE public.update_updated_at_column();
+    BEFORE UPDATE ON user_subscriptions
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
-DROP TRIGGER IF EXISTS update_user_metrics_updated_at ON user_metrics;
-CREATE TRIGGER update_user_metrics_updated_at
-  BEFORE UPDATE ON user_metrics
-  FOR EACH ROW EXECUTE PROCEDURE public.update_updated_at_column();
+-- Function to increment video views
+CREATE OR REPLACE FUNCTION increment_video_views(video_id UUID)
+RETURNS void AS $$
+BEGIN
+    UPDATE videos 
+    SET view_count = view_count + 1 
+    WHERE id = video_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
-DROP TRIGGER IF EXISTS update_user_stats_updated_at ON user_stats;
-CREATE TRIGGER update_user_stats_updated_at
-  BEFORE UPDATE ON user_stats
-  FOR EACH ROW EXECUTE PROCEDURE public.update_updated_at_column();
+-- Function to award achievement
+CREATE OR REPLACE FUNCTION award_achievement(p_user_id UUID, p_achievement_id UUID)
+RETURNS boolean AS $$
+DECLARE
+    achievement_exists boolean;
+    already_awarded boolean;
+BEGIN
+    -- Check if achievement exists
+    SELECT EXISTS(SELECT 1 FROM achievements WHERE id = p_achievement_id) INTO achievement_exists;
+    
+    IF NOT achievement_exists THEN
+        RETURN false;
+    END IF;
+    
+    -- Check if already awarded
+    SELECT EXISTS(
+        SELECT 1 FROM user_achievements 
+        WHERE user_id = p_user_id AND achievement_id = p_achievement_id
+    ) INTO already_awarded;
+    
+    IF already_awarded THEN
+        RETURN false;
+    END IF;
+    
+    -- Award achievement
+    INSERT INTO user_achievements (user_id, achievement_id) 
+    VALUES (p_user_id, p_achievement_id);
+    
+    -- Update achievement count in user stats
+    INSERT INTO user_stats (user_id, achievements_count) 
+    VALUES (p_user_id, 1)
+    ON CONFLICT (user_id) 
+    DO UPDATE SET achievements_count = user_stats.achievements_count + 1;
+    
+    RETURN true;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
-DROP TRIGGER IF EXISTS update_user_gamification_data_updated_at ON user_gamification_data;
-CREATE TRIGGER update_user_gamification_data_updated_at
-  BEFORE UPDATE ON user_gamification_data
-  FOR EACH ROW EXECUTE PROCEDURE public.update_updated_at_column();
+-- =====================================
+-- INITIAL DATA
+-- =====================================
 
--- ==================================================
--- 8. INDEXES FOR PERFORMANCE
--- ==================================================
+-- Insert default achievements
+INSERT INTO achievements (name, description, icon, category, condition_type, condition_value, xp_reward, rarity) VALUES
+('Primeiro Treino', 'Complete seu primeiro treino', '🎯', 'workout', 'count', 1, 50, 'common'),
+('Guerreiro Semanal', 'Complete 7 treinos em uma semana', '⚡', 'workout', 'count', 7, 100, 'rare'),
+('Maratonista', 'Complete 30 treinos em um mês', '🏃‍♂️', 'workout', 'count', 30, 250, 'epic'),
+('Sequência de Ferro', 'Mantenha uma sequência de 7 dias', '🔥', 'streak', 'streak', 7, 100, 'rare'),
+('Lenda Viva', 'Mantenha uma sequência de 30 dias', '👑', 'streak', 'streak', 30, 500, 'legendary'),
+('Explorador', 'Assista a 10 vídeos diferentes', '🎬', 'social', 'count', 10, 75, 'common'),
+('Mestre dos Desafios', 'Complete 50 desafios diários', '🏆', 'challenge', 'count', 50, 300, 'epic')
+ON CONFLICT DO NOTHING;
 
--- Indexes for better query performance
-CREATE INDEX IF NOT EXISTS idx_user_profiles_email ON user_profiles(email);
-CREATE INDEX IF NOT EXISTS idx_user_profiles_role ON user_profiles(role);
-CREATE INDEX IF NOT EXISTS idx_user_subscriptions_user_id ON user_subscriptions(user_id);
-CREATE INDEX IF NOT EXISTS idx_user_subscriptions_status ON user_subscriptions(status);
-CREATE INDEX IF NOT EXISTS idx_user_metrics_user_id ON user_metrics(user_id);
-CREATE INDEX IF NOT EXISTS idx_user_activities_user_id ON user_activities(user_id);
-CREATE INDEX IF NOT EXISTS idx_user_activities_timestamp ON user_activities(timestamp);
-CREATE INDEX IF NOT EXISTS idx_user_activities_type ON user_activities(activity_type);
-CREATE INDEX IF NOT EXISTS idx_user_stats_user_id ON user_stats(user_id);
-CREATE INDEX IF NOT EXISTS idx_user_gamification_data_user_id ON user_gamification_data(user_id);
-CREATE INDEX IF NOT EXISTS idx_user_gamification_data_last_sync ON user_gamification_data(last_sync_at);
-CREATE INDEX IF NOT EXISTS idx_audit_logs_performed_by ON audit_logs(performed_by);
-CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at);
+-- Insert default daily challenges
+INSERT INTO daily_challenges (name, description, category, target_value, xp_reward, difficulty) VALUES
+('Hidratação Diária', 'Beba 8 copos de água hoje', 'nutrition', 8, 10, 'easy'),
+('Passos Ativos', 'Caminhe 5000 passos hoje', 'workout', 5000, 15, 'medium'),
+('Momento Zen', 'Medite por 10 minutos', 'mindfulness', 10, 20, 'easy'),
+('Força Interior', 'Complete um treino de força', 'workout', 1, 25, 'medium'),
+('Flexibilidade', 'Faça 15 minutos de alongamento', 'workout', 15, 15, 'easy'),
+('Cardio Power', 'Faça 30 minutos de cardio', 'workout', 30, 30, 'hard'),
+('Alimentação Consciente', 'Registre todas as refeições', 'nutrition', 3, 20, 'medium')
+ON CONFLICT DO NOTHING;
 
--- ==================================================
--- SETUP COMPLETE
--- ==================================================
--- 
--- PRÓXIMOS PASSOS:
--- 1. Configure as variáveis de ambiente no seu projeto:
---    VITE_SUPABASE_URL=https://seu-projeto.supabase.co
---    VITE_SUPABASE_ANON_KEY=sua-chave-anon
--- 
--- 2. Configure o Storage no Supabase Dashboard:
---    - Vá para Storage > Settings
---    - Configure as policies de upload conforme necessário
--- 
--- 3. Configure Authentication:
---    - Vá para Authentication > Settings
---    - Configure providers de email/senha
---    - Configure templates de email
--- 
--- 4. Teste a aplicação em modo desenvolvimento
--- 
--- ==================================================
+-- Insert video categories
+INSERT INTO video_categories (name, description, icon, color, sort_order) VALUES
+('Emagrecimento', 'Treinos focados em perda de peso', '🔥', '#ef4444', 1),
+('Ganho de Massa', 'Treinos para ganho de massa muscular', '💪', '#10b981', 2),
+('Flexibilidade', 'Alongamentos e mobilidade', '🧘‍♀️', '#6366f1', 3),
+('Cardio', 'Exercícios cardiovasculares', '❤️', '#f59e0b', 4),
+('Força', 'Treinos de força e resistência', '⚡', '#8b5cf6', 5),
+('Yoga', 'Práticas de yoga e mindfulness', '🕉️', '#06b6d4', 6),
+('HIIT', 'Treinos intervalados de alta intensidade', '🏃‍♂️', '#dc2626', 7),
+('Pilates', 'Exercícios de pilates', '🤸‍♀️', '#059669', 8)
+ON CONFLICT DO NOTHING;
+
+-- Insert default plans
+INSERT INTO plans (name, description, price_monthly, price_yearly, features, sort_order) VALUES
+('Básico', 'Acesso aos treinos básicos', 0.00, 0.00, '["Treinos básicos", "Vídeos introdutórios", "Suporte por email"]', 1),
+('Premium', 'Acesso completo a todos os recursos', 29.90, 299.00, '["Todos os treinos", "Planos personalizados", "Acompanhamento nutricional", "Suporte prioritário", "Relatórios detalhados"]', 2),
+('Pro', 'Para atletas e profissionais', 59.90, 599.00, '["Tudo do Premium", "Consultoria individual", "Planos avançados", "Acesso antecipado", "Suporte 24/7"]', 3)
+ON CONFLICT DO NOTHING;
+
+-- =====================================
+-- STORAGE BUCKETS AND POLICIES
+-- =====================================
+
+-- Create storage buckets (run this in Supabase dashboard if not exists)
+-- INSERT INTO storage.buckets (id, name, public) VALUES ('avatars', 'avatars', true);
+-- INSERT INTO storage.buckets (id, name, public) VALUES ('videos', 'videos', true);
+-- INSERT INTO storage.buckets (id, name, public) VALUES ('thumbnails', 'thumbnails', true);
+
+-- Create storage policies
+-- Storage policies need to be created in Supabase dashboard or via SQL in the dashboard
+
+COMMIT;
