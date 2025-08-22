@@ -163,7 +163,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
         className="w-full max-w-md space-y-6"
       >
         <div className="text-center">
-          <motion.div 
+          <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring" }}
@@ -171,13 +171,31 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
           >
             <CheckCircle className="w-8 h-8 text-emerald-600" />
           </motion.div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">{t('auth.email_sent')}</h2>
-          <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            {t('auth.recovery_sent')} <br />
-            <span className="text-slate-900 font-semibold">{email}</span>
-            <br /><br />
-            {t('auth.check_inbox')}
-          </p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">Email enviado!</h2>
+
+          <div className="space-y-4 text-left mb-6">
+            <p className="text-slate-600">
+              Enviamos um link de recuperação para:
+            </p>
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
+              <p className="text-slate-900 font-medium break-all">{email}</p>
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <div className="space-y-2 text-sm text-blue-800">
+                  <p className="font-medium">Próximos passos:</p>
+                  <ul className="space-y-1 list-disc list-inside ml-2">
+                    <li>Verifique sua caixa de entrada</li>
+                    <li>Confira a pasta de spam/lixo eletrônico</li>
+                    <li>Clique no link no email para redefinir sua senha</li>
+                    <li>O link expira em 1 hora por segurança</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <button
