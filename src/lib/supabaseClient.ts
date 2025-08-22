@@ -17,7 +17,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     detectSessionInUrl: true,
     flowType: 'pkce',
-    redirectTo: `${window.location.origin}/auth/callback`,
     // Configure URLs for email verification and password reset
     redirectTo: `${window.location.origin}/auth/confirm`,
   },
