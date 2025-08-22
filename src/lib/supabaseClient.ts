@@ -17,6 +17,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     detectSessionInUrl: true,
     flowType: 'pkce',
+    // Configure URLs for email verification and password reset
+    redirectTo: `${window.location.origin}/auth/confirm`,
   },
   global: {
     headers: {
@@ -92,11 +94,29 @@ export const authOperations = {
     );
   },
 
-  async resetPasswordForEmail(email: string) {
+  async resetPasswordForEmail(email: string, redirectTo?: string) {
+    const finalRedirectTo = redirectTo || `${window.location.origin}/auth/reset-password`;
     return withTimeout(
-      supabase.auth.resetPasswordForEmail(email),
+      supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: finalRedirectTo,
+      }),
       15000,
       'Password Reset'
+    );
+  },
+
+  async resendConfirmation(email: string, redirectTo?: string) {
+    const finalRedirectTo = redirectTo || `${window.location.origin}/auth/confirm`;
+    return withTimeout(
+      supabase.auth.resend({
+        type: 'signup',
+        email: email,
+        options: {
+          emailRedirectTo: finalRedirectTo,
+        }
+      }),
+      15000,
+      'Resend Confirmation'
     );
   },
 };

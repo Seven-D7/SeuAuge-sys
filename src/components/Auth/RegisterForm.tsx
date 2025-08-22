@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, AlertCircle, Calendar, Ruler, Weight } from 'lucide-react';
 import { useAuth } from '../../contexts/SupabaseAuthContext';
 import { validatePassword, validateEmail, validateName, validateBirthdate, validateNumeric, sanitizeInput } from '../../lib/validation';
+import EmailVerificationPrompt from './EmailVerificationPrompt';
 
 interface RegisterFormProps {
   onToggleMode: () => void;
@@ -24,6 +25,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [passwordStrength, setPasswordStrength] = useState<'weak' | 'medium' | 'strong'>('weak');
+  const [showEmailVerification, setShowEmailVerification] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
   const navigate = useNavigate();
   const { register } = useAuth();
 
@@ -117,18 +120,24 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
         sanitizedData.birthdate
       );
 
-      navigate('/preferences');
+      // Show email verification prompt instead of immediate navigation
+      setRegisteredEmail(sanitizedData.email);
+      setShowEmailVerification(true);
     } catch (error: unknown) {
       console.error('Registration error:', error);
       
       // Handle specific error codes
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-      if (errorMessage.includes('email-already-in-use')) {
+      if (errorMessage.includes('email-already-in-use') || errorMessage.includes('User already registered')) {
         setErrors({ email: 'Este email já está em uso. Tente fazer login.' });
       } else if (errorMessage.includes('weak-password')) {
         setErrors({ password: 'Senha muito fraca. Use pelo menos 6 caracteres.' });
       } else if (errorMessage.includes('invalid-email')) {
         setErrors({ email: 'Email inválido. Verifique o formato.' });
+      } else if (errorMessage.includes('Email not confirmed')) {
+        // If user tries to register with unconfirmed email, show verification prompt
+        setRegisteredEmail(formData.email.trim().toLowerCase());
+        setShowEmailVerification(true);
       } else {
         setErrors({ general: 'Erro ao criar conta. Tente novamente.' });
       }
@@ -154,11 +163,23 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="w-full max-w-md space-y-6"
-    >
+    <>
+      {showEmailVerification && (
+        <EmailVerificationPrompt
+          email={registeredEmail}
+          onClose={() => setShowEmailVerification(false)}
+          onResendSuccess={() => {
+            // Optionally navigate after successful resend
+            // navigate('/preferences');
+          }}
+        />
+      )}
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-md space-y-6"
+      >
       <div className="text-center">
         <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
           Criar sua conta
@@ -458,6 +479,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
         </motion.div>
       </form>
     </motion.div>
+    </>
   );
 };
 

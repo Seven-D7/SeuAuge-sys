@@ -1,7 +1,10 @@
-import React from 'react';
-import { Users, DollarSign, ShoppingBag } from 'lucide-react';
+import React, { useState } from 'react';
+import { Users, DollarSign, ShoppingBag, Mail, ChevronDown, ChevronUp } from 'lucide-react';
+import EmailConfigDiagnostic from '../components/Admin/EmailConfigDiagnostic';
 
 const AdminDashboard: React.FC = () => {
+  const [showEmailDiagnostic, setShowEmailDiagnostic] = useState(false);
+
   // Esses valores podem ser obtidos do banco de dados futuramente
   const stats = [
     { icon: Users, label: 'Usuários Ativos', value: 1200, color: 'bg-primary' },
@@ -28,6 +31,37 @@ const AdminDashboard: React.FC = () => {
             </div>
           );
         })}
+      </div>
+
+      {/* Seção de Diagnóstico */}
+      <div className="bg-slate-800 rounded-lg overflow-hidden">
+        <button
+          onClick={() => setShowEmailDiagnostic(!showEmailDiagnostic)}
+          className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-700 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <Mail className="w-5 h-5 text-blue-400" />
+            <div>
+              <h2 className="text-lg font-semibold text-white">
+                Diagnóstico de Email
+              </h2>
+              <p className="text-sm text-slate-400">
+                Verificar configuração de emails e autenticação
+              </p>
+            </div>
+          </div>
+          {showEmailDiagnostic ? (
+            <ChevronUp className="w-5 h-5 text-slate-400" />
+          ) : (
+            <ChevronDown className="w-5 h-5 text-slate-400" />
+          )}
+        </button>
+
+        {showEmailDiagnostic && (
+          <div className="px-6 pb-6">
+            <EmailConfigDiagnostic />
+          </div>
+        )}
       </div>
     </div>
   );

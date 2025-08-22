@@ -96,41 +96,49 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
 
   const handleForgotPassword = async () => {
     const trimmedEmail = email.trim();
-    
+
     if (!trimmedEmail) {
-      setError(t('auth.enter_email_to_recover'));
+      setError('Digite seu email para recuperar a senha');
       return;
     }
 
     if (!validateEmail(trimmedEmail)) {
-      setError(t('auth.valid_email_required'));
+      setError('Digite um email válido');
       return;
     }
 
     setLoading(true);
     setError(null);
-    setLoginProgress(t('auth.sending_recovery'));
+    setLoginProgress('Enviando link de recuperação...');
 
     try {
-      const { error } = await authOperations.resetPasswordForEmail(trimmedEmail);
+      const { error } = await authOperations.resetPasswordForEmail(
+        trimmedEmail,
+        `${window.location.origin}/auth/reset-password`
+      );
+
       if (error) throw error;
+
       setResetEmailSent(true);
+      toast.success('Email de recuperação enviado!', { duration: 5000 });
     } catch (error: unknown) {
       console.error('Password reset error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
 
       if (errorMessage?.includes('timeout')) {
-        const timeoutMsg = t('auth.connection_timeout');
+        const timeoutMsg = 'Tempo limite excedido. Verifique sua conexão';
         setError(timeoutMsg);
         toast.error(timeoutMsg, { duration: 6000 });
-      } else if (errorMessage?.includes('User not found')) {
-        setError(t('auth.email_not_found'));
+      } else if (errorMessage?.includes('User not found') || errorMessage?.includes('Invalid login credentials')) {
+        setError('Email não encontrado. Verifique se está correto');
       } else if (errorMessage?.includes('Invalid email')) {
-        setError(t('auth.invalid_email'));
-      } else if (errorMessage?.includes('too many requests')) {
-        setError(t('auth.too_many_requests'));
+        setError('Formato de email inválido');
+      } else if (errorMessage?.includes('too many requests') || errorMessage?.includes('Email rate limit')) {
+        setError('Muitas tentativas. Aguarde alguns minutos e tente novamente');
+      } else if (errorMessage?.includes('For security purposes')) {
+        setError('Por segurança, você só pode solicitar recuperação a cada 60 segundos');
       } else {
-        setError(t('auth.recovery_error'));
+        setError('Erro ao enviar email de recuperação. Tente novamente');
       }
     } finally {
       setLoading(false);
@@ -155,7 +163,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
         className="w-full max-w-md space-y-6"
       >
         <div className="text-center">
-          <motion.div 
+          <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring" }}
@@ -163,13 +171,31 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
           >
             <CheckCircle className="w-8 h-8 text-emerald-600" />
           </motion.div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">{t('auth.email_sent')}</h2>
-          <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            {t('auth.recovery_sent')} <br />
-            <span className="text-slate-900 font-semibold">{email}</span>
-            <br /><br />
-            {t('auth.check_inbox')}
-          </p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">Email enviado!</h2>
+
+          <div className="space-y-4 text-left mb-6">
+            <p className="text-slate-600">
+              Enviamos um link de recuperação para:
+            </p>
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
+              <p className="text-slate-900 font-medium break-all">{email}</p>
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <div className="space-y-2 text-sm text-blue-800">
+                  <p className="font-medium">Próximos passos:</p>
+                  <ul className="space-y-1 list-disc list-inside ml-2">
+                    <li>Verifique sua caixa de entrada</li>
+                    <li>Confira a pasta de spam/lixo eletrônico</li>
+                    <li>Clique no link no email para redefinir sua senha</li>
+                    <li>O link expira em 1 hora por segurança</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <button
