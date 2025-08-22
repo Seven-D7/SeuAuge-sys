@@ -132,6 +132,20 @@ const TestDashboard = lazy(() =>
   })
 );
 
+const AuthCallback = lazy(() =>
+  import("./pages/AuthCallback").then(module => {
+    performanceMonitor.mark('auth-callback-loaded');
+    return module;
+  })
+);
+
+const ResetPassword = lazy(() =>
+  import("./pages/ResetPassword").then(module => {
+    performanceMonitor.mark('reset-password-loaded');
+    return module;
+  })
+);
+
 // Minimal loading fallback - empty div for instant loading feel
 const LoadingFallback: React.FC = () => <div />;
 
@@ -197,6 +211,30 @@ function App() {
           <Route
             path="/register"
             element={<Navigate to="/auth?mode=register" replace />}
+          />
+          <Route
+            path="/auth/callback"
+            element={
+              <Suspense fallback={<LoadingFallback />}>
+                <AuthCallback />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/auth/confirm"
+            element={
+              <Suspense fallback={<LoadingFallback />}>
+                <AuthCallback />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/auth/reset-password"
+            element={
+              <Suspense fallback={<LoadingFallback />}>
+                <ResetPassword />
+              </Suspense>
+            }
           />
 
           <Route
