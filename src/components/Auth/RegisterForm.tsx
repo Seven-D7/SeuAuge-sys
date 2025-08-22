@@ -163,11 +163,23 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="w-full max-w-md space-y-6"
-    >
+    <>
+      {showEmailVerification && (
+        <EmailVerificationPrompt
+          email={registeredEmail}
+          onClose={() => setShowEmailVerification(false)}
+          onResendSuccess={() => {
+            // Optionally navigate after successful resend
+            // navigate('/preferences');
+          }}
+        />
+      )}
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-md space-y-6"
+      >
       <div className="text-center">
         <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
           Criar sua conta
@@ -467,6 +479,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
         </motion.div>
       </form>
     </motion.div>
+    </>
   );
 };
 
