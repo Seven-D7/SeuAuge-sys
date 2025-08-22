@@ -1,7 +1,10 @@
-import React from 'react';
-import { Users, DollarSign, ShoppingBag } from 'lucide-react';
+import React, { useState } from 'react';
+import { Users, DollarSign, ShoppingBag, Mail, ChevronDown, ChevronUp } from 'lucide-react';
+import EmailConfigDiagnostic from '../components/Admin/EmailConfigDiagnostic';
 
 const AdminDashboard: React.FC = () => {
+  const [showEmailDiagnostic, setShowEmailDiagnostic] = useState(false);
+
   // Esses valores podem ser obtidos do banco de dados futuramente
   const stats = [
     { icon: Users, label: 'Usuários Ativos', value: 1200, color: 'bg-primary' },
