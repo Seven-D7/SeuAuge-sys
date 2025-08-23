@@ -16,32 +16,73 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
-// Cliente único do Supabase com configurações otimizadas
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+// Mock Supabase client for development
+const createMockSupabaseClient = () => ({
   auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true,
-    flowType: 'pkce',
-    // Configure URLs for email verification and password reset
-    redirectTo: `${window.location.origin}/auth/confirm`,
+    signInWithPassword: mockAuthOperations.signInWithPassword,
+    signUp: mockAuthOperations.signUp,
+    signOut: mockAuthOperations.signOut,
+    getSession: mockAuthOperations.getSession,
+    getUser: mockAuthOperations.getUser,
+    resetPasswordForEmail: mockAuthOperations.resetPasswordForEmail,
+    resend: mockAuthOperations.resendConfirmation,
+    onAuthStateChange: (callback: any) => {
+      console.log('🔧 Development mode: Mock auth state change listener');
+      return {
+        data: { subscription: { unsubscribe: () => {} } }
+      };
+    }
   },
-  global: {
-    headers: {
-      'x-application-name': 'healthflix',
+  from: (table: string) => ({
+    select: () => ({
+      eq: () => ({
+        single: () => {
+          console.log('🔧 Development mode: Mock DB select from', table);
+          return Promise.resolve({ data: null, error: null });
+        }
+      })
+    }),
+    insert: (data: any) => {
+      console.log('🔧 Development mode: Mock DB insert to', table, data);
+      return Promise.resolve({ data, error: null });
     },
-  },
-  realtime: {
-    params: {
-      eventsPerSecond: 10,
-    },
-    heartbeatIntervalMs: 30000,
-    reconnectAfterMs: (tries: number) => Math.min(tries * 1000, 10000),
-  },
-  db: {
-    schema: 'public',
-  },
+    update: (data: any) => ({
+      eq: () => {
+        console.log('🔧 Development mode: Mock DB update in', table, data);
+        return Promise.resolve({ data, error: null });
+      }
+    })
+  })
 });
+
+// Cliente único do Supabase com configurações otimizadas
+export const supabase = isFakeCredentials && isDevelopment ?
+  createMockSupabaseClient() as any :
+  createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce',
+      // Configure URLs for email verification and password reset
+      redirectTo: `${window.location.origin}/auth/confirm`,
+    },
+    global: {
+      headers: {
+        'x-application-name': 'healthflix',
+      },
+    },
+    realtime: {
+      params: {
+        eventsPerSecond: 10,
+      },
+      heartbeatIntervalMs: 30000,
+      reconnectAfterMs: (tries: number) => Math.min(tries * 1000, 10000),
+    },
+    db: {
+      schema: 'public',
+    },
+  });
 
 // Helper function to add timeout to Supabase operations
 export const withTimeout = <T>(
