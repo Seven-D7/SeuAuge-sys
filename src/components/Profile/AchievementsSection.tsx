@@ -182,28 +182,30 @@ const AchievementsSection: React.FC = () => {
             transition={{ duration: 0.3 }}
             className="space-y-6"
           >
-            {/* Filters */}
-            <div className="flex flex-wrap gap-2">
+            {/* Filters - Improved mobile responsiveness */}
+            <div className="flex flex-col sm:flex-row gap-3">
               <select
                 value={achievementFilter}
                 onChange={(e) => setAchievementFilter(e.target.value as any)}
-                className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                <option value="all">Todas</option>
-                <option value="unlocked">Desbloqueadas</option>
-                <option value="locked">Bloqueadas</option>
+                <option value="all">🏆 Todas as Conquistas</option>
+                <option value="unlocked">✅ Desbloqueadas ({unlockedCount})</option>
+                <option value="locked">🔒 Bloqueadas ({achievements.length - unlockedCount})</option>
               </select>
-              
+
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                {categories.map(category => (
-                  <option key={category} value={category}>
-                    {category === 'all' ? 'Todas Categorias' : category.charAt(0).toUpperCase() + category.slice(1)}
-                  </option>
-                ))}
+                <option value="all">���� Todas as Categorias</option>
+                <option value="fitness">🏃‍♀️ Fitness</option>
+                <option value="nutrition">🥗 Nutrição</option>
+                <option value="mindfulness">🧘‍♀️ Mindfulness</option>
+                <option value="consistency">📅 Consistência</option>
+                <option value="social">👥 Social</option>
+                <option value="learning">📚 Aprendizado</option>
               </select>
             </div>
 
