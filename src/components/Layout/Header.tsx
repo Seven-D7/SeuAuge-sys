@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { Search, ShoppingCart, Bell, Menu, User, Star } from "lucide-react";
-import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, ShoppingCart, Bell, Menu, User, Star, X } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/SupabaseAuthContext";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { useCartStore } from "../../stores/cartStore";
 import { useLevelStore } from "../../stores/levelStore";
 import { PLANS } from "../../data/plans";
 import LanguageSelector from "../LanguageSelector";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -16,12 +17,37 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const { user } = useAuth();
   const { t } = useLanguage();
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const { getTotalItems, toggleCart, showAddedAnimation } = useCartStore();
   const { levelSystem } = useLevelStore();
   const [searchQuery, setSearchQuery] = useState("");
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [notifications] = useState([
+    { id: 1, message: "Nova conquista desbloqueada!", type: "achievement" },
+    { id: 2, message: "Sequência de 7 dias!", type: "streak" },
+    { id: 3, message: "Novo vídeo disponível", type: "content" }
+  ]);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const planName = PLANS.find((p) => p.id === user?.plan)?.name ?? "Iniciante";
   const totalCartItems = getTotalItems();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/videos?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+      setShowMobileSearch(false);
+    }
+  };
+
+  const handleMobileSearchToggle = () => {
+    setShowMobileSearch(!showMobileSearch);
+    if (showMobileSearch) {
+      setSearchQuery("");
+    }
+  };
 
   return (
     <motion.header 
@@ -40,8 +66,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
             <Menu className="w-5 h-5" />
           </button>
 
-          {/* Search bar - hidden on mobile, shown on desktop */}
-          <div className="relative max-w-md w-full hidden md:block">
+          {/* Desktop Search bar */}
+          <form onSubmit={handleSearch} className="relative max-w-md w-full hidden md:block">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
             <input
               type="text"
@@ -51,25 +77,68 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
               maxLength={100}
               className="w-full pl-10 pr-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm transition-all duration-200"
             />
-          </div>
+          </form>
         </div>
 
         {/* Right Section */}
         <div className="flex items-center space-x-3">
           {/* Mobile search button */}
-          <button className="md:hidden p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
-            <Search className="w-5 h-5" />
-          </button>
-
-          {/* Notifications */}
-          <motion.button 
+          <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="relative p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+            onClick={handleMobileSearchToggle}
+            className="md:hidden p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
           >
-            <Bell className="w-5 h-5" />
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+            {showMobileSearch ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
           </motion.button>
+
+          {/* Notifications */}
+          <div className="relative">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="relative p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+            >
+              <Bell className="w-5 h-5" />
+              {notifications.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-medium">
+                  {notifications.length > 9 ? '9+' : notifications.length}
+                </span>
+              )}
+            </motion.button>
+
+            {/* Notifications Dropdown */}
+            <AnimatePresence>
+              {showNotifications && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="absolute right-0 top-full mt-2 w-80 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50"
+                >
+                  <div className="p-4 border-b border-slate-700">
+                    <h3 className="text-white font-semibold">Notificações</h3>
+                  </div>
+                  <div className="max-h-64 overflow-y-auto">
+                    {notifications.length > 0 ? (
+                      notifications.map((notification) => (
+                        <div key={notification.id} className="p-3 border-b border-slate-700 last:border-b-0 hover:bg-slate-700/50 transition-colors">
+                          <p className="text-white text-sm">{notification.message}</p>
+                          <span className="text-xs text-slate-400 capitalize">{notification.type}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="p-4 text-center text-slate-400">
+                        <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">Nenhuma notificação</p>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           {/* Language Selector */}
           <LanguageSelector variant="discrete" />
@@ -137,6 +206,31 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           </Link>
         </div>
       </div>
+
+      {/* Mobile Search Overlay */}
+      <AnimatePresence>
+        {showMobileSearch && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-slate-800 border-t border-slate-700 px-4 py-3"
+          >
+            <form onSubmit={handleSearch} className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder={t('navigation.search_placeholder')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value.slice(0, 100))}
+                maxLength={100}
+                autoFocus
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm transition-all duration-200"
+              />
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.header>
   );
 };
