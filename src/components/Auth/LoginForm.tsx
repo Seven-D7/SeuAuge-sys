@@ -5,7 +5,9 @@ import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react'
 import { useAuth } from '../../contexts/SupabaseAuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { authOperations } from '../../lib/supabase';
+import { isSupabaseConfigured } from '../../lib/supabaseClient';
 import LanguageSelector from '../LanguageSelector';
+import SupabaseSetupPrompt from './SupabaseSetupPrompt';
 import toast from 'react-hot-toast';
 
 interface LoginFormProps {
@@ -21,6 +23,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
   const [loginProgress, setLoginProgress] = useState<string>('');
   const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
   const [resetEmailSent, setResetEmailSent] = useState(false);
+  const [showSetupPrompt, setShowSetupPrompt] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
   const { t } = useLanguage();
@@ -77,7 +80,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
       // Enhanced error handling
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
 
-      if (errorMessage.includes('timeout')) {
+      // Show setup prompt if Supabase is not configured
+      if (errorMessage.includes('Sistema de autenticação não configurado') ||
+          errorMessage.includes('Supabase not configured') ||
+          (!isSupabaseConfigured && (errorMessage.includes('conexão') || errorMessage.includes('Failed to fetch') || errorMessage.includes('network')))) {
+        setShowSetupPrompt(true);
+      } else if (errorMessage.includes('timeout')) {
         const timeoutMsg = t('auth.connection_timeout');
         setError(timeoutMsg);
         toast.error(timeoutMsg, { duration: 6000 });
