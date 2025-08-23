@@ -4,85 +4,38 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Check if we're in development mode with fake credentials
-const isDevelopment = import.meta.env.DEV;
-const isFakeCredentials = supabaseUrl?.includes('temp-project') ||
-  supabaseUrl === 'COLE_SUA_URL_AQUI' ||
-  supabaseAnonKey === 'COLE_SUA_CHAVE_AQUI';
-
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error(
     'Missing Supabase environment variables. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY'
   );
 }
 
-// Mock Supabase client for development
-const createMockSupabaseClient = () => ({
-  auth: {
-    signInWithPassword: mockAuthOperations.signInWithPassword,
-    signUp: mockAuthOperations.signUp,
-    signOut: mockAuthOperations.signOut,
-    getSession: mockAuthOperations.getSession,
-    getUser: mockAuthOperations.getUser,
-    resetPasswordForEmail: mockAuthOperations.resetPasswordForEmail,
-    resend: mockAuthOperations.resendConfirmation,
-    onAuthStateChange: (callback: any) => {
-      console.log('🔧 Development mode: Mock auth state change listener');
-      return {
-        data: { subscription: { unsubscribe: () => {} } }
-      };
-    }
-  },
-  from: (table: string) => ({
-    select: () => ({
-      eq: () => ({
-        single: () => {
-          console.log('🔧 Development mode: Mock DB select from', table);
-          return Promise.resolve({ data: null, error: null });
-        }
-      })
-    }),
-    insert: (data: any) => {
-      console.log('🔧 Development mode: Mock DB insert to', table, data);
-      return Promise.resolve({ data, error: null });
-    },
-    update: (data: any) => ({
-      eq: () => {
-        console.log('🔧 Development mode: Mock DB update in', table, data);
-        return Promise.resolve({ data, error: null });
-      }
-    })
-  })
-});
-
 // Cliente único do Supabase com configurações otimizadas
-export const supabase = isFakeCredentials && isDevelopment ?
-  createMockSupabaseClient() as any :
-  createClient(supabaseUrl, supabaseAnonKey, {
-    auth: {
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: true,
-      flowType: 'pkce',
-      // Configure URLs for email verification and password reset
-      redirectTo: `${window.location.origin}/auth/confirm`,
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true,
+    flowType: 'pkce',
+    // Configure URLs for email verification and password reset
+    redirectTo: `${window.location.origin}/auth/confirm`,
+  },
+  global: {
+    headers: {
+      'x-application-name': 'healthflix',
     },
-    global: {
-      headers: {
-        'x-application-name': 'healthflix',
-      },
+  },
+  realtime: {
+    params: {
+      eventsPerSecond: 10,
     },
-    realtime: {
-      params: {
-        eventsPerSecond: 10,
-      },
-      heartbeatIntervalMs: 30000,
-      reconnectAfterMs: (tries: number) => Math.min(tries * 1000, 10000),
-    },
-    db: {
-      schema: 'public',
-    },
-  });
+    heartbeatIntervalMs: 30000,
+    reconnectAfterMs: (tries: number) => Math.min(tries * 1000, 10000),
+  },
+  db: {
+    schema: 'public',
+  },
+});
 
 // Helper function to add timeout to Supabase operations
 export const withTimeout = <T>(
@@ -99,76 +52,8 @@ export const withTimeout = <T>(
   return Promise.race([promise, timeoutPromise]);
 };
 
-// Mock auth for development mode
-const createMockUser = (email: string, name: string = 'Dev User') => ({
-  id: 'dev-user-123',
-  email,
-  user_metadata: { name },
-  app_metadata: {},
-  aud: 'authenticated',
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
-});
-
-const mockAuthOperations = {
-  async signInWithPassword(email: string, password: string) {
-    console.log('🔧 Development mode: Mock login for', email);
-    return {
-      data: {
-        user: createMockUser(email),
-        session: {
-          access_token: 'mock-token',
-          refresh_token: 'mock-refresh',
-          user: createMockUser(email),
-        }
-      },
-      error: null
-    };
-  },
-
-  async signUp(email: string, password: string, options?: any) {
-    console.log('🔧 Development mode: Mock signup for', email);
-    const user = createMockUser(email, options?.data?.name);
-    return {
-      data: { user, session: null },
-      error: null
-    };
-  },
-
-  async signOut() {
-    console.log('🔧 Development mode: Mock logout');
-    return { error: null };
-  },
-
-  async getSession() {
-    console.log('🔧 Development mode: Mock get session');
-    return {
-      data: { session: null },
-      error: null
-    };
-  },
-
-  async getUser() {
-    console.log('🔧 Development mode: Mock get user');
-    return {
-      data: { user: null },
-      error: null
-    };
-  },
-
-  async resetPasswordForEmail(email: string, redirectTo?: string) {
-    console.log('🔧 Development mode: Mock password reset for', email);
-    return { data: {}, error: null };
-  },
-
-  async resendConfirmation(email: string, redirectTo?: string) {
-    console.log('🔧 Development mode: Mock resend confirmation for', email);
-    return { data: {}, error: null };
-  },
-};
-
 // Enhanced auth operations with timeout
-export const authOperations = isFakeCredentials && isDevelopment ? mockAuthOperations : {
+export const authOperations = {
   async signInWithPassword(email: string, password: string) {
     return withTimeout(
       supabase.auth.signInWithPassword({ email, password }),
