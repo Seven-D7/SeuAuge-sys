@@ -21,9 +21,19 @@ const AchievementCard: React.FC<AchievementCardProps> = ({
     switch (rarity) {
       case 'common': return 'from-gray-400 to-gray-600';
       case 'rare': return 'from-blue-400 to-blue-600';
-      case 'epic': return 'from-blue-400 to-cyan-600';
+      case 'epic': return 'from-purple-400 to-purple-600';
       case 'legendary': return 'from-yellow-400 to-orange-500';
       default: return 'from-gray-400 to-gray-600';
+    }
+  };
+
+  const getRarityName = (rarity: string) => {
+    switch (rarity) {
+      case 'common': return 'Comum';
+      case 'rare': return 'Raro';
+      case 'epic': return 'Épico';
+      case 'legendary': return 'Lendário';
+      default: return 'Comum';
     }
   };
 
@@ -76,13 +86,13 @@ const AchievementCard: React.FC<AchievementCardProps> = ({
 
           {/* Rarity Badge */}
           <div className={`
-            px-2 py-1 rounded-full text-xs font-bold
-            ${achievement.isUnlocked 
-              ? `bg-gradient-to-r ${getRarityColor(achievement.rarity)} text-white`
+            px-3 py-1 rounded-full text-xs font-bold
+            ${achievement.isUnlocked
+              ? `bg-gradient-to-r ${getRarityColor(achievement.rarity)} text-white shadow-lg`
               : 'bg-gray-700 text-gray-400'
             }
           `}>
-            {achievement.rarity.toUpperCase()}
+            {getRarityName(achievement.rarity)}
           </div>
         </div>
 

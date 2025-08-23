@@ -337,15 +337,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (err: AuthError | any) {
       // Enhanced error handling without exposing sensitive information
       console.error("Login error:", err.message);
-      
+
       if (err.message?.includes('Invalid login credentials')) {
-        throw new Error("Credenciais inválidas");
+        throw new Error("Email ou senha incorretos. Verifique suas credenciais.");
       } else if (err.message?.includes('Too many requests')) {
-        throw new Error("Muitas tentativas de login. Tente novamente mais tarde");
+        throw new Error("Muitas tentativas de login. Aguarde alguns minutos antes de tentar novamente.");
       } else if (err.message?.includes('Email not confirmed')) {
-        throw new Error("Email não confirmado. Verifique sua caixa de entrada");
+        throw new Error("Email não confirmado. Verifique sua caixa de entrada e clique no link de confirmação.");
+      } else if (err.message?.includes('User not found')) {
+        throw new Error("Usuário não encontrado. Verifique o email digitado ou crie uma nova conta.");
+      } else if (err.message?.includes('timeout')) {
+        throw new Error("Tempo limite excedido. Verifique sua conexão com a internet e tente novamente.");
+      } else if (err.message?.includes('network')) {
+        throw new Error("Erro de conexão. Verifique sua internet e tente novamente.");
       } else {
-        throw new Error("Falha na autenticação");
+        throw new Error("Erro interno. Tente novamente em alguns minutos.");
       }
     }
   };
@@ -440,15 +446,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     } catch (err: AuthError | any) {
       console.error("Registration error:", err.message);
-      
+
       if (err.message?.includes('User already registered')) {
-        throw new Error("Este email já está em uso");
+        throw new Error("Este email já está em uso. Tente fazer login ou use outro email.");
       } else if (err.message?.includes('Password should be at least')) {
-        throw new Error("Senha muito fraca. Use uma senha mais forte");
+        throw new Error("Senha muito fraca. Use uma senha com pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas e números.");
       } else if (err.message?.includes('Signups not allowed')) {
-        throw new Error("Registro não permitido. Entre em contato com o suporte");
+        throw new Error("Registros temporariamente desabilitados. Entre em contato com o suporte.");
+      } else if (err.message?.includes('timeout')) {
+        throw new Error("Tempo limite excedido. Verifique sua conexão e tente novamente.");
+      } else if (err.message?.includes('network')) {
+        throw new Error("Erro de conexão. Verifique sua internet e tente novamente.");
       } else {
-        throw new Error("Falha no registro");
+        throw new Error("Erro no registro. Tente novamente em alguns minutos.");
       }
     }
   };

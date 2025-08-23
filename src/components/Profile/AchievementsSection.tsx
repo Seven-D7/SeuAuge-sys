@@ -182,28 +182,30 @@ const AchievementsSection: React.FC = () => {
             transition={{ duration: 0.3 }}
             className="space-y-6"
           >
-            {/* Filters */}
-            <div className="flex flex-wrap gap-2">
+            {/* Filters - Improved mobile responsiveness */}
+            <div className="flex flex-col sm:flex-row gap-3">
               <select
                 value={achievementFilter}
                 onChange={(e) => setAchievementFilter(e.target.value as any)}
-                className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                <option value="all">Todas</option>
-                <option value="unlocked">Desbloqueadas</option>
-                <option value="locked">Bloqueadas</option>
+                <option value="all">🏆 Todas as Conquistas</option>
+                <option value="unlocked">✅ Desbloqueadas ({unlockedCount})</option>
+                <option value="locked">🔒 Bloqueadas ({achievements.length - unlockedCount})</option>
               </select>
-              
+
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                {categories.map(category => (
-                  <option key={category} value={category}>
-                    {category === 'all' ? 'Todas Categorias' : category.charAt(0).toUpperCase() + category.slice(1)}
-                  </option>
-                ))}
+                <option value="all">📁 Todas as Categorias</option>
+                <option value="fitness">🏃‍♀️ Fitness</option>
+                <option value="nutrition">🥗 Nutrição</option>
+                <option value="mindfulness">🧘‍♀️ Mindfulness</option>
+                <option value="consistency">📅 Consistência</option>
+                <option value="social">👥 Social</option>
+                <option value="learning">📚 Aprendizado</option>
               </select>
             </div>
 
@@ -240,14 +242,28 @@ const AchievementsSection: React.FC = () => {
             </div>
 
             {filteredAchievements.length === 0 && (
-              <div className="text-center py-12">
-                <Trophy className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-2">
+              <div className="text-center py-16">
+                <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-slate-700 to-slate-800 rounded-full flex items-center justify-center">
+                  <Trophy className="w-12 h-12 text-gray-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3">
                   Nenhuma conquista encontrada
                 </h3>
-                <p className="text-gray-400">
-                  Ajuste os filtros ou continue progredindo para desbloquear mais conquistas!
+                <p className="text-gray-300 mb-6 max-w-md mx-auto">
+                  {achievementFilter === 'locked'
+                    ? 'Todas as conquistas desta categoria já foram desbloqueadas! 🎉'
+                    : 'Ajuste os filtros ou continue progredindo para desbloquear mais conquistas!'
+                  }
                 </p>
+                <button
+                  onClick={() => {
+                    setAchievementFilter('all');
+                    setCategoryFilter('all');
+                  }}
+                  className="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                >
+                  Ver Todas as Conquistas
+                </button>
               </div>
             )}
           </motion.div>
