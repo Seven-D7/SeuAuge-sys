@@ -58,8 +58,76 @@ export const withTimeout = <T>(
   return Promise.race([promise, timeoutPromise]);
 };
 
+// Mock auth for development mode
+const createMockUser = (email: string, name: string = 'Dev User') => ({
+  id: 'dev-user-123',
+  email,
+  user_metadata: { name },
+  app_metadata: {},
+  aud: 'authenticated',
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+});
+
+const mockAuthOperations = {
+  async signInWithPassword(email: string, password: string) {
+    console.log('🔧 Development mode: Mock login for', email);
+    return {
+      data: {
+        user: createMockUser(email),
+        session: {
+          access_token: 'mock-token',
+          refresh_token: 'mock-refresh',
+          user: createMockUser(email),
+        }
+      },
+      error: null
+    };
+  },
+
+  async signUp(email: string, password: string, options?: any) {
+    console.log('🔧 Development mode: Mock signup for', email);
+    const user = createMockUser(email, options?.data?.name);
+    return {
+      data: { user, session: null },
+      error: null
+    };
+  },
+
+  async signOut() {
+    console.log('🔧 Development mode: Mock logout');
+    return { error: null };
+  },
+
+  async getSession() {
+    console.log('🔧 Development mode: Mock get session');
+    return {
+      data: { session: null },
+      error: null
+    };
+  },
+
+  async getUser() {
+    console.log('🔧 Development mode: Mock get user');
+    return {
+      data: { user: null },
+      error: null
+    };
+  },
+
+  async resetPasswordForEmail(email: string, redirectTo?: string) {
+    console.log('🔧 Development mode: Mock password reset for', email);
+    return { data: {}, error: null };
+  },
+
+  async resendConfirmation(email: string, redirectTo?: string) {
+    console.log('🔧 Development mode: Mock resend confirmation for', email);
+    return { data: {}, error: null };
+  },
+};
+
 // Enhanced auth operations with timeout
-export const authOperations = {
+export const authOperations = isFakeCredentials && isDevelopment ? mockAuthOperations : {
   async signInWithPassword(email: string, password: string) {
     return withTimeout(
       supabase.auth.signInWithPassword({ email, password }),
