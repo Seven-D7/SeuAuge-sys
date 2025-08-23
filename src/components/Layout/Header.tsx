@@ -34,21 +34,31 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const planName = PLANS.find((p) => p.id === user?.plan)?.name ?? "Iniciante";
   const totalCartItems = getTotalItems();
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/videos?search=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
       setShowMobileSearch(false);
     }
-  };
+  }, [searchQuery, navigate]);
 
-  const handleMobileSearchToggle = () => {
-    setShowMobileSearch(!showMobileSearch);
+  const handleMobileSearchToggle = useCallback(() => {
+    setShowMobileSearch(prev => !prev);
     if (showMobileSearch) {
       setSearchQuery("");
     }
-  };
+  }, [showMobileSearch]);
+
+  const handleNotificationsToggle = useCallback(() => {
+    setShowNotifications(prev => !prev);
+  }, []);
+
+  // Debounced search input handler
+  const debouncedSearchHandler = useDebouncedCallback((value: string) => {
+    // Aqui poderia fazer uma busca em tempo real se necessário
+    console.log('Searching for:', value);
+  }, 300);
 
   return (
     <motion.header 
