@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ShoppingCart, Bell, Menu, User, Star, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ import { useLevelStore } from "../../stores/levelStore";
 import { PLANS } from "../../data/plans";
 import LanguageSelector from "../LanguageSelector";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import { useDebouncedCallback } from "../../hooks/useDebounce";
 
 interface HeaderProps {
   onMenuClick: () => void;
