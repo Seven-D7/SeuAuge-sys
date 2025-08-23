@@ -337,15 +337,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (err: AuthError | any) {
       // Enhanced error handling without exposing sensitive information
       console.error("Login error:", err.message);
-      
+
       if (err.message?.includes('Invalid login credentials')) {
-        throw new Error("Credenciais inválidas");
+        throw new Error("Email ou senha incorretos. Verifique suas credenciais.");
       } else if (err.message?.includes('Too many requests')) {
-        throw new Error("Muitas tentativas de login. Tente novamente mais tarde");
+        throw new Error("Muitas tentativas de login. Aguarde alguns minutos antes de tentar novamente.");
       } else if (err.message?.includes('Email not confirmed')) {
-        throw new Error("Email não confirmado. Verifique sua caixa de entrada");
+        throw new Error("Email não confirmado. Verifique sua caixa de entrada e clique no link de confirmação.");
+      } else if (err.message?.includes('User not found')) {
+        throw new Error("Usuário não encontrado. Verifique o email digitado ou crie uma nova conta.");
+      } else if (err.message?.includes('timeout')) {
+        throw new Error("Tempo limite excedido. Verifique sua conexão com a internet e tente novamente.");
+      } else if (err.message?.includes('network')) {
+        throw new Error("Erro de conexão. Verifique sua internet e tente novamente.");
       } else {
-        throw new Error("Falha na autenticação");
+        throw new Error("Erro interno. Tente novamente em alguns minutos.");
       }
     }
   };
