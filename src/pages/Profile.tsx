@@ -340,66 +340,70 @@ const Profile: React.FC = () => {
     <div className="min-h-screen bg-slate-100 dark:bg-slate-900">
       <div className="max-w-7xl mx-auto p-4 space-y-8">
         {/* Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+          className="flex flex-col gap-4"
         >
-          <div>
-            <h1 className="text-4xl font-bold text-slate-900 dark:text-white">
-              Meu Perfil
-            </h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-1">
-              Gerencie suas informações e acompanhe seu progresso
-            </p>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">
+                Meu Perfil
+              </h1>
+              <p className="text-slate-600 dark:text-slate-400 mt-1">
+                Gerencie suas informações e acompanhe seu progresso
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* Action Buttons - Full width on mobile */}
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             {!isEditing ? (
               <>
-                {user?.plan && user.plan !== "A" && (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleCancelSubscription}
-                    className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg"
-                  >
-                    <X className="w-4 h-4" />
-                    <span>Cancelar Assinatura</span>
-                  </motion.button>
-                )}
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center space-x-2 bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
+                  className="flex items-center justify-center space-x-2 bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 text-white px-4 sm:px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl w-full sm:w-auto"
                 >
                   <Edit3 className="w-4 h-4" />
                   <span>Editar Perfil</span>
                 </motion.button>
+                {user?.plan && user.plan !== "A" && (
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleCancelSubscription}
+                    className="flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 sm:px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg w-full sm:w-auto"
+                  >
+                    <X className="w-4 h-4" />
+                    <span className="hidden sm:inline">Cancelar Assinatura</span>
+                    <span className="sm:hidden">Cancelar</span>
+                  </motion.button>
+                )}
               </>
             ) : (
-              <div className="flex space-x-3">
+              <>
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={handleSave}
                   disabled={saving}
-                  className={`flex items-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg ${saving ? "opacity-60 cursor-not-allowed" : ""}`}
+                  className={`flex items-center justify-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-4 sm:px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg w-full sm:w-auto ${saving ? "opacity-60 cursor-not-allowed" : ""}`}
                 >
                   <Save className="w-4 h-4" />
                   <span>{saving ? "Salvando..." : "Salvar"}</span>
                 </motion.button>
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={handleCancel}
-                  className="flex items-center space-x-2 bg-slate-600 hover:bg-slate-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200"
+                  className="flex items-center justify-center space-x-2 bg-slate-600 hover:bg-slate-700 text-white px-4 sm:px-6 py-3 rounded-xl font-medium transition-all duration-200 w-full sm:w-auto"
                 >
                   <X className="w-4 h-4" />
                   <span>Cancelar</span>
                 </motion.button>
-              </div>
+              </>
             )}
           </div>
         </motion.div>
@@ -589,33 +593,51 @@ const Profile: React.FC = () => {
           </div>
         </motion.section>
 
-        {/* Tabs Navigation */}
+        {/* Tabs Navigation - Improved mobile responsiveness */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="flex flex-wrap gap-2 bg-white dark:bg-slate-800 p-2 rounded-lg border border-slate-200 dark:border-slate-700 overflow-x-auto"
+          className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700"
         >
-          {tabs.map((tab, index) => {
-            const Icon = tab.icon;
-            return (
-              <motion.button
-                key={tab.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.05 }}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center space-x-2 px-4 sm:px-6 py-3 rounded-xl font-medium transition-all duration-200 whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-lg"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700/50"
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                <span className="hidden sm:inline">{tab.label}</span>
-              </motion.button>
-            );
-          })}
+          {/* Mobile Tab Selector */}
+          <div className="sm:hidden p-2">
+            <select
+              value={activeTab}
+              onChange={(e) => setActiveTab(e.target.value as any)}
+              className="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white font-medium"
+            >
+              {tabs.map((tab) => (
+                <option key={tab.id} value={tab.id}>
+                  {tab.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Desktop Tab Buttons */}
+          <div className="hidden sm:flex gap-2 p-2 overflow-x-auto">
+            {tabs.map((tab, index) => {
+              const Icon = tab.icon;
+              return (
+                <motion.button
+                  key={tab.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center space-x-2 px-4 lg:px-6 py-3 rounded-xl font-medium transition-all duration-200 whitespace-nowrap ${
+                    activeTab === tab.id
+                      ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-lg"
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700/50"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{tab.label}</span>
+                </motion.button>
+              );
+            })}
+          </div>
         </motion.div>
 
         {/* Tab Content */}
