@@ -108,7 +108,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setShowNotifications(!showNotifications)}
+              onClick={handleNotificationsToggle}
               className="relative p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
             >
               <Bell className="w-5 h-5" />
