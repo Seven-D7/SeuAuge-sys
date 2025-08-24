@@ -686,32 +686,35 @@ const Profile: React.FC = () => {
 
               {/* Recent Achievements Preview */}
               {recentAchievements.length > 0 && (
-                <section className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center">
-                      <Trophy className="w-6 h-6 mr-3 text-yellow-500" />
-                      Conquistas Recentes
+                <section className="bg-white dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-slate-200 dark:border-slate-700">
+                  <div className="flex items-center justify-between mb-4 sm:mb-6">
+                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center">
+                      <Trophy className="w-5 sm:w-6 h-5 sm:h-6 mr-2 sm:mr-3 text-yellow-500" />
+                      <span className="hidden sm:inline">Conquistas Recentes</span>
+                      <span className="sm:hidden">Conquistas</span>
                     </h3>
                     <button
                       onClick={() => setActiveTab('achievements')}
-                      className="text-primary hover:text-emerald-400 text-sm font-medium flex items-center"
+                      className="text-primary hover:text-emerald-400 text-xs sm:text-sm font-medium flex items-center"
                     >
-                      Ver todas <ChevronRight className="w-4 h-4 ml-1" />
+                      <span className="hidden sm:inline">Ver todas</span>
+                      <span className="sm:hidden">Ver +</span>
+                      <ChevronRight className="w-3 sm:w-4 h-3 sm:h-4 ml-1" />
                     </button>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                     {recentAchievements.slice(0, 3).map((achievement) => (
                       <motion.div
                         key={achievement.id}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         whileHover={{ scale: 1.02 }}
-                        className={`p-4 rounded-lg border bg-gradient-to-br ${getRarityColor(achievement.rarity)}`}
+                        className={`p-3 sm:p-4 rounded-lg border bg-gradient-to-br ${getRarityColor(achievement.rarity)}`}
                       >
                         <div className="text-center text-white">
-                          <div className="text-3xl mb-2">{achievement.icon}</div>
-                          <h4 className="font-semibold mb-1">{achievement.title}</h4>
-                          <p className="text-xs opacity-90">{achievement.description}</p>
+                          <div className="text-2xl sm:text-3xl mb-2">{achievement.icon}</div>
+                          <h4 className="font-semibold mb-1 text-sm sm:text-base">{achievement.title}</h4>
+                          <p className="text-xs opacity-90 line-clamp-2">{achievement.description}</p>
                           <div className="mt-2 text-xs opacity-75">
                             +{achievement.reward.xp} XP
                           </div>
@@ -1245,7 +1248,7 @@ const Profile: React.FC = () => {
                   {unlockedTitles.length === 0 && (
                     <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                       <Lock className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                      <p>Nenhum título desbloqueado ainda</p>
+                      <p>Nenhum t��tulo desbloqueado ainda</p>
                       <p className="text-sm">Complete conquistas para desbloquear títulos</p>
                     </div>
                   )}
