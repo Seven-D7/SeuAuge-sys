@@ -1010,12 +1010,12 @@ const Profile: React.FC = () => {
               <WeeklyProgressChart />
 
               {/* Body Metrics */}
-              <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
-                  <TrendingUp className="w-6 h-6 mr-3 text-emerald-500" />
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-slate-200 dark:border-slate-700">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4 sm:mb-6 flex items-center">
+                  <TrendingUp className="w-5 sm:w-6 h-5 sm:h-6 mr-2 sm:mr-3 text-emerald-500" />
                   Métricas Corporais
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
                   {bodyMetrics.map((metric, index) => {
                     const Icon = metric.icon;
                     const isIMC = metric.label === 'IMC';
