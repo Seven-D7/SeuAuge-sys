@@ -1234,14 +1234,14 @@ const Profile: React.FC = () => {
                         setCurrentTitle(title);
                         setShowTitleSelector(false);
                       }}
-                      className={`w-full p-3 rounded-lg border-2 text-left transition-all duration-200 ${
-                        currentTitle === title 
-                          ? 'border-primary bg-primary/10 text-primary' 
+                      className={`w-full p-2.5 sm:p-3 rounded-lg border-2 text-left transition-all duration-200 ${
+                        currentTitle === title
+                          ? 'border-primary bg-primary/10 text-primary'
                           : 'border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500'
                       }`}
                     >
-                      <div className="font-medium">"{title}"</div>
-                      <div className="text-sm text-slate-500">Desbloqueado por conquista</div>
+                      <div className="font-medium text-sm sm:text-base">"{title}"</div>
+                      <div className="text-xs sm:text-sm text-slate-500">Desbloqueado por conquista</div>
                     </motion.button>
                   ))}
                   
