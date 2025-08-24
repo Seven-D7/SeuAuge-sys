@@ -1208,20 +1208,20 @@ const Profile: React.FC = () => {
                   </button>
                 </div>
                 
-                <div className="space-y-3 max-h-96 overflow-y-auto">
+                <div className="space-y-2 sm:space-y-3 max-h-80 sm:max-h-96 overflow-y-auto">
                   <button
                     onClick={() => {
                       setCurrentTitle('');
                       setShowTitleSelector(false);
                     }}
-                    className={`w-full p-3 rounded-lg border-2 text-left transition-all duration-200 ${
-                      !currentTitle 
-                        ? 'border-primary bg-primary/10 text-primary' 
+                    className={`w-full p-2.5 sm:p-3 rounded-lg border-2 text-left transition-all duration-200 ${
+                      !currentTitle
+                        ? 'border-primary bg-primary/10 text-primary'
                         : 'border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500'
                     }`}
                   >
-                    <div className="font-medium">Sem título</div>
-                    <div className="text-sm text-slate-500">Não exibir título</div>
+                    <div className="font-medium text-sm sm:text-base">Sem título</div>
+                    <div className="text-xs sm:text-sm text-slate-500">Não exibir título</div>
                   </button>
                   
                   {unlockedTitles.map((title, index) => (
