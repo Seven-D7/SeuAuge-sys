@@ -816,13 +816,13 @@ const Profile: React.FC = () => {
                               }`}
                             >
                               <div className="text-center">
-                                <div className="text-3xl mb-2">
-                                  {achievement.isUnlocked ? achievement.icon : <Lock className="w-8 h-8 mx-auto text-slate-400" />}
+                                <div className="text-2xl sm:text-3xl mb-2">
+                                  {achievement.isUnlocked ? achievement.icon : <Lock className="w-6 sm:w-8 h-6 sm:h-8 mx-auto text-slate-400" />}
                                 </div>
-                                <h4 className={`font-semibold mb-1 ${achievement.isUnlocked ? 'text-white' : 'text-slate-600 dark:text-slate-400'}`}>
+                                <h4 className={`font-semibold mb-1 text-xs sm:text-sm ${achievement.isUnlocked ? 'text-white' : 'text-slate-600 dark:text-slate-400'}`}>
                                   {achievement.title}
                                 </h4>
-                                <p className={`text-xs mb-2 ${achievement.isUnlocked ? 'text-white/80' : 'text-slate-500 dark:text-slate-500'}`}>
+                                <p className={`text-xs mb-2 line-clamp-2 ${achievement.isUnlocked ? 'text-white/80' : 'text-slate-500 dark:text-slate-500'}`}>
                                   {achievement.description}
                                 </p>
                                 {!achievement.isUnlocked && (
