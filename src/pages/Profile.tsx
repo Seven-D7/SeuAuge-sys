@@ -338,33 +338,31 @@ const Profile: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-900">
-      <div className="max-w-7xl mx-auto p-4 space-y-8">
+      <div className="max-w-7xl mx-auto p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6 lg:space-y-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-3 sm:gap-4"
         >
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">
-                Meu Perfil
-              </h1>
-              <p className="text-slate-600 dark:text-slate-400 mt-1">
-                Gerencie suas informações e acompanhe seu progresso
-              </p>
-            </div>
+          <div className="text-center sm:text-left">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white">
+              Meu Perfil
+            </h1>
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-1">
+              Gerencie suas informações e acompanhe seu progresso
+            </p>
           </div>
 
-          {/* Action Buttons - Full width on mobile */}
-          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          {/* Action Buttons - Optimized for mobile */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             {!isEditing ? (
               <>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center justify-center space-x-2 bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 text-white px-4 sm:px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl w-full sm:w-auto"
+                  className="flex items-center justify-center space-x-2 bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
                   <Edit3 className="w-4 h-4" />
                   <span>Editar Perfil</span>
@@ -374,11 +372,10 @@ const Profile: React.FC = () => {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleCancelSubscription}
-                    className="flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 sm:px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg w-full sm:w-auto"
+                    className="flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-lg"
                   >
                     <X className="w-4 h-4" />
-                    <span className="hidden sm:inline">Cancelar Assinatura</span>
-                    <span className="sm:hidden">Cancelar</span>
+                    <span>Cancelar Assinatura</span>
                   </motion.button>
                 )}
               </>
@@ -389,7 +386,7 @@ const Profile: React.FC = () => {
                   whileTap={{ scale: 0.98 }}
                   onClick={handleSave}
                   disabled={saving}
-                  className={`flex items-center justify-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-4 sm:px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg w-full sm:w-auto ${saving ? "opacity-60 cursor-not-allowed" : ""}`}
+                  className={`flex items-center justify-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-lg ${saving ? "opacity-60 cursor-not-allowed" : ""}`}
                 >
                   <Save className="w-4 h-4" />
                   <span>{saving ? "Salvando..." : "Salvar"}</span>
@@ -398,7 +395,7 @@ const Profile: React.FC = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleCancel}
-                  className="flex items-center justify-center space-x-2 bg-slate-600 hover:bg-slate-700 text-white px-4 sm:px-6 py-3 rounded-xl font-medium transition-all duration-200 w-full sm:w-auto"
+                  className="flex items-center justify-center space-x-2 bg-slate-600 hover:bg-slate-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200"
                 >
                   <X className="w-4 h-4" />
                   <span>Cancelar</span>
@@ -409,42 +406,45 @@ const Profile: React.FC = () => {
         </motion.div>
 
         {/* Profile Card */}
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700"
+          className="bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700"
         >
-          <div className="h-32 bg-gradient-to-r from-primary via-emerald-600 to-cyan-600 relative overflow-hidden">
+          <div className="h-24 sm:h-32 bg-gradient-to-r from-primary via-emerald-600 to-cyan-600 relative overflow-hidden">
             <div className="absolute inset-0 bg-black/20" />
-            <div className="absolute top-4 right-4">
-              <div className="inline-flex items-center px-3 py-1.5 bg-white/90 backdrop-blur-sm text-slate-900 rounded-lg text-sm font-medium border border-white/20">
-                <Award className="w-4 h-4 mr-2" />
-                {planName}
+            <div className="absolute top-2 sm:top-4 right-2 sm:right-4">
+              <div className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 bg-white/90 backdrop-blur-sm text-slate-900 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium border border-white/20">
+                <Award className="w-3 sm:w-4 h-3 sm:h-4 mr-1 sm:mr-2" />
+                <span className="hidden xs:inline">{planName}</span>
+                <span className="xs:hidden">{planName.substring(0, 4)}</span>
               </div>
             </div>
             {/* Level Badge */}
-            <div className="absolute top-4 left-4">
-              <div className="inline-flex items-center px-3 py-1.5 bg-white/90 backdrop-blur-sm text-slate-900 rounded-lg text-sm font-medium border border-white/20">
-                <Star className="w-4 h-4 mr-2 text-yellow-500" />
-                Nível {levelSystem.currentLevel}
+            <div className="absolute top-2 sm:top-4 left-2 sm:left-4">
+              <div className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 bg-white/90 backdrop-blur-sm text-slate-900 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium border border-white/20">
+                <Star className="w-3 sm:w-4 h-3 sm:h-4 mr-1 sm:mr-2 text-yellow-500" />
+                <span className="hidden xs:inline">Nível {levelSystem.currentLevel}</span>
+                <span className="xs:hidden">N{levelSystem.currentLevel}</span>
               </div>
             </div>
             {/* Streak Badge */}
-            <div className="absolute bottom-4 left-4">
-              <div className="inline-flex items-center px-3 py-1.5 bg-white/90 backdrop-blur-sm text-slate-900 rounded-lg text-sm font-medium border border-white/20">
-                <Flame className="w-4 h-4 mr-2 text-orange-500" />
-                {currentStreak} dias
+            <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4">
+              <div className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 bg-white/90 backdrop-blur-sm text-slate-900 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium border border-white/20">
+                <Flame className="w-3 sm:w-4 h-3 sm:h-4 mr-1 sm:mr-2 text-orange-500" />
+                <span className="hidden xs:inline">{currentStreak} dias</span>
+                <span className="xs:hidden">{currentStreak}d</span>
               </div>
             </div>
           </div>
 
-          <div className="-mt-16 p-6">
-            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
+          <div className="-mt-12 sm:-mt-16 p-4 sm:p-6">
+            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 sm:gap-6 lg:gap-8">
               {/* Avatar */}
               <div className="relative group">
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.05 }}
-                  className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-r from-slate-600 to-slate-700 flex items-center justify-center ring-4 ring-white dark:ring-slate-800 shadow-lg transition-all duration-300"
+                  className="w-24 sm:w-32 h-24 sm:h-32 rounded-full overflow-hidden bg-gradient-to-r from-slate-600 to-slate-700 flex items-center justify-center ring-2 sm:ring-4 ring-white dark:ring-slate-800 shadow-lg transition-all duration-300"
                 >
                   {preview ? (
                     <img
@@ -459,7 +459,7 @@ const Profile: React.FC = () => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <User className="w-20 h-20 text-white" />
+                    <User className="w-12 sm:w-20 h-12 sm:h-20 text-white" />
                   )}
                 </motion.div>
                 {isEditing && (
@@ -469,9 +469,9 @@ const Profile: React.FC = () => {
                       whileTap={{ scale: 0.9 }}
                       type="button"
                       onClick={() => fileRef.current?.click()}
-                      className="absolute bottom-0 right-0 w-10 h-10 bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 rounded-full flex items-center justify-center text-white transition-all duration-200 shadow-lg"
+                      className="absolute bottom-0 right-0 w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 rounded-full flex items-center justify-center text-white transition-all duration-200 shadow-lg"
                     >
-                      <Camera className="w-5 h-5" />
+                      <Camera className="w-4 sm:w-5 h-4 sm:h-5" />
                     </motion.button>
                     <input
                       ref={fileRef}
@@ -482,8 +482,8 @@ const Profile: React.FC = () => {
                     />
                   </>
                 )}
-                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white dark:border-slate-800 flex items-center justify-center">
-                  <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
+                <div className="absolute -bottom-1 sm:-bottom-2 -right-1 sm:-right-2 w-6 sm:w-8 h-6 sm:h-8 bg-green-500 rounded-full border-2 sm:border-4 border-white dark:border-slate-800 flex items-center justify-center">
+                  <div className="w-2 sm:w-3 h-2 sm:h-3 bg-white rounded-full animate-pulse" />
                 </div>
               </div>
 
