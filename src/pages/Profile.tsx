@@ -1138,40 +1138,40 @@ const Profile: React.FC = () => {
                 {/* Preferences */}
                 <motion.div
                   whileHover={{ scale: 1.01 }}
-                  className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group cursor-pointer border border-slate-200 dark:border-slate-600/50"
+                  className="flex items-center justify-between p-3 sm:p-4 bg-slate-50 dark:bg-slate-700/30 rounded-lg sm:rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group cursor-pointer border border-slate-200 dark:border-slate-600/50"
                   onClick={() => setShowPreferences(true)}
                 >
-                  <div className="flex items-center space-x-4">
-                    <User className="w-6 h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
+                  <div className="flex items-center space-x-3 sm:space-x-4">
+                    <User className="w-5 sm:w-6 h-5 sm:h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
                     <div>
-                      <div className="text-slate-900 dark:text-white font-medium">
+                      <div className="text-slate-900 dark:text-white font-medium text-sm sm:text-base">
                         Personalização
                       </div>
-                      <div className="text-slate-600 dark:text-slate-400 text-sm">
+                      <div className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
                         Configure suas preferências alimentares e de treino
                       </div>
                     </div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 group-hover:translate-x-1 transition-all duration-200" />
+                  <ChevronRight className="w-4 sm:w-5 h-4 sm:h-5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 group-hover:translate-x-1 transition-all duration-200" />
                 </motion.div>
 
                 {/* Data Export */}
                 <motion.div
                   whileHover={{ scale: 1.01 }}
-                  className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group cursor-pointer border border-slate-200 dark:border-slate-600/50"
+                  className="flex items-center justify-between p-3 sm:p-4 bg-slate-50 dark:bg-slate-700/30 rounded-lg sm:rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group cursor-pointer border border-slate-200 dark:border-slate-600/50"
                 >
-                  <div className="flex items-center space-x-4">
-                    <Download className="w-6 h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
+                  <div className="flex items-center space-x-3 sm:space-x-4">
+                    <Download className="w-5 sm:w-6 h-5 sm:h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
                     <div>
-                      <div className="text-slate-900 dark:text-white font-medium">
+                      <div className="text-slate-900 dark:text-white font-medium text-sm sm:text-base">
                         Exportar Dados
                       </div>
-                      <div className="text-slate-600 dark:text-slate-400 text-sm">
+                      <div className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
                         Baixe seus dados de progresso e conquistas
                       </div>
                     </div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 group-hover:translate-x-1 transition-all duration-200" />
+                  <ChevronRight className="w-4 sm:w-5 h-4 sm:h-5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 group-hover:translate-x-1 transition-all duration-200" />
                 </motion.div>
               </div>
             </motion.div>
