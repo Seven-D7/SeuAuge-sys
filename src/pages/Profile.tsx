@@ -885,24 +885,24 @@ const Profile: React.FC = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className={`p-6 rounded-xl border-2 transition-all duration-200 ${
+                        className={`p-4 sm:p-6 rounded-lg sm:rounded-xl border-2 transition-all duration-200 ${
                           goal.completed
                             ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
                             : "bg-slate-50 dark:bg-slate-700/30 border-slate-200 dark:border-slate-600/50"
                         }`}
                       >
-                        <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-start justify-between mb-3 sm:mb-4">
                           <div className="flex-1">
-                            <div className="flex items-center space-x-3 mb-2">
-                              <span className="text-2xl">{goal.icon}</span>
-                              <div>
-                                <h4 className="text-lg font-semibold text-slate-900 dark:text-white">
+                            <div className="flex items-start sm:items-center space-x-2 sm:space-x-3 mb-2">
+                              <span className="text-xl sm:text-2xl mt-0.5 sm:mt-0">{goal.icon}</span>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">
                                   {goal.title}
                                   {goal.completed && (
                                     <span className="ml-2 text-green-500">✓</span>
                                   )}
                                 </h4>
-                                <p className="text-sm text-slate-600 dark:text-slate-400">
+                                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
                                   {goal.description}
                                 </p>
                               </div>
