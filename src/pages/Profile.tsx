@@ -931,14 +931,14 @@ const Profile: React.FC = () => {
                             </div>
 
                             {!goal.completed && (
-                              <div className="flex gap-2 mb-4">
+                              <div className="flex flex-col xs:flex-row gap-2 mb-3 sm:mb-4">
                                 <motion.button
                                   whileHover={{ scale: 1.05 }}
                                   whileTap={{ scale: 0.95 }}
                                   onClick={() => handleGoalProgress(goal.id, 1)}
-                                  className="flex items-center space-x-2 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                                  className="flex items-center justify-center space-x-2 bg-primary hover:bg-primary-dark text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex-1 xs:flex-none"
                                 >
-                                  <Plus className="w-4 h-4" />
+                                  <Plus className="w-3 sm:w-4 h-3 sm:h-4" />
                                   <span>+1 {goal.unit}</span>
                                 </motion.button>
                                 {goal.targetValue > 5 && (
@@ -946,9 +946,9 @@ const Profile: React.FC = () => {
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={() => handleGoalProgress(goal.id, 5)}
-                                    className="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                                    className="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex-1 xs:flex-none"
                                   >
-                                    <Plus className="w-4 h-4" />
+                                    <Plus className="w-3 sm:w-4 h-3 sm:h-4" />
                                     <span>+5 {goal.unit}</span>
                                   </motion.button>
                                 )}
