@@ -757,18 +757,18 @@ const Profile: React.FC = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="space-y-6"
+              className="space-y-4 sm:space-y-6"
             >
-              <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center">
-                    <Trophy className="w-6 h-6 mr-3 text-yellow-500" />
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-slate-200 dark:border-slate-700">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-4">
+                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center">
+                    <Trophy className="w-5 sm:w-6 h-5 sm:h-6 mr-2 sm:mr-3 text-yellow-500" />
                     Minhas Conquistas
                   </h3>
-                  <div className="flex items-center space-x-4 text-sm text-slate-600 dark:text-slate-400">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                     <span>{unlockedAchievements.length}/{achievements.length} desbloqueadas</span>
-                    <div className="w-32 bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-                      <div 
+                    <div className="w-full sm:w-32 bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                      <div
                         className="bg-gradient-to-r from-primary to-emerald-500 h-2 rounded-full transition-all duration-500"
                         style={{ width: `${(unlockedAchievements.length / achievements.length) * 100}%` }}
                       />
@@ -1248,7 +1248,7 @@ const Profile: React.FC = () => {
                   {unlockedTitles.length === 0 && (
                     <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                       <Lock className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                      <p>Nenhum t��tulo desbloqueado ainda</p>
+                      <p>Nenhum título desbloqueado ainda</p>
                       <p className="text-sm">Complete conquistas para desbloquear títulos</p>
                     </div>
                   )}
