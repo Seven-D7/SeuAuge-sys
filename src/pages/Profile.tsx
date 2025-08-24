@@ -1045,19 +1045,19 @@ const Profile: React.FC = () => {
                                 term={metric.label}
                                 definition="Taxa Metabólica Basal - quantidade de energia que o corpo gasta em repouso"
                                 detailsLink="https://www.mayoclinic.org/healthy-lifestyle/weight-loss/in-depth/metabolism/art-20046508"
-                                className="text-slate-600 dark:text-slate-400 text-sm"
+                                className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm"
                               />
                             ) : (
-                              <span className="text-slate-600 dark:text-slate-400 text-sm">
+                              <span className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
                                 {metric.label}
                               </span>
                             )}
                           </div>
                           {getTrendIcon(metric.trend)}
                         </div>
-                        <div className="text-2xl font-bold text-slate-900 dark:text-white">
+                        <div className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900 dark:text-white">
                           {metric.value}{" "}
-                          <span className="text-lg text-slate-500 dark:text-slate-400">
+                          <span className="text-sm sm:text-base lg:text-lg text-slate-500 dark:text-slate-400">
                             {metric.unit}
                           </span>
                         </div>
