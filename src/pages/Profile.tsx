@@ -800,7 +800,7 @@ const Profile: React.FC = () => {
                             ({categoryAchievements.filter(a => a.isUnlocked).length}/{categoryAchievements.length})
                           </span>
                         </h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
                           {categoryAchievements.map((achievement, index) => (
                             <motion.div
                               key={achievement.id}
@@ -809,7 +809,7 @@ const Profile: React.FC = () => {
                               transition={{ delay: (catIndex * 0.1) + (index * 0.05) }}
                               whileHover={{ scale: 1.02 }}
                               onClick={() => setShowAchievementDetails(true)}
-                              className={`p-4 rounded-xl cursor-pointer transition-all duration-200 border-2 ${
+                              className={`p-3 sm:p-4 rounded-lg sm:rounded-xl cursor-pointer transition-all duration-200 border-2 ${
                                 achievement.isUnlocked
                                   ? `bg-gradient-to-br ${getRarityColor(achievement.rarity)} border-transparent`
                                   : 'bg-slate-50 dark:bg-slate-700/30 border-slate-200 dark:border-slate-600/50 opacity-60'
