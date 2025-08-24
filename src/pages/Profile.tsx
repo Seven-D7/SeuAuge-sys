@@ -869,14 +869,14 @@ const Profile: React.FC = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="space-y-6"
+              className="space-y-4 sm:space-y-6"
             >
-              <div className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
-                  <Target className="w-6 h-6 mr-3 text-primary" />
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-slate-200 dark:border-slate-700">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4 sm:mb-6 flex items-center">
+                  <Target className="w-5 sm:w-6 h-5 sm:h-6 mr-2 sm:mr-3 text-primary" />
                   Metas Inteligentes
                 </h3>
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {goals.map((goal, index) => {
                     const progressPercentage = (goal.currentValue / goal.targetValue) * 100;
                     return (
