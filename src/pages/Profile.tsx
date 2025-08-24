@@ -1100,21 +1100,21 @@ const Profile: React.FC = () => {
               </h3>
               <div className="space-y-3 sm:space-y-4">
                 {/* Theme Toggle */}
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.01 }}
-                  className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group border border-slate-200 dark:border-slate-600/50"
+                  className="flex items-center justify-between p-3 sm:p-4 bg-slate-50 dark:bg-slate-700/30 rounded-lg sm:rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group border border-slate-200 dark:border-slate-600/50"
                 >
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-3 sm:space-x-4">
                     {theme === "dark" ? (
-                      <Moon className="w-6 h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
+                      <Moon className="w-5 sm:w-6 h-5 sm:h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
                     ) : (
-                      <Sun className="w-6 h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
+                      <Sun className="w-5 sm:w-6 h-5 sm:h-6 text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors duration-200" />
                     )}
                     <div>
-                      <div className="text-slate-900 dark:text-white font-medium">
+                      <div className="text-slate-900 dark:text-white font-medium text-sm sm:text-base">
                         Tema {theme === "dark" ? "Escuro" : "Claro"}
                       </div>
-                      <div className="text-slate-600 dark:text-slate-400 text-sm">
+                      <div className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
                         Alternar entre tema claro e escuro
                       </div>
                     </div>
