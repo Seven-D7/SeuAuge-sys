@@ -1028,11 +1028,11 @@ const Profile: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
                         whileHover={{ scale: 1.02 }}
-                        className="bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group border border-slate-200 dark:border-slate-600/50 cursor-pointer"
+                        className="bg-slate-50 dark:bg-slate-700/30 rounded-lg sm:rounded-xl p-3 sm:p-4 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-200 group border border-slate-200 dark:border-slate-600/50 cursor-pointer"
                       >
                         <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center space-x-2">
-                            <Icon className="w-5 h-5 text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors" />
+                          <div className="flex items-center space-x-1 sm:space-x-2">
+                            <Icon className="w-4 sm:w-5 h-4 sm:h-5 text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors" />
                             {isIMC ? (
                               <TechnicalTerm
                                 term={metric.label}
