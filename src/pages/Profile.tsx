@@ -1185,26 +1185,26 @@ const Profile: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4"
+              className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-3 sm:p-4"
               onClick={() => setShowTitleSelector(false)}
             >
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
-                className="bg-white dark:bg-slate-800 rounded-xl p-6 max-w-md w-full border border-slate-200 dark:border-slate-700"
+                className="bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl p-4 sm:p-6 max-w-md w-full border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center">
-                    <Crown className="w-6 h-6 mr-2 text-yellow-500" />
+                <div className="flex items-center justify-between mb-4 sm:mb-6">
+                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center">
+                    <Crown className="w-5 sm:w-6 h-5 sm:h-6 mr-2 text-yellow-500" />
                     Escolher Título
                   </h3>
                   <button
                     onClick={() => setShowTitleSelector(false)}
                     className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                   >
-                    <X className="w-6 h-6" />
+                    <X className="w-5 sm:w-6 h-5 sm:h-6" />
                   </button>
                 </div>
                 
