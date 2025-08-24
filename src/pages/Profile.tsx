@@ -651,7 +651,7 @@ const Profile: React.FC = () => {
               className="space-y-8"
             >
               {/* Quick Stats */}
-              <section className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+              <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
                 {quickStats.map((stat, index) => {
                   const Icon = stat.icon;
                   return (
@@ -660,21 +660,24 @@ const Profile: React.FC = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-300 group"
+                      className="bg-white dark:bg-slate-800 rounded-lg p-3 sm:p-4 lg:p-6 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-300 group"
                     >
-                      <div className="flex items-center justify-between mb-4">
-                        <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}>
-                          <Icon className="w-6 h-6 text-white" />
+                      <div className="flex items-center justify-between mb-2 sm:mb-4">
+                        <div className={`w-8 sm:w-10 lg:w-12 h-8 sm:h-10 lg:h-12 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}>
+                          <Icon className="w-4 sm:w-5 lg:w-6 h-4 sm:h-5 lg:h-6 text-white" />
                         </div>
-                        <span className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/50 px-2 py-1 rounded-full">
+                        <span className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full hidden sm:block">
                           {stat.change}
                         </span>
                       </div>
-                      <div className="text-2xl font-bold text-slate-900 dark:text-white mb-1">
+                      <div className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900 dark:text-white mb-1">
                         {stat.value}
                       </div>
-                      <div className="text-slate-600 dark:text-slate-400 text-sm">
+                      <div className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
                         {stat.label}
+                      </div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 sm:hidden">
+                        {stat.change}
                       </div>
                     </motion.div>
                   );
