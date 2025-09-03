@@ -1,316 +1,471 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { User } from '@supabase/supabase-js';
+import { supabase, authOperations } from '../lib/supabase';
+import { createUserDocument, getUserData } from '../services/user';
+import { initializeActivityTracking } from '../services/activity';
+import { initializeSyncSystem } from '../services/sync';
+import { validateEmail, validatePassword, validateName, validateBirthdate, sanitizeInput } from '../lib/validation';
+import toast from 'react-hot-toast';
 
-/* Global Base Styles */
-@layer base {
-  * {
-    box-sizing: border-box;
-  }
-  
-  html {
-    scroll-behavior: smooth;
-  }
-  
-  body {
-    @apply bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
-    overflow-x: hidden;
-    min-height: 100vh;
-  }
-  
-  /* Custom Scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    @apply bg-slate-100 dark:bg-slate-800;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    @apply bg-slate-300 dark:bg-slate-600 rounded-full;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-primary dark:bg-primary;
-  }
-  
-  /* Firefox scrollbar */
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: theme(colors.slate.300) theme(colors.slate.100);
-  }
-  
-  .dark * {
-    scrollbar-color: theme(colors.slate.600) theme(colors.slate.800);
-  }
+export interface AuthUser extends User {
+  name?: string;
+  avatar?: string;
+  plan?: string | null;
+  role?: 'user' | 'admin' | 'moderator';
+  isAdmin?: boolean;
+  isPremium?: boolean;
+  birthdate?: string;
 }
 
-/* Component Styles */
-@layer components {
-  /* Button Variants */
-  .btn-primary {
-    @apply bg-gradient-to-r from-primary to-emerald-600 hover:from-primary-dark hover:to-emerald-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg;
-  }
-  
-  .btn-secondary {
-    @apply bg-slate-600 hover:bg-slate-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200;
-  }
-  
-  .btn-outline {
-    @apply border-2 border-primary text-primary hover:bg-primary hover:text-white px-6 py-3 rounded-lg font-medium transition-all duration-200;
-  }
-  
-  /* Input Styles */
-  .input {
-    @apply w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200;
-  }
-  
-  /* Card Variants */
-  .card {
-    @apply bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm;
-  }
-  
-  .card-elevated {
-    @apply bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300;
-  }
-  
-  .card-glass {
-    @apply bg-white/10 dark:bg-slate-800/10 backdrop-blur-md border border-white/20 dark:border-slate-700/20 rounded-xl;
-  }
-  
-  /* Scrollbar Utilities */
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .scrollbar-thin {
-    scrollbar-width: thin;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-  }
-  
-  /* Glass Morphism */
-  .glass {
-    @apply bg-white/10 backdrop-blur-md border border-white/20;
-  }
-  
-  .glass-dark {
-    @apply bg-black/10 backdrop-blur-md border border-white/10;
-  }
-  
-  /* Text Gradient */
-  .gradient-text {
-    @apply bg-gradient-to-r from-primary to-emerald-500 bg-clip-text text-transparent;
-  }
-  
-  /* Loading States */
-  .loading-skeleton {
-    @apply animate-pulse bg-slate-200 dark:bg-slate-700 rounded;
-  }
-  
-  /* Focus Styles */
-  .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900;
-  }
-  
-  /* Hover Effects */
-  .hover-lift {
-    @apply transition-all duration-300 hover:scale-105 hover:-translate-y-1;
-  }
-  
-  .hover-glow {
-    @apply transition-all duration-300 hover:shadow-lg hover:shadow-primary/25;
-  }
+interface AuthContextType {
+  user: AuthUser | null;
+  loading: boolean;
+  error: string | null;
+  login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, name: string, birthdate?: string) => Promise<void>;
+  logout: () => Promise<void>;
+  updateUser: (data: { name?: string; email?: string; avatar_url?: string; birthdate?: string }) => Promise<void>;
+  clearError: () => void;
 }
 
-/* Utility Classes */
-@layer utilities {
-  /* Spacing Responsive */
-  .space-responsive {
-    @apply space-y-4 sm:space-y-6 lg:space-y-8;
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth deve ser usado dentro de um AuthProvider');
   }
-  
-  .gap-responsive {
-    @apply gap-4 sm:gap-6 lg:gap-8;
-  }
-  
-  .padding-responsive {
-    @apply p-4 sm:p-6 lg:p-8;
-  }
-  
-  /* Text Responsive */
-  .text-responsive-sm {
-    @apply text-xs sm:text-sm;
-  }
-  
-  .text-responsive {
-    @apply text-sm sm:text-base;
-  }
-  
-  .text-responsive-lg {
-    @apply text-base sm:text-lg lg:text-xl;
-  }
-  
-  .heading-responsive {
-    @apply text-xl sm:text-2xl lg:text-3xl;
-  }
-  
-  .heading-responsive-lg {
-    @apply text-2xl sm:text-3xl lg:text-4xl xl:text-5xl;
-  }
-  
-  /* Layout Utilities */
-  .container-responsive {
-    @apply max-w-full px-4 sm:px-6 lg:px-8 mx-auto;
-  }
-  
-  .grid-responsive {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
-  }
-  
-  .grid-responsive-cards {
-    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
-  }
-  
-  /* Animation Utilities */
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease-out;
-  }
-  
-  .animate-slide-up {
-    animation: slideUp 0.5s ease-out;
-  }
-  
-  .animate-scale-in {
-    animation: scaleIn 0.3s ease-out;
-  }
+  return context;
+};
+
+interface AuthProviderProps {
+  children: ReactNode;
 }
 
-/* Custom Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+  // Enhanced error handling
+  const handleAuthError = (error: any): string => {
+    console.error('Auth error:', error);
+    
+    const message = error?.message || '';
+    
+    // Network and connection errors
+    if (message.includes('Failed to fetch') || message.includes('NetworkError') || message.includes('fetch')) {
+      return 'Erro de conexão. Verifique sua internet e tente novamente';
+    }
+    
+    if (message.includes('timeout') || message.includes('Timeout')) {
+      return 'Conexão lenta. Tente novamente';
+    }
 
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
+    // Supabase specific errors
+    if (message.includes('Invalid login credentials')) {
+      return 'Email ou senha incorretos';
+    }
+    
+    if (message.includes('Email not confirmed')) {
+      return 'Email não confirmado. Verifique sua caixa de entrada';
+    }
+    
+    if (message.includes('User already registered')) {
+      return 'Este email já está em uso';
+    }
+    
+    if (message.includes('Password should be at least')) {
+      return 'Senha deve ter pelo menos 6 caracteres';
+    }
+    
+    if (message.includes('Email rate limit')) {
+      return 'Muitas tentativas. Aguarde alguns minutos';
+    }
+    
+    if (message.includes('Invalid email')) {
+      return 'Formato de email inválido';
+    }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
+    if (message.includes('Supabase not configured')) {
+      return 'Sistema de autenticação não configurado';
+    }
 
-/* Accessibility */
-@media (prefers-reduced-motion: reduce) {
-  .animate-fade-in,
-  .animate-slide-up,
-  .animate-scale-in,
-  .hover-lift {
-    animation: none;
-    transform: none;
-    transition: none;
-  }
-}
+    // Generic fallback
+    return 'Erro de autenticação. Tente novamente';
+  };
 
-/* Touch Device Optimizations */
-@media (hover: none) and (pointer: coarse) {
-  .hover-lift:hover,
-  .hover-glow:hover {
-    transform: none;
-    box-shadow: none;
-  }
-  
-  /* Better touch targets */
-  button, [role="button"], a {
-    min-height: 44px;
-    min-width: 44px;
-  }
-}
+  // Enhanced user data loading
+  const loadUserData = async (supabaseUser: User): Promise<AuthUser> => {
+    try {
+      const userData = await getUserData(supabaseUser.id);
+      
+      const authUser: AuthUser = {
+        ...supabaseUser,
+        name: userData?.name || supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || 'Usuário',
+        avatar: userData?.avatar_url || supabaseUser.user_metadata?.avatar_url,
+        plan: userData?.plan || null,
+        role: userData?.role || 'user',
+        isAdmin: userData?.role === 'admin',
+        isPremium: !!(userData?.plan && ['B', 'C', 'D'].includes(userData.plan)),
+        birthdate: userData?.birthdate,
+      };
 
-/* Mobile Optimizations */
-@media (max-width: 768px) {
-  body {
-    -webkit-text-size-adjust: 100%;
-    -webkit-tap-highlight-color: transparent;
-  }
-  
-  /* Compact spacing on mobile */
-  .space-responsive {
-    @apply space-y-3;
-  }
-  
-  .gap-responsive {
-    @apply gap-3;
-  }
-  
-  .padding-responsive {
-    @apply p-3;
-  }
-}
+      return authUser;
+    } catch (error) {
+      console.warn('Erro ao carregar dados do usuário:', error);
+      // Return basic user data if profile loading fails
+      return {
+        ...supabaseUser,
+        name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || 'Usuário',
+        avatar: supabaseUser.user_metadata?.avatar_url,
+        plan: null,
+        role: 'user',
+        isAdmin: false,
+        isPremium: false,
+      };
+    }
+  };
 
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .card,
-  .card-elevated {
-    @apply border-2;
-  }
-  
-  .btn-primary {
-    @apply border-2 border-primary;
-  }
-}
+  // Initialize auth state
+  useEffect(() => {
+    let mounted = true;
 
-/* Print styles */
-@media print {
-  .no-print {
-    display: none !important;
-  }
-  
-  body {
-    @apply bg-white text-black;
-  }
-  
-  .card {
-    @apply border border-gray-300 shadow-none;
-  }
-}
+    const initializeAuth = async () => {
+      try {
+        const { data: { session }, error } = await authOperations.getSession();
+        
+        if (error) {
+          console.error('Session error:', error);
+          if (mounted) {
+            setError(handleAuthError(error));
+            setUser(null);
+          }
+          return;
+        }
+
+        if (session?.user && mounted) {
+          const authUser = await loadUserData(session.user);
+          setUser(authUser);
+          
+          // Initialize background services
+          try {
+            await initializeActivityTracking();
+            await initializeSyncSystem();
+          } catch (serviceError) {
+            console.warn('Erro ao inicializar serviços:', serviceError);
+          }
+        } else if (mounted) {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        if (mounted) {
+          setError(handleAuthError(error));
+          setUser(null);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    initializeAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+
+      console.log('Auth state change:', event);
+
+      try {
+        if (event === 'SIGNED_IN' && session?.user) {
+          const authUser = await loadUserData(session.user);
+          setUser(authUser);
+          setError(null);
+          
+          // Initialize services for new session
+          try {
+            await initializeActivityTracking();
+            await initializeSyncSystem();
+          } catch (serviceError) {
+            console.warn('Erro ao inicializar serviços:', serviceError);
+          }
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+          setError(null);
+          // Clear any cached data
+          localStorage.removeItem('user-preferences');
+        } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+          // Update user data on token refresh
+          const authUser = await loadUserData(session.user);
+          setUser(authUser);
+        }
+      } catch (error) {
+        console.error('Auth state change error:', error);
+        setError(handleAuthError(error));
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const login = async (email: string, password: string): Promise<void> => {
+    // Input validation
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+      throw new Error(emailValidation.error || 'Email inválido');
+    }
+
+    if (!password || password.length < 6) {
+      throw new Error('Senha deve ter pelo menos 6 caracteres');
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data, error } = await authOperations.signInWithPassword(
+        email.trim().toLowerCase(),
+        password
+      );
+
+      if (error) throw error;
+
+      if (data.user) {
+        const authUser = await loadUserData(data.user);
+        setUser(authUser);
+        
+        // Initialize services
+        try {
+          await initializeActivityTracking();
+          await initializeSyncSystem();
+        } catch (serviceError) {
+          console.warn('Erro ao inicializar serviços:', serviceError);
+        }
+
+        toast.success('Login realizado com sucesso!', { duration: 3000 });
+      }
+    } catch (error: any) {
+      const errorMessage = handleAuthError(error);
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const register = async (email: string, password: string, name: string, birthdate?: string): Promise<void> => {
+    // Input validation
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+      throw new Error(emailValidation.error || 'Email inválido');
+    }
+
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      throw new Error(passwordValidation.errors[0] || 'Senha inválida');
+    }
+
+    const nameValidation = validateName(name);
+    if (!nameValidation.isValid) {
+      throw new Error(nameValidation.error || 'Nome inválido');
+    }
+
+    if (birthdate) {
+      const birthdateValidation = validateBirthdate(birthdate);
+      if (!birthdateValidation.isValid) {
+        throw new Error(birthdateValidation.error || 'Data de nascimento inválida');
+      }
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const sanitizedName = sanitizeInput(name);
+      const sanitizedEmail = email.trim().toLowerCase();
+
+      const { data, error } = await authOperations.signUp(sanitizedEmail, password, {
+        data: {
+          name: sanitizedName,
+          birthdate: birthdate || null,
+          role: 'user',
+        },
+      });
+
+      if (error) throw error;
+
+      if (data.user) {
+        // Create user profile document
+        try {
+          await createUserDocument({
+            uid: data.user.id,
+            name: sanitizedName,
+            email: sanitizedEmail,
+            birthdate: birthdate || null,
+            role: 'user',
+          });
+        } catch (profileError) {
+          console.warn('Erro ao criar perfil:', profileError);
+          // Continue even if profile creation fails
+        }
+
+        // Don't set user immediately - wait for email confirmation
+        toast.success('Conta criada! Verifique seu email para confirmar', { duration: 5000 });
+      }
+    } catch (error: any) {
+      const errorMessage = handleAuthError(error);
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logout = async (): Promise<void> => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { error } = await authOperations.signOut();
+      
+      if (error) throw error;
+
+      setUser(null);
+      
+      // Clear local storage
+      localStorage.removeItem('user-preferences');
+      localStorage.removeItem('achievements-store');
+      localStorage.removeItem('level-storage');
+      localStorage.removeItem('goals-storage');
+      
+      toast.success('Logout realizado com sucesso', { duration: 2000 });
+    } catch (error: any) {
+      const errorMessage = handleAuthError(error);
+      setError(errorMessage);
+      console.error('Logout error:', error);
+      
+      // Force logout even if there's an error
+      setUser(null);
+      localStorage.clear();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateUser = async (data: { 
+    name?: string; 
+    email?: string; 
+    avatar_url?: string; 
+    birthdate?: string;
+  }): Promise<void> => {
+    if (!user) throw new Error('Usuário não autenticado');
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Validate inputs
+      if (data.name !== undefined) {
+        const nameValidation = validateName(data.name);
+        if (!nameValidation.isValid) {
+          throw new Error(nameValidation.error || 'Nome inválido');
+        }
+      }
+
+      if (data.email !== undefined) {
+        const emailValidation = validateEmail(data.email);
+        if (!emailValidation.isValid) {
+          throw new Error(emailValidation.error || 'Email inválido');
+        }
+      }
+
+      if (data.birthdate !== undefined) {
+        const birthdateValidation = validateBirthdate(data.birthdate);
+        if (!birthdateValidation.isValid) {
+          throw new Error(birthdateValidation.error || 'Data de nascimento inválida');
+        }
+      }
+
+      // Update auth user metadata
+      const updateData: any = { data: {} };
+      if (data.name !== undefined) updateData.data.name = sanitizeInput(data.name);
+      if (data.avatar_url !== undefined) updateData.data.avatar_url = data.avatar_url;
+
+      if (Object.keys(updateData.data).length > 0) {
+        const { error: authError } = await supabase.auth.updateUser(updateData);
+        if (authError) throw authError;
+      }
+
+      // Update email separately if needed
+      if (data.email !== undefined && data.email !== user.email) {
+        const { error: emailError } = await supabase.auth.updateUser({ 
+          email: sanitizeInput(data.email.toLowerCase()) 
+        });
+        if (emailError) throw emailError;
+      }
+
+      // Update profile in database
+      const profileData: any = { updated_at: new Date().toISOString() };
+      if (data.name !== undefined) profileData.name = sanitizeInput(data.name);
+      if (data.email !== undefined) profileData.email = sanitizeInput(data.email.toLowerCase());
+      if (data.birthdate !== undefined) profileData.birthdate = data.birthdate;
+      if (data.avatar_url !== undefined) profileData.avatar_url = data.avatar_url;
+
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update(profileData)
+        .eq('id', user.id);
+
+      if (profileError) throw profileError;
+
+      // Update local user state
+      const updatedUser: AuthUser = {
+        ...user,
+        name: data.name !== undefined ? sanitizeInput(data.name) : user.name,
+        email: data.email !== undefined ? sanitizeInput(data.email.toLowerCase()) : user.email,
+        avatar: data.avatar_url !== undefined ? data.avatar_url : user.avatar,
+        user_metadata: {
+          ...user.user_metadata,
+          name: data.name !== undefined ? sanitizeInput(data.name) : user.user_metadata?.name,
+          avatar_url: data.avatar_url !== undefined ? data.avatar_url : user.user_metadata?.avatar_url,
+        }
+      };
+
+      setUser(updatedUser);
+      toast.success('Perfil atualizado com sucesso!', { duration: 3000 });
+    } catch (error: any) {
+      const errorMessage = handleAuthError(error);
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const clearError = () => {
+    setError(null);
+  };
+
+  const value: AuthContextType = {
+    user,
+    loading,
+    error,
+    login,
+    register,
+    logout,
+    updateUser,
+    clearError,
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

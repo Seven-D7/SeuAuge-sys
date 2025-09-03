@@ -27,7 +27,8 @@ import {
   RefreshCw,
   CheckCircle,
   AlertCircle,
-  Loader2
+  Loader2,
+  ChevronDown
 } from 'lucide-react';
 import { useAuth } from '../contexts/SupabaseAuthContext';
 import { useAchievementsStore } from '../stores/achievementsStore';
@@ -89,6 +90,7 @@ const Profile: React.FC = () => {
       clearError();
     }
   }, [authError, clearError]);
+
   // Memoized callbacks for better performance
   const handleInputChange = useCallback((field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -134,20 +136,16 @@ const Profile: React.FC = () => {
         birthdate: formData.birthdate || undefined,
       });
 
-      // Update extended profile data
-      await updateProfile({
-        phone: formData.phone ? sanitizeInput(formData.phone) : undefined,
-        location: formData.location ? sanitizeInput(formData.location) : undefined,
-      });
-
       setIsEditing(false);
+      toast.success('Perfil atualizado com sucesso!');
     } catch (error: any) {
       console.error('Erro ao atualizar perfil:', error);
       setErrors({ general: error.message || 'Erro ao atualizar perfil' });
+      toast.error('Erro ao atualizar perfil');
     } finally {
       setLoading(false);
     }
-  }, [formData, updateUser, updateProfile]);
+  }, [formData, updateUser]);
 
   const handleCancel = useCallback(() => {
     setIsEditing(false);
@@ -184,6 +182,7 @@ const Profile: React.FC = () => {
     try {
       const avatarUrl = await uploadAvatar(file, user.id);
       await updateUser({ avatar_url: avatarUrl });
+      toast.success('Avatar atualizado com sucesso!');
     } catch (error: any) {
       console.error('Erro ao fazer upload do avatar:', error);
       toast.error('Erro ao atualizar avatar');
@@ -215,24 +214,27 @@ const Profile: React.FC = () => {
 
   // Mobile-friendly tab selector
   const TabSelector = () => (
-    <div className="block sm:hidden mb-4">
-      <select
-        value={activeTab}
-        onChange={(e) => setActiveTab(e.target.value as any)}
-        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-primary text-sm"
-      >
-        <option value="overview">Visão Geral</option>
-        <option value="achievements">Conquistas</option>
-        <option value="goals">Metas</option>
-        <option value="progress">Progresso</option>
-        <option value="settings">Configurações</option>
-      </select>
+    <div className="block md:hidden mb-4">
+      <div className="relative">
+        <select
+          value={activeTab}
+          onChange={(e) => setActiveTab(e.target.value as any)}
+          className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-primary text-sm appearance-none"
+        >
+          <option value="overview">📊 Visão Geral</option>
+          <option value="achievements">🏆 Conquistas</option>
+          <option value="goals">🎯 Metas</option>
+          <option value="progress">📈 Progresso</option>
+          <option value="settings">⚙️ Configurações</option>
+        </select>
+        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+      </div>
     </div>
   );
 
   // Desktop tab navigation
   const TabNavigation = () => (
-    <div className="hidden sm:flex space-x-1 bg-slate-800 p-1 rounded-lg mb-4">
+    <div className="hidden md:flex space-x-1 bg-slate-800 p-1 rounded-lg mb-6 overflow-x-auto">
       {[
         { id: 'overview', label: 'Visão Geral', icon: User },
         { id: 'achievements', label: 'Conquistas', icon: Trophy },
@@ -245,14 +247,14 @@ const Profile: React.FC = () => {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={`flex items-center space-x-2 px-4 py-2.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === tab.id
                 ? 'bg-primary text-white'
                 : 'text-slate-400 hover:text-white hover:bg-slate-700'
             }`}
           >
             <Icon className="w-4 h-4" />
-            <span className="hidden lg:inline">{tab.label}</span>
+            <span>{tab.label}</span>
           </button>
         );
       })}
@@ -273,30 +275,33 @@ const Profile: React.FC = () => {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="text-center">
+        <div className="text-center max-w-md mx-auto">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-white mb-2">Erro ao carregar perfil</h2>
-          <p className="text-slate-400">Usuário não encontrado</p>
+          <p className="text-slate-400 mb-4">Usuário não encontrado</p>
+          <Button onClick={() => window.location.href = '/auth'}>
+            Fazer Login
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 p-2 sm:p-4 md:p-6">
+    <div className="min-h-screen bg-slate-900 p-3 sm:p-4 md:p-6 overflow-x-hidden">
       <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
-        {/* Header Section - Responsive */}
+        {/* Header Section - Melhorado para mobile */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="relative bg-gradient-to-r from-primary via-emerald-600 to-cyan-600 rounded-xl overflow-hidden"
         >
           <div className="absolute inset-0 bg-black/20" />
-          <div className="relative z-10 p-3 sm:p-4 md:p-6">
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 md:gap-6">
+          <div className="relative z-10 p-4 sm:p-6">
+            <div className="flex flex-col items-center text-center space-y-4">
               {/* Avatar Section */}
-              <div className="relative flex-shrink-0">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full overflow-hidden bg-slate-700 border-2 sm:border-4 border-white/20">
+              <div className="relative">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full overflow-hidden bg-slate-700 border-4 border-white/20 mx-auto">
                   {user.avatar ? (
                     <img
                       src={user.avatar}
@@ -305,17 +310,17 @@ const Profile: React.FC = () => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-600 to-slate-700">
-                      <User className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-white" />
+                      <User className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" />
                     </div>
                   )}
                 </div>
                 
                 {/* Upload Avatar Button */}
-                <label className="absolute bottom-0 right-0 w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 bg-primary hover:bg-primary-dark rounded-full flex items-center justify-center cursor-pointer transition-colors border-2 border-white">
+                <label className="absolute bottom-0 right-0 w-7 h-7 sm:w-8 sm:h-8 bg-primary hover:bg-primary-dark rounded-full flex items-center justify-center cursor-pointer transition-colors border-2 border-white shadow-lg">
                   {uploadingAvatar ? (
-                    <Loader2 className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 text-white animate-spin" />
+                    <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 text-white animate-spin" />
                   ) : (
-                    <Camera className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 text-white" />
+                    <Camera className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                   )}
                   <input
                     type="file"
@@ -327,90 +332,84 @@ const Profile: React.FC = () => {
                 </label>
               </div>
 
-              {/* User Info */}
-              <div className="flex-1 text-center sm:text-left min-w-0">
-                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-3 mb-3">
-                  <div className="min-w-0">
-                    <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white break-words">
-                      {user.name || 'Usuário'}
-                    </h1>
-                    <p className="text-white/80 text-xs sm:text-sm md:text-base break-all">
-                      {user.email}
-                    </p>
-                  </div>
-                  
-                  {/* Edit Button - Responsive */}
-                  <div className="flex justify-center sm:justify-end flex-shrink-0">
-                    {!isEditing ? (
+              {/* User Info - Centralizado e responsivo */}
+              <div className="w-full max-w-md mx-auto">
+                <div className="mb-4">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2 break-words leading-tight">
+                    {user.name || 'Usuário'}
+                  </h1>
+                  <p className="text-white/80 text-sm sm:text-base break-all leading-relaxed">
+                    {user.email}
+                  </p>
+                </div>
+                
+                {/* Edit Buttons - Melhorados para mobile */}
+                <div className="mb-4">
+                  {!isEditing ? (
+                    <Button
+                      onClick={() => setIsEditing(true)}
+                      variant="outline"
+                      className="bg-white/10 border-white/20 text-white hover:bg-white/20 w-full sm:w-auto px-6 py-2.5"
+                    >
+                      <Edit3 className="w-4 h-4 mr-2" />
+                      Editar Perfil
+                    </Button>
+                  ) : (
+                    <div className="flex flex-col sm:flex-row gap-2 w-full">
                       <Button
-                        onClick={() => setIsEditing(true)}
-                        variant="outline"
-                        size="sm"
-                        className="bg-white/10 border-white/20 text-white hover:bg-white/20 w-full sm:w-auto min-h-[36px] px-3 py-1.5"
+                        onClick={handleSave}
+                        disabled={loading}
+                        className="bg-green-600 hover:bg-green-700 text-white flex-1 py-2.5"
                       >
-                        <Edit3 className="w-4 h-4 mr-2" />
-                        <span className="sm:hidden">Editar</span>
-                        <span className="hidden sm:inline">Editar Perfil</span>
+                        {loading ? (
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        ) : (
+                          <Save className="w-4 h-4 mr-2" />
+                        )}
+                        Salvar
                       </Button>
-                    ) : (
-                      <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                        <Button
-                          onClick={handleSave}
-                          disabled={loading}
-                          size="sm"
-                          className="bg-green-600 hover:bg-green-700 text-white w-full sm:w-auto min-h-[36px] px-3 py-1.5"
-                        >
-                          {loading ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Save className="w-4 h-4 mr-2" />
-                          )}
-                          <span>Salvar</span>
-                        </Button>
-                        <Button
-                          onClick={handleCancel}
-                          variant="outline"
-                          size="sm"
-                          className="bg-red-600/10 border-red-500/20 text-red-400 hover:bg-red-600/20 w-full sm:w-auto min-h-[36px] px-3 py-1.5"
-                        >
-                          <X className="w-4 h-4 mr-2" />
-                          <span>Cancelar</span>
-                        </Button>
-                      </div>
-                    )}
-                  </div>
+                      <Button
+                        onClick={handleCancel}
+                        variant="outline"
+                        className="bg-red-600/10 border-red-500/20 text-red-400 hover:bg-red-600/20 flex-1 py-2.5"
+                      >
+                        <X className="w-4 h-4 mr-2" />
+                        Cancelar
+                      </Button>
+                    </div>
+                  )}
                 </div>
 
-                {/* User Stats - Responsive Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 sm:p-3 text-center">
-                    <div className="text-base sm:text-lg md:text-xl font-bold text-white">
+                {/* User Stats - Grid responsivo */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
+                    <div className="text-lg sm:text-xl font-bold text-white">
                       {levelSystem.currentLevel}
                     </div>
-                    <div className="text-xs sm:text-sm text-white/70">Nível</div>
+                    <div className="text-xs text-white/70">Nível</div>
                   </div>
-                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 sm:p-3 text-center">
-                    <div className="text-base sm:text-lg md:text-xl font-bold text-white">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
+                    <div className="text-lg sm:text-xl font-bold text-white">
                       {unlockedAchievements.length}
                     </div>
-                    <div className="text-xs sm:text-sm text-white/70">Conquistas</div>
+                    <div className="text-xs text-white/70">Conquistas</div>
                   </div>
-                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 sm:p-3 text-center">
-                    <div className="text-base sm:text-lg md:text-xl font-bold text-white">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
+                    <div className="text-lg sm:text-xl font-bold text-white">
                       {userStats.currentStreak}
                     </div>
-                    <div className="text-xs sm:text-sm text-white/70">Sequência</div>
+                    <div className="text-xs text-white/70">Sequência</div>
                   </div>
-                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 sm:p-3 text-center">
-                    <div className="text-base sm:text-lg md:text-xl font-bold text-white break-words">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
+                    <div className="text-sm sm:text-base font-bold text-white break-words">
                       {currentPlan?.name || 'Gratuito'}
                     </div>
-                    <div className="text-xs sm:text-sm text-white/70">Plano</div>
+                    <div className="text-xs text-white/70">Plano</div>
                   </div>
                 </div>
 
                 {/* Profile Completion */}
-                <div className="mt-3 bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-white/80 text-sm">Perfil Completo</span>
                     <span className="text-white font-medium text-sm">{profileCompletion}%</span>
@@ -438,25 +437,28 @@ const Profile: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3"
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
           >
-            <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0" />
-              <p className="text-red-600 dark:text-red-400 text-sm">
-                {authError || errors.general}
-              </p>
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <p className="text-red-600 dark:text-red-400 text-sm break-words">
+                  {authError || errors.general}
+                </p>
+              </div>
               <button
                 onClick={() => {
                   clearError();
                   setErrors(prev => ({ ...prev, general: '' }));
                 }}
-                className="ml-auto text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200"
+                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 flex-shrink-0"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
           </motion.div>
         )}
+
         {/* Tab Content */}
         <AnimatePresence mode="wait">
           {activeTab === 'overview' && (
@@ -475,10 +477,10 @@ const Profile: React.FC = () => {
                     Informações Pessoais
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3 sm:space-y-4">
+                <CardContent className="space-y-4">
                   {isEditing ? (
-                    <div className="space-y-3 sm:space-y-4">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-slate-300 mb-2">
                             Nome Completo
@@ -487,15 +489,15 @@ const Profile: React.FC = () => {
                             type="text"
                             value={formData.name}
                             onChange={(e) => handleInputChange('name', e.target.value)}
-                            className={`w-full px-3 py-2.5 bg-slate-700 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary text-sm ${
+                            className={`w-full px-4 py-3 bg-slate-700 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary text-sm ${
                               errors.name ? 'border-red-500' : 'border-slate-600'
                             }`}
                             placeholder="Digite seu nome completo"
                           />
                           {errors.name && (
                             <p className="text-red-400 text-xs mt-1 flex items-center">
-                              <AlertCircle className="w-3 h-3 mr-1" />
-                              {errors.name}
+                              <AlertCircle className="w-3 h-3 mr-1 flex-shrink-0" />
+                              <span className="break-words">{errors.name}</span>
                             </p>
                           )}
                         </div>
@@ -508,15 +510,15 @@ const Profile: React.FC = () => {
                             type="email"
                             value={formData.email}
                             onChange={(e) => handleInputChange('email', e.target.value)}
-                            className={`w-full px-3 py-2.5 bg-slate-700 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary text-sm ${
+                            className={`w-full px-4 py-3 bg-slate-700 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary text-sm ${
                               errors.email ? 'border-red-500' : 'border-slate-600'
                             }`}
                             placeholder="Digite seu email"
                           />
                           {errors.email && (
                             <p className="text-red-400 text-xs mt-1 flex items-center">
-                              <AlertCircle className="w-3 h-3 mr-1" />
-                              {errors.email}
+                              <AlertCircle className="w-3 h-3 mr-1 flex-shrink-0" />
+                              <span className="break-words">{errors.email}</span>
                             </p>
                           )}
                         </div>
@@ -529,101 +531,55 @@ const Profile: React.FC = () => {
                             type="date"
                             value={formData.birthdate}
                             onChange={(e) => handleInputChange('birthdate', e.target.value)}
-                            className={`w-full px-3 py-2.5 bg-slate-700 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary text-sm ${
+                            className={`w-full px-4 py-3 bg-slate-700 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary text-sm ${
                               errors.birthdate ? 'border-red-500' : 'border-slate-600'
                             }`}
                           />
                           {errors.birthdate && (
                             <p className="text-red-400 text-xs mt-1 flex items-center">
-                              <AlertCircle className="w-3 h-3 mr-1" />
-                              {errors.birthdate}
+                              <AlertCircle className="w-3 h-3 mr-1 flex-shrink-0" />
+                              <span className="break-words">{errors.birthdate}</span>
                             </p>
                           )}
                         </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-slate-300 mb-2">
-                            Telefone (Opcional)
-                          </label>
-                          <input
-                            type="tel"
-                            value={formData.phone}
-                            onChange={(e) => handleInputChange('phone', e.target.value)}
-                            className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary text-sm"
-                            placeholder="(11) 99999-9999"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">
-                          Localização (Opcional)
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.location}
-                          onChange={(e) => handleInputChange('location', e.target.value)}
-                          className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary text-sm"
-                          placeholder="Cidade, Estado"
-                        />
                       </div>
                     </div>
                   ) : (
-                    <div className="space-y-3 sm:space-y-4">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                        <div className="flex items-center space-x-3">
-                          <Mail className="w-5 h-5 text-slate-400 flex-shrink-0" />
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="flex items-start space-x-3 p-3 bg-slate-700/30 rounded-lg">
+                          <Mail className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
                           <div className="min-w-0 flex-1">
-                            <p className="text-sm text-slate-400">Email</p>
-                            <p className="text-white font-medium break-all text-sm">{user.email}</p>
+                            <p className="text-sm text-slate-400 mb-1">Email</p>
+                            <p className="text-white font-medium break-all text-sm leading-relaxed">{user.email}</p>
                           </div>
                         </div>
 
                         {profile?.birthdate && (
-                          <div className="flex items-center space-x-3">
-                            <Calendar className="w-5 h-5 text-slate-400 flex-shrink-0" />
+                          <div className="flex items-start space-x-3 p-3 bg-slate-700/30 rounded-lg">
+                            <Calendar className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
                             <div className="min-w-0 flex-1">
-                              <p className="text-sm text-slate-400">Data de Nascimento</p>
+                              <p className="text-sm text-slate-400 mb-1">Data de Nascimento</p>
                               <p className="text-white font-medium text-sm">
                                 {new Date(profile.birthdate).toLocaleDateString('pt-BR')}
                               </p>
                             </div>
                           </div>
                         )}
-
-                        {profile?.phone && (
-                          <div className="flex items-center space-x-3">
-                            <Phone className="w-5 h-5 text-slate-400 flex-shrink-0" />
-                            <div className="min-w-0 flex-1">
-                              <p className="text-sm text-slate-400">Telefone</p>
-                              <p className="text-white font-medium text-sm break-all">{profile.phone}</p>
-                            </div>
-                          </div>
-                        )}
-
-                        {profile?.location && (
-                          <div className="flex items-center space-x-3">
-                            <MapPin className="w-5 h-5 text-slate-400 flex-shrink-0" />
-                            <div className="min-w-0 flex-1">
-                              <p className="text-sm text-slate-400">Localização</p>
-                              <p className="text-white font-medium text-sm break-words">{profile.location}</p>
-                            </div>
-                          </div>
-                        )}
                       </div>
 
                       {/* Plan Info */}
-                      <div className="bg-slate-700/50 rounded-lg p-3 sm:p-4">
+                      <div className="bg-slate-700/50 rounded-lg p-4">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                           <div className="flex items-center space-x-3 min-w-0 flex-1">
-                            <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
+                            <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
                               <Award className="w-5 h-5 text-white" />
                             </div>
                             <div className="min-w-0 flex-1">
                               <p className="text-white font-medium text-sm break-words">
                                 {currentPlan?.name || 'Plano Gratuito'}
                               </p>
-                              <p className="text-slate-400 text-xs sm:text-sm break-words">
+                              <p className="text-slate-400 text-xs break-words leading-relaxed">
                                 {currentPlan?.description || 'Acesso limitado aos recursos básicos'}
                               </p>
                             </div>
@@ -644,53 +600,53 @@ const Profile: React.FC = () => {
                 </CardContent>
               </Card>
 
-              {/* Quick Stats Grid - Responsive */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+              {/* Quick Stats Grid - Responsivo */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <Card className="bg-slate-800 border-slate-700">
-                  <CardContent className="p-3 sm:p-4 text-center">
+                  <CardContent className="p-4 text-center">
                     <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-3">
                       <BarChart3 className="w-5 h-5 text-white" />
                     </div>
-                    <div className="text-base sm:text-lg md:text-xl font-bold text-white">
+                    <div className="text-lg sm:text-xl font-bold text-white">
                       {levelSystem.totalXP.toLocaleString()}
                     </div>
-                    <div className="text-xs sm:text-sm text-slate-400">XP Total</div>
+                    <div className="text-xs text-slate-400">XP Total</div>
                   </CardContent>
                 </Card>
 
                 <Card className="bg-slate-800 border-slate-700">
-                  <CardContent className="p-3 sm:p-4 text-center">
+                  <CardContent className="p-4 text-center">
                     <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mx-auto mb-3">
                       <Trophy className="w-5 h-5 text-white" />
                     </div>
-                    <div className="text-base sm:text-lg md:text-xl font-bold text-white">
+                    <div className="text-lg sm:text-xl font-bold text-white">
                       {unlockedAchievements.length}
                     </div>
-                    <div className="text-xs sm:text-sm text-slate-400">Conquistas</div>
+                    <div className="text-xs text-slate-400">Conquistas</div>
                   </CardContent>
                 </Card>
 
                 <Card className="bg-slate-800 border-slate-700">
-                  <CardContent className="p-3 sm:p-4 text-center">
+                  <CardContent className="p-4 text-center">
                     <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center mx-auto mb-3">
                       <Flame className="w-5 h-5 text-white" />
                     </div>
-                    <div className="text-base sm:text-lg md:text-xl font-bold text-white">
+                    <div className="text-lg sm:text-xl font-bold text-white">
                       {userStats.currentStreak}
                     </div>
-                    <div className="text-xs sm:text-sm text-slate-400">Dias Seguidos</div>
+                    <div className="text-xs text-slate-400">Dias Seguidos</div>
                   </CardContent>
                 </Card>
 
                 <Card className="bg-slate-800 border-slate-700">
-                  <CardContent className="p-3 sm:p-4 text-center">
+                  <CardContent className="p-4 text-center">
                     <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center mx-auto mb-3">
                       <Target className="w-5 h-5 text-white" />
                     </div>
-                    <div className="text-base sm:text-lg md:text-xl font-bold text-white">
+                    <div className="text-lg sm:text-xl font-bold text-white">
                       {goals.filter(g => g.completed).length}/{goals.length}
                     </div>
-                    <div className="text-xs sm:text-sm text-slate-400">Metas</div>
+                    <div className="text-xs text-slate-400">Metas</div>
                   </CardContent>
                 </Card>
               </div>
@@ -715,7 +671,7 @@ const Profile: React.FC = () => {
               className="space-y-4 sm:space-y-6"
             >
               {/* Achievements Overview */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                 {[
                   { label: 'Total', value: achievements.length, color: 'bg-slate-600' },
                   { label: 'Desbloqueadas', value: unlockedAchievements.length, color: 'bg-green-600' },
@@ -723,12 +679,12 @@ const Profile: React.FC = () => {
                   { label: 'Raras+', value: unlockedAchievements.filter(a => ['rare', 'epic', 'legendary'].includes(a.rarity)).length, color: 'bg-purple-600' }
                 ].map((stat, index) => (
                   <Card key={index} className="bg-slate-800 border-slate-700">
-                    <CardContent className="p-3 sm:p-4 text-center">
+                    <CardContent className="p-4 text-center">
                       <div className={`w-10 h-10 ${stat.color} rounded-lg flex items-center justify-center mx-auto mb-3`}>
                         <Trophy className="w-5 h-5 text-white" />
                       </div>
-                      <div className="text-base sm:text-lg md:text-xl font-bold text-white">{stat.value}</div>
-                      <div className="text-sm text-slate-400">{stat.label}</div>
+                      <div className="text-lg sm:text-xl font-bold text-white">{stat.value}</div>
+                      <div className="text-xs text-slate-400 break-words">{stat.label}</div>
                     </CardContent>
                   </Card>
                 ))}
@@ -741,20 +697,20 @@ const Profile: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   {unlockedAchievements.length > 0 ? (
-                    <div className="space-y-2 sm:space-y-3">
+                    <div className="space-y-3">
                       {unlockedAchievements.slice(0, 5).map((achievement) => (
-                        <div key={achievement.id} className="flex items-center space-x-3 p-2 sm:p-3 bg-slate-700/50 rounded-lg">
-                          <div className="text-2xl">{achievement.icon}</div>
+                        <div key={achievement.id} className="flex items-start space-x-3 p-3 bg-slate-700/50 rounded-lg">
+                          <div className="text-2xl flex-shrink-0">{achievement.icon}</div>
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-white text-sm break-words">{achievement.title}</h4>
-                            <p className="text-slate-400 text-xs sm:text-sm break-words">{achievement.description}</p>
+                            <h4 className="font-medium text-white text-sm break-words leading-tight">{achievement.title}</h4>
+                            <p className="text-slate-400 text-xs break-words leading-relaxed mt-1">{achievement.description}</p>
                           </div>
-                          <Badge className={`flex-shrink-0 ${
-                            ${achievement.rarity === 'common' ? 'bg-gray-500/20 text-gray-400' :
-                              achievement.rarity === 'rare' ? 'bg-blue-500/20 text-blue-400' :
-                              achievement.rarity === 'epic' ? 'bg-purple-500/20 text-purple-400' :
-                              'bg-yellow-500/20 text-yellow-400'}
-                          `}>
+                          <Badge className={`flex-shrink-0 text-xs ${
+                            achievement.rarity === 'common' ? 'bg-gray-500/20 text-gray-400' :
+                            achievement.rarity === 'rare' ? 'bg-blue-500/20 text-blue-400' :
+                            achievement.rarity === 'epic' ? 'bg-purple-500/20 text-purple-400' :
+                            'bg-yellow-500/20 text-yellow-400'
+                          }`}>
                             {achievement.rarity}
                           </Badge>
                         </div>
@@ -823,13 +779,13 @@ const Profile: React.FC = () => {
                     Configurações da Conta
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3 sm:space-y-4">
-                  <div className="flex items-center justify-between p-3 sm:p-4 bg-slate-700/50 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <Bell className="w-5 h-5 text-slate-400" />
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg">
+                    <div className="flex items-center space-x-3 min-w-0 flex-1">
+                      <Bell className="w-5 h-5 text-slate-400 flex-shrink-0" />
                       <div className="min-w-0 flex-1">
-                        <p className="text-white font-medium">Notificações</p>
-                        <p className="text-slate-400 text-xs sm:text-sm break-words">Receber lembretes e atualizações</p>
+                        <p className="text-white font-medium text-sm">Notificações</p>
+                        <p className="text-slate-400 text-xs break-words leading-relaxed">Receber lembretes e atualizações</p>
                       </div>
                     </div>
                     <div className="w-12 h-6 bg-slate-600 rounded-full relative cursor-pointer flex-shrink-0">
@@ -837,12 +793,12 @@ const Profile: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 sm:p-4 bg-slate-700/50 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <Shield className="w-5 h-5 text-slate-400" />
+                  <div className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg">
+                    <div className="flex items-center space-x-3 min-w-0 flex-1">
+                      <Shield className="w-5 h-5 text-slate-400 flex-shrink-0" />
                       <div className="min-w-0 flex-1">
-                        <p className="text-white font-medium">Privacidade</p>
-                        <p className="text-slate-400 text-xs sm:text-sm break-words">Controlar visibilidade do perfil</p>
+                        <p className="text-white font-medium text-sm">Privacidade</p>
+                        <p className="text-slate-400 text-xs break-words leading-relaxed">Controlar visibilidade do perfil</p>
                       </div>
                     </div>
                     <div className="w-12 h-6 bg-primary rounded-full relative cursor-pointer flex-shrink-0">
@@ -850,12 +806,12 @@ const Profile: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 sm:p-4 bg-slate-700/50 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <Smartphone className="w-5 h-5 text-slate-400" />
+                  <div className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg">
+                    <div className="flex items-center space-x-3 min-w-0 flex-1">
+                      <Smartphone className="w-5 h-5 text-slate-400 flex-shrink-0" />
                       <div className="min-w-0 flex-1">
-                        <p className="text-white font-medium">Modo Offline</p>
-                        <p className="text-slate-400 text-xs sm:text-sm break-words">Baixar conteúdo para uso offline</p>
+                        <p className="text-white font-medium text-sm">Modo Offline</p>
+                        <p className="text-slate-400 text-xs break-words leading-relaxed">Baixar conteúdo para uso offline</p>
                       </div>
                     </div>
                     <div className="w-12 h-6 bg-slate-600 rounded-full relative cursor-pointer flex-shrink-0">
@@ -870,23 +826,23 @@ const Profile: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="text-white">Gerenciar Dados</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3 sm:space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4">
-                    <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">
+                <CardContent className="space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 w-full">
                       <Download className="w-4 h-4 mr-2" />
-                      Exportar Dados
+                      <span className="truncate">Exportar Dados</span>
                     </Button>
-                    <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">
+                    <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 w-full">
                       <Upload className="w-4 h-4 mr-2" />
-                      Importar Dados
+                      <span className="truncate">Importar Dados</span>
                     </Button>
-                    <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">
+                    <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 w-full">
                       <RefreshCw className="w-4 h-4 mr-2" />
-                      Sincronizar
+                      <span className="truncate">Sincronizar</span>
                     </Button>
-                    <Button variant="outline" className="border-red-600 text-red-400 hover:bg-red-600/10">
+                    <Button variant="outline" className="border-red-600 text-red-400 hover:bg-red-600/10 w-full">
                       <X className="w-4 h-4 mr-2" />
-                      Excluir Conta
+                      <span className="truncate">Excluir Conta</span>
                     </Button>
                   </div>
                 </CardContent>

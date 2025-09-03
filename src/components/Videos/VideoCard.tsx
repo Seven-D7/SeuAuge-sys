@@ -28,23 +28,14 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
   };
 
   return (
-    <div className={`
-      group cursor-pointer overflow-hidden rounded-lg
-      ${designUtils.glass('dark')}
-      hover:scale-[1.02] transition-all duration-300
-      hover:shadow-xl hover:shadow-primary/10
-      ${COMMON_CLASSES.focus}
-      w-full max-w-full
-    `}>
+    <div className="group cursor-pointer overflow-hidden rounded-lg bg-slate-800 border border-slate-700 hover:scale-[1.02] transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 focus:outline-none focus:ring-2 focus:ring-primary w-full max-w-full">
       {/* Video Thumbnail */}
       <div className="relative aspect-video overflow-hidden w-full">
-        <LazyImage
+        <img
           src={video.thumbnail}
           alt={video.title}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
           loading="lazy"
-          width={400}
-          height={225}
         />
         
         {/* Gradient Overlay */}
@@ -52,23 +43,15 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
         
         {/* Play Button */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-          <div className={`
-            w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center
-            ${designUtils.gradient('primary')}
-            shadow-lg hover:scale-110 transition-transform duration-200
-          `}>
-            <Play className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 text-white ml-0.5 fill-current" />
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center bg-gradient-to-r from-primary to-emerald-500 shadow-lg hover:scale-110 transition-transform duration-200">
+            <Play className="w-5 h-5 sm:w-6 sm:h-6 text-white ml-0.5 fill-current" />
           </div>
         </div>
 
         {/* Premium Badge */}
         {!video.isFree && (
           <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-            <div className={`
-              flex items-center gap-1 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-semibold
-              ${designUtils.glass('warning')}
-              text-yellow-200
-            `}>
+            <div className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-yellow-400 to-orange-500 text-black">
               <Crown className="w-3 h-3" />
               PRO
             </div>
@@ -77,11 +60,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
 
         {/* Duration */}
         <div className="absolute bottom-2 right-2">
-          <div className={`
-            flex items-center gap-1 px-1.5 py-0.5 rounded-md text-xs font-medium
-            ${designUtils.glass('dark')}
-            text-white
-          `}>
+          <div className="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-black/80 text-white">
             <Clock className="w-3 h-3" />
             <span>{formatDuration(video.duration, 'short')}</span>
           </div>
@@ -90,39 +69,29 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
         {/* Favorite Button */}
         <button
           onClick={toggleFavorite}
-          className={`
-            absolute top-2 right-2 p-1.5 sm:p-2 rounded-full transition-all duration-200
-            ${designUtils.glass('dark')}
-            hover:scale-110 ${COMMON_CLASSES.focus}
-            ${isFavorite ? 'text-red-400' : 'text-white/70 hover:text-white'}
-          `}
+          className={`absolute top-2 right-2 sm:top-3 sm:right-3 p-2 rounded-full transition-all duration-200 bg-black/60 hover:bg-black/80 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary min-w-[32px] min-h-[32px] flex items-center justify-center ${
+            isFavorite ? 'text-red-400' : 'text-white/70 hover:text-white'
+          }`}
           aria-label={isFavorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
         >
-          <Heart className={`w-3 h-3 sm:w-4 sm:h-4 ${isFavorite ? 'fill-current' : ''}`} />
+          <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
         </button>
       </div>
 
       {/* Video Info */}
-      <div className="p-3">
+      <div className="p-3 overflow-hidden">
         <div className="mb-2">
-          <h3 className={`
-            font-semibold text-white line-clamp-2 mb-1
-            ${COMMON_CLASSES.heading.h4}
-            text-sm leading-tight
-          `}>
+          <h3 className="font-semibold text-white text-sm leading-tight mb-1 break-words overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
             {video.title}
           </h3>
-          <p className="text-gray-400 text-xs font-medium">
+          <p className="text-gray-400 text-xs font-medium truncate">
             {video.instructor}
           </p>
         </div>
 
         {/* Category Badge */}
         <div className="flex items-center justify-between">
-          <span className={`
-            inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
-            bg-primary/20 text-primary-300 border border-primary/30
-          `}>
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary border border-primary/30 truncate max-w-[120px]">
             {video.category}
           </span>
 
@@ -136,11 +105,11 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
 
         {/* Tags */}
         {video.tags && video.tags.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1">
+          <div className="mt-2 flex flex-wrap gap-1 overflow-hidden">
             {video.tags.slice(0, 2).map((tag) => (
               <span
                 key={tag}
-                className="px-1.5 py-0.5 bg-gray-700/50 text-gray-300 text-xs rounded-md"
+                className="px-1.5 py-0.5 bg-gray-700/50 text-gray-300 text-xs rounded-md truncate max-w-[80px]"
               >
                 #{tag}
               </span>
@@ -153,18 +122,14 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
           <button
             onClick={onClick}
             disabled={!hasAccess}
-            className={`
-              flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium
-              transition-all duration-200
-              ${hasAccess
-                ? `${designUtils.gradient('primary')} text-white hover:scale-105 shadow-md hover:shadow-lg`
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 min-h-[32px] ${
+              hasAccess
+                ? 'bg-gradient-to-r from-primary to-emerald-500 text-white hover:scale-105 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary'
                 : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-              }
-              ${COMMON_CLASSES.focus}
-            `}
+            }`}
           >
             <Play className="w-3 h-3" />
-            {hasAccess ? 'Assistir' : 'Premium'}
+            <span className="truncate">{hasAccess ? 'Assistir' : 'Premium'}</span>
           </button>
 
         </div>

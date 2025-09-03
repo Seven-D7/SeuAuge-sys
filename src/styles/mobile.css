@@ -1,0 +1,632 @@
+/* Mobile and Capacitor specific optimizations */
+
+/* Safe area support for notched devices */
+:root {
+  --safe-area-inset-top: env(safe-area-inset-top);
+  --safe-area-inset-right: env(safe-area-inset-right);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom);
+  --safe-area-inset-left: env(safe-area-inset-left);
+}
+
+/* Capacitor specific styles */
+.capacitor-app {
+  /* Prevent overscroll bounce */
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+  
+  /* Prevent text selection on UI elements */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  
+  /* Prevent callouts */
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Allow text selection for content areas */
+.capacitor-app input,
+.capacitor-app textarea,
+.capacitor-app [contenteditable],
+.capacitor-app .selectable-text {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* Android specific optimizations */
+@media (max-width: 768px) {
+  /* Prevent zoom on input focus */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="search"],
+  textarea,
+  select {
+    font-size: 16px !important;
+    transform: translateZ(0);
+    -webkit-appearance: none;
+    border-radius: 8px;
+  }
+  
+  /* Better touch targets */
+  button,
+  [role="button"],
+  a,
+  .touch-target {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    touch-action: manipulation;
+  }
+  
+  /* Improve scrolling performance */
+  .scroll-container {
+    -webkit-overflow-scrolling: touch;
+    transform: translateZ(0);
+    will-change: scroll-position;
+  }
+  
+  /* Prevent horizontal scroll */
+  body, html {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+  
+  /* Fix viewport issues */
+  .viewport-fix {
+    width: 100vw;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+}
+
+/* Extra small screens (Android phones) */
+@media (max-width: 480px) {
+  /* Compact spacing */
+  .mobile-compact {
+    padding: 12px !important;
+    margin: 8px !important;
+  }
+  
+  /* Smaller text on very small screens */
+  .text-responsive-mobile {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
+  
+  /* Ensure buttons are accessible */
+  button {
+    min-height: 48px !important;
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+  }
+  
+  /* Modal adjustments for small screens */
+  .modal-mobile {
+    margin: 8px !important;
+    max-height: calc(100vh - 16px) !important;
+    border-radius: 12px !important;
+  }
+  
+  /* Card adjustments */
+  .card-mobile {
+    margin: 8px !important;
+    padding: 16px !important;
+    border-radius: 12px !important;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  /* Compact header for landscape */
+  .header-landscape {
+    padding: 8px 16px !important;
+  }
+  
+  /* Reduce modal padding in landscape */
+  .modal-landscape {
+    padding: 16px !important;
+    max-height: 90vh !important;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Crisp images on retina displays */
+  img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Dark mode optimizations for mobile */
+@media (prefers-color-scheme: dark) {
+  .mobile-dark-optimized {
+    /* Reduce eye strain on mobile */
+    background-color: #0f172a !important;
+    color: #f1f5f9 !important;
+  }
+  
+  /* Better contrast for mobile reading */
+  .mobile-text-contrast {
+    color: #e2e8f0 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Accessibility improvements for mobile */
+@media (max-width: 768px) {
+  /* Larger focus indicators */
+  *:focus {
+    outline: 3px solid #14b8a6 !important;
+    outline-offset: 2px !important;
+  }
+  
+  /* Better error states */
+  .error-mobile {
+    border: 2px solid #ef4444 !important;
+    background-color: rgba(239, 68, 68, 0.1) !important;
+  }
+  
+  /* Success states */
+  .success-mobile {
+    border: 2px solid #10b981 !important;
+    background-color: rgba(16, 185, 129, 0.1) !important;
+  }
+}
+
+/* Performance optimizations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Smooth animations on mobile */
+@media (max-width: 768px) {
+  .animate-mobile {
+    animation-duration: 0.3s !important;
+    animation-timing-function: ease-out !important;
+  }
+  
+  /* Reduce motion for better performance */
+  .reduced-motion-mobile {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Text overflow handling */
+.text-overflow-mobile {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.text-wrap-mobile {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  line-height: 1.6;
+}
+
+/* Container queries for responsive components */
+.container-mobile {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 100%;
+}
+
+@container (max-width: 400px) {
+  .container-mobile .text-responsive {
+    font-size: 14px !important;
+  }
+  
+  .container-mobile .heading-responsive {
+    font-size: 18px !important;
+  }
+  
+  .container-mobile .button-responsive {
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* Prevent layout shift */
+.layout-stable {
+  contain: layout style paint;
+}
+
+/* Optimize images for mobile */
+@media (max-width: 768px) {
+  img {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
+    loading: lazy;
+  }
+  
+  /* Placeholder for loading images */
+  .image-placeholder {
+    background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Form optimizations for mobile */
+@media (max-width: 768px) {
+  .form-mobile input,
+  .form-mobile textarea,
+  .form-mobile select {
+    padding: 16px !important;
+    font-size: 16px !important;
+    border-radius: 8px !important;
+    border: 2px solid #374151 !important;
+    background-color: #1f2937 !important;
+    color: #f9fafb !important;
+  }
+  
+  .form-mobile input:focus,
+  .form-mobile textarea:focus,
+  .form-mobile select:focus {
+    border-color: #14b8a6 !important;
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1) !important;
+  }
+  
+  .form-mobile label {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: #d1d5db !important;
+    margin-bottom: 8px !important;
+    display: block !important;
+  }
+}
+
+/* Loading states optimized for mobile */
+.loading-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: 20px;
+}
+
+.loading-mobile .spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #374151;
+  border-top: 3px solid #14b8a6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Toast notifications for mobile */
+@media (max-width: 768px) {
+  .toast-mobile {
+    position: fixed !important;
+    top: var(--safe-area-inset-top, 20px) !important;
+    left: 16px !important;
+    right: 16px !important;
+    z-index: 9999 !important;
+    max-width: calc(100vw - 32px) !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    word-break: break-word !important;
+  }
+}
+
+/* Navigation optimizations */
+.nav-mobile {
+  position: fixed;
+  bottom: var(--safe-area-inset-bottom, 0);
+  left: 0;
+  right: 0;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid #334155;
+  padding: 12px 16px;
+  z-index: 50;
+}
+
+.nav-mobile .nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  min-height: 44px;
+  justify-content: center;
+}
+
+.nav-mobile .nav-item.active {
+  background-color: rgba(20, 184, 166, 0.2);
+  color: #14b8a6;
+}
+
+.nav-mobile .nav-item .icon {
+  width: 20px;
+  height: 20px;
+  margin-bottom: 4px;
+}
+
+.nav-mobile .nav-item .label {
+  font-size: 10px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Swipe gestures support */
+.swipe-container {
+  touch-action: pan-x pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Video player mobile optimizations */
+@media (max-width: 768px) {
+  .video-player-mobile {
+    width: 100vw !important;
+    height: 56.25vw !important; /* 16:9 aspect ratio */
+    max-height: 50vh !important;
+  }
+  
+  .video-controls-mobile {
+    padding: 16px !important;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent) !important;
+  }
+  
+  .video-controls-mobile button {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    padding: 12px !important;
+  }
+}
+
+/* Modal optimizations for mobile */
+@media (max-width: 768px) {
+  .modal-mobile {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: var(--safe-area-inset-top, 20px) 16px var(--safe-area-inset-bottom, 20px) 16px !important;
+    overflow-y: auto !important;
+  }
+  
+  .modal-content-mobile {
+    padding: 20px !important;
+    max-height: calc(100vh - 40px) !important;
+    overflow-y: auto !important;
+  }
+}
+
+/* Improved touch interactions */
+.touch-feedback {
+  position: relative;
+  overflow: hidden;
+}
+
+.touch-feedback::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.touch-feedback:active::after {
+  width: 200px;
+  height: 200px;
+}
+
+/* Keyboard avoidance */
+.keyboard-avoiding {
+  transition: transform 0.3s ease;
+}
+
+.keyboard-avoiding.keyboard-open {
+  transform: translateY(-100px);
+}
+
+/* Network status indicator */
+.network-status {
+  position: fixed;
+  top: var(--safe-area-inset-top, 0);
+  left: 0;
+  right: 0;
+  background: #ef4444;
+  color: white;
+  text-align: center;
+  padding: 8px 16px;
+  font-size: 12px;
+  z-index: 9999;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease;
+}
+
+.network-status.offline {
+  transform: translateY(0);
+}
+
+/* Pull to refresh indicator */
+.pull-to-refresh {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(20, 184, 166, 0.9);
+  border-radius: 50%;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.pull-to-refresh.active {
+  top: 20px;
+}
+
+/* Haptic feedback classes */
+.haptic-light {
+  /* Will be handled by Capacitor Haptics plugin */
+}
+
+.haptic-medium {
+  /* Will be handled by Capacitor Haptics plugin */
+}
+
+.haptic-heavy {
+  /* Will be handled by Capacitor Haptics plugin */
+}
+
+/* Performance optimizations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-scroll {
+  will-change: scroll-position;
+}
+
+.gpu-layer {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Reduce motion for better performance on low-end devices */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-reduced-motion * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Battery optimization */
+@media (prefers-reduced-data: reduce) {
+  .data-saver img {
+    display: none;
+  }
+  
+  .data-saver .image-placeholder {
+    display: block;
+    background: #374151;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+}
+
+/* Orientation change handling */
+@media (orientation: portrait) {
+  .orientation-portrait {
+    /* Portrait specific styles */
+  }
+}
+
+@media (orientation: landscape) {
+  .orientation-landscape {
+    /* Landscape specific styles */
+  }
+  
+  /* Adjust video player for landscape */
+  .video-player-landscape {
+    width: 100vw !important;
+    height: 100vh !important;
+  }
+}
+
+/* Android Chrome specific fixes */
+@supports (-webkit-appearance: none) {
+  /* Chrome on Android */
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"] {
+    -webkit-appearance: none;
+    background: #1f2937;
+    color: #f9fafb;
+    border: 2px solid #374151;
+    border-radius: 8px;
+    padding: 16px;
+    font-size: 16px;
+  }
+}
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari */
+  .ios-fix {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Fix for iOS viewport units */
+  .ios-vh-fix {
+    height: -webkit-fill-available;
+  }
+}
+
+/* Prevent text size adjustment */
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+/* Improve tap delay */
+a, button, input, select, textarea {
+  touch-action: manipulation;
+}
+
+/* Better scrolling on mobile */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Fix for sticky elements on mobile */
+.sticky-mobile {
+  position: -webkit-sticky;
+  position: sticky;
+  top: var(--safe-area-inset-top, 0);
+  z-index: 10;
+}

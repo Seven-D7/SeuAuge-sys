@@ -10,6 +10,8 @@
   
   html {
     scroll-behavior: smooth;
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
   }
   
   body {
@@ -17,6 +19,37 @@
     font-feature-settings: "rlig" 1, "calt" 1;
     overflow-x: hidden;
     min-height: 100vh;
+    /* Capacitor/Android optimizations */
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  
+  /* Allow text selection for inputs and content areas */
+  input, textarea, [contenteditable], .selectable {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+  
+  /* Safe area support for mobile devices */
+  .safe-area-inset {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  
+  .safe-area-inset-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .safe-area-inset-x {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
   
   /* Custom Scrollbar */
@@ -65,7 +98,7 @@
   
   /* Input Styles */
   .input {
-    @apply w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200;
+    @apply w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 text-base;
   }
   
   /* Card Variants */
@@ -132,6 +165,20 @@
   .hover-glow {
     @apply transition-all duration-300 hover:shadow-lg hover:shadow-primary/25;
   }
+  
+  /* Mobile optimizations */
+  .mobile-touch-target {
+    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+  }
+  
+  /* Text wrapping utilities */
+  .text-wrap-balance {
+    text-wrap: balance;
+  }
+  
+  .text-wrap-pretty {
+    text-wrap: pretty;
+  }
 }
 
 /* Utility Classes */
@@ -194,6 +241,20 @@
   
   .animate-scale-in {
     animation: scaleIn 0.3s ease-out;
+  }
+  
+  /* Overflow utilities */
+  .overflow-wrap-anywhere {
+    overflow-wrap: anywhere;
+  }
+  
+  .word-break-break-word {
+    word-break: break-word;
+  }
+  
+  /* Container queries for responsive design */
+  .container-sm {
+    container-type: inline-size;
   }
 }
 
@@ -262,8 +323,14 @@
   
   /* Better touch targets */
   button, [role="button"], a {
-    min-height: 44px;
-    min-width: 44px;
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+  
+  /* Improve tap targets for mobile */
+  input, select, textarea {
+    min-height: 44px !important;
+    font-size: 16px !important; /* Prevent zoom on iOS */
   }
 }
 
@@ -285,6 +352,50 @@
   
   .padding-responsive {
     @apply p-3;
+  }
+  
+  /* Prevent text overflow on small screens */
+  h1, h2, h3, h4, h5, h6 {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+  
+  /* Ensure proper spacing for mobile */
+  .container-responsive {
+    @apply px-3;
+  }
+  
+  /* Mobile-specific input styling */
+  input, textarea, select {
+    font-size: 16px; /* Prevent zoom on iOS */
+    border-radius: 8px;
+  }
+}
+
+/* Android/Capacitor specific optimizations */
+@media (max-width: 480px) {
+  /* Extra small screens */
+  .text-responsive-lg {
+    @apply text-sm;
+  }
+  
+  .heading-responsive {
+    @apply text-lg;
+  }
+  
+  .heading-responsive-lg {
+    @apply text-xl;
+  }
+  
+  /* Ensure buttons are large enough for touch */
+  button {
+    min-height: 48px !important;
+    padding: 12px 16px !important;
+  }
+  
+  /* Improve readability on small screens */
+  p, span, div {
+    line-height: 1.6;
   }
 }
 

@@ -54,22 +54,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
   };
 
   return (
-    <div className={`
-      group cursor-pointer overflow-hidden rounded-lg sm:rounded-xl
-      ${designUtils.glass('dark')}
-      hover:scale-[1.02] sm:hover:scale-105 transition-all duration-300 
-      hover:shadow-xl hover:shadow-primary/10
-      ${COMMON_CLASSES.focus}
-    `}>
+    <div className="group cursor-pointer overflow-hidden rounded-lg sm:rounded-xl bg-slate-800 border border-slate-700 hover:scale-[1.02] sm:hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 focus:outline-none focus:ring-2 focus:ring-primary w-full max-w-full">
       {/* Product Image */}
       <div className="relative aspect-square overflow-hidden">
-        <LazyImage
+        <img
           src={product.image}
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
           loading="lazy"
-          width={300}
-          height={300}
         />
         
         {/* Gradient Overlay */}
@@ -78,11 +70,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
         {/* Discount Badge */}
         {product.discount && (
           <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-            <div className={`
-              px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-bold
-              ${designUtils.gradient('sunset')}
-              text-white shadow-lg
-            `}>
+            <div className="px-2 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg">
               -{product.discount}%
             </div>
           </div>
@@ -90,70 +78,54 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
 
         {/* Category Badge */}
         <div className="absolute top-2 right-2 sm:top-3 sm:right-3">
-          <div className={`
-            flex items-center gap-1 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium
-            ${designUtils.glass('primary')}
-            text-primary-200
-          `}>
+          <div className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-primary/20 text-primary border border-primary/30 max-w-[100px]">
             {getCategoryIcon(product.category)}
-            {product.category}
+            <span className="truncate">{product.category}</span>
           </div>
         </div>
 
         {/* Favorite Button */}
         <button
           onClick={toggleFavorite}
-          className={`
-            absolute bottom-2 right-2 sm:bottom-3 sm:right-3 p-1.5 sm:p-2 rounded-full transition-all duration-200
-            ${designUtils.glass('dark')}
-            hover:scale-110 ${COMMON_CLASSES.focus}
-            ${isFavorite ? 'text-red-400' : 'text-white/70 hover:text-white'}
-          `}
+          className={`absolute bottom-2 right-2 sm:bottom-3 sm:right-3 p-2 rounded-full transition-all duration-200 bg-black/60 hover:bg-black/80 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary min-w-[32px] min-h-[32px] flex items-center justify-center ${
+            isFavorite ? 'text-red-400' : 'text-white/70 hover:text-white'
+          }`}
           aria-label={isFavorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
         >
-          <Heart className={`w-3 h-3 sm:w-4 sm:h-4 ${isFavorite ? 'fill-current' : ''}`} />
+          <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
         </button>
 
         {/* Quick Add to Cart */}
         <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
           <button
             onClick={handleAddToCart}
-            className={`
-              p-1.5 sm:p-2 rounded-full transition-all duration-200
-              ${designUtils.gradient('primary')}
-              text-white shadow-lg hover:scale-110
-              ${COMMON_CLASSES.focus}
-            `}
+            className="p-2 rounded-full transition-all duration-200 bg-gradient-to-r from-primary to-emerald-500 text-white shadow-lg hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary min-w-[32px] min-h-[32px] flex items-center justify-center"
             aria-label="Adicionar ao carrinho"
           >
-            <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" />
+            <ShoppingCart className="w-4 h-4" />
           </button>
         </div>
       </div>
 
       {/* Product Info */}
-      <div className="p-3 sm:p-4">
+      <div className="p-3 sm:p-4 overflow-hidden">
         {/* Rating */}
         <div className="flex items-center gap-2 mb-2">
           <div className="flex items-center gap-0.5">
             {renderStars(product.rating)}
           </div>
-          <span className="text-gray-400 text-xs truncate">
+          <span className="text-gray-400 text-xs truncate flex-shrink-0">
             ({product.reviews} avaliações)
           </span>
         </div>
 
         {/* Product Name */}
-        <h3 className={`
-          font-semibold text-white line-clamp-2 mb-2
-          ${COMMON_CLASSES.heading.h4}
-          text-sm
-        `}>
+        <h3 className="font-semibold text-white text-sm mb-2 break-words overflow-hidden leading-tight" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
           {product.name}
         </h3>
 
         {/* Product Description */}
-        <p className="text-gray-400 text-xs line-clamp-2 mb-3">
+        <p className="text-gray-400 text-xs mb-3 break-words overflow-hidden leading-relaxed" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
           {product.description}
         </p>
 
@@ -165,11 +137,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
                 R$ {product.originalPrice.toFixed(2)}
               </span>
             )}
-            <span className={`
-              font-bold text-base sm:text-lg
-              ${designUtils.gradient('primary')}
-              bg-clip-text text-transparent
-            `}>
+            <span className="font-bold text-base sm:text-lg bg-gradient-to-r from-primary to-emerald-500 bg-clip-text text-transparent">
               R$ {product.price.toFixed(2)}
             </span>
           </div>
@@ -177,11 +145,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
 
         {/* Tags */}
         {product.tags && product.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-4">
+          <div className="flex flex-wrap gap-1 mb-4 overflow-hidden">
             {product.tags.slice(0, 2).map((tag) => (
               <span
                 key={tag}
-                className="px-1.5 py-0.5 bg-gray-700/50 text-gray-300 text-xs rounded-md"
+                className="px-1.5 py-0.5 bg-gray-700/50 text-gray-300 text-xs rounded-md truncate max-w-[80px]"
               >
                 {tag}
               </span>
@@ -193,25 +161,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
         <div className="flex gap-2">
           <button
             onClick={() => onSelect?.(product)}
-            className={`
-              flex-1 py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium
-              bg-white/10 hover:bg-white/20 text-white border border-white/20
-              transition-all duration-200 hover:scale-[1.02] sm:hover:scale-105
-              ${COMMON_CLASSES.focus}
-            `}
+            className="flex-1 py-2 px-3 rounded-lg text-xs sm:text-sm font-medium bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-all duration-200 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary min-h-[36px] flex items-center justify-center"
           >
-            <span className="hidden sm:inline">Ver Detalhes</span>
-            <span className="sm:hidden">Ver</span>
+            <span className="text-white truncate">Ver Detalhes</span>
           </button>
           <button
             onClick={handleAddToCart}
-            className={`
-              px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium
-              ${designUtils.gradient('primary')}
-              text-white shadow-md hover:shadow-lg
-              transition-all duration-200 hover:scale-[1.02] sm:hover:scale-105
-              ${COMMON_CLASSES.focus}
-            `}
+            className="px-4 py-2 rounded-lg text-xs sm:text-sm font-medium bg-gradient-to-r from-primary to-emerald-500 text-white shadow-md hover:shadow-lg transition-all duration-200 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary min-h-[36px] min-w-[44px] flex items-center justify-center"
           >
             <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" />
           </button>
@@ -220,15 +176,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
         {/* Stock Status */}
         {product.stock !== undefined && (
           <div className="mt-3">
-            <div className={`
-              text-xs font-medium
-              ${product.stock > 10 
-                ? 'text-success-400' 
+            <div className={`text-xs font-medium truncate ${
+              product.stock > 10 
+                ? 'text-green-400' 
                 : product.stock > 0 
-                  ? 'text-warning-400' 
-                  : 'text-error-400'
-              }
-            `}>
+                  ? 'text-yellow-400' 
+                  : 'text-red-400'
+            }`}>
               {product.stock > 0 
                 ? `${product.stock} em estoque`
                 : 'Fora de estoque'

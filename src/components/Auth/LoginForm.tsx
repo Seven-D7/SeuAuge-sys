@@ -85,6 +85,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
           errorMessage.includes('Supabase not configured') ||
           (!isSupabaseConfigured && (errorMessage.includes('conexão') || errorMessage.includes('Failed to fetch') || errorMessage.includes('network')))) {
         setShowSetupPrompt(true);
+      } else if (errorMessage.includes('Invalid login credentials')) {
+        setError('Email ou senha incorretos. Verifique suas credenciais');
+      } else if (errorMessage.includes('Email not confirmed')) {
+        setError('Email não confirmado. Verifique sua caixa de entrada');
+      } else if (errorMessage.includes('Too many requests')) {
+        setError('Muitas tentativas de login. Aguarde alguns minutos');
       } else if (errorMessage.includes('timeout')) {
         const timeoutMsg = 'Conexão lenta. Tente novamente';
         setError(timeoutMsg);
@@ -94,7 +100,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
         setError(networkMsg);
         toast.error(networkMsg, { duration: 6000 });
       } else {
-        setError(errorMessage || t('auth.login_error'));
+        setError('Erro ao fazer login. Verifique suas credenciais e tente novamente');
       }
     } finally {
       setLoading(false);

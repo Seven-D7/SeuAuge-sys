@@ -103,9 +103,19 @@ export const authOperations = {
     if (!hasValidCredentials) {
       throw new Error('Supabase not configured. Please set up your Supabase credentials.');
     }
+    
+    // Additional validation
+    if (!email || !password) {
+      throw new Error('Email e senha são obrigatórios');
+    }
+    
+    if (password.length < 6) {
+      throw new Error('Senha deve ter pelo menos 6 caracteres');
+    }
+    
     return withTimeout(
       supabase.auth.signInWithPassword({ email, password }),
-      15000,
+      20000,
       'Login'
     );
   },
@@ -114,9 +124,19 @@ export const authOperations = {
     if (!hasValidCredentials) {
       throw new Error('Supabase not configured. Please set up your Supabase credentials.');
     }
+    
+    // Additional validation
+    if (!email || !password) {
+      throw new Error('Email e senha são obrigatórios');
+    }
+    
+    if (password.length < 8) {
+      throw new Error('Senha deve ter pelo menos 8 caracteres');
+    }
+    
     return withTimeout(
       supabase.auth.signUp({ email, password, options }),
-      20000,
+      25000,
       'Registration'
     );
   },
@@ -125,9 +145,20 @@ export const authOperations = {
     if (!hasValidCredentials) {
       return { error: null };
     }
+    
+    // Clear any pending requests
+    try {
+      // Cancel any ongoing requests if possible
+      if (typeof AbortController !== 'undefined') {
+        // Implementation would depend on how we track ongoing requests
+      }
+    } catch (error) {
+      console.warn('Error canceling requests during logout:', error);
+    }
+    
     return withTimeout(
       supabase.auth.signOut(),
-      10000,
+      15000,
       'Logout'
     );
   },
@@ -138,7 +169,7 @@ export const authOperations = {
     }
     return withTimeout(
       supabase.auth.getSession(),
-      10000,
+      15000,
       'Get Session'
     );
   },
@@ -149,7 +180,7 @@ export const authOperations = {
     }
     return withTimeout(
       supabase.auth.getUser(),
-      10000,
+      15000,
       'Get User'
     );
   },
@@ -158,12 +189,17 @@ export const authOperations = {
     if (!hasValidCredentials) {
       throw new Error('Supabase not configured. Please set up your Supabase credentials.');
     }
+    
+    if (!email) {
+      throw new Error('Email é obrigatório');
+    }
+    
     const finalRedirectTo = redirectTo || `${window.location.origin}/auth/reset-password`;
     return withTimeout(
       supabase.auth.resetPasswordForEmail(email, {
         redirectTo: finalRedirectTo,
       }),
-      15000,
+      20000,
       'Password Reset'
     );
   },
@@ -172,6 +208,11 @@ export const authOperations = {
     if (!hasValidCredentials) {
       throw new Error('Supabase not configured. Please set up your Supabase credentials.');
     }
+    
+    if (!email) {
+      throw new Error('Email é obrigatório');
+    }
+    
     const finalRedirectTo = redirectTo || `${window.location.origin}/auth/confirm`;
     return withTimeout(
       supabase.auth.resend({
@@ -181,7 +222,7 @@ export const authOperations = {
           emailRedirectTo: finalRedirectTo,
         }
       }),
-      15000,
+      20000,
       'Resend Confirmation'
     );
   },

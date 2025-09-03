@@ -147,6 +147,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
         // If user tries to register with unconfirmed email, show verification prompt
         setRegisteredEmail(formData.email.trim().toLowerCase());
         setShowEmailVerification(true);
+      } else if (errorMessage.includes('User already registered')) {
+        setErrors({ email: 'Este email já está em uso. Tente fazer login.' });
+      } else if (errorMessage.includes('weak-password')) {
+        setErrors({ password: 'Senha muito fraca. Use pelo menos 8 caracteres com letras e números.' });
+      } else if (errorMessage.includes('invalid-email')) {
+        setErrors({ email: 'Email inválido. Verifique o formato.' });
+      } else if (errorMessage.includes('Too many requests')) {
+        setErrors({ general: 'Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.' });
       } else {
         setErrors({ general: 'Erro ao criar conta. Tente novamente.' });
       }

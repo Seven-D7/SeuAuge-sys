@@ -9,9 +9,11 @@ import Layout from "./components/Layout/Layout";
 import PlanGuard from "./components/PlanGuard";
 import ErrorBoundary from "./components/ErrorBoundary";
 import SupabaseStatus from "./components/Common/SupabaseStatus";
+import NetworkStatus from "./components/Common/NetworkStatus";
 import { Toaster } from "react-hot-toast";
 
 import { performanceMonitor, registerServiceWorker, addResourceHint } from "./lib/performance";
+import { useCapacitor } from "./hooks/useCapacitor";
 
 // Lazy load components with better chunking
 const Auth = lazy(() =>
@@ -149,12 +151,14 @@ const Plans = lazy(() =>
 
 // Loading fallback component
 const LoadingFallback = () => (
-  <div className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-900">
+  <div className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-900 safe-area-inset">
     <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
   </div>
 );
 
 const App: React.FC = () => {
+  const { triggerHaptic } = useCapacitor();
+
   useEffect(() => {
     // Register service worker for PWA
     registerServiceWorker();
@@ -185,6 +189,18 @@ const App: React.FC = () => {
         }
       }, 1000);
     }
+
+    // Add haptic feedback to buttons (Capacitor only)
+    const addHapticFeedback = () => {
+      document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        if (target.tagName === 'BUTTON' || target.closest('button')) {
+          triggerHaptic();
+        }
+      });
+    };
+
+    addHapticFeedback();
   }, []);
 
   return (
@@ -193,7 +209,8 @@ const App: React.FC = () => {
         <LanguageProvider>
           <AuthProvider>
             <SupabaseStatus />
-            <div className="min-h-screen bg-slate-900">
+            <NetworkStatus />
+            <div className="min-h-screen bg-slate-900 safe-area-inset">
               <Routes>
                 <Route
                   path="/"
@@ -429,13 +446,16 @@ const App: React.FC = () => {
 
               {/* Global Toast Notifications */}
               <Toaster
-                position="top-right"
+                position="top-center"
                 toastOptions={{
                   duration: 4000,
+                  className: 'safe-area-inset-top',
                   style: {
                     background: '#1e293b',
                     color: '#f1f5f9',
                     border: '1px solid #334155',
+                    maxWidth: 'calc(100vw - 32px)',
+                    wordBreak: 'break-word',
                   },
                   success: {
                     style: {

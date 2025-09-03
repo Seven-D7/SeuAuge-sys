@@ -147,7 +147,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden safe-area-inset"
           onClick={onClose}
         />
       )}
@@ -157,10 +157,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         variants={sidebarVariants}
         initial="closed"
         animate={isOpen ? "open" : "closed"}
-        className="fixed top-0 left-0 h-full w-72 max-w-[90vw] overflow-y-auto bg-slate-900 border-r border-slate-800 z-50 lg:translate-x-0 lg:static lg:z-auto lg:w-72 flex flex-col"
+        className="fixed top-0 left-0 h-full w-72 max-w-[85vw] overflow-y-auto bg-slate-900 border-r border-slate-800 z-50 lg:translate-x-0 lg:static lg:z-auto lg:w-72 flex flex-col safe-area-inset"
       >
         {/* Logo Header */}
-        <div className="p-4 sm:p-6 border-b border-slate-800 flex-shrink-0">
+        <div className="p-4 sm:p-6 border-b border-slate-800 flex-shrink-0 safe-area-inset-top">
           <motion.div 
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -169,8 +169,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             <div className="w-10 h-10 bg-gradient-to-r from-primary to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
               <TrendingUp className="w-5 h-5 text-white" />
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-white">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl font-bold text-white truncate">
                 Meu Auge
               </h1>
               <p className="text-xs text-slate-400">
@@ -181,14 +181,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* User Level Card */}
-        <div className="p-3 sm:p-4 mx-3 sm:mx-4 mt-4 bg-gradient-to-r from-primary/10 to-emerald-500/10 border border-primary/20 rounded-xl flex-shrink-0">
+        <div className="p-3 sm:p-4 mx-3 sm:mx-4 mt-4 bg-gradient-to-r from-primary/10 to-emerald-500/10 border border-primary/20 rounded-xl flex-shrink-0 overflow-hidden">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-to-r from-primary to-emerald-500 rounded-lg flex items-center justify-center">
                 <Star className="w-4 h-4 text-white" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold text-white">
+                <p className="text-sm font-bold text-white truncate">
                   Nível {levelSystem.currentLevel}
                 </p>
                 <p className="text-xs text-slate-400 truncate">
@@ -218,7 +218,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Navigation Sections */}
-        <nav className="flex-1 p-3 sm:p-4 space-y-4 sm:space-y-6 overflow-y-auto">
+        <nav className="flex-1 p-3 sm:p-4 space-y-4 sm:space-y-6 overflow-y-auto safe-area-inset-bottom">
           {menuSections.map((section, sectionIndex) => (
             <div key={section.title}>
               <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 sm:mb-3 px-2">
@@ -235,10 +235,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: (sectionIndex * 0.1) + (itemIndex * 0.05) }}
-                        className="flex items-center px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg text-slate-500 cursor-not-allowed opacity-50"
+                        className="flex items-center px-3 py-2.5 rounded-lg text-slate-500 cursor-not-allowed opacity-50 overflow-hidden"
                       >
                         <Icon className="w-5 h-5 mr-3" />
-                        <span className="font-medium text-sm sm:text-base truncate flex-1">{item.label}</span>
+                        <span className="font-medium text-sm truncate flex-1">{item.label}</span>
                         <span className="ml-auto text-xs bg-slate-700 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded flex-shrink-0">
                           Em breve
                         </span>
@@ -256,27 +256,27 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                       <Link
                         to={item.path}
                         onClick={onClose}
-                        className={`flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 group relative ${
+                        className={`flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 group relative overflow-hidden min-h-[44px] ${
                           isActive(item.path)
                             ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-md"
                             : "text-slate-400 hover:text-white hover:bg-slate-800/50"
                         }`}
                       >
                         <Icon
-                          className={`w-5 h-5 mr-3 ${
+                          className={`w-5 h-5 mr-3 flex-shrink-0 ${
                             isActive(item.path) 
                               ? "text-white" 
                               : "text-slate-400 group-hover:text-primary"
                           }`}
                         />
-                        <span className="font-medium text-sm sm:text-base flex-1 truncate">{item.label}</span>
+                        <span className="font-medium text-sm flex-1 truncate">{item.label}</span>
                         
                         {/* Badge */}
                         {item.badge && (
                           <motion.span 
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
-                            className="bg-red-500 text-white text-xs rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center flex-shrink-0"
+                            className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0"
                           >
                             {item.badge}
                           </motion.span>
@@ -296,15 +296,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         </nav>
 
         {/* Plan Status */}
-        <div className="p-3 sm:p-4 border-t border-slate-800 space-y-3 sm:space-y-4 flex-shrink-0">
-          <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-lg p-3">
+        <div className="p-3 sm:p-4 border-t border-slate-800 space-y-3 sm:space-y-4 flex-shrink-0 safe-area-inset-bottom">
+          <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-lg p-3 overflow-hidden">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <div className="w-6 h-6 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-md flex items-center justify-center">
                   <Crown className="w-3 h-3 text-white" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-white">
+                  <p className="text-sm font-medium text-white truncate">
                     {planName}
                   </p>
                   <p className="text-xs text-slate-400 truncate">
@@ -325,7 +325,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Quick Stats */}
-          <div className="bg-slate-800/50 rounded-lg p-3">
+          <div className="bg-slate-800/50 rounded-lg p-3 overflow-hidden">
             <h4 className="text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wide">
               Estatísticas
             </h4>
@@ -334,7 +334,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 <div className="text-sm font-bold text-white">
                   {userStats.currentStreak}
                 </div>
-                <div className="text-xs text-slate-400">
+                <div className="text-xs text-slate-400 truncate">
                   Dias seguidos
                 </div>
               </div>
@@ -342,7 +342,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 <div className="text-sm font-bold text-white">
                   {unlockedAchievements}
                 </div>
-                <div className="text-xs text-slate-400">
+                <div className="text-xs text-slate-400 truncate">
                   Conquistas
                 </div>
               </div>
@@ -357,10 +357,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               logout();
               onClose();
             }}
-            className="flex items-center w-full px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-900/20 transition-all duration-200 group"
+            className="flex items-center w-full px-3 py-2.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-900/20 transition-all duration-200 group min-h-[44px] overflow-hidden"
           >
-            <LogOut className="w-5 h-5 mr-3 group-hover:text-red-500" />
-            <span className="font-medium text-sm sm:text-base">Sair</span>
+            <LogOut className="w-5 h-5 mr-3 group-hover:text-red-500 flex-shrink-0" />
+            <span className="font-medium text-sm truncate">Sair</span>
           </motion.button>
         </div>
       </motion.div>
