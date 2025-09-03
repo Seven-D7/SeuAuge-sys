@@ -55,9 +55,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
 
   return (
     <div className={`
-      group cursor-pointer overflow-hidden rounded-xl
+      group cursor-pointer overflow-hidden rounded-lg sm:rounded-xl
       ${designUtils.glass('dark')}
-      hover:scale-105 transition-all duration-300 
+      hover:scale-[1.02] sm:hover:scale-105 transition-all duration-300 
       hover:shadow-xl hover:shadow-primary/10
       ${COMMON_CLASSES.focus}
     `}>
@@ -77,9 +77,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
         
         {/* Discount Badge */}
         {product.discount && (
-          <div className="absolute top-3 left-3">
+          <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
             <div className={`
-              px-2 py-1 rounded-full text-xs font-bold
+              px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-bold
               ${designUtils.gradient('sunset')}
               text-white shadow-lg
             `}>
@@ -89,9 +89,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
         )}
 
         {/* Category Badge */}
-        <div className="absolute top-3 right-3">
+        <div className="absolute top-2 right-2 sm:top-3 sm:right-3">
           <div className={`
-            flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium
+            flex items-center gap-1 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium
             ${designUtils.glass('primary')}
             text-primary-200
           `}>
@@ -104,41 +104,41 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
         <button
           onClick={toggleFavorite}
           className={`
-            absolute bottom-3 right-3 p-2 rounded-full transition-all duration-200
+            absolute bottom-2 right-2 sm:bottom-3 sm:right-3 p-1.5 sm:p-2 rounded-full transition-all duration-200
             ${designUtils.glass('dark')}
             hover:scale-110 ${COMMON_CLASSES.focus}
             ${isFavorite ? 'text-red-400' : 'text-white/70 hover:text-white'}
           `}
           aria-label={isFavorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
         >
-          <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+          <Heart className={`w-3 h-3 sm:w-4 sm:h-4 ${isFavorite ? 'fill-current' : ''}`} />
         </button>
 
         {/* Quick Add to Cart */}
-        <div className="absolute bottom-3 left-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
+        <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
           <button
             onClick={handleAddToCart}
             className={`
-              p-2 rounded-full transition-all duration-200
+              p-1.5 sm:p-2 rounded-full transition-all duration-200
               ${designUtils.gradient('primary')}
               text-white shadow-lg hover:scale-110
               ${COMMON_CLASSES.focus}
             `}
             aria-label="Adicionar ao carrinho"
           >
-            <ShoppingCart className="w-4 h-4" />
+            <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" />
           </button>
         </div>
       </div>
 
       {/* Product Info */}
-      <div className="p-4">
+      <div className="p-3 sm:p-4">
         {/* Rating */}
         <div className="flex items-center gap-2 mb-2">
           <div className="flex items-center gap-0.5">
             {renderStars(product.rating)}
           </div>
-          <span className="text-gray-400 text-xs">
+          <span className="text-gray-400 text-xs truncate">
             ({product.reviews} avaliações)
           </span>
         </div>
@@ -147,13 +147,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
         <h3 className={`
           font-semibold text-white line-clamp-2 mb-2
           ${COMMON_CLASSES.heading.h4}
-          text-sm sm:text-base
+          text-sm
         `}>
           {product.name}
         </h3>
 
         {/* Product Description */}
-        <p className="text-gray-400 text-xs sm:text-sm line-clamp-2 mb-3">
+        <p className="text-gray-400 text-xs line-clamp-2 mb-3">
           {product.description}
         </p>
 
@@ -166,7 +166,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
               </span>
             )}
             <span className={`
-              font-bold text-lg
+              font-bold text-base sm:text-lg
               ${designUtils.gradient('primary')}
               bg-clip-text text-transparent
             `}>
@@ -181,7 +181,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
             {product.tags.slice(0, 2).map((tag) => (
               <span
                 key={tag}
-                className="px-2 py-0.5 bg-gray-700/50 text-gray-300 text-xs rounded-md"
+                className="px-1.5 py-0.5 bg-gray-700/50 text-gray-300 text-xs rounded-md"
               >
                 {tag}
               </span>
@@ -194,25 +194,26 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
           <button
             onClick={() => onSelect?.(product)}
             className={`
-              flex-1 py-2 px-3 rounded-lg text-sm font-medium
+              flex-1 py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium
               bg-white/10 hover:bg-white/20 text-white border border-white/20
-              transition-all duration-200 hover:scale-105
+              transition-all duration-200 hover:scale-[1.02] sm:hover:scale-105
               ${COMMON_CLASSES.focus}
             `}
           >
-            Ver Detalhes
+            <span className="hidden sm:inline">Ver Detalhes</span>
+            <span className="sm:hidden">Ver</span>
           </button>
           <button
             onClick={handleAddToCart}
             className={`
-              px-4 py-2 rounded-lg text-sm font-medium
+              px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium
               ${designUtils.gradient('primary')}
               text-white shadow-md hover:shadow-lg
-              transition-all duration-200 hover:scale-105
+              transition-all duration-200 hover:scale-[1.02] sm:hover:scale-105
               ${COMMON_CLASSES.focus}
             `}
           >
-            <ShoppingCart className="w-4 h-4" />
+            <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" />
           </button>
         </div>
 
@@ -238,8 +239,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
       </div>
 
       {/* Hover Glow Effect */}
-      <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-        <div className="absolute inset-0 rounded-xl shadow-lg shadow-primary/20"></div>
+      <div className="absolute inset-0 rounded-lg sm:rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+        <div className="absolute inset-0 rounded-lg sm:rounded-xl shadow-lg shadow-primary/20"></div>
       </div>
     </div>
   );

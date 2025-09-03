@@ -67,16 +67,16 @@ const sanitizeInput = (input: string): string => {
 // Enhanced password validation
 const validatePassword = (password: string): { isValid: boolean; message?: string } => {
   if (password.length < 8) {
-    return { isValid: false, message: 'A senha deve ter pelo menos 8 caracteres' };
+    return { isValid: false, message: 'Senha deve ter pelo menos 8 caracteres' };
   }
   if (!/[A-Z]/.test(password)) {
-    return { isValid: false, message: 'A senha deve conter pelo menos uma letra maiúscula' };
+    return { isValid: false, message: 'Senha deve conter uma letra maiúscula' };
   }
   if (!/[a-z]/.test(password)) {
-    return { isValid: false, message: 'A senha deve conter pelo menos uma letra minúscula' };
+    return { isValid: false, message: 'Senha deve conter uma letra minúscula' };
   }
   if (!/[0-9]/.test(password)) {
-    return { isValid: false, message: 'A senha deve conter pelo menos um número' };
+    return { isValid: false, message: 'Senha deve conter um número' };
   }
   return { isValid: true };
 };
@@ -341,19 +341,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       if (err.message?.includes('Supabase not configured')) {
         throw new Error("Sistema de autenticação não configurado. Por favor, configure o Supabase primeiro.");
       } else if (err.message?.includes('Invalid login credentials')) {
-        throw new Error("Email ou senha incorretos. Verifique suas credenciais.");
+        throw new Error("Email ou senha incorretos");
       } else if (err.message?.includes('Too many requests')) {
-        throw new Error("Muitas tentativas de login. Aguarde alguns minutos antes de tentar novamente.");
+        throw new Error("Muitas tentativas. Aguarde alguns minutos");
       } else if (err.message?.includes('Email not confirmed')) {
-        throw new Error("Email não confirmado. Verifique sua caixa de entrada e clique no link de confirmação.");
+        throw new Error("Email não confirmado. Verifique sua caixa de entrada");
       } else if (err.message?.includes('User not found')) {
-        throw new Error("Usuário não encontrado. Verifique o email digitado ou crie uma nova conta.");
+        throw new Error("Usuário não encontrado. Verifique o email");
       } else if (err.message?.includes('timeout')) {
-        throw new Error("Tempo limite excedido. Verifique sua conexão com a internet e tente novamente.");
+        throw new Error("Conexão lenta. Tente novamente");
       } else if (err.message?.includes('network') || err.message?.includes('Failed to fetch')) {
-        throw new Error("Erro de conexão. Verifique sua internet e se o Supabase está configurado corretamente.");
+        throw new Error("Sem conexão. Verifique sua internet");
       } else {
-        throw new Error("Erro interno. Tente novamente em alguns minutos.");
+        throw new Error("Erro interno. Tente novamente");
       }
     }
   };
@@ -450,17 +450,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("Registration error:", err.message);
 
       if (err.message?.includes('User already registered')) {
-        throw new Error("Este email já está em uso. Tente fazer login ou use outro email.");
+        throw new Error("Email já está em uso");
       } else if (err.message?.includes('Password should be at least')) {
-        throw new Error("Senha muito fraca. Use uma senha com pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas e números.");
+        throw new Error("Senha muito fraca");
       } else if (err.message?.includes('Signups not allowed')) {
-        throw new Error("Registros temporariamente desabilitados. Entre em contato com o suporte.");
+        throw new Error("Registros desabilitados");
       } else if (err.message?.includes('timeout')) {
-        throw new Error("Tempo limite excedido. Verifique sua conexão e tente novamente.");
+        throw new Error("Conexão lenta. Tente novamente");
       } else if (err.message?.includes('network')) {
-        throw new Error("Erro de conexão. Verifique sua internet e tente novamente.");
+        throw new Error("Sem conexão. Verifique sua internet");
       } else {
-        throw new Error("Erro no registro. Tente novamente em alguns minutos.");
+        throw new Error("Erro no registro. Tente novamente");
       }
     }
   };

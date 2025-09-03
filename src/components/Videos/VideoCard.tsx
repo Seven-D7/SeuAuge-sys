@@ -29,9 +29,9 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
 
   return (
     <div className={`
-      group cursor-pointer overflow-hidden rounded-md sm:rounded-lg md:rounded-xl
+      group cursor-pointer overflow-hidden rounded-lg
       ${designUtils.glass('dark')}
-      hover:scale-[1.01] sm:hover:scale-[1.02] md:hover:scale-105 transition-all duration-300
+      hover:scale-[1.02] transition-all duration-300
       hover:shadow-xl hover:shadow-primary/10
       ${COMMON_CLASSES.focus}
       w-full max-w-full
@@ -63,9 +63,9 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
 
         {/* Premium Badge */}
         {!video.isFree && (
-          <div className="absolute top-3 left-3">
+          <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
             <div className={`
-              flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold
+              flex items-center gap-1 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-semibold
               ${designUtils.glass('warning')}
               text-yellow-200
             `}>
@@ -76,15 +76,14 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
         )}
 
         {/* Duration */}
-        <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3">
+        <div className="absolute bottom-2 right-2">
           <div className={`
-            flex items-center gap-1 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-md text-xs font-medium
+            flex items-center gap-1 px-1.5 py-0.5 rounded-md text-xs font-medium
             ${designUtils.glass('dark')}
             text-white
           `}>
             <Clock className="w-3 h-3" />
-            <span className="hidden sm:inline">{formatDuration(video.duration, 'full')}</span>
-            <span className="sm:hidden">{formatDuration(video.duration, 'short')}</span>
+            <span>{formatDuration(video.duration, 'short')}</span>
           </div>
         </div>
 
@@ -92,24 +91,24 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
         <button
           onClick={toggleFavorite}
           className={`
-            absolute top-3 right-3 p-2 rounded-full transition-all duration-200
+            absolute top-2 right-2 p-1.5 sm:p-2 rounded-full transition-all duration-200
             ${designUtils.glass('dark')}
             hover:scale-110 ${COMMON_CLASSES.focus}
             ${isFavorite ? 'text-red-400' : 'text-white/70 hover:text-white'}
           `}
           aria-label={isFavorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
         >
-          <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+          <Heart className={`w-3 h-3 sm:w-4 sm:h-4 ${isFavorite ? 'fill-current' : ''}`} />
         </button>
       </div>
 
       {/* Video Info */}
-      <div className="p-2 sm:p-3 md:p-4">
+      <div className="p-3">
         <div className="mb-2">
           <h3 className={`
             font-semibold text-white line-clamp-2 mb-1
             ${COMMON_CLASSES.heading.h4}
-            text-xs sm:text-sm md:text-base leading-tight
+            text-sm leading-tight
           `}>
             {video.title}
           </h3>
@@ -121,7 +120,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
         {/* Category Badge */}
         <div className="flex items-center justify-between">
           <span className={`
-            inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+            inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
             bg-primary/20 text-primary-300 border border-primary/30
           `}>
             {video.category}
@@ -137,11 +136,11 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
 
         {/* Tags */}
         {video.tags && video.tags.length > 0 && (
-          <div className="mt-2 sm:mt-3 flex flex-wrap gap-1">
+          <div className="mt-2 flex flex-wrap gap-1">
             {video.tags.slice(0, 2).map((tag) => (
               <span
                 key={tag}
-                className="px-1.5 sm:px-2 py-0.5 bg-gray-700/50 text-gray-300 text-xs rounded-md"
+                className="px-1.5 py-0.5 bg-gray-700/50 text-gray-300 text-xs rounded-md"
               >
                 #{tag}
               </span>
@@ -150,35 +149,30 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
         )}
 
         {/* Action Bar */}
-        <div className="mt-2 sm:mt-3 md:mt-4 flex items-center justify-between">
+        <div className="mt-3 flex items-center justify-between">
           <button
             onClick={onClick}
             disabled={!hasAccess}
             className={`
-              flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg text-xs font-medium
+              flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium
               transition-all duration-200
               ${hasAccess
-                ? `${designUtils.gradient('primary')} text-white hover:scale-[1.02] sm:hover:scale-105 shadow-md hover:shadow-lg`
+                ? `${designUtils.gradient('primary')} text-white hover:scale-105 shadow-md hover:shadow-lg`
                 : 'bg-gray-700 text-gray-400 cursor-not-allowed'
               }
               ${COMMON_CLASSES.focus}
             `}
           >
-            <Play className="w-3 h-3 sm:w-4 sm:h-4" />
+            <Play className="w-3 h-3" />
             {hasAccess ? 'Assistir' : 'Premium'}
           </button>
 
-          {video.description && (
-            <div className="text-xs text-gray-400 truncate ml-2 flex-1 hidden md:block">
-              {video.description}
-            </div>
-          )}
         </div>
       </div>
 
       {/* Hover Glow Effect */}
-      <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-        <div className="absolute inset-0 rounded-xl shadow-lg shadow-primary/20"></div>
+      <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+        <div className="absolute inset-0 rounded-lg shadow-lg shadow-primary/20"></div>
       </div>
     </div>
   );

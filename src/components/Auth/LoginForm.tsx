@@ -42,37 +42,37 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
 
     // Input validation
     if (!email.trim() || !password.trim()) {
-      setError(t('auth.email_password_required'));
+      setError('Email e senha são obrigatórios');
       return;
     }
 
     if (!validateEmail(email.trim())) {
-      setError(t('auth.valid_email_required'));
+      setError('Email inválido');
       return;
     }
 
     if (password.length < 6) {
-      setError(t('auth.password_min_length'));
+      setError('Senha deve ter pelo menos 6 caracteres');
       return;
     }
 
     setLoading(true);
     setError(null);
-    setLoginProgress(t('auth.authenticating'));
+    setLoginProgress('Autenticando...');
 
     try {
       // Step 1: Authenticate
-      setLoginProgress(t('auth.verifying_credentials'));
+      setLoginProgress('Verificando credenciais...');
       await login(email.trim(), password);
 
       // Step 2: Loading user data
-      setLoginProgress(t('auth.loading_profile'));
+      setLoginProgress('Carregando perfil...');
 
       // Small delay to show progress feedback
       await new Promise(resolve => setTimeout(resolve, 500));
 
       // Step 3: Redirect
-      setLoginProgress(t('auth.redirecting'));
+      setLoginProgress('Redirecionando...');
       navigate('/dashboard');
     } catch (error: unknown) {
       console.error('Login error:', error);
@@ -86,11 +86,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
           (!isSupabaseConfigured && (errorMessage.includes('conexão') || errorMessage.includes('Failed to fetch') || errorMessage.includes('network')))) {
         setShowSetupPrompt(true);
       } else if (errorMessage.includes('timeout')) {
-        const timeoutMsg = t('auth.connection_timeout');
+        const timeoutMsg = 'Conexão lenta. Tente novamente';
         setError(timeoutMsg);
         toast.error(timeoutMsg, { duration: 6000 });
       } else if (errorMessage.includes('network')) {
-        const networkMsg = t('auth.network_error');
+        const networkMsg = 'Sem conexão. Verifique sua internet';
         setError(networkMsg);
         toast.error(networkMsg, { duration: 6000 });
       } else {
