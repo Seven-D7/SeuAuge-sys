@@ -1,315 +1,46 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Verificação de variáveis obrigatórias
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Development mode check
-const isDevelopment = import.meta.env.DEV;
+const hasValidCredentials = supabaseUrl && supabaseAnonKey && supabaseUrl.includes('.supabase.co');
 
-// Create a mock client for development when credentials are missing
-const createMockClient = () => {
-  const mockError = new Error('Supabase not configured. Please connect to Supabase to enable authentication.');
-  
-  return {
-    auth: {
-      signInWithPassword: () => Promise.reject(mockError),
-      signUp: () => Promise.reject(mockError),
-      signOut: () => Promise.reject(mockError),
-      getSession: () => Promise.resolve({ data: { session: null }, error: null }),
-      getUser: () => Promise.resolve({ data: { user: null }, error: null }),
-      resetPasswordForEmail: () => Promise.reject(mockError),
-      resend: () => Promise.reject(mockError),
-      onAuthStateChange: (callback: Function) => {
-        // Mock empty subscription
-        return { data: { subscription: { unsubscribe: () => {} } } };
-      }
-    },
+export const supabase = hasValidCredentials
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true,
+      },
+    })
+  : createMockClient();
+
+export const isSupabaseConfigured = hasValidCredentials;
+
+// Helper function to create a mock client if credentials are not set
+function createMockClient() {
+  const mockError = new Error('Supabase não configurado.');
+  console.warn(mockError.message);
+
+  const mockAuth = {
+    signInWithPassword: () => Promise.reject(mockError),
+    signUp: () => Promise.reject(mockError),
+    signOut: () => Promise.resolve({ error: null }),
+    getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+  };
+
+  const mockDb = {
     from: () => ({
       select: () => Promise.resolve({ data: [], error: null }),
       insert: () => Promise.reject(mockError),
       update: () => Promise.reject(mockError),
       delete: () => Promise.reject(mockError),
     }),
-    realtime: {
-      channel: () => ({
-        on: () => ({}),
-        subscribe: () => ({}),
-        unsubscribe: () => ({}),
-      })
-    }
   };
-};
 
-// Check if we have valid Supabase credentials
-const hasValidCredentials = supabaseUrl && 
-  supabaseAnonKey && 
-  supabaseUrl !== '' && 
-  supabaseAnonKey !== '' &&
-  supabaseUrl.includes('.supabase.co') &&
-  !supabaseUrl.includes('demo-project') &&
-  !supabaseAnonKey.includes('demo-key');
-
-// Create either real or mock client
-export const supabase = hasValidCredentials 
-  ? createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: true,
-        flowType: 'pkce',
-        storage: {
-          getItem: (key: string) => {
-            try {
-              return localStorage.getItem(key);
-            } catch (error) {
-              console.warn('Error reading from localStorage:', error);
-              return null;
-            }
-          },
-          setItem: (key: string, value: string) => {
-            try {
-              localStorage.setItem(key, value);
-            } catch (error) {
-              console.warn('Error writing to localStorage:', error);
-            }
-          },
-          removeItem: (key: string) => {
-            try {
-              localStorage.removeItem(key);
-            } catch (error) {
-              console.warn('Error removing from localStorage:', error);
-            }
-          },
-        },
-        // Configure URLs for email verification and password reset
-        redirectTo: `${window.location.origin}/auth/confirm`,
-      },
-      global: {
-        headers: {
-          'x-application-name': 'healthflix',
-        },
-      },
-      realtime: {
-        params: {
-          eventsPerSecond: 10,
-        },
-        heartbeatIntervalMs: 30000,
-        reconnectAfterMs: (tries: number) => Math.min(tries * 1000, 10000),
-      },
-      db: {
-        schema: 'public',
-      },
-    })
-  : createMockClient() as any;
-
-// Export configuration status
-export const isSupabaseConfigured = hasValidCredentials;
-
-// Helper function to add timeout to Supabase operations
-export const withTimeout = <T>(
-  promise: Promise<T>, 
-  timeoutMs: number = 30000, 
-  operation: string = 'Operation'
-): Promise<T> => {
-  const timeoutPromise = new Promise<never>((_, reject) => {
-    setTimeout(() => {
-      reject(new Error(`${operation} timeout after ${timeoutMs}ms`));
-    }, timeoutMs);
-  });
-
-  return Promise.race([promise, timeoutPromise]);
-};
-
-// Enhanced auth operations with timeout and configuration check
-export const authOperations = {
-  async signInWithPassword(email: string, password: string) {
-    if (!hasValidCredentials) {
-      throw new Error('Supabase not configured. Please set up your Supabase credentials.');
-    }
-    
-    // Additional validation
-    if (!email || !password) {
-      throw new Error('Email e senha são obrigatórios');
-    }
-    
-    if (password.length < 6) {
-      throw new Error('Senha deve ter pelo menos 6 caracteres');
-    }
-    
-    return withTimeout(
-      supabase.auth.signInWithPassword({ email, password }),
-      20000,
-      'Login'
-    );
-  },
-
-  async signUp(email: string, password: string, options?: any) {
-    if (!hasValidCredentials) {
-      throw new Error('Supabase not configured. Please set up your Supabase credentials.');
-    }
-    
-    // Additional validation
-    if (!email || !password) {
-      throw new Error('Email e senha são obrigatórios');
-    }
-    
-    if (password.length < 8) {
-      throw new Error('Senha deve ter pelo menos 8 caracteres');
-    }
-    
-    return withTimeout(
-      supabase.auth.signUp({ email, password, options }),
-      25000,
-      'Registration'
-    );
-  },
-
-  async signOut() {
-    if (!hasValidCredentials) {
-      return { error: null };
-    }
-    
-    // Enhanced logout with proper cleanup
-    try {
-      // First, sign out from Supabase
-      const result = await withTimeout(
-        supabase.auth.signOut({ scope: 'global' }),
-        10000,
-        'Logout'
-      );
-      
-      // Force clear all auth-related storage regardless of result
-      try {
-        const allKeys = Object.keys(localStorage);
-        allKeys.forEach(key => {
-          if (key.startsWith('supabase.') || 
-              key.startsWith('sb-') || 
-              key.includes('auth') ||
-              key.includes('session') ||
-              key.includes('token')) {
-            localStorage.removeItem(key);
-          }
-        });
-        
-        // Clear sessionStorage as well
-        sessionStorage.clear();
-        
-        // Clear any cookies related to auth
-        document.cookie.split(";").forEach(cookie => {
-          const eqPos = cookie.indexOf("=");
-          const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-          if (name.includes('auth') || name.includes('session') || name.includes('token')) {
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-          }
-        });
-        
-      } catch (cleanupError) {
-        console.warn('Error during storage cleanup:', cleanupError);
-      }
-      
-      return result;
-    } catch (error) {
-      console.error('Logout error:', error);
-      // Even if logout fails, clear local data
-      try {
-        localStorage.clear();
-        sessionStorage.clear();
-      } catch (clearError) {
-        console.error('Error clearing storage after failed logout:', clearError);
-      }
-      throw error;
-    }
-  },
-
-  async getSession() {
-    if (!hasValidCredentials) {
-      return { data: { session: null }, error: null };
-    }
-    return withTimeout(
-      supabase.auth.getSession(),
-      15000,
-      'Get Session'
-    );
-  },
-
-  async getUser() {
-    if (!hasValidCredentials) {
-      return { data: { user: null }, error: null };
-    }
-    return withTimeout(
-      supabase.auth.getUser(),
-      15000,
-      'Get User'
-    );
-  },
-
-  async resetPasswordForEmail(email: string, redirectTo?: string) {
-    if (!hasValidCredentials) {
-      throw new Error('Supabase not configured. Please set up your Supabase credentials.');
-    }
-    
-    if (!email) {
-      throw new Error('Email é obrigatório');
-    }
-    
-    const finalRedirectTo = redirectTo || `${window.location.origin}/auth/reset-password`;
-    return withTimeout(
-      supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: finalRedirectTo,
-      }),
-      20000,
-      'Password Reset'
-    );
-  },
-
-  async resendConfirmation(email: string, redirectTo?: string) {
-    if (!hasValidCredentials) {
-      throw new Error('Supabase not configured. Please set up your Supabase credentials.');
-    }
-    
-    if (!email) {
-      throw new Error('Email é obrigatório');
-    }
-    
-    const finalRedirectTo = redirectTo || `${window.location.origin}/auth/confirm`;
-    return withTimeout(
-      supabase.auth.resend({
-        type: 'signup',
-        email: email,
-        options: {
-          emailRedirectTo: finalRedirectTo,
-        }
-      }),
-      20000,
-      'Resend Confirmation'
-    );
-  },
-};
-
-// Database types for better type safety
-export interface UserProfile {
-  id: string;
-  email: string;
-  name: string;
-  avatar_url?: string;
-  plan?: string | null;
-  role?: 'user' | 'admin' | 'moderator';
-  birthdate?: string;
-  created_at: string;
-  updated_at: string;
+  return {
+    auth: mockAuth,
+    from: mockDb.from,
+  } as any;
 }
-
-export interface Database {
-  public: {
-    Tables: {
-      user_profiles: {
-        Row: UserProfile;
-        Insert: Omit<UserProfile, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<UserProfile, 'id' | 'created_at' | 'updated_at'>>;
-      };
-    };
-  };
-}
-
-export default supabase;

@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect } from "react";
+import React, { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
@@ -12,234 +12,34 @@ import SupabaseStatus from "./components/Common/SupabaseStatus";
 import NetworkStatus from "./components/Common/NetworkStatus";
 import { Toaster } from "react-hot-toast";
 
-import { performanceMonitor, registerServiceWorker, addResourceHint } from "./lib/performance";
-import { useCapacitor } from "./hooks/useCapacitor";
+// Lazy load components
+const Auth = lazy(() => import("./pages/Auth"));
+const Home = lazy(() => import("./pages/Home"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const About = lazy(() => import("./pages/About"));
+const AuthCallback = lazy(() => import("./pages/AuthCallback"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Favorites = lazy(() => import("./pages/Favorites"));
+const Cart = lazy(() => import("./pages/Cart"));
+const Profile = lazy(() => import("./pages/Profile"));
+const FitnessModulesApp = lazy(() => import("./components/fitness-modules/ModulosConfig"));
+const Reports = lazy(() => import("./pages/Reports"));
+const Videos = lazy(() => import("./pages/Videos"));
+const Products = lazy(() => import("./pages/Products"));
+const AppsPage = lazy(() => import("./pages/Apps"));
+const Achievements = lazy(() => import("./pages/Achievements"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
+const PreferencesSetup = lazy(() => import("./pages/PreferencesSetup"));
+const Plans = lazy(() => import("./pages/Plans"));
 
-// Lazy load components with better chunking
-const Auth = lazy(() =>
-  import("./pages/Auth").then(module => {
-    performanceMonitor.mark('auth-loaded');
-    return module;
-  })
-);
-
-const Home = lazy(() =>
-  import("./pages/Home").then(module => {
-    performanceMonitor.mark('home-loaded');
-    return module;
-  })
-);
-
-const Dashboard = lazy(() =>
-  import("./pages/Dashboard").then(module => {
-    performanceMonitor.mark('dashboard-loaded');
-    return module;
-  })
-);
-
-const About = lazy(() =>
-  import("./pages/About").then(module => {
-    performanceMonitor.mark('about-loaded');
-    return module;
-  })
-);
-
-const AuthCallback = lazy(() =>
-  import("./pages/AuthCallback").then(module => {
-    performanceMonitor.mark('auth-callback-loaded');
-    return module;
-  })
-);
-
-const ResetPassword = lazy(() =>
-  import("./pages/ResetPassword").then(module => {
-    performanceMonitor.mark('reset-password-loaded');
-    return module;
-  })
-);
-
-const Favorites = lazy(() =>
-  import("./pages/Favorites").then(module => {
-    performanceMonitor.mark('favorites-loaded');
-    return module;
-  })
-);
-
-const Cart = lazy(() =>
-  import("./pages/Cart").then(module => {
-    performanceMonitor.mark('cart-loaded');
-    return module;
-  })
-);
-
-const Profile = lazy(() =>
-  import("./pages/Profile").then(module => {
-    performanceMonitor.mark('profile-loaded');
-    return module;
-  })
-);
-
-const FitnessModulesApp = lazy(() =>
-  import("./components/fitness-modules/ModulosConfig").then(module => {
-    performanceMonitor.mark('fitness-modules-loaded');
-    return module;
-  })
-);
-
-const Reports = lazy(() =>
-  import("./pages/Reports").then(module => {
-    performanceMonitor.mark('reports-loaded');
-    return module;
-  })
-);
-
-const Videos = lazy(() =>
-  import("./pages/Videos").then(module => {
-    performanceMonitor.mark('videos-loaded');
-    return module;
-  })
-);
-
-const Products = lazy(() =>
-  import("./pages/Products").then(module => {
-    performanceMonitor.mark('products-loaded');
-    return module;
-  })
-);
-
-const AppsPage = lazy(() =>
-  import("./pages/Apps").then(module => {
-    performanceMonitor.mark('apps-loaded');
-    return module;
-  })
-);
-
-const Achievements = lazy(() =>
-  import("./pages/Achievements").then(module => {
-    performanceMonitor.mark('achievements-loaded');
-    return module;
-  })
-);
-
-const AdminDashboard = lazy(() =>
-  import("./pages/AdminDashboard").then(module => {
-    performanceMonitor.mark('admin-dashboard-loaded');
-    return module;
-  })
-);
-
-const Onboarding = lazy(() =>
-  import("./pages/Onboarding").then(module => {
-    performanceMonitor.mark('onboarding-loaded');
-    return module;
-  })
-);
-
-const PreferencesSetup = lazy(() =>
-  import("./pages/PreferencesSetup").then(module => {
-    performanceMonitor.mark('preferences-setup-loaded');
-    return module;
-  })
-);
-
-const Plans = lazy(() =>
-  import("./pages/Plans").then(module => {
-    performanceMonitor.mark('plans-loaded');
-    return module;
-  })
-);
-
-// Loading fallback component
 const LoadingFallback = () => (
-  <div className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-900 safe-area-inset">
+  <div className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-900">
     <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
   </div>
 );
 
 const App: React.FC = () => {
-  const { triggerHaptic } = useCapacitor();
-
-  useEffect(() => {
-    // Register service worker for PWA
-    registerServiceWorker();
-
-    // Add preconnect hints for better performance
-    addResourceHint('preconnect', 'https://fonts.googleapis.com');
-    addResourceHint('preconnect', 'https://fonts.gstatic.com');
-
-    // Mark app initialization
-    performanceMonitor.mark('app-start');
-
-    // Session integrity check on app start
-    const checkSessionOnStart = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.warn('Session error on app start:', error);
-          // Clear potentially corrupted session data
-          const allKeys = Object.keys(localStorage);
-          allKeys.forEach(key => {
-            if (key.startsWith('supabase.') || key.includes('auth')) {
-              localStorage.removeItem(key);
-            }
-          });
-        }
-        
-        // If we have a session but user is on auth page, redirect to dashboard
-        if (session?.user && window.location.pathname.includes('/auth')) {
-          window.location.href = '/dashboard';
-        }
-        
-        // If no session but user is on protected page, redirect to auth
-        if (!session?.user && 
-            !window.location.pathname.includes('/auth') && 
-            !window.location.pathname.includes('/') &&
-            !window.location.pathname.includes('/about') &&
-            !window.location.pathname.includes('/plans')) {
-          window.location.href = '/auth';
-        }
-      } catch (error) {
-        console.warn('Error checking session on start:', error);
-      }
-    };
-    
-    // Run session check after a brief delay
-    setTimeout(checkSessionOnStart, 500);
-    
-    // Register performance observer
-    if ('PerformanceObserver' in window) {
-      const observer = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
-          performanceMonitor.mark(`${entry.name}-observed`);
-        });
-      });
-      observer.observe({ entryTypes: ['navigation', 'resource'] });
-    }
-
-    // Performance metrics reporting after load
-    if (import.meta.env.PROD) {
-      setTimeout(() => {
-        const metrics = performanceMonitor.getMetrics();
-        if (metrics) {
-          console.log('Page Load Metrics:', metrics);
-        }
-      }, 1000);
-    }
-
-    // Add haptic feedback to buttons (Capacitor only)
-    const addHapticFeedback = () => {
-      document.addEventListener('click', (e) => {
-        const target = e.target as HTMLElement;
-        if (target.tagName === 'BUTTON' || target.closest('button')) {
-          triggerHaptic();
-        }
-      });
-    };
-
-    addHapticFeedback();
-  }, []);
-
   return (
     <ErrorBoundary>
       <ThemeProvider>
@@ -247,268 +47,44 @@ const App: React.FC = () => {
           <AuthProvider>
             <SupabaseStatus />
             <NetworkStatus />
-            <div className="min-h-screen bg-slate-900 safe-area-inset">
+            <Toaster position="top-center" />
+            <Suspense fallback={<LoadingFallback />}>
               <Routes>
-                <Route
-                  path="/"
-                  element={
-                    <Suspense fallback={<LoadingFallback />}>
-                      <Home />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/about"
-                  element={
-                    <Suspense fallback={<LoadingFallback />}>
-                      <About />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/auth"
-                  element={
-                    <Suspense fallback={<LoadingFallback />}>
-                      <Auth />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/login"
-                  element={<Navigate to="/auth?mode=login" replace />}
-                />
-                <Route
-                  path="/register"
-                  element={<Navigate to="/auth?mode=register" replace />}
-                />
-                <Route
-                  path="/auth/callback"
-                  element={
-                    <Suspense fallback={<LoadingFallback />}>
-                      <AuthCallback />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/auth/confirm"
-                  element={
-                    <Suspense fallback={<LoadingFallback />}>
-                      <AuthCallback />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/auth/reset-password"
-                  element={
-                    <Suspense fallback={<LoadingFallback />}>
-                      <ResetPassword />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="/plans"
-                  element={
-                    <Suspense fallback={<LoadingFallback />}>
-                      <Plans />
-                    </Suspense>
-                  }
-                />
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/login" element={<Navigate to="/auth?mode=login" replace />} />
+                <Route path="/register" element={<Navigate to="/auth?mode=register" replace />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/auth/confirm" element={<AuthCallback />} />
+                <Route path="/auth/reset-password" element={<ResetPassword />} />
+                <Route path="/plans" element={<Plans />} />
 
                 {/* Protected Routes */}
-                <Route
-                  path="/dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <Suspense fallback={<LoadingFallback />}>
-                          <Dashboard />
-                        </Suspense>
-                      </Layout>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/profile"
-                  element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <Suspense fallback={<LoadingFallback />}>
-                          <Profile />
-                        </Suspense>
-                      </Layout>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/favorites"
-                  element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <Suspense fallback={<LoadingFallback />}>
-                          <Favorites />
-                        </Suspense>
-                      </Layout>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/cart"
-                  element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <Suspense fallback={<LoadingFallback />}>
-                          <Cart />
-                        </Suspense>
-                      </Layout>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/reports"
-                  element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <Suspense fallback={<LoadingFallback />}>
-                          <Reports />
-                        </Suspense>
-                      </Layout>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/achievements"
-                  element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <Suspense fallback={<LoadingFallback />}>
-                          <Achievements />
-                        </Suspense>
-                      </Layout>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/onboarding"
-                  element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <Suspense fallback={<LoadingFallback />}>
-                          <Onboarding />
-                        </Suspense>
-                      </Layout>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/preferences"
-                  element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <Suspense fallback={<LoadingFallback />}>
-                          <PreferencesSetup />
-                        </Suspense>
-                      </Layout>
-                    </ProtectedRoute>
-                  }
-                />
+                <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><Layout><Profile /></Layout></ProtectedRoute>} />
+                <Route path="/favorites" element={<ProtectedRoute><Layout><Favorites /></Layout></ProtectedRoute>} />
+                <Route path="/cart" element={<ProtectedRoute><Layout><Cart /></Layout></ProtectedRoute>} />
+                <Route path="/reports" element={<ProtectedRoute><Layout><Reports /></Layout></ProtectedRoute>} />
+                <Route path="/achievements" element={<ProtectedRoute><Layout><Achievements /></Layout></ProtectedRoute>} />
+                <Route path="/onboarding" element={<ProtectedRoute><Layout><Onboarding /></Layout></ProtectedRoute>} />
+                <Route path="/preferences" element={<ProtectedRoute><Layout><PreferencesSetup /></Layout></ProtectedRoute>} />
 
                 {/* Plan-Protected Routes */}
-                <Route path="/protected/*" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Routes>
-                        <Route
-                          path="videos"
-                          element={
-                            <PlanGuard requiredPlan="B">
-                              <Suspense fallback={<LoadingFallback />}>
-                                <Videos />
-                              </Suspense>
-                            </PlanGuard>
-                          }
-                        />
-                        <Route
-                          path="products"
-                          element={
-                            <PlanGuard requiredPlan="B">
-                              <Suspense fallback={<LoadingFallback />}>
-                                <Products />
-                              </Suspense>
-                            </PlanGuard>
-                          }
-                        />
-
-                        <Route
-                          path="apps"
-                          element={
-                            <PlanGuard requiredPlan="B">
-                              <Suspense fallback={<LoadingFallback />}>
-                                <AppsPage />
-                              </Suspense>
-                            </PlanGuard>
-                          }
-                        />
-                        <Route
-                          path="fitness/*"
-                          element={
-                            <PlanGuard requiredPlan="B">
-                              <Suspense fallback={<LoadingFallback />}>
-                                <FitnessModulesApp />
-                              </Suspense>
-                            </PlanGuard>
-                          }
-                        />
-                      </Routes>
-                    </Layout>
-                  </ProtectedRoute>
-                } />
+                <Route path="/protected/*" element={<ProtectedRoute><Layout><Routes>
+                  <Route path="videos" element={<PlanGuard requiredPlan="B"><Videos /></PlanGuard>} />
+                  <Route path="products" element={<PlanGuard requiredPlan="B"><Products /></PlanGuard>} />
+                  <Route path="apps" element={<PlanGuard requiredPlan="B"><AppsPage /></PlanGuard>} />
+                  <Route path="fitness/*" element={<PlanGuard requiredPlan="B"><FitnessModulesApp /></PlanGuard>} />
+                </Routes></Layout></ProtectedRoute>} />
 
                 {/* Admin Routes */}
-                <Route
-                  path="/admin"
-                  element={
-                    <AdminRoute>
-                      <Layout>
-                        <Suspense fallback={<LoadingFallback />}>
-                          <AdminDashboard />
-                        </Suspense>
-                      </Layout>
-                    </AdminRoute>
-                  }
-                />
+                <Route path="/admin" element={<AdminRoute><Layout><AdminDashboard /></Layout></AdminRoute>} />
 
                 {/* Fallback */}
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
-
-              {/* Global Toast Notifications */}
-              <Toaster
-                position="top-center"
-                toastOptions={{
-                  duration: 4000,
-                  className: 'safe-area-inset-top',
-                  style: {
-                    background: '#1e293b',
-                    color: '#f1f5f9',
-                    border: '1px solid #334155',
-                    maxWidth: 'calc(100vw - 32px)',
-                    wordBreak: 'break-word',
-                  },
-                  success: {
-                    style: {
-                      background: '#059669',
-                      color: '#ffffff',
-                    },
-                  },
-                  error: {
-                    style: {
-                      background: '#dc2626',
-                      color: '#ffffff',
-                    },
-                  },
-                }}
-              />
-            </div>
+            </Suspense>
           </AuthProvider>
         </LanguageProvider>
       </ThemeProvider>
