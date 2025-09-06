@@ -9,6 +9,30 @@ import './styles/mobile.css';
 import App from './App';
 import { ThemeProvider } from './contexts/ThemeContext';
 
+// Session cleanup on page load
+const cleanupStaleSession = async () => {
+  try {
+    // Check if we have a valid session
+    const { data: { session }, error } = await supabase.auth.getSession();
+    
+    if (error || !session) {
+      // Clear any stale data if no valid session
+      const allKeys = Object.keys(localStorage);
+      allKeys.forEach(key => {
+        if (key.startsWith('supabase.') || 
+            key.startsWith('sb-') || 
+            key.includes('auth') ||
+            key.includes('session')) {
+          localStorage.removeItem(key);
+        }
+      });
+      console.log('Cleared stale session data');
+    }
+  } catch (error) {
+    console.warn('Error during session cleanup:', error);
+  }
+};
+
 // Detect if running in Capacitor
 const isCapacitor = !!(window as any).Capacitor;
 
@@ -74,12 +98,20 @@ window.addEventListener('orientationchange', () => {
 window.addEventListener('online', () => {
   document.body.classList.remove('offline');
   console.log('🌐 Conexão restaurada');
+  
+  // Validate session when coming back online
+  if (window.location.pathname !== '/auth') {
+    cleanupStaleSession();
+  }
 });
 
 window.addEventListener('offline', () => {
   document.body.classList.add('offline');
   console.log('📵 Sem conexão');
 });
+
+// Cleanup stale session on page load
+cleanupStaleSession();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

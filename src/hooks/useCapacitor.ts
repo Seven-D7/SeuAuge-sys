@@ -55,6 +55,26 @@ export const useCapacitor = () => {
 
     const appStateListener = App.addListener('appStateChange', ({ isActive }) => {
       setState(prev => ({ ...prev, appState: isActive ? 'active' : 'background' }));
+      
+      // Validate session when app becomes active
+      if (isActive) {
+        setTimeout(async () => {
+          try {
+            const { data: { session }, error } = await supabase.auth.getSession();
+            if (error || !session) {
+              // Clear stale data if session is invalid
+              const allKeys = Object.keys(localStorage);
+              allKeys.forEach(key => {
+                if (key.startsWith('supabase.') || key.includes('auth')) {
+                  localStorage.removeItem(key);
+                }
+              });
+            }
+          } catch (error) {
+            console.warn('Error validating session on app resume:', error);
+          }
+        }, 1000);
+      }
     });
 
     // Handle back button

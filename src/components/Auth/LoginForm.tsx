@@ -61,6 +61,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     setLoginProgress('Autenticando...');
 
     try {
+      // Clear any existing session data before attempting login
+      const allKeys = Object.keys(localStorage);
+      allKeys.forEach(key => {
+        if (key.startsWith('supabase.') || key.includes('auth') || key.includes('session')) {
+          localStorage.removeItem(key);
+        }
+      });
+      
+      // Small delay to ensure cleanup is complete
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       // Step 1: Authenticate
       setLoginProgress('Verificando credenciais...');
       await login(email.trim(), password);
@@ -91,6 +102,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
         setError('Email não confirmado. Verifique sua caixa de entrada');
       } else if (errorMessage.includes('Too many requests')) {
         setError('Muitas tentativas de login. Aguarde alguns minutos');
+      } else if (errorMessage.includes('Sessão inválida') || errorMessage.includes('Session')) {
+        setError('Erro de sessão. Tente novamente');
+        // Clear all data on session error
+        localStorage.clear();
+        sessionStorage.clear();
       } else if (errorMessage.includes('timeout')) {
         const timeoutMsg = 'Conexão lenta. Tente novamente';
         setError(timeoutMsg);

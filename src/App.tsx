@@ -170,6 +170,43 @@ const App: React.FC = () => {
     // Mark app initialization
     performanceMonitor.mark('app-start');
 
+    // Session integrity check on app start
+    const checkSessionOnStart = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.warn('Session error on app start:', error);
+          // Clear potentially corrupted session data
+          const allKeys = Object.keys(localStorage);
+          allKeys.forEach(key => {
+            if (key.startsWith('supabase.') || key.includes('auth')) {
+              localStorage.removeItem(key);
+            }
+          });
+        }
+        
+        // If we have a session but user is on auth page, redirect to dashboard
+        if (session?.user && window.location.pathname.includes('/auth')) {
+          window.location.href = '/dashboard';
+        }
+        
+        // If no session but user is on protected page, redirect to auth
+        if (!session?.user && 
+            !window.location.pathname.includes('/auth') && 
+            !window.location.pathname.includes('/') &&
+            !window.location.pathname.includes('/about') &&
+            !window.location.pathname.includes('/plans')) {
+          window.location.href = '/auth';
+        }
+      } catch (error) {
+        console.warn('Error checking session on start:', error);
+      }
+    };
+    
+    // Run session check after a brief delay
+    setTimeout(checkSessionOnStart, 500);
+    
     // Register performance observer
     if ('PerformanceObserver' in window) {
       const observer = new PerformanceObserver((list) => {

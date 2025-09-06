@@ -245,6 +245,14 @@ export function stopRealtimeSync(): void {
     unsubscribeSnapshot = null;
   }
 
+  // Clear any sync-related data
+  try {
+    localStorage.removeItem('lastSyncAt');
+    localStorage.removeItem('syncStatus');
+  } catch (error) {
+    console.warn('Error clearing sync data:', error);
+  }
+  
   console.log("⏹️ Sincronização em tempo real parada");
 }
 

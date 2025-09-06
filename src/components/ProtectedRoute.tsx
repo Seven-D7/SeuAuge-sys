@@ -16,6 +16,30 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
+  
+  // Check for stale session data
+  React.useEffect(() => {
+    const checkStaleSession = async () => {
+      if (!loading && !user) {
+        // Clear any stale session data when user is null but not loading
+        const allKeys = Object.keys(localStorage);
+        const hasStaleAuthData = allKeys.some(key => 
+          key.startsWith('supabase.') || key.includes('auth')
+        );
+        
+        if (hasStaleAuthData) {
+          console.log('Clearing stale session data in ProtectedRoute');
+          allKeys.forEach(key => {
+            if (key.startsWith('supabase.') || key.includes('auth')) {
+              localStorage.removeItem(key);
+            }
+          });
+        }
+      }
+    };
+    
+    checkStaleSession();
+  }, [user, loading]);
 
   // Enhanced loading state with better UX
   if (loading) {

@@ -7,6 +7,119 @@ import { initializeSyncSystem } from '../services/sync';
 import { validateEmail, validatePassword, validateName, validateBirthdate, sanitizeInput } from '../lib/validation';
 import toast from 'react-hot-toast';
 
+// Session management utilities
+const SESSION_STORAGE_KEYS = [
+  'supabase.auth.token',
+  'sb-auth-token',
+  'sb-refresh-token',
+  'user-session',
+  'auth-state',
+  'user-preferences',
+  'achievements-store',
+  'level-storage',
+  'goals-storage',
+  'user-profile-store',
+  'enhanced-preferences-store',
+  'fitness-reports-storage',
+  'gamificationData',
+  'userActivities',
+  'userActivityStats',
+  'userMetrics',
+  'lastSyncAt',
+  'onboarding-completed'
+];
+
+const clearAllSessionData = (): void => {
+  try {
+    // Clear localStorage
+    SESSION_STORAGE_KEYS.forEach(key => {
+      localStorage.removeItem(key);
+    });
+    
+    // Clear sessionStorage
+    sessionStorage.clear();
+    
+    // Clear any Supabase-specific storage
+    const allKeys = Object.keys(localStorage);
+    allKeys.forEach(key => {
+      if (key.startsWith('supabase.') || key.startsWith('sb-') || key.includes('auth')) {
+        localStorage.removeItem(key);
+      }
+    });
+    
+    console.log('✅ Session data cleared successfully');
+  } catch (error) {
+    console.error('Error clearing session data:', error);
+  }
+};
+
+const validateSessionIntegrity = async (): Promise<boolean> => {
+  try {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    
+    if (error) {
+      console.warn('Session validation error:', error);
+      return false;
+    }
+    
+    if (!session) {
+      return false;
+    }
+    
+    // Check if session is expired
+    const now = Math.floor(Date.now() / 1000);
+    if (session.expires_at && session.expires_at < now) {
+      console.warn('Session expired, clearing data');
+      clearAllSessionData();
+      return false;
+    }
+    
+    // Validate token format
+    if (!session.access_token || !session.refresh_token) {
+      console.warn('Invalid session tokens');
+      clearAllSessionData();
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Session validation failed:', error);
+    clearAllSessionData();
+    return false;
+  }
+};
+
+const refreshSessionIfNeeded = async (): Promise<boolean> => {
+  try {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    
+    if (error || !session) {
+      return false;
+    }
+    
+    // Check if token expires within next 5 minutes
+    const now = Math.floor(Date.now() / 1000);
+    const expiresIn = session.expires_at ? session.expires_at - now : 0;
+    
+    if (expiresIn < 300) { // Less than 5 minutes
+      console.log('Refreshing session token...');
+      const { data: { session: newSession }, error: refreshError } = await supabase.auth.refreshSession();
+      
+      if (refreshError || !newSession) {
+        console.warn('Failed to refresh session:', refreshError);
+        return false;
+      }
+      
+      console.log('Session refreshed successfully');
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Session refresh failed:', error);
+    return false;
+  }
+};
+
 export interface AuthUser extends User {
   name?: string;
   avatar?: string;
@@ -130,9 +243,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Initialize auth state
   useEffect(() => {
     let mounted = true;
+    let sessionCheckInterval: NodeJS.Timeout | null = null;
 
     const initializeAuth = async () => {
       try {
+        // Validate session integrity first
+        const isSessionValid = await validateSessionIntegrity();
+        
+        if (!isSessionValid) {
+          console.log('Invalid session detected, clearing data');
+          clearAllSessionData();
+          if (mounted) {
+            setUser(null);
+            setLoading(false);
+          }
+          return;
+        }
+        
         const { data: { session }, error } = await authOperations.getSession();
         
         if (error) {
@@ -140,11 +267,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           if (mounted) {
             setError(handleAuthError(error));
             setUser(null);
+            clearAllSessionData();
           }
           return;
         }
 
         if (session?.user && mounted) {
+          // Refresh session if needed
+          await refreshSessionIfNeeded();
+          
           const authUser = await loadUserData(session.user);
           setUser(authUser);
           
@@ -155,14 +286,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           } catch (serviceError) {
             console.warn('Erro ao inicializar serviços:', serviceError);
           }
+          
+          // Set up periodic session validation
+          sessionCheckInterval = setInterval(async () => {
+            if (!mounted) return;
+            
+            const isValid = await validateSessionIntegrity();
+            if (!isValid) {
+              console.log('Session became invalid, logging out');
+              await logout();
+            }
+          }, 5 * 60 * 1000); // Check every 5 minutes
+          
         } else if (mounted) {
           setUser(null);
+          clearAllSessionData();
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
         if (mounted) {
           setError(handleAuthError(error));
           setUser(null);
+          clearAllSessionData();
         }
       } finally {
         if (mounted) {
@@ -181,6 +326,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       try {
         if (event === 'SIGNED_IN' && session?.user) {
+          // Clear any stale data before setting new session
+          if (event === 'SIGNED_IN') {
+            clearAllSessionData();
+          }
+          
           const authUser = await loadUserData(session.user);
           setUser(authUser);
           setError(null);
@@ -195,21 +345,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
           setError(null);
-          // Clear any cached data
-          localStorage.removeItem('user-preferences');
+          // Comprehensive cleanup on sign out
+          clearAllSessionData();
+          
+          // Clear session check interval
+          if (sessionCheckInterval) {
+            clearInterval(sessionCheckInterval);
+            sessionCheckInterval = null;
+          }
         } else if (event === 'TOKEN_REFRESHED' && session?.user) {
           // Update user data on token refresh
+          const authUser = await loadUserData(session.user);
+          setUser(authUser);
+        } else if (event === 'USER_UPDATED' && session?.user) {
+          // Handle user updates
           const authUser = await loadUserData(session.user);
           setUser(authUser);
         }
       } catch (error) {
         console.error('Auth state change error:', error);
         setError(handleAuthError(error));
+        clearAllSessionData();
       }
     });
 
     return () => {
       mounted = false;
+      if (sessionCheckInterval) {
+        clearInterval(sessionCheckInterval);
+      }
       subscription.unsubscribe();
     };
   }, []);
@@ -229,6 +393,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setError(null);
 
     try {
+      // Clear any existing session data before login
+      clearAllSessionData();
+      
+      // Wait a bit to ensure cleanup is complete
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       const { data, error } = await authOperations.signInWithPassword(
         email.trim().toLowerCase(),
         password
@@ -237,6 +407,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (error) throw error;
 
       if (data.user) {
+        // Validate the new session
+        const isSessionValid = await validateSessionIntegrity();
+        if (!isSessionValid) {
+          throw new Error('Sessão inválida após login');
+        }
+        
         const authUser = await loadUserData(data.user);
         setUser(authUser);
         
@@ -253,6 +429,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error: any) {
       const errorMessage = handleAuthError(error);
       setError(errorMessage);
+      
+      // Clear data on login failure
+      clearAllSessionData();
       throw new Error(errorMessage);
     } finally {
       setLoading(false);
@@ -332,17 +511,58 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setError(null);
 
     try {
+      // Clear all session data BEFORE calling Supabase signOut
+      clearAllSessionData();
+      
+      // Force clear any pending requests or timers
+      if (typeof AbortController !== 'undefined') {
+        // Cancel any ongoing requests if possible
+        try {
+          // Implementation would depend on how we track ongoing requests
+        } catch (error) {
+          console.warn('Error canceling requests during logout:', error);
+        }
+      }
+      
       const { error } = await authOperations.signOut();
       
       if (error) throw error;
 
       setUser(null);
       
-      // Clear local storage
-      localStorage.removeItem('user-preferences');
-      localStorage.removeItem('achievements-store');
-      localStorage.removeItem('level-storage');
-      localStorage.removeItem('goals-storage');
+      // Additional cleanup to ensure everything is cleared
+      clearAllSessionData();
+      
+      // Clear any browser-specific storage
+      try {
+        if ('indexedDB' in window) {
+          // Clear IndexedDB if used by Supabase
+          const databases = await indexedDB.databases();
+          databases.forEach(db => {
+            if (db.name?.includes('supabase')) {
+              indexedDB.deleteDatabase(db.name);
+            }
+          });
+        }
+      } catch (error) {
+        console.warn('Error clearing IndexedDB:', error);
+      }
+      
+      // Clear any service worker cache if applicable
+      try {
+        if ('serviceWorker' in navigator && 'caches' in window) {
+          const cacheNames = await caches.keys();
+          await Promise.all(
+            cacheNames.map(cacheName => {
+              if (cacheName.includes('auth') || cacheName.includes('user')) {
+                return caches.delete(cacheName);
+              }
+            })
+          );
+        }
+      } catch (error) {
+        console.warn('Error clearing service worker cache:', error);
+      }
       
       toast.success('Logout realizado com sucesso', { duration: 2000 });
     } catch (error: any) {
@@ -352,7 +572,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       // Force logout even if there's an error
       setUser(null);
-      localStorage.clear();
+      clearAllSessionData();
     } finally {
       setLoading(false);
     }
