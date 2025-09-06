@@ -2,7 +2,6 @@
 import { supabase } from './supabaseClient';
 export {
   supabase,
-  withTimeout,
   type UserProfile,
   type Database
 } from './supabaseClient';
