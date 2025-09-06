@@ -17,6 +17,20 @@ export const supabase = hasValidCredentials
 
 export const isSupabaseConfigured = hasValidCredentials;
 
+// Utility function to handle promise timeouts
+export function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  operation: string = 'Operation'
+): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`${operation} timed out after ${timeoutMs}ms`)), timeoutMs)
+    )
+  ]);
+}
+
 // Helper function to create a mock client if credentials are not set
 function createMockClient() {
   const mockError = new Error('Supabase não configurado.');
