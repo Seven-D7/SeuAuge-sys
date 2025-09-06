@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, RefreshCw, CheckCircle, AlertCircle, Clock } from 'lucide-react';
-import { authOperations } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import { useLanguage } from '../../contexts/LanguageContext';
 import toast from 'react-hot-toast';
 
@@ -47,7 +47,10 @@ const EmailVerificationPrompt: React.FC<EmailVerificationPromptProps> = ({
     setIsResending(true);
 
     try {
-      const { error } = await authOperations.resendConfirmation(email);
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email
+      });
       
       if (error) {
         throw error;

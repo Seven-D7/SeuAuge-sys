@@ -2,7 +2,6 @@
 import { supabase } from './supabaseClient';
 export {
   supabase,
-  authOperations,
   withTimeout,
   type UserProfile,
   type Database

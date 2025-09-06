@@ -1,4 +1,4 @@
-import { supabase, authOperations, withTimeout } from "../lib/supabase";
+import { supabase, withTimeout } from "../lib/supabase";
 import api from "./api";
 
 export interface PlanData {
@@ -48,7 +48,7 @@ export async function getPlanFromToken(
 ): Promise<string | null> {
   try {
     const { data: { user }, error: userError } = await withTimeout(
-      authOperations.getUser(),
+      supabase.auth.getUser(),
       5000,
       'Get User for Plan'
     );
